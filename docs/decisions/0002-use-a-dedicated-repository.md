@@ -1,4 +1,4 @@
-[//]: # (bc-madr v0.2)
+[//]: # (bc-madr v0.1)
 <!-- modified MADR 4.0.0 -->
 
 # Use a dedicated repository for project code
