@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vpi-app-deployment
+  labels:
+    name: vpi-app-deployment
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      name: vpi-app-pod
+  template:
+    metadata:
+      labels:
+        name: vpi-app-pod
+    spec:
+      containers:
+        - name: vpi-app-container
+          image: "{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+      restartPolicy: Always

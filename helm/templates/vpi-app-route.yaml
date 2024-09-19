@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: vpi-app-route
+  labels:
+    app.kubernetes.io/name: vpi-app-route
+spec:
+  to:
+    kind: Service
+    name: vpi-app-service
+  port:
+    targetPort: "vpi-app-service-port"
+  tls:
+    termination: edge
