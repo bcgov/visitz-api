@@ -5,7 +5,7 @@
 
 * status: accepted
 * date: 2024-09-18
-* decision-makers: Leo Lou, Todd Scharien
+* decision-makers: Leo Lou (ARB), Todd Scharien
 
 ## Context and Problem Statement
 

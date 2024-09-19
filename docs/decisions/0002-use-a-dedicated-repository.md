@@ -1,4 +1,4 @@
-[//]: # (bc-madr v0.2)
+[//]: # (bc-madr v0.1)
 <!-- modified MADR 4.0.0 -->
 
 # Use a dedicated repository for project code
@@ -6,7 +6,7 @@
 * status: accepted
 * date: 2024-09-18
 * decision-makers: Todd Scharien
-* consulted: Fred Wen
+* consulted: Fred Wen (ARB)
 
 ## Context and Problem Statement
 
