@@ -6,7 +6,7 @@
 * status: accepted
 * date: 2024-09-18
 * decision-makers: Todd Scharien
-* consulted: Fred Wen
+* consulted: Fred Wen (ARB)
 
 ## Context and Problem Statement
 
