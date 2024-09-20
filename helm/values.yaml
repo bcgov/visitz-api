@@ -17,3 +17,6 @@ nodeSelector: {}
 tolerations: []
  
 affinity: {}
+
+aps:
+  namespace: '<set by CI/CD>'
