@@ -1,0 +1,19 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-traffic-from-gateway-to-your-api
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vpi-app
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              environment: test
+              name: {{ .Values.aps.namespace }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              environment: prod
+              name: {{ .Values.aps.namespace }}
