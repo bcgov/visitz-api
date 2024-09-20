@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start":"node app.js"
   },
   "author": "MCFD Mobility",
   "license": "MIT License",
