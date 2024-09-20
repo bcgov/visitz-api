@@ -8,7 +8,7 @@ on:
       - dev
 
 env:
-  DEPLOYMENT_NAME: visitz-api-deployment
+  HELM_RELEASE_NAME: visitz-api-deployment
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -78,7 +78,7 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          helm upgrade --install ${{ env.DEPLOYMENT_NAME }} ./helm \
+          helm upgrade --install ${{ env.HELM_RELEASE_NAME }} ./helm \
             --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ needs.build_and_push.outputs.image_tag }}
