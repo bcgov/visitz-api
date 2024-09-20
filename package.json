@@ -1,0 +1,17 @@
+{
+  "name": "visitz-api",
+  "version": "0.1.0",
+  "description": "Middleware API for the MCFD Mobility app.",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "author": "MCFD Mobility",
+  "license": "MIT License",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
