@@ -60,12 +60,20 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: Set image tag in values.yaml
+      - name: 'YAML poke: Set image tag'
         uses: fjogeleit/yaml-update-action@v0.15.0
         with:
           valueFile: 'helm/values.yaml'
           propertyPath: 'image.tag'
           value: ${{ github.ref_name }}
+          commitChange: false
+
+      - name: 'YAML poke: Set APS namespace'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'aps.namespace'
+          value: ${{ secrets.APS_NAMESPACE }}
           commitChange: false
 
       - name: Authenticate with OpenShift
