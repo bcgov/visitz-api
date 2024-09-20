@@ -11,3 +11,4 @@ spec:
     - name: vpi-app-service-port
       protocol: TCP
       port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.containerPort }}

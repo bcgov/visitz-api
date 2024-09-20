@@ -18,6 +18,6 @@ spec:
         - name: vpi-app-container
           image: "{{ .Values.image.tag }}"
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.service.containerPort }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
       restartPolicy: Always
