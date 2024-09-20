@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: vpi-app-service
 spec:
   selector:
-    app.kubernetes.io/name: vpi-app-deployment
+    app.kubernetes.io/name: vpi-app
   ports:
     - name: vpi-app-service-port
       protocol: TCP
