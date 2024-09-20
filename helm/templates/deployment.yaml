@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: vpi-app-deployment
   labels:
-    name: vpi-app-deployment
+    app.kubernetes.io/name: vpi-app-deployment
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      name: vpi-app-pod
+      app.kubernetes.io/name: vpi-app-pod
   template:
     metadata:
       labels:
-        name: vpi-app-pod
+        app.kubernetes.io/name: vpi-app-pod
     spec:
       containers:
         - name: vpi-app-container
