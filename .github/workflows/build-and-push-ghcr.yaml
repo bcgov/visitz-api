@@ -11,6 +11,7 @@ env:
   HELM_RELEASE_NAME: visitz-api-deployment
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  HUSKY: 0
 
 jobs:
 
