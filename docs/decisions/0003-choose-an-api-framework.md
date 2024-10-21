@@ -4,8 +4,8 @@
 # Choose an API framework
 
 * status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
-* date: 2024-09-19 <!-- YYYY-MM-DD when the decision was last updated -->
-* decision-makers: Leo Lou (ARB), Keith Parkin (ARB), Todd Scharien, Fred Wen (ARB) <!-- list everyone involved in the decision -->
+* date: 2024-10-21 <!-- YYYY-MM-DD when the decision was last updated -->
+* decision-makers: Leo Lou (ARB), Keith Parkin (ARB), Todd Scharien, Fred Wen (ARB), Hannah MacDonald <!-- list everyone involved in the decision -->
 * consulted: Leo Lou (ARB) <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
 * informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
 
@@ -24,12 +24,13 @@ To keep development and maintenance of this middleware solution sane, we should 
 
 * Express
 * Bun
+* NestJS
 * go-micro
 * Not using any framework
 
 ## Decision Outcome
 
-Chosen option: "Express", because it best satisfies the decision drivers.
+Chosen option: "NestJS", because it best satisfies the decision drivers.
 
 ### Consequences
 
@@ -67,6 +68,22 @@ JavaScript | https://bun.sh/ | [GitHub](https://github.com/oven-sh/bun)
 * Neutral, because JavaScript is loosely typed
 * Bad, because JavaScript was never explicitly designed for systems programming
 * Bad, because JavaScript requires more care to keep the codebase clean
+
+### NestJS
+
+TypeScript/JavaScript | https://nestjs.com/ | [GitHub](https://github.com/nestjs/nest)
+
+> A progressive Node.js framework for building efficient and scalable server-side applications.
+
+* Good, because JavaScript and Node.js are popular with large communities
+* Good, because JavaScript has oceans of libraries and packages available
+* Good, because it is compatible with TypeScript, which is strongly-typed
+* Good, because NestJS can use Express
+* Good, because it has good amounts of documentation available
+* Good, because it was designed for scalability and enterprise use
+* Good, because it has numerous enterprise sponsors and many maintainers
+* Good, because it has OpenAPI decorator support, allowing for OpenAPI to be generated as part of the code
+* Bad, because JavaScript was never explicitly designed for systems programming
 
 ### go-micro
 
