@@ -23,9 +23,9 @@ export class RecordValidatorMiddleware implements NestMiddleware {
     // TODO: Remove this console log once confirmed working with real request
     console.log(`idir:${idir} id:${id} type:${recordType}`);
 
-    // Cache record (5 minutes, set in env variable in case we adjust)
+    // TODO: Cache record (5 minutes, set in env variable in case we adjust)
 
-    // Confirm IDIR matches. If no, return 403 Forbidden
+    // TODO: Confirm IDIR matches. If no, return 403 Forbidden
 
     // Else, proceed. This should return 200 OK
     next();
