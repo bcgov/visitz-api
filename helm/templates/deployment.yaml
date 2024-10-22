@@ -20,4 +20,5 @@ spec:
           ports:
             - containerPort: {{ .Values.service.containerPort }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
+          imagePullPolicy: Always
       restartPolicy: Always
