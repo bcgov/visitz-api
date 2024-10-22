@@ -38,7 +38,7 @@ describe('Record Validator Middleware', () => {
   });
 
   describe('use function', () => {
-    it('Should proceed to next function with no input errors', () => {
+    it('Should proceed to next function with no input errors', async () => {
       const mockRequest = getMockReq({
         path: validPath,
         header: jest.fn((key: string): string => {
@@ -48,7 +48,7 @@ describe('Record Validator Middleware', () => {
           return headerVal[key];
         }),
       });
-      recordValidatorMiddleware.use(mockRequest, res, next);
+      await recordValidatorMiddleware.use(mockRequest, res, next);
       expect(next).toHaveBeenCalled();
     });
   });
