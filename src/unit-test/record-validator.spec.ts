@@ -5,6 +5,7 @@ import { Test } from '@nestjs/testing';
 import { RecordValidatorMiddleware } from '../common/middleware/record-validator.middleware';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { RecordType } from '../common/constants';
+import { EnumTypeError } from '../common/errors';
 
 describe('Record Validator Middleware', () => {
   let app: INestApplication;
@@ -63,7 +64,7 @@ describe('Record Validator Middleware', () => {
     it(`throws an error when the enum doesn't match the record type`, () => {
       expect(() => {
         recordValidatorPrototype.grabRecordInfoFromUrl(notinEnumPath);
-      }).toThrow(TypeError);
+      }).toThrow(EnumTypeError);
     });
 
     it(`throws an error when the url doesn't match the correct format`, () => {
