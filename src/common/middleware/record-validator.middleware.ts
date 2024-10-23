@@ -2,7 +2,7 @@ import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response, NextFunction } from 'express';
-import { RecordType } from '../constants';
+import { DEFAULT_CACHE_TTL_MS, RecordType } from '../constants';
 import { enumTypeGuard } from '../utilities';
 import { EnumTypeError } from '../errors';
 
@@ -29,21 +29,19 @@ export class RecordValidatorMiddleware implements NestMiddleware {
     if (upstreamResult === null) {
       // If not in cache, call upstream for record
       // TODO: Implement function that calls upstream
-      upstreamResult = idir.trim();
+      upstreamResult = idir;
 
       // TODO: Remove this console log once confirmed working with real request
       console.log(`idir:${idir} id:${id} type:${recordType}`);
 
       // Cache record
-      await this.cacheManager.set(
-        key,
-        upstreamResult,
-        parseInt(process.env.RECORD_CACHE_MS, 5 * 60 * 1000),
-      ); // defaults to 5 minutes in ms for ttl
+      let cacheTime = parseInt(process.env.RECORD_CACHE_MS);
+      cacheTime = isNaN(cacheTime) ? DEFAULT_CACHE_TTL_MS : cacheTime;
+      await this.cacheManager.set(key, upstreamResult, cacheTime);
     }
 
     // Confirm IDIR matches. If no, return 403 Forbidden
-    if (upstreamResult !== idir.trim()) {
+    if (upstreamResult !== idir) {
       res.status(403).send();
     }
     // Else, proceed. This should return 200 OK
