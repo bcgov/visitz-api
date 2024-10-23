@@ -8,7 +8,14 @@ import { EnumTypeError } from '../errors';
 
 @Injectable()
 export class RecordValidatorMiddleware implements NestMiddleware {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  cacheTime;
+
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {
+    this.cacheTime = parseInt(process.env.RECORD_CACHE_MS);
+    this.cacheTime = isNaN(this.cacheTime)
+      ? DEFAULT_CACHE_TTL_MS
+      : this.cacheTime;
+  }
 
   async use(req: Request, res: Response, next: NextFunction) {
     // Read header, find IDIR
@@ -35,9 +42,7 @@ export class RecordValidatorMiddleware implements NestMiddleware {
       console.log(`idir:${idir} id:${id} type:${recordType}`);
 
       // Cache record
-      let cacheTime = parseInt(process.env.RECORD_CACHE_MS);
-      cacheTime = isNaN(cacheTime) ? DEFAULT_CACHE_TTL_MS : cacheTime;
-      await this.cacheManager.set(key, upstreamResult, cacheTime);
+      await this.cacheManager.set(key, upstreamResult, this.cacheTime);
     }
 
     // Confirm IDIR matches. If no, return 403 Forbidden
