@@ -11,6 +11,7 @@ import {
   VIEW_MODE,
   CONTENT_TYPE,
 } from '../../common/constants/constants';
+import { UtilitiesService } from '../utilities/utilities.service';
 
 @Injectable()
 export class SupportNetworkService {
@@ -18,6 +19,7 @@ export class SupportNetworkService {
   constructor(
     private readonly httpService: HttpService,
     private configService: ConfigService,
+    private utilitiesService: UtilitiesService,
   ) {
     this.url = (
       this.configService.get<string>('UPSTREAM_BASE_URL') +
@@ -31,10 +33,16 @@ export class SupportNetworkService {
     since?: string,
   ) {
     let searchSpec = `([Entity Id]="${id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
-    if (typeof since === 'string' && since != 'undefined') {
-      searchSpec = searchSpec + ` AND [Updated] > "${since}")`;
-    } else {
+    let formattedDate: string | undefined;
+    if (
+      typeof since !== 'string' ||
+      (formattedDate =
+        this.utilitiesService.convertISODateToUpstreamFormat(since)) ===
+        undefined
+    ) {
       searchSpec = searchSpec + `)`;
+    } else {
+      searchSpec = searchSpec + ` AND [Updated] > "${formattedDate}")`;
     }
     const params = {
       ViewMode: VIEW_MODE,

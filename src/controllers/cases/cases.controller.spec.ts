@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CasesController } from './cases.controller';
 import { CasesService } from './cases.service';
-import { SupportNetworkModule } from '../../helpers/support-network/support-network.module';
 import { ConfigModule } from '@nestjs/config';
+import { HelpersModule } from '../../helpers/helpers.module';
 
 describe('CasesController', () => {
   let controller: CasesController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [SupportNetworkModule, ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot(), HelpersModule],
       providers: [CasesService],
       controllers: [CasesController],
     }).compile();
