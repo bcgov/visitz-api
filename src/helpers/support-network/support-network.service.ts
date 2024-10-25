@@ -12,6 +12,10 @@ import {
   CONTENT_TYPE,
 } from '../../common/constants/constants';
 import { UtilitiesService } from '../utilities/utilities.service';
+import {
+  SupportNetworkEntity,
+  NestedSupportNetworkEntity,
+} from '../../entities/support-network.entity';
 
 @Injectable()
 export class SupportNetworkService {
@@ -50,14 +54,18 @@ export class SupportNetworkService {
       searchspec: searchSpec,
     };
     const headers = {
+      // TODO: Change the authorization to service account
       Cookie: this.configService.get<string>('SIEBEL_COOKIE'),
       Authorization: this.configService.get<string>('SIEBEL_BEARER_AUTH'),
       Accept: CONTENT_TYPE,
     };
-    console.log(this.url, type, id, since, params);
     const response = await firstValueFrom(
       this.httpService.get(this.url, { params, headers }),
     );
-    return response.data;
+    if ((response.data as object).hasOwnProperty('items')) {
+      console.log(response.data);
+      return new NestedSupportNetworkEntity(response.data);
+    }
+    return new SupportNetworkEntity(response.data);
   }
 }
