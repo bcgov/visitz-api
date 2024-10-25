@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { CasesController } from './cases.controller';
 import { CasesService } from './cases.service';
-import { ConfigModule } from '@nestjs/config';
 import { HelpersModule } from '../../helpers/helpers.module';
 
 describe('CasesController', () => {
