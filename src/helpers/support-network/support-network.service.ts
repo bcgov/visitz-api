@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -16,6 +16,7 @@ import {
   SupportNetworkEntity,
   NestedSupportNetworkEntity,
 } from '../../entities/support-network.entity';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class SupportNetworkService {
@@ -59,11 +60,25 @@ export class SupportNetworkService {
       Authorization: this.configService.get<string>('SIEBEL_BEARER_AUTH'),
       Accept: CONTENT_TYPE,
     };
-    const response = await firstValueFrom(
-      this.httpService.get(this.url, { params, headers }),
-    );
+    let response;
+    try {
+      response = await firstValueFrom(
+        this.httpService.get(this.url, { params, headers }),
+      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        // TODO: Consider exposing certain codes to end user (404, etc.) while hiding others
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'There is no data for the requested resource',
+          },
+          HttpStatus.NOT_FOUND,
+          { cause: error },
+        );
+      }
+    }
     if ((response.data as object).hasOwnProperty('items')) {
-      console.log(response.data);
       return new NestedSupportNetworkEntity(response.data);
     }
     return new SupportNetworkEntity(response.data);
