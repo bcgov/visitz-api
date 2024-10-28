@@ -5,22 +5,79 @@ import {
   Param,
   Query,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
+import {
+  ApiExtraModels,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  getSchemaPath,
+} from '@nestjs/swagger';
+
 import { IncidentsService } from './incidents.service';
 import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
+  SupportNetworkListResponseIncidentExample,
+  SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
+import { IdPathParams } from '../../dto/id-path-params.dto';
+import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { ApiNotFoundEntity } from '../../entities/api-not-found-entity';
 
 @Controller('incident')
+@ApiNotFoundResponse({ type: ApiNotFoundEntity })
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id/supportnetwork')
+  @ApiOperation({
+    description:
+      'Find all Support Network entries related to a given Incident entity by Incident id.',
+  })
+  @ApiQuery({ name: 'since', required: false })
+  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
+  @ApiOkResponse({
+    content: {
+      'application/json': {
+        schema: {
+          oneOf: [
+            { $ref: getSchemaPath(SupportNetworkEntity) },
+            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
+          ],
+        },
+        examples: {
+          SupportNetworkSingleResponse: {
+            value: SupportNetworkSingleResponseIncidentExample,
+          },
+          SupportNetworkListResponse: {
+            value: SupportNetworkListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
   async getSingleCaseSupportNetworkInformationRecord(
-    @Param('id') id: string,
-    @Query('since') since: string,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,

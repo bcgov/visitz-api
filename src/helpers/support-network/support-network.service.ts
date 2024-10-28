@@ -17,14 +17,16 @@ import {
   NestedSupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import { AxiosError } from 'axios';
+import { IdPathParams } from '../../dto/id-path-params.dto';
+import { SinceQueryParams } from '../../dto/since-query-params.dto';
 
 @Injectable()
 export class SupportNetworkService {
   url: string;
   constructor(
     private readonly httpService: HttpService,
-    private configService: ConfigService,
-    private utilitiesService: UtilitiesService,
+    private readonly configService: ConfigService,
+    private readonly utilitiesService: UtilitiesService,
   ) {
     this.url = (
       this.configService.get<string>('UPSTREAM_BASE_URL') +
@@ -34,16 +36,16 @@ export class SupportNetworkService {
 
   async getSingleSupportNetworkInformationRecord(
     type: RecordType,
-    id: string,
-    since?: string,
+    id: IdPathParams,
+    since?: SinceQueryParams,
   ) {
-    let searchSpec = `([Entity Id]="${id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+    let searchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     let formattedDate: string | undefined;
     if (
-      typeof since !== 'string' ||
-      (formattedDate =
-        this.utilitiesService.convertISODateToUpstreamFormat(since)) ===
-        undefined
+      typeof since.since !== 'string' ||
+      (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
+        since.since,
+      )) === undefined
     ) {
       searchSpec = searchSpec + `)`;
     } else {

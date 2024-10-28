@@ -5,14 +5,16 @@ import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
+import { IdPathParams } from '../../dto/id-path-params.dto';
+import { SinceQueryParams } from '../../dto/since-query-params.dto';
 
 @Injectable()
 export class CasesService {
-  constructor(private supportNetworkService: SupportNetworkService) {}
+  constructor(private readonly supportNetworkService: SupportNetworkService) {}
 
   getSingleCaseSupportNetworkInformationRecord(
-    id: string,
-    since?: string,
+    id: IdPathParams,
+    since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
