@@ -62,6 +62,7 @@ export class SupportNetworkEntity {
 
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['Entity Name'],
+    enum: EntityType,
   })
   @Expose()
   'Entity Name': string;
