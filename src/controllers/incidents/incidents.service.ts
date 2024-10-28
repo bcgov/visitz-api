@@ -12,11 +12,11 @@ import { SinceQueryParams } from '../../dto/since-query-params.dto';
 export class IncidentsService {
   constructor(private readonly supportNetworkService: SupportNetworkService) {}
 
-  getSingleIncidentSupportNetworkInformationRecord(
+  async getSingleIncidentSupportNetworkInformationRecord(
     id: IdPathParams,
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
-    return this.supportNetworkService.getSingleSupportNetworkInformationRecord(
+    return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Incident,
       id,
       since,

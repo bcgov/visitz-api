@@ -60,7 +60,7 @@ export class ServiceRequestsController {
       },
     },
   })
-  getSingleCaseSupportNetworkInformationRecord(
+  async getSingleCaseSupportNetworkInformationRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -79,7 +79,7 @@ export class ServiceRequestsController {
     )
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
-    return this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
+    return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
       id,
       since,
     );

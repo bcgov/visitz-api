@@ -80,7 +80,7 @@ export class IncidentsController {
     )
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
-    return this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
+    return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,
       since,
     );

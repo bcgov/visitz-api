@@ -60,7 +60,7 @@ export class CasesController {
       },
     },
   })
-  getSingleCaseSupportNetworkInformationRecord(
+  async getSingleCaseSupportNetworkInformationRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -79,7 +79,7 @@ export class CasesController {
     )
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
-    return this.casesService.getSingleCaseSupportNetworkInformationRecord(
+    return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
       since,
     );
