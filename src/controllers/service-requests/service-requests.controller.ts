@@ -25,6 +25,7 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ApiNotFoundEntity } from '../../entities/api-not-found-entity';
+import { CONTENT_TYPE } from '../../common/constants/constants';
 
 @Controller('sr')
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
@@ -41,7 +42,7 @@ export class ServiceRequestsController {
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
     content: {
-      'application/json': {
+      [CONTENT_TYPE]: {
         schema: {
           oneOf: [
             { $ref: getSchemaPath(SupportNetworkEntity) },
