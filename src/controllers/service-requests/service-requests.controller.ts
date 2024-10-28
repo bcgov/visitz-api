@@ -24,7 +24,7 @@ import {
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { ApiNotFoundEntity } from '../../entities/api-not-found-entity';
+import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
 import { CONTENT_TYPE } from '../../common/constants/constants';
 
 @Controller('sr')
