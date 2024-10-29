@@ -42,6 +42,7 @@ export class SupportNetworkService {
     let searchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     let formattedDate: string | undefined;
     if (
+      since === undefined ||
       typeof since.since !== 'string' ||
       (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
         since.since,

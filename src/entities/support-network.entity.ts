@@ -37,15 +37,33 @@ export const SupportNetworkSingleResponseIncidentExample = {
 };
 
 export const SupportNetworkListResponseCaseExample = {
-  items: [SupportNetworkSingleResponseCaseExample],
+  items: [
+    {
+      ...SupportNetworkSingleResponseCaseExample,
+      Updated: '12/25/2024 00:33:37',
+    },
+    SupportNetworkSingleResponseCaseExample,
+  ],
 };
 
 export const SupportNetworkListResponseSRExample = {
-  items: [SupportNetworkSingleResponseSRExample],
+  items: [
+    {
+      ...SupportNetworkSingleResponseSRExample,
+      Updated: '12/25/2024 00:33:37',
+    },
+    SupportNetworkSingleResponseSRExample,
+  ],
 };
 
 export const SupportNetworkListResponseIncidentExample = {
-  items: [SupportNetworkSingleResponseIncidentExample],
+  items: [
+    {
+      ...SupportNetworkSingleResponseIncidentExample,
+      Updated: '12/25/2024 00:33:37',
+    },
+    SupportNetworkSingleResponseIncidentExample,
+  ],
 };
 
 /*
