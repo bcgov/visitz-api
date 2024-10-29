@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -23,6 +23,7 @@ import { SinceQueryParams } from '../../dto/since-query-params.dto';
 @Injectable()
 export class SupportNetworkService {
   url: string;
+  private readonly logger = new Logger(SupportNetworkService.name);
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
@@ -71,6 +72,9 @@ export class SupportNetworkService {
     } catch (error) {
       if (error instanceof AxiosError) {
         // TODO: Consider exposing certain codes to end user (404, etc.) while hiding others
+        if (error.status >= 500) {
+          this.logger.error(error.message, error.stack, error.cause);
+        }
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,

@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AxiosError, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
+import {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+  RawAxiosRequestHeaders,
+} from 'axios';
 import { of } from 'rxjs';
 import { UtilitiesService } from '../utilities/utilities.service';
 import { RecordType } from '../../common/constants/enumerations';
@@ -122,17 +127,32 @@ describe('SupportNetworkService', () => {
       },
     );
 
-    it(`Should return HttpException with status 404 on axios error`, async () => {
-      const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
-        throw new AxiosError('Axios Error');
-      });
+    it.each([[404], [500]])(
+      `Should return HttpException with status 404 on axios error`,
+      async (status) => {
+        const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+          throw new AxiosError(
+            'Axios Error',
+            status.toString(),
+            {} as InternalAxiosRequestConfig,
+            {},
+            {
+              data: {},
+              status: status,
+              statusText: '',
+              headers: {} as RawAxiosRequestHeaders,
+              config: {} as InternalAxiosRequestConfig,
+            },
+          );
+        });
 
-      await expect(
-        service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
-          id: 'doesNotExist',
-        } as IdPathParams),
-      ).rejects.toHaveProperty('status', 404);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
+        await expect(
+          service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
+            id: 'doesNotExist',
+          } as IdPathParams),
+        ).rejects.toHaveProperty('status', 404);
+        expect(spy).toHaveBeenCalledTimes(1);
+      },
+    );
   });
 });

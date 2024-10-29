@@ -9,8 +9,10 @@ To install the project, use
 
 ```bash
 $ npm install
+$ npm install -g pino-pretty
 ```
 This will install all dependencies, as well as pre-commit hooks for formatting, linting and running tests.
+Note the global install of pino-pretty is for prettifying logs when using watch, debug or development mode. This is so this dependency doesn't need to be installed in production.
 
 ## Compile and run the project
 
@@ -20,6 +22,9 @@ $ npm run start
 
 # watch mode (rebuilds on change)
 $ npm run start:dev
+
+# debug mode
+$ npm run start:debug
 
 # production mode
 $ npm run start:prod
