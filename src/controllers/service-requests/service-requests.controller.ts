@@ -60,7 +60,7 @@ export class ServiceRequestsController {
       },
     },
   })
-  async getSingleCaseSupportNetworkInformationRecord(
+  async getSingleSRSupportNetworkInformationRecord(
     @Param(
       new ValidationPipe({
         transform: true,

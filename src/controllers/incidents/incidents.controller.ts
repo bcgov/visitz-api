@@ -61,7 +61,7 @@ export class IncidentsController {
       },
     },
   })
-  async getSingleCaseSupportNetworkInformationRecord(
+  async getSingleIncidentSupportNetworkInformationRecord(
     @Param(
       new ValidationPipe({
         transform: true,
