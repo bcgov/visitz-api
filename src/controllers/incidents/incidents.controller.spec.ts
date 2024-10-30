@@ -30,6 +30,7 @@ describe('IncidentsController', () => {
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,
+        AuthService,
         { provide: HttpService, useValue: { get: jest.fn() } },
       ],
       controllers: [IncidentsController],
