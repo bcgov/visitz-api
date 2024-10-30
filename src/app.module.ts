@@ -7,6 +7,7 @@ import { CommonModule } from './common/common.module';
 import { ControllersModule } from './controllers/controllers.module';
 import { HelpersModule } from './helpers/helpers.module';
 import { LoggerModule } from 'nestjs-pino';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LoggerModule } from 'nestjs-pino';
       load: [configuration],
     }),
     LoggerModule.forRoot(),
+    CacheModule.register({ isGlobal: true }),
     CommonModule,
     ControllersModule,
     HelpersModule,

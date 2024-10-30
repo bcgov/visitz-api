@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ServiceRequestsController } from './service-requests.controller';
 import { ServiceRequestsService } from './service-requests.service';
 import { HelpersModule } from '../../helpers/helpers.module';
@@ -9,6 +11,8 @@ import {
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { AuthService } from '../../common/guards/auth/auth.service';
+import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -17,7 +21,14 @@ describe('ServiceRequestsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), HelpersModule],
-      providers: [ServiceRequestsService],
+      providers: [
+        ServiceRequestsService,
+        AuthService,
+        { provide: CACHE_MANAGER, useValue: {} },
+        UtilitiesService,
+        ConfigService,
+        { provide: HttpService, useValue: { get: jest.fn() } },
+      ],
       controllers: [ServiceRequestsController],
     }).compile();
 

@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CasesController } from './cases.controller';
 import { CasesService } from './cases.service';
 import { HelpersModule } from '../../helpers/helpers.module';
@@ -9,6 +11,8 @@ import {
 } from '../../entities/support-network.entity';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
+import { AuthService } from '../../common/guards/auth/auth.service';
+import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -17,7 +21,14 @@ describe('CasesController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), HelpersModule],
-      providers: [CasesService],
+      providers: [
+        CasesService,
+        AuthService,
+        { provide: CACHE_MANAGER, useValue: {} },
+        UtilitiesService,
+        ConfigService,
+        { provide: HttpService, useValue: { get: jest.fn() } },
+      ],
       controllers: [CasesController],
     }).compile();
 

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -27,8 +28,10 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
 import { CONTENT_TYPE } from '../../common/constants/constants';
+import { AuthGuard } from '../../common/guards/auth/auth.guard';
 
 @Controller('incident')
+@UseGuards(AuthGuard)
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
