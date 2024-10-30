@@ -10,7 +10,6 @@ import {
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { AuthService } from '../../common/guards/auth/auth.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -24,7 +23,6 @@ describe('ServiceRequestsController', () => {
       imports: [ConfigModule.forRoot()],
       providers: [
         ServiceRequestsService,
-        AuthService,
         SupportNetworkService,
         TokenRefresherService,
         { provide: CACHE_MANAGER, useValue: {} },
