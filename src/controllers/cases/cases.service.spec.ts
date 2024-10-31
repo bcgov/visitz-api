@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { CasesService } from './cases.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
@@ -11,6 +12,7 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
+import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -19,7 +21,19 @@ describe('CasesService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule, ConfigModule.forRoot()],
-      providers: [CasesService, SupportNetworkService, UtilitiesService],
+      providers: [
+        CasesService,
+        SupportNetworkService,
+        UtilitiesService,
+        TokenRefresherService,
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            set: () => jest.fn(),
+            get: () => 'Bearer token',
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<CasesService>(CasesService);

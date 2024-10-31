@@ -1,14 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IncidentsController } from './incidents.controller';
 import { IncidentsService } from './incidents.service';
-import { HelpersModule } from '../../helpers/helpers.module';
 import {
   SupportNetworkEntity,
   SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
+import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
+import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -16,8 +20,16 @@ describe('IncidentsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot(), HelpersModule],
-      providers: [IncidentsService],
+      imports: [ConfigModule.forRoot()],
+      providers: [
+        IncidentsService,
+        SupportNetworkService,
+        TokenRefresherService,
+        { provide: CACHE_MANAGER, useValue: {} },
+        ConfigService,
+        UtilitiesService,
+        { provide: HttpService, useValue: { get: jest.fn() } },
+      ],
       controllers: [IncidentsController],
     }).compile();
 

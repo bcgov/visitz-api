@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { IncidentsService } from './incidents.service';
 import { HttpModule } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
+import { IncidentsService } from './incidents.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
@@ -11,6 +12,7 @@ import {
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
+import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -19,7 +21,19 @@ describe('IncidentsService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule, ConfigModule.forRoot()],
-      providers: [IncidentsService, SupportNetworkService, UtilitiesService],
+      providers: [
+        IncidentsService,
+        SupportNetworkService,
+        UtilitiesService,
+        TokenRefresherService,
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            set: () => jest.fn(),
+            get: () => 'Bearer token',
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<IncidentsService>(IncidentsService);

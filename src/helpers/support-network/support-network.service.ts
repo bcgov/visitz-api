@@ -19,6 +19,7 @@ import {
 import { AxiosError } from 'axios';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { TokenRefresherService } from '../token-refresher/token-refresher.service';
 
 @Injectable()
 export class SupportNetworkService {
@@ -28,6 +29,7 @@ export class SupportNetworkService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     private readonly utilitiesService: UtilitiesService,
+    private readonly tokenRefresherService: TokenRefresherService,
   ) {
     this.url = (
       this.configService.get<string>('UPSTREAM_BASE_URL') +
@@ -59,13 +61,16 @@ export class SupportNetworkService {
       searchspec: searchSpec,
     };
     const headers = {
-      // TODO: Change the authorization to service account
-      Cookie: this.configService.get<string>('SIEBEL_COOKIE'),
-      Authorization: this.configService.get<string>('SIEBEL_BEARER_AUTH'),
       Accept: CONTENT_TYPE,
     };
     let response;
     try {
+      const token =
+        await this.tokenRefresherService.refreshUpstreamBearerToken();
+      if (token === undefined) {
+        throw new Error('Upstream auth failed');
+      }
+      headers['Authorization'] = token;
       response = await firstValueFrom(
         this.httpService.get(this.url, { params, headers }),
       );
@@ -75,15 +80,17 @@ export class SupportNetworkService {
         if (error.status >= 500) {
           this.logger.error(error.message, error.stack, error.cause);
         }
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'There is no data for the requested resource',
-          },
-          HttpStatus.NOT_FOUND,
-          { cause: error },
-        );
+      } else {
+        this.logger.error(error);
       }
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'There is no data for the requested resource',
+        },
+        HttpStatus.NOT_FOUND,
+        { cause: error },
+      );
     }
     if ((response.data as object).hasOwnProperty('items')) {
       return new NestedSupportNetworkEntity(response.data);
