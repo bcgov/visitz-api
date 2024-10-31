@@ -59,12 +59,19 @@ export class TokenRefresherService {
       response = await firstValueFrom(
         this.httpService.post(this.accessTokenUrl, data, { headers }),
       );
-      const access_token =
-        (response.data['token_type'] as string) +
-        ' ' +
-        (response.data['access_token'] as string);
-      const expiryMs = (response.data['expires_in'] as number) * 1000;
-      return [access_token, expiryMs];
+      const access_token = response.data['access_token'];
+      const token_type = response.data['token_type'];
+      const expirySeconds = response.data['expires_in'];
+      if (
+        typeof access_token !== 'string' ||
+        typeof token_type != 'string' ||
+        typeof expirySeconds != 'number'
+      ) {
+        throw new Error('Response data is invalid');
+      }
+      const bearer_token = token_type + ' ' + access_token;
+      const expiryMs = expirySeconds * 1000;
+      return [bearer_token, expiryMs];
     } catch (error) {
       if (error instanceof AxiosError) {
         this.logger.error(error.message, error.stack, error.cause);
