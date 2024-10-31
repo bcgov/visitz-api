@@ -27,6 +27,7 @@ describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
   let configService: ConfigService;
   let httpService: HttpService;
+  let tokenRefresherService: TokenRefresherService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +51,9 @@ describe('SupportNetworkService', () => {
     service = module.get<SupportNetworkService>(SupportNetworkService);
     configService = module.get<ConfigService>(ConfigService);
     httpService = module.get<HttpService>(HttpService);
+    tokenRefresherService = module.get<TokenRefresherService>(
+      TokenRefresherService,
+    );
   });
 
   it('should be defined', () => {
@@ -164,5 +168,17 @@ describe('SupportNetworkService', () => {
         expect(spy).toHaveBeenCalledTimes(1);
       },
     );
+
+    it('Should return HttpException with status 404 on bearer token undefined', async () => {
+      const spy = jest
+        .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
+        .mockResolvedValueOnce(undefined);
+      await expect(
+        service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
+          id: 'doesNotExist',
+        } as IdPathParams),
+      ).rejects.toHaveProperty('status', 404);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 });
