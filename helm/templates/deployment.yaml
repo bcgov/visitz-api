@@ -21,4 +21,45 @@ spec:
             - containerPort: {{ .Values.service.containerPort }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: Always
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: NODE_ENV
+            - name: RECORD_CACHE_MS
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: RECORD_CACHE_MS
+            - name: UPSTREAM_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: UPSTREAM_BASE_URL
+            - name: SUPPORT_NETWORK_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SUPPORT_NETWORK_ENDPOINT
+            - name: CASE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_ENDPOINT
+            - name: INCIDENT_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_ENDPOINT
+            - name: SR_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_ENDPOINT
+            - name: MEMO_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MEMO_ENDPOINT
       restartPolicy: Always
