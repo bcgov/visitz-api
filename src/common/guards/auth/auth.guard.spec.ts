@@ -126,4 +126,57 @@ describe('AuthGuard', () => {
       expect(isAuthed).toBe(false);
     });
   });
+
+  describe('canActivate tests', () => {
+    it('should always return true in non-production environment', async () => {
+      const authGuard = new AuthGuard(service, configService);
+      const authSpy = jest
+        .spyOn(service, 'getRecordAndValidate')
+        .mockResolvedValueOnce(false);
+      const isAuthed = await authGuard.canActivate({} as ExecutionContext);
+      expect(isAuthed).toBe(true);
+      expect(authSpy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return the result of getRecordAndValidate in a production environment', async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          AuthService,
+          { provide: CACHE_MANAGER, useValue: {} },
+          UtilitiesService,
+          {
+            provide: ConfigService,
+            useValue: {
+              get: jest.fn((key: string) => {
+                const lookup = {
+                  NODE_ENV: 'production',
+                };
+                return lookup[key];
+              }),
+            },
+          },
+
+          { provide: HttpService, useValue: { get: jest.fn() } },
+        ],
+      }).compile();
+
+      service = module.get<AuthService>(AuthService);
+      configService = module.get<ConfigService>(ConfigService);
+      console.log(configService.get('NODE_ENV'));
+      const authGuard = new AuthGuard(service, configService);
+      const authSpy = jest
+        .spyOn(service, 'getRecordAndValidate')
+        .mockResolvedValueOnce(false);
+      const execContext = {
+        switchToHttp: () => ({
+          getRequest: () => getMockReq(),
+        }),
+      };
+      const isAuthed = await authGuard.canActivate(
+        execContext as ExecutionContext,
+      );
+      expect(authSpy).toHaveBeenCalledTimes(1);
+      expect(isAuthed).toBe(false);
+    });
+  });
 });
