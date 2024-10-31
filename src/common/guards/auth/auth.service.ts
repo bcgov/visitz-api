@@ -32,7 +32,7 @@ export class AuthService {
     this.baseUrl = this.configService.get<string>('UPSTREAM_BASE_URL');
   }
 
-  async getRecordandValidate(req: Request): Promise<boolean> {
+  async getRecordAndValidate(req: Request): Promise<boolean> {
     let idir: string, id: string, recordType: RecordType;
     try {
       idir = req.header('idir_username').trim();
@@ -104,6 +104,9 @@ export class AuthService {
         response.data[
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
         ];
+      if (idir === undefined) {
+        return null;
+      }
       return idir;
     } catch (error) {
       if (error instanceof AxiosError) {
