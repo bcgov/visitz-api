@@ -62,4 +62,19 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: MEMO_ENDPOINT
+            - name: ACCESS_TOKEN_URL
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: ACCESS_TOKEN_URL
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLIENT_ID
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLIENT_SECRET
       restartPolicy: Always

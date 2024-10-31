@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule, HttpService } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { ServiceRequestsService } from './service-requests.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
@@ -11,6 +12,7 @@ import {
 import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -23,7 +25,15 @@ describe('ServiceRequestsService', () => {
         ServiceRequestsService,
         SupportNetworkService,
         UtilitiesService,
+        TokenRefresherService,
         { provide: HttpService, useValue: { get: jest.fn() } },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            set: () => jest.fn(),
+            get: () => 'Bearer token',
+          },
+        },
       ],
     }).compile();
 

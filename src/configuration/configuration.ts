@@ -22,4 +22,9 @@ export default () => ({
       workspace: undefined,
     },
   },
+  oauth: {
+    accessTokenUrl: process.env.ACCESS_TOKEN_URL,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+  },
 });
