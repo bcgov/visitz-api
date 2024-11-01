@@ -90,4 +90,28 @@ export class CasesController {
       since,
     );
   }
+
+  // TODO: Add entity and swagger defintions once model is available
+  @Get(':id/visits')
+  async getSingleCaseInPersonVisitRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    since?: SinceQueryParams,
+  ) {
+    return await this.casesService.getSingleCaseInPersonVisitRecord(id, since);
+  }
 }

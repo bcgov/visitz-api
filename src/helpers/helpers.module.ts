@@ -7,6 +7,8 @@ import { UtilitiesModule } from './utilities/utilities.module';
 import { UtilitiesService } from './utilities/utilities.service';
 import { TokenRefresherModule } from './token-refresher/token-refresher.module';
 import { TokenRefresherService } from './token-refresher/token-refresher.service';
+import { InPersonVisitsModule } from './in-person-visits/in-person-visits.module';
+import { InPersonVisitsService } from './in-person-visits/in-person-visits.service';
 
 @Module({
   imports: [
@@ -15,8 +17,19 @@ import { TokenRefresherService } from './token-refresher/token-refresher.service
     ConfigModule,
     UtilitiesModule,
     TokenRefresherModule,
+    InPersonVisitsModule,
   ],
-  providers: [SupportNetworkService, UtilitiesService, TokenRefresherService],
-  exports: [SupportNetworkService, UtilitiesService, TokenRefresherService],
+  providers: [
+    SupportNetworkService,
+    UtilitiesService,
+    TokenRefresherService,
+    InPersonVisitsService,
+  ],
+  exports: [
+    SupportNetworkService,
+    UtilitiesService,
+    TokenRefresherService,
+    InPersonVisitsService,
+  ],
 })
 export class HelpersModule {}

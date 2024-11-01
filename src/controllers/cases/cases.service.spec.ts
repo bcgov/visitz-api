@@ -13,6 +13,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
 import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -26,6 +27,7 @@ describe('CasesService', () => {
         SupportNetworkService,
         UtilitiesService,
         TokenRefresherService,
+        InPersonVisitsService,
         {
           provide: CACHE_MANAGER,
           useValue: {
