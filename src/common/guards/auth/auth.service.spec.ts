@@ -184,7 +184,7 @@ describe('AuthService', () => {
     });
 
     it.each([[{}], [undefined]])(
-      'should return an error when idir not in response',
+      'should return null when idir not in response',
       async (data) => {
         const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
@@ -237,5 +237,17 @@ describe('AuthService', () => {
         expect(idir).toBe(null);
       },
     );
+
+    it('should return null on token refresh error', async () => {
+      const cacheSpy = jest
+        .spyOn(cache, 'get')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.getAssignedIdirUpstream(
+        validId,
+        validRecordType,
+      );
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(null);
+    });
   });
 });
