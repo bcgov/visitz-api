@@ -7,12 +7,11 @@ import { Request } from 'express';
 import { RecordType } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
-
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
   VIEW_MODE,
-} from '../../../common/constants/constants';
+} from '../../../common/constants/parameter-constants';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 

@@ -12,10 +12,10 @@ export class SinceQueryParams {
   })
   @Expose()
   @ApiProperty({
-    example: '2024-10-28T19:34:54+0000',
+    example: '2024-10-28T19:34:54',
     format: 'date-time',
     description:
-      'The ISO8601 formatted date to narrow down searches with. Only results after the selected datetime will appear.',
+      'The ISO8601 formatted date to narrow down searches with, expected to be provided in UTC. Only results after the selected datetime will appear.',
   })
   since?: string;
 }

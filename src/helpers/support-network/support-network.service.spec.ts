@@ -142,7 +142,7 @@ describe('SupportNetworkService', () => {
     );
 
     it.each([[404], [500]])(
-      `Should return HttpException with status 404 on axios error`,
+      `Should return HttpException with matching status on axios error`,
       async (status) => {
         const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
           throw new AxiosError(
@@ -164,12 +164,12 @@ describe('SupportNetworkService', () => {
           service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
             id: 'doesNotExist',
           } as IdPathParams),
-        ).rejects.toHaveProperty('status', 404);
+        ).rejects.toHaveProperty('status', status);
         expect(spy).toHaveBeenCalledTimes(1);
       },
     );
 
-    it('Should return HttpException with status 404 on bearer token undefined', async () => {
+    it('Should return HttpException with status 500 on bearer token undefined', async () => {
       const spy = jest
         .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
         .mockResolvedValueOnce(undefined);
@@ -177,7 +177,7 @@ describe('SupportNetworkService', () => {
         service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
           id: 'doesNotExist',
         } as IdPathParams),
-      ).rejects.toHaveProperty('status', 404);
+      ).rejects.toHaveProperty('status', 500);
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });

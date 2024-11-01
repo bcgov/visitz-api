@@ -5,7 +5,11 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { Cache } from 'cache-manager';
 import { firstValueFrom } from 'rxjs';
-import { CONTENT_TYPE } from '../../common/constants/constants';
+import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
+import {
+  fiveSecondsMs,
+  secondsToMsConversionFactor,
+} from './token-refresher-constants';
 
 @Injectable()
 export class TokenRefresherService {
@@ -36,7 +40,7 @@ export class TokenRefresherService {
     if (token === undefined || ttlMs === undefined) {
       return undefined; // do not store bad result in cache
     }
-    await this.cacheManager.set(key, token, ttlMs - 5000); // subtract time so it can be used upstream
+    await this.cacheManager.set(key, token, ttlMs - fiveSecondsMs); // subtract time so it can be used upstream
     return token;
   }
 
@@ -70,7 +74,7 @@ export class TokenRefresherService {
         throw new Error('Response data is invalid');
       }
       const bearer_token = token_type + ' ' + access_token;
-      const expiryMs = expirySeconds * 1000;
+      const expiryMs = expirySeconds * secondsToMsConversionFactor;
       return [bearer_token, expiryMs];
     } catch (error) {
       if (error instanceof AxiosError) {

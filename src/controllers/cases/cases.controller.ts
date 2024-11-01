@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiExtraModels,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -26,12 +27,14 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
-import { CONTENT_TYPE } from '../../common/constants/constants';
+import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
+import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 
 @Controller('case')
 @UseGuards(AuthGuard)
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
+@ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
