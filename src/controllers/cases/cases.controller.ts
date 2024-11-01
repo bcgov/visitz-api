@@ -31,6 +31,7 @@ import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 
+
 @Controller('case')
 @UseGuards(AuthGuard)
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
