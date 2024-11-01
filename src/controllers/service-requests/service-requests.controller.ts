@@ -14,6 +14,7 @@ import {
   ApiQuery,
   ApiOperation,
   ApiNotFoundResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import {
@@ -25,10 +26,12 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
-import { CONTENT_TYPE } from '../../common/constants/constants';
+import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
+import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 
 @Controller('sr')
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
+@ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
 

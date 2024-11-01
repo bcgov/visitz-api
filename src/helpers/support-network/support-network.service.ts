@@ -10,7 +10,7 @@ import {
   CHILD_LINKS,
   VIEW_MODE,
   CONTENT_TYPE,
-} from '../../common/constants/constants';
+} from '../../common/constants/parameter-constants';
 import { UtilitiesService } from '../utilities/utilities.service';
 import {
   SupportNetworkEntity,
@@ -76,19 +76,26 @@ export class SupportNetworkService {
       );
     } catch (error) {
       if (error instanceof AxiosError) {
-        // TODO: Consider exposing certain codes to end user (404, etc.) while hiding others
-        if (error.status >= 500) {
-          this.logger.error(error.message, error.stack, error.cause);
+        this.logger.error(error.message, error.stack, error.cause);
+        if (error.status === 404) {
+          throw new HttpException(
+            {
+              status: HttpStatus.NOT_FOUND,
+              error: 'There is no data for the requested resource',
+            },
+            HttpStatus.NOT_FOUND,
+            { cause: error },
+          );
         }
       } else {
         this.logger.error(error);
       }
       throw new HttpException(
         {
-          status: HttpStatus.NOT_FOUND,
-          error: 'There is no data for the requested resource',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.INTERNAL_SERVER_ERROR,
         { cause: error },
       );
     }

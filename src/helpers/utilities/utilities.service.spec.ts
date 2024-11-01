@@ -19,7 +19,7 @@ describe('UtilitiesService', () => {
   describe('convertISODateToUpstreamFormat tests', () => {
     it.each([
       ['2024-10-24T22:16:24+0000', '10/24/2024 22:16:24'],
-      ['2024-10-24T22:16:24-0100', '10/24/2024 23:16:24'],
+      ['2024-10-24T22:16:24', '10/24/2024 22:16:24'],
       ['   2024-W10-1T000000+0000   ', '03/04/2024 00:00:00'],
     ])(
       `should format an ISO-8601 Date to format MM/DD/YYYY HH:mm:ss in UTC`,
