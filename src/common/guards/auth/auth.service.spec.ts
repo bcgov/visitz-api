@@ -15,6 +15,7 @@ import { AuthService } from './auth.service';
 import { RecordType } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
+import { TokenRefresherService } from '../../../helpers/token-refresher/token-refresher.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -34,6 +35,7 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
+        TokenRefresherService,
         {
           provide: CACHE_MANAGER,
           useValue: {
@@ -73,7 +75,8 @@ describe('AuthService', () => {
     it('should return true with valid record', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
-        .mockResolvedValueOnce(undefined);
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {
@@ -100,7 +103,7 @@ describe('AuthService', () => {
       });
       const isAuthed = await service.getRecordAndValidate(mockRequest);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(cacheSpy).toHaveBeenCalledTimes(2);
       expect(isAuthed).toBe(true);
     });
 
@@ -158,6 +161,7 @@ describe('AuthService', () => {
       [validId, validRecordType],
       [validId, RecordType.Memo],
     ])('should return idir string given good input', async (id, recordType) => {
+      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {
@@ -175,12 +179,14 @@ describe('AuthService', () => {
       );
       const result = await service.getAssignedIdirUpstream(id, recordType);
       expect(spy).toHaveBeenCalledTimes(1);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(testIdir);
     });
 
     it.each([[{}], [undefined]])(
       'should return an error when idir not in response',
       async (data) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
           of({
             data,
@@ -198,6 +204,7 @@ describe('AuthService', () => {
           validRecordType,
         );
         expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(null);
       },
     );
@@ -205,6 +212,7 @@ describe('AuthService', () => {
     it.each([[404], [500]])(
       `Should return null on axios error`,
       async (status) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
           throw new AxiosError(
             'Axios Error',
@@ -225,6 +233,7 @@ describe('AuthService', () => {
           RecordType.Case,
         );
         expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
         expect(idir).toBe(null);
       },
     );

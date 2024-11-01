@@ -14,6 +14,7 @@ import {
 } from '../../../common/constants/parameter-constants';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import { TokenRefresherService } from '../../../helpers/token-refresher/token-refresher.service';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly utilitiesService: UtilitiesService,
     private readonly httpService: HttpService,
+    private readonly tokenRefresherService: TokenRefresherService,
   ) {
     this.cacheTime = this.configService.get<number>('recordCache.cacheTtlMs');
     this.baseUrl = this.configService.get<string>('UPSTREAM_BASE_URL');
@@ -84,9 +86,6 @@ export class AuthService {
       params['workspace'] = workspace;
     }
     const headers = {
-      // TODO: Change the authorization to service account
-      Cookie: this.configService.get<string>('SIEBEL_COOKIE'),
-      Authorization: this.configService.get<string>('SIEBEL_BEARER_AUTH'),
       Accept: CONTENT_TYPE,
     };
     const url =
@@ -96,6 +95,12 @@ export class AuthService {
 
     let response;
     try {
+      const token =
+        await this.tokenRefresherService.refreshUpstreamBearerToken();
+      if (token === undefined) {
+        throw new Error('Upstream auth failed');
+      }
+      headers['Authorization'] = token;
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
@@ -109,9 +114,9 @@ export class AuthService {
       return idir;
     } catch (error) {
       if (error instanceof AxiosError) {
-        if (error.status >= 500) {
-          this.logger.error(error.message, error.stack, error.cause);
-        }
+        this.logger.error(error.message, error.stack, error.cause);
+      } else {
+        this.logger.error(error);
       }
     }
     return null;
