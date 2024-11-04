@@ -8,6 +8,10 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
+import {
+  InPersonVisitsEntity,
+  NestedInPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
 
 @Injectable()
 export class CasesService {
@@ -30,7 +34,7 @@ export class CasesService {
   async getSingleCaseInPersonVisitRecord(
     id: IdPathParams,
     since?: SinceQueryParams,
-  ) {
+  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,

@@ -29,6 +29,6 @@ export default () => ({
   },
   workspaces: {
     supportNetwork: undefined,
-    inPersonVisits: 'int_lab',
+    inPersonVisits: undefined,
   },
 });

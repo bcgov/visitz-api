@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RecordType } from '../../common/constants/enumerations';
+import {
+  RecordEntityMap,
+  RecordType,
+} from '../../common/constants/enumerations';
 import {
   SupportNetworkEntity,
   NestedSupportNetworkEntity,
@@ -29,10 +32,10 @@ export class SupportNetworkService {
     id: IdPathParams,
     since?: SinceQueryParams,
   ) {
+    const baseSearchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
-        type,
-        id,
+        baseSearchSpec,
         this.workspace,
         since,
       );

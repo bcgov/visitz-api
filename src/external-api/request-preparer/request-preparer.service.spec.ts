@@ -2,10 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RequestPreparerService } from './request-preparer.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
-  RecordEntityMap,
-  RecordType,
-} from '../../common/constants/enumerations';
-import {
   CHILD_LINKS,
   CONTENT_TYPE,
   VIEW_MODE,
@@ -63,39 +59,30 @@ describe('RequestPreparerService', () => {
 
   describe('prepareHeadersAndParams tests', () => {
     it.each([
-      [RecordType.Case, { id: validId }, undefined],
-      [RecordType.SR, { id: validId }, 'workspace'],
+      ['spec', undefined],
+      ['spec', { id: validId }, 'workspace'],
     ])(
       'correctly prepares headers and params with no date parameter',
-      (type, id, workspace) => {
+      (baseSearchSpec, workspace) => {
         const [headers, params] = service.prepareHeadersAndParams(
-          type,
-          id,
+          baseSearchSpec,
           workspace,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
-          searchspec: `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}")`,
+          searchspec: baseSearchSpec + ')',
           workspace: workspace,
         });
       },
     );
 
-    it.each([
-      [
-        RecordType.Case,
-        { id: validId },
-        { since: '2024-02-20' },
-        '02/20/2024 00:00:00',
-      ],
-    ])(
+    it.each([['spec', { since: '2024-02-20' }, '02/20/2024 00:00:00']])(
       'correctly prepares headers and params with a date parameter',
-      (type, id, since, expectedDate) => {
+      (baseSearchSpec, since, expectedDate) => {
         const [headers, params] = service.prepareHeadersAndParams(
-          type,
-          id,
+          baseSearchSpec,
           undefined,
           since,
         );
@@ -103,7 +90,7 @@ describe('RequestPreparerService', () => {
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
-          searchspec: `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}" AND [Updated] > "${expectedDate}")`,
+          searchspec: `${baseSearchSpec} AND [Updated] > "${expectedDate}")`,
         });
       },
     );

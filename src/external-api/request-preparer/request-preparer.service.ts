@@ -1,14 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
-  RecordEntityMap,
-  RecordType,
-} from '../../common/constants/enumerations';
-import {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
 } from '../../common/constants/parameter-constants';
-import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
@@ -26,12 +21,11 @@ export class RequestPreparerService {
   ) {}
 
   prepareHeadersAndParams(
-    type: RecordType,
-    id: IdPathParams,
+    baseSearchSpec: string,
     workspace: string | undefined,
     since?: SinceQueryParams,
   ) {
-    let searchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+    let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
     if (
       since === undefined ||

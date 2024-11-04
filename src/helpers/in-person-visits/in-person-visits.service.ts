@@ -4,6 +4,10 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import {
+  NestedInPersonVisitsEntity,
+  InPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -19,15 +23,16 @@ export class InPersonVisitsService {
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.inPersonVisits');
   }
+
   async getSingleInPersonVisitRecord(
-    type: RecordType,
+    _type: RecordType,
     id: IdPathParams,
     since?: SinceQueryParams,
-  ) {
+  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
+    const baseSearchSpec = `([Parent Id]="${id.id}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
-        type,
-        id,
+        baseSearchSpec,
         this.workspace,
         since,
       );
@@ -36,7 +41,9 @@ export class InPersonVisitsService {
       headers,
       params,
     );
-    // TODO: Pass info to entity constructs once created
-    return response.data;
+    if ((response.data as object).hasOwnProperty('items')) {
+      return new NestedInPersonVisitsEntity(response.data);
+    }
+    return new InPersonVisitsEntity(response.data);
   }
 }

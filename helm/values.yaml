@@ -20,3 +20,6 @@ affinity: {}
 
 aps:
   namespace: '<set by CI/CD>'
+
+vpiAppBuildLabel:
+  version: '<set by CI/CD>'

@@ -77,4 +77,6 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: CLIENT_SECRET
+            - name: VPI_APP_LABEL
+              value: {{ .Values.vpiAppBuildLabel.version }}
       restartPolicy: Always

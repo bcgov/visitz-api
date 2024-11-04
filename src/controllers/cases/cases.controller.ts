@@ -30,6 +30,12 @@ import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
 import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
+import {
+  InPersonVisitsEntity,
+  InPersonVisitsListResponseCaseExample,
+  InPersonVisitsSingleResponseCaseExample,
+  NestedInPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -39,7 +45,7 @@ export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/supportnetwork')
+  @Get(':id/support-network')
   @ApiOperation({
     description:
       'Find all Support Network entries related to a given Case entity by Case id.',
@@ -91,8 +97,34 @@ export class CasesController {
     );
   }
 
-  // TODO: Add entity and swagger defintions once model is available
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id/visits')
+  @ApiOperation({
+    description:
+      'Find all In Person Child / Youth Visits related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: 'since', required: false })
+  @ApiExtraModels(InPersonVisitsEntity, NestedInPersonVisitsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          oneOf: [
+            { $ref: getSchemaPath(InPersonVisitsEntity) },
+            { $ref: getSchemaPath(NestedInPersonVisitsEntity) },
+          ],
+        },
+        examples: {
+          InPersonVisitsSingleResponse: {
+            value: InPersonVisitsSingleResponseCaseExample,
+          },
+          InPersonVisitsListResponse: {
+            value: InPersonVisitsListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
   async getSingleCaseInPersonVisitRecord(
     @Param(
       new ValidationPipe({
@@ -111,7 +143,7 @@ export class CasesController {
       }),
     )
     since?: SinceQueryParams,
-  ) {
+  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.casesService.getSingleCaseInPersonVisitRecord(id, since);
   }
 }
