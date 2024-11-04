@@ -63,17 +63,22 @@ describe('RequestPreparerService', () => {
 
   describe('prepareHeadersAndParams tests', () => {
     it.each([
-      [RecordType.Case, { id: validId }],
-      [RecordType.SR, { id: validId }],
+      [RecordType.Case, { id: validId }, undefined],
+      [RecordType.SR, { id: validId }, 'workspace'],
     ])(
       'correctly prepares headers and params with no date parameter',
-      (type, id) => {
-        const [headers, params] = service.prepareHeadersAndParams(type, id);
+      (type, id, workspace) => {
+        const [headers, params] = service.prepareHeadersAndParams(
+          type,
+          id,
+          workspace,
+        );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
           searchspec: `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}")`,
+          workspace: workspace,
         });
       },
     );
@@ -91,6 +96,7 @@ describe('RequestPreparerService', () => {
         const [headers, params] = service.prepareHeadersAndParams(
           type,
           id,
+          undefined,
           since,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });

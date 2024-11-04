@@ -27,4 +27,8 @@ export default () => ({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
   },
+  workspaces: {
+    supportNetwork: undefined,
+    inPersonVisits: 'int_lab',
+  },
 });

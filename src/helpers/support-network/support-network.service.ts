@@ -12,6 +12,7 @@ import { RequestPreparerService } from '../../external-api/request-preparer/requ
 @Injectable()
 export class SupportNetworkService {
   url: string;
+  workspace: string | undefined;
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -20,6 +21,7 @@ export class SupportNetworkService {
       this.configService.get<string>('UPSTREAM_BASE_URL') +
       this.configService.get<string>('SUPPORT_NETWORK_ENDPOINT')
     ).replace(/\s/g, '%20');
+    this.workspace = this.configService.get('workspaces.supportNetwork');
   }
 
   async getSingleSupportNetworkInformationRecord(
@@ -28,7 +30,12 @@ export class SupportNetworkService {
     since?: SinceQueryParams,
   ) {
     const [headers, params] =
-      this.requestPreparerService.prepareHeadersAndParams(type, id, since);
+      this.requestPreparerService.prepareHeadersAndParams(
+        type,
+        id,
+        this.workspace,
+        since,
+      );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,

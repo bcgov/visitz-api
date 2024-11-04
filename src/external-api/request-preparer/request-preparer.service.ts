@@ -28,6 +28,7 @@ export class RequestPreparerService {
   prepareHeadersAndParams(
     type: RecordType,
     id: IdPathParams,
+    workspace: string | undefined,
     since?: SinceQueryParams,
   ) {
     let searchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
@@ -48,6 +49,9 @@ export class RequestPreparerService {
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
     };
+    if (typeof workspace !== 'undefined') {
+      params['workspace'] = workspace;
+    }
     const headers = {
       Accept: CONTENT_TYPE,
     };
