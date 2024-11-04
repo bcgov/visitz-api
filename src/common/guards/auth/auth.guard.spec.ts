@@ -7,7 +7,7 @@ import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { getMockReq } from '@jest-mock/express';
-import { TokenRefresherService } from '../../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 
 describe('AuthGuard', () => {
   let service: AuthService;

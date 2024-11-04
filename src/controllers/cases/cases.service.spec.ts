@@ -12,8 +12,9 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
-import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -28,6 +29,7 @@ describe('CasesService', () => {
         UtilitiesService,
         TokenRefresherService,
         InPersonVisitsService,
+        RequestPreparerService,
         {
           provide: CACHE_MANAGER,
           useValue: {

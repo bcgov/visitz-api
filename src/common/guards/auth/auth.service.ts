@@ -14,7 +14,7 @@ import {
 } from '../../../common/constants/parameter-constants';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
-import { TokenRefresherService } from '../../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 
 @Injectable()
 export class AuthService {

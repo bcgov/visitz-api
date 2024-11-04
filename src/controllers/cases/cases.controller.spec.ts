@@ -11,10 +11,11 @@ import {
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
-import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -29,6 +30,7 @@ describe('CasesController', () => {
         SupportNetworkService,
         TokenRefresherService,
         InPersonVisitsService,
+        RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

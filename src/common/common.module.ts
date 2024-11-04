@@ -5,7 +5,7 @@ import { UtilitiesModule } from '../helpers/utilities/utilities.module';
 import { UtilitiesService } from '../helpers/utilities/utilities.service';
 import { AuthService } from './guards/auth/auth.service';
 import { AuthModule } from './guards/auth/auth.module';
-import { TokenRefresherModule } from '../helpers/token-refresher/token-refresher.module';
+import { TokenRefresherModule } from '../external-api/token-refresher/token-refresher.module';
 
 @Module({
   providers: [UtilitiesService, AuthService, UtilitiesService, ConfigService],

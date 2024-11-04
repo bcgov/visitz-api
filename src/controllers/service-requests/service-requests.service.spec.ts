@@ -12,7 +12,8 @@ import {
 import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -26,6 +27,7 @@ describe('ServiceRequestsService', () => {
         SupportNetworkService,
         UtilitiesService,
         TokenRefresherService,
+        RequestPreparerService,
         { provide: HttpService, useValue: { get: jest.fn() } },
         {
           provide: CACHE_MANAGER,

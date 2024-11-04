@@ -8,6 +8,7 @@ import { ControllersModule } from './controllers/controllers.module';
 import { HelpersModule } from './helpers/helpers.module';
 import { LoggerModule } from 'nestjs-pino';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ExternalApiModule } from './external-api/external-api.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     CommonModule,
     ControllersModule,
     HelpersModule,
+    ExternalApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

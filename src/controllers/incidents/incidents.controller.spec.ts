@@ -12,8 +12,9 @@ import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
-import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -27,6 +28,7 @@ describe('IncidentsController', () => {
         SupportNetworkService,
         AuthService,
         TokenRefresherService,
+        RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

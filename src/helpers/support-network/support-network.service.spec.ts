@@ -2,13 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import {
-  AxiosError,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-  RawAxiosRequestHeaders,
-} from 'axios';
-import { of } from 'rxjs';
+import { AxiosResponse } from 'axios';
 import { UtilitiesService } from '../utilities/utilities.service';
 import { RecordType } from '../../common/constants/enumerations';
 import { SupportNetworkService } from './support-network.service';
@@ -21,13 +15,12 @@ import {
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { TokenRefresherService } from '../token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
-  let configService: ConfigService;
-  let httpService: HttpService;
-  let tokenRefresherService: TokenRefresherService;
+  let requestPreparerService: RequestPreparerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +30,7 @@ describe('SupportNetworkService', () => {
         UtilitiesService,
         ConfigService,
         TokenRefresherService,
+        RequestPreparerService,
         { provide: HttpService, useValue: { get: jest.fn() } },
         {
           provide: CACHE_MANAGER,
@@ -49,10 +43,8 @@ describe('SupportNetworkService', () => {
     }).compile();
 
     service = module.get<SupportNetworkService>(SupportNetworkService);
-    configService = module.get<ConfigService>(ConfigService);
-    httpService = module.get<HttpService>(HttpService);
-    tokenRefresherService = module.get<TokenRefresherService>(
-      TokenRefresherService,
+    requestPreparerService = module.get<RequestPreparerService>(
+      RequestPreparerService,
     );
   });
 
@@ -77,22 +69,14 @@ describe('SupportNetworkService', () => {
     ])(
       'should return single values given good input',
       async (data, recordType, idPathParams, sinceQueryParams) => {
-        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
-          of({
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
             data: data,
             headers: {},
-            config: {
-              url:
-                configService.get<string>('UPSTREAM_BASE_URL') +
-                configService
-                  .get<string>('SUPPORT_NETWORK_ENDPOINT')
-                  .replace(/\s/g, '%20'),
-              headers: {} as RawAxiosRequestHeaders,
-            },
             status: 200,
             statusText: 'OK',
-          } as AxiosResponse<any, any>),
-        );
+          } as AxiosResponse<any, any>);
 
         const result = await service.getSingleSupportNetworkInformationRecord(
           recordType,
@@ -114,22 +98,14 @@ describe('SupportNetworkService', () => {
     ])(
       'should return list values given good input',
       async (data, recordType, idPathParams, sinceQueryParams) => {
-        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
-          of({
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
             data: data,
             headers: {},
-            config: {
-              url:
-                configService.get<string>('UPSTREAM_BASE_URL') +
-                configService
-                  .get<string>('SUPPORT_NETWORK_ENDPOINT')
-                  .replace(/\s/g, '%20'),
-              headers: {} as RawAxiosRequestHeaders,
-            },
             status: 200,
             statusText: 'OK',
-          } as AxiosResponse<any, any>),
-        );
+          } as AxiosResponse<any, any>);
 
         const result = await service.getSingleSupportNetworkInformationRecord(
           recordType,
@@ -140,45 +116,5 @@ describe('SupportNetworkService', () => {
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
-
-    it.each([[404], [500]])(
-      `Should return HttpException with matching status on axios error`,
-      async (status) => {
-        const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
-          throw new AxiosError(
-            'Axios Error',
-            status.toString(),
-            {} as InternalAxiosRequestConfig,
-            {},
-            {
-              data: {},
-              status: status,
-              statusText: '',
-              headers: {} as RawAxiosRequestHeaders,
-              config: {} as InternalAxiosRequestConfig,
-            },
-          );
-        });
-
-        await expect(
-          service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
-            id: 'doesNotExist',
-          } as IdPathParams),
-        ).rejects.toHaveProperty('status', status);
-        expect(spy).toHaveBeenCalledTimes(1);
-      },
-    );
-
-    it('Should return HttpException with status 500 on bearer token undefined', async () => {
-      const spy = jest
-        .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
-        .mockResolvedValueOnce(undefined);
-      await expect(
-        service.getSingleSupportNetworkInformationRecord(RecordType.Case, {
-          id: 'doesNotExist',
-        } as IdPathParams),
-      ).rejects.toHaveProperty('status', 500);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
   });
 });
