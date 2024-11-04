@@ -38,6 +38,6 @@ export default () => ({
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   workspaces: {
     supportNetwork: undefined,
-    inPersonVisits: 'int_lab',
+    inPersonVisits: undefined,
   },
 });
