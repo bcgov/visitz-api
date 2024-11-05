@@ -5,18 +5,18 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  environment;
+  skip;
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
   ) {
-    this.environment = this.configService.get('NODE_ENV');
+    this.skip = this.configService.get('skipAuthGuard');
   }
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    if (this.environment !== 'production') {
+    if (this.skip) {
       // skip for local development
       return true;
     }

@@ -77,4 +77,9 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: CLIENT_SECRET
+            - name: SKIP_AUTH_GUARD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SKIP_AUTH_GUARD
       restartPolicy: Always

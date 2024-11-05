@@ -27,4 +27,5 @@ export default () => ({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
   },
+  skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
 });
