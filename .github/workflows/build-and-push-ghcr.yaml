@@ -91,3 +91,9 @@ jobs:
             --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ needs.build_and_push.outputs.image_tag }}
+
+      - name: Restart Pod after image update
+        run: |
+          oc rollout restart deployment \
+            --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
+            --selector=app.kubernetes.io/name=vpi-app
