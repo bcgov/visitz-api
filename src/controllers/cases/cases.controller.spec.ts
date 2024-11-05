@@ -10,6 +10,7 @@ import {
 } from '../../entities/support-network.entity';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
+import { AuthService } from '../../common/guards/auth/auth.service';
 import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -23,6 +24,7 @@ describe('CasesController', () => {
       imports: [ConfigModule.forRoot()],
       providers: [
         CasesService,
+        AuthService,
         SupportNetworkService,
         TokenRefresherService,
         { provide: CACHE_MANAGER, useValue: {} },

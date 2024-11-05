@@ -1,11 +1,21 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { ServiceRequestsService } from './service-requests.service';
 import { ServiceRequestsController } from './service-requests.controller';
 import { HelpersModule } from '../../helpers/helpers.module';
+import { AuthModule } from '../../common/guards/auth/auth.module';
+import { AuthService } from '../../common/guards/auth/auth.service';
+import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 
 @Module({
-  providers: [ServiceRequestsService],
+  providers: [
+    ServiceRequestsService,
+    AuthService,
+    ConfigService,
+    UtilitiesService,
+  ],
   controllers: [ServiceRequestsController],
-  imports: [HelpersModule],
+  imports: [HelpersModule, AuthModule, HttpModule],
 })
 export class ServiceRequestsModule {}
