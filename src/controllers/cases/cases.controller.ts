@@ -39,7 +39,7 @@ export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/supportnetwork')
+  @Get(':id/support-network')
   @ApiOperation({
     description:
       'Find all Support Network entries related to a given Case entity by Case id.',
