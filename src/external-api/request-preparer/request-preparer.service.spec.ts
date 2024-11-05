@@ -4,6 +4,7 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
+  PAGINATION,
   VIEW_MODE,
 } from '../../common/constants/parameter-constants';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
@@ -75,6 +76,7 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
+          pagination: PAGINATION,
         });
       },
     );
@@ -93,6 +95,7 @@ describe('RequestPreparerService', () => {
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
           searchspec: `${baseSearchSpec} AND [Updated] > "${expectedDate}")`,
+          pagination: PAGINATION,
         });
       },
     );

@@ -3,6 +3,7 @@ import {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
+  PAGINATION,
 } from '../../common/constants/parameter-constants';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -45,6 +46,7 @@ export class RequestPreparerService {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
+      pagination: PAGINATION,
     };
     if (typeof workspace !== 'undefined') {
       params['workspace'] = workspace;
