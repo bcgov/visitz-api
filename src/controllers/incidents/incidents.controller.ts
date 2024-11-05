@@ -37,7 +37,7 @@ export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/supportnetwork')
+  @Get(':id/support-network')
   @ApiOperation({
     description:
       'Find all Support Network entries related to a given Incident entity by Incident id.',
