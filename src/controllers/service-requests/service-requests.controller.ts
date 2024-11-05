@@ -36,7 +36,7 @@ export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/supportnetwork')
+  @Get(':id/support-network')
   @ApiOperation({
     description:
       'Find all Support Network entries related to a given Service Request entity by Service Request id.',
