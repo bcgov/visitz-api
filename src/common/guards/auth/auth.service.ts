@@ -36,7 +36,7 @@ export class AuthService {
   async getRecordAndValidate(req: Request): Promise<boolean> {
     let idir: string, id: string, recordType: RecordType;
     try {
-      idir = req.header('idir_username').trim();
+      idir = req.header('x-idir-username').trim();
       [id, recordType] = this.grabRecordInfoFromPath(req.path);
     } catch (error: any) {
       this.logger.error({ error });
