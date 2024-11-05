@@ -84,4 +84,9 @@ spec:
                     key: IN_PERSON_VISITS_ENDPOINT
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
+            - name: SKIP_AUTH_GUARD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SKIP_AUTH_GUARD
       restartPolicy: Always

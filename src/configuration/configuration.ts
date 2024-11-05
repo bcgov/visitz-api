@@ -35,4 +35,5 @@ export default () => ({
     supportNetwork: 'Updated',
     inPersonVisits: undefined,
   },
+  skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
 });

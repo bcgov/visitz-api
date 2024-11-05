@@ -43,7 +43,7 @@ describe('AuthGuard', () => {
           useValue: {
             get: jest.fn((key: string) => {
               const lookup = {
-                NODE_ENV: 'test',
+                skipAuthGuard: true,
               };
               return lookup[key];
             }),
@@ -69,18 +69,23 @@ describe('AuthGuard', () => {
   });
 
   describe('canActivate tests', () => {
-    it('should always return true in non-production environment', async () => {
+    it('should always return true when skipping', async () => {
       const authSpy = jest
         .spyOn(service, 'getRecordAndValidate')
         .mockResolvedValueOnce(false);
       const guardSpy = jest.spyOn(AuthGuard.prototype, 'canActivate');
-      const isAuthed = await guard.canActivate({} as ExecutionContext);
+      const execContext = {
+        switchToHttp: () => ({
+          getRequest: () => getMockReq(),
+        }),
+      };
+      const isAuthed = await guard.canActivate(execContext as ExecutionContext);
       expect(authSpy).toHaveBeenCalledTimes(0);
       expect(guardSpy).toHaveBeenCalledTimes(1);
       expect(isAuthed).toBe(true);
     });
 
-    it('should return the result of getRecordAndValidate in a production environment', async () => {
+    it('should return the result of getRecordAndValidate when not skipping', async () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           AuthService,
@@ -92,7 +97,7 @@ describe('AuthGuard', () => {
             useValue: {
               get: jest.fn((key: string) => {
                 const lookup = {
-                  NODE_ENV: 'production',
+                  skipAuthGuard: false,
                 };
                 return lookup[key];
               }),
@@ -119,7 +124,6 @@ describe('AuthGuard', () => {
           getRequest: () => getMockReq(),
         }),
       };
-
       const isAuthed = await guard.canActivate(execContext);
       expect(authSpy).toHaveBeenCalledTimes(1);
       expect(guardSpy).toHaveBeenCalledTimes(1);
