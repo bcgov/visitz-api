@@ -13,6 +13,7 @@ import {
 export class InPersonVisitsService {
   url: string;
   workspace: string | undefined;
+  sinceFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -22,6 +23,9 @@ export class InPersonVisitsService {
       this.configService.get<string>('IN_PERSON_VISITS_ENDPOINT')
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.inPersonVisits');
+    this.sinceFieldName = this.configService.get(
+      'sinceFieldName.supportNetwork',
+    );
   }
 
   async getSingleInPersonVisitRecord(
@@ -34,6 +38,7 @@ export class InPersonVisitsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
+        this.sinceFieldName,
         since,
       );
     const response = await this.requestPreparerService.sendGetRequest(

@@ -67,6 +67,7 @@ describe('RequestPreparerService', () => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           workspace,
+          '',
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
@@ -84,6 +85,7 @@ describe('RequestPreparerService', () => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           undefined,
+          'Updated',
           since,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });

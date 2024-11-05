@@ -16,6 +16,7 @@ import { RequestPreparerService } from '../../external-api/request-preparer/requ
 export class SupportNetworkService {
   url: string;
   workspace: string | undefined;
+  sinceFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -25,6 +26,9 @@ export class SupportNetworkService {
       this.configService.get<string>('SUPPORT_NETWORK_ENDPOINT')
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.supportNetwork');
+    this.sinceFieldName = this.configService.get(
+      'sinceFieldName.supportNetwork',
+    );
   }
 
   async getSingleSupportNetworkInformationRecord(
@@ -37,6 +41,7 @@ export class SupportNetworkService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
+        this.sinceFieldName,
         since,
       );
     const response = await this.requestPreparerService.sendGetRequest(

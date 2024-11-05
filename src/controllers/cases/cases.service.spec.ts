@@ -15,10 +15,15 @@ import { RecordType } from '../../common/constants/enumerations';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import {
+  InPersonVisitsEntity,
+  InPersonVisitsSingleResponseCaseExample,
+} from '../../entities/in-person-visits.entity';
 
 describe('CasesService', () => {
   let service: CasesService;
   let supportNetworkService: SupportNetworkService;
+  let inPersonVisitsService: InPersonVisitsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +48,9 @@ describe('CasesService', () => {
     service = module.get<CasesService>(CasesService);
     supportNetworkService = module.get<SupportNetworkService>(
       SupportNetworkService,
+    );
+    inPersonVisitsService = module.get<InPersonVisitsService>(
+      InPersonVisitsService,
     );
   });
 
@@ -78,6 +86,34 @@ describe('CasesService', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseInPersonVisitRecord tests', () => {
+    it.each([
+      [
+        InPersonVisitsSingleResponseCaseExample,
+        { id: 'test' } as IdPathParams,
+        { since: '2024-12-01' } as SinceQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams) => {
+        const InPersonVisitsSpy = jest
+          .spyOn(inPersonVisitsService, 'getSingleInPersonVisitRecord')
+          .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
+
+        const result = await service.getSingleCaseInPersonVisitRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(InPersonVisitsSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new InPersonVisitsEntity(data));
       },
     );
   });

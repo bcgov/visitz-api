@@ -31,4 +31,8 @@ export default () => ({
     supportNetwork: undefined,
     inPersonVisits: undefined,
   },
+  sinceFieldNamr: {
+    supportNetwork: 'Updated',
+    inPersonVisits: undefined,
+  },
 });

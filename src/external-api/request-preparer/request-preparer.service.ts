@@ -23,11 +23,13 @@ export class RequestPreparerService {
   prepareHeadersAndParams(
     baseSearchSpec: string,
     workspace: string | undefined,
+    sinceFieldName: string | undefined,
     since?: SinceQueryParams,
   ) {
     let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
     if (
+      sinceFieldName === undefined ||
       since === undefined ||
       typeof since.since !== 'string' ||
       (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
@@ -36,7 +38,8 @@ export class RequestPreparerService {
     ) {
       searchSpec = searchSpec + `)`;
     } else {
-      searchSpec = searchSpec + ` AND [Updated] > "${formattedDate}")`;
+      searchSpec =
+        searchSpec + ` AND [${sinceFieldName}] > "${formattedDate}")`;
     }
     const params = {
       ViewMode: VIEW_MODE,
