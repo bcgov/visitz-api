@@ -96,7 +96,7 @@ describe('AuthService', () => {
         path: validPath,
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            idir_username: testIdir,
+            'x-idir-username': testIdir,
           };
           return headerVal[key];
         }),
@@ -109,7 +109,7 @@ describe('AuthService', () => {
 
     it.each([
       [{}, undefined, 0],
-      [{ idir_username: testIdir }, null, 1],
+      [{ 'x-idir-username': testIdir }, null, 1],
     ])(
       'should return false with invalid record',
       async (headers, cacheReturn, cacheSpyCallTimes) => {
