@@ -14,6 +14,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import { idName } from '../../common/constants/parameter-constants';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -53,7 +54,7 @@ describe('ServiceRequestsService', () => {
     it.each([
       [
         SupportNetworkSingleResponseSRExample,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-01' } as SinceQueryParams,
       ],
     ])(

@@ -18,6 +18,8 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    return await this.authService.getRecordAndValidate(request);
+    const controllerPath =
+      Reflect.getMetadata('path', context.getClass()) || '';
+    return await this.authService.getRecordAndValidate(request, controllerPath);
   }
 }

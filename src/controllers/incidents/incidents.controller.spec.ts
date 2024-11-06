@@ -15,6 +15,7 @@ import { SupportNetworkService } from '../../helpers/support-network/support-net
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import { idName } from '../../common/constants/parameter-constants';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -49,7 +50,7 @@ describe('IncidentsController', () => {
     it.each([
       [
         SupportNetworkSingleResponseIncidentExample,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
       ],
     ])(

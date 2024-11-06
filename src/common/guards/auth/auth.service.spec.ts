@@ -16,6 +16,8 @@ import { RecordType } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
+import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
+import { idName } from '../../../common/constants/parameter-constants';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -96,12 +98,17 @@ describe('AuthService', () => {
         path: validPath,
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            'x-idir-username': testIdir,
+            [idirUsernameHeaderField]: testIdir,
           };
           return headerVal[key];
         }),
+        params: { [idName]: 'id' },
       });
-      const isAuthed = await service.getRecordAndValidate(mockRequest);
+      const controllerPath = 'case';
+      const isAuthed = await service.getRecordAndValidate(
+        mockRequest,
+        controllerPath,
+      );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(2);
       expect(isAuthed).toBe(true);
@@ -109,7 +116,7 @@ describe('AuthService', () => {
 
     it.each([
       [{}, undefined, 0],
-      [{ 'x-idir-username': testIdir }, null, 1],
+      [{ [idirUsernameHeaderField]: testIdir }, null, 1],
     ])(
       'should return false with invalid record',
       async (headers, cacheReturn, cacheSpyCallTimes) => {
@@ -122,8 +129,13 @@ describe('AuthService', () => {
             const headerVal: { [key: string]: string } = headers;
             return headerVal[key];
           }),
+          params: { [idName]: 'id' },
         });
-        const isAuthed = await service.getRecordAndValidate(mockRequest);
+        const controllerPath = 'case';
+        const isAuthed = await service.getRecordAndValidate(
+          mockRequest,
+          controllerPath,
+        );
         expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
         expect(isAuthed).toBe(false);
       },

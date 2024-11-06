@@ -10,12 +10,16 @@ import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
+  idName,
   VIEW_MODE,
 } from '../../../common/constants/parameter-constants';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
-import { baseUrlEnvVarName } from '../../../common/constants/upstream-constants';
+import {
+  baseUrlEnvVarName,
+  idirUsernameHeaderField,
+} from '../../../common/constants/upstream-constants';
 
 @Injectable()
 export class AuthService {
@@ -36,11 +40,14 @@ export class AuthService {
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
   }
 
-  async getRecordAndValidate(req: Request): Promise<boolean> {
+  async getRecordAndValidate(
+    req: Request,
+    controllerPath: string,
+  ): Promise<boolean> {
     let idir: string, id: string, recordType: RecordType;
     try {
-      idir = req.header('x-idir-username').trim();
-      [id, recordType] = this.grabRecordInfoFromPath(req.path);
+      idir = req.header(idirUsernameHeaderField).trim();
+      [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
       this.logger.error({ error });
       return false;
@@ -68,6 +75,17 @@ export class AuthService {
       throw new Error(`Id not found in path: '${path}'`);
     }
     return [pathParts[1].trim(), pathParts[0].trim() as RecordType];
+  }
+
+  grabRecordInfo(req: Request, controllerPath: string): [string, RecordType] {
+    if (!this.utilitiesService.enumTypeGuard(RecordType, controllerPath)) {
+      throw new EnumTypeError(controllerPath);
+    }
+    const rowId = req.params[idName];
+    if (rowId === undefined) {
+      throw new Error(`Id not found in path`);
+    }
+    return [rowId, controllerPath as RecordType];
   }
 
   async getAssignedIdirUpstream(

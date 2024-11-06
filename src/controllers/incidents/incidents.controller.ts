@@ -28,7 +28,10 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
-import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
+import {
+  CONTENT_TYPE,
+  idName,
+} from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 
@@ -40,7 +43,7 @@ export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/support-network')
+  @Get(`:${idName}/support-network`)
   @ApiOperation({
     description:
       'Find all Support Network entries related to a given Incident entity by Incident id.',

@@ -16,6 +16,7 @@ import {
   InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
 } from '../../entities/in-person-visits.entity';
+import { idName } from '../../common/constants/parameter-constants';
 
 describe('InPersonVisitsService', () => {
   let service: InPersonVisitsService;
@@ -56,13 +57,13 @@ describe('InPersonVisitsService', () => {
       [
         InPersonVisitsSingleResponseCaseExample,
         RecordType.Case,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         undefined,
       ],
       [
         InPersonVisitsListResponseCaseExample.items[0],
         RecordType.Case,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-24' } as SinceQueryParams,
       ],
     ])(
@@ -91,7 +92,7 @@ describe('InPersonVisitsService', () => {
       [
         InPersonVisitsListResponseCaseExample,
         RecordType.Case,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         undefined,
       ],
     ])(

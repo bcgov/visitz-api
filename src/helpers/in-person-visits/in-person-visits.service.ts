@@ -12,6 +12,7 @@ import {
   baseUrlEnvVarName,
   inPersonVisitsEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
+import { idName } from '../../common/constants/parameter-constants';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -37,7 +38,7 @@ export class InPersonVisitsService {
     id: IdPathParams,
     since?: SinceQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
-    const baseSearchSpec = `([Parent Id]="${id.id}"`;
+    const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,

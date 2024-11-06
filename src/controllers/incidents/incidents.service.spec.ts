@@ -14,6 +14,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import { idName } from '../../common/constants/parameter-constants';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -52,7 +53,7 @@ describe('IncidentsService', () => {
     it.each([
       [
         SupportNetworkSingleResponseIncidentExample,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-01' } as SinceQueryParams,
       ],
     ])(
