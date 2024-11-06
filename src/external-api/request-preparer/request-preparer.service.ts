@@ -73,14 +73,7 @@ export class RequestPreparerService {
       if (error instanceof AxiosError) {
         this.logger.error(error.message, error.stack, error.cause);
         if (error.status === 404) {
-          throw new HttpException(
-            {
-              status: HttpStatus.NOT_FOUND,
-              error: 'There is no data for the requested resource',
-            },
-            HttpStatus.NOT_FOUND,
-            { cause: error },
-          );
+          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
       } else {
         this.logger.error(error);

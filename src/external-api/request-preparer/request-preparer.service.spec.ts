@@ -116,7 +116,7 @@ describe('RequestPreparerService', () => {
       expect(result.data).toEqual({});
     });
 
-    it.each([[404], [500]])(
+    it.each([[500]])(
       `Should return HttpException with matching status on axios error`,
       async (status) => {
         const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
@@ -141,6 +141,28 @@ describe('RequestPreparerService', () => {
         expect(spy).toHaveBeenCalledTimes(1);
       },
     );
+
+    it('Should return HttpException with status 204 on 404 from upstream', async () => {
+      const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+        throw new AxiosError(
+          'Axios Error',
+          '404',
+          {} as InternalAxiosRequestConfig,
+          {},
+          {
+            data: {},
+            status: 404,
+            statusText: '',
+            headers: {} as RawAxiosRequestHeaders,
+            config: {} as InternalAxiosRequestConfig,
+          },
+        );
+      });
+      await expect(
+        service.sendGetRequest('url', {}, {}),
+      ).rejects.toHaveProperty('status', 204);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
     it('Should return HttpException with status 500 on bearer token undefined', async () => {
       const spy = jest

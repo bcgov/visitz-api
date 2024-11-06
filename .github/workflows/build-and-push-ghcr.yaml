@@ -77,7 +77,7 @@ jobs:
           value: ${{ secrets.APS_NAMESPACE }}
           commitChange: false
 
-      - name: 'YAML poke: Set APS namespace'
+      - name: 'YAML poke: Set build number'
         uses: fjogeleit/yaml-update-action@v0.15.0
         with:
           valueFile: 'helm/values.yaml'
