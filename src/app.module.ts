@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './configuration/configuration';
@@ -15,7 +15,26 @@ import { ExternalApiModule } from './external-api/external-api.module';
     ConfigModule.forRoot({
       load: [configuration],
     }),
-    LoggerModule.forRoot(),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        pinoHttp: {
+          customSuccessObject: (req, res, loggableObject) => {
+            return {
+              ...loggableObject,
+              buildNumber: configService.get('buildInfo.buildNumber'),
+            };
+          },
+          customErrorObject: (req, res, loggableObject) => {
+            return {
+              ...loggableObject,
+              buildNumber: configService.get('buildInfo.buildNumber'),
+            };
+          },
+        },
+      }),
+    }),
     CacheModule.register({ isGlobal: true }),
     CommonModule,
     ControllersModule,

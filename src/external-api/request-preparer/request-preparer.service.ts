@@ -11,15 +11,20 @@ import { TokenRefresherService } from '../token-refresher/token-refresher.servic
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RequestPreparerService {
+  buildNumber: string;
   private readonly logger = new Logger(RequestPreparerService.name);
   constructor(
     private readonly utilitiesService: UtilitiesService,
     private readonly tokenRefresherService: TokenRefresherService,
     private readonly httpService: HttpService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
+  }
 
   prepareHeadersAndParams(
     baseSearchSpec: string,
@@ -71,12 +76,17 @@ export class RequestPreparerService {
       );
     } catch (error) {
       if (error instanceof AxiosError) {
-        this.logger.error(error.message, error.stack, error.cause);
+        this.logger.error({
+          msg: error.message,
+          stack: error.stack,
+          cause: error.cause,
+          buildNumber: this.buildNumber,
+        });
         if (error.status === 404) {
           throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
       } else {
-        this.logger.error(error);
+        this.logger.error({ error, buildNumber: this.buildNumber });
       }
       throw new HttpException(
         {

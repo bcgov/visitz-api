@@ -8,6 +8,10 @@ import {
   NestedInPersonVisitsEntity,
   InPersonVisitsEntity,
 } from '../../entities/in-person-visits.entity';
+import {
+  baseUrlEnvVarName,
+  inPersonVisitsEndpointEnvVarName,
+} from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -19,8 +23,8 @@ export class InPersonVisitsService {
     private readonly requestPreparerService: RequestPreparerService,
   ) {
     this.url = (
-      this.configService.get<string>('UPSTREAM_BASE_URL') +
-      this.configService.get<string>('IN_PERSON_VISITS_ENDPOINT')
+      this.configService.get<string>(baseUrlEnvVarName) +
+      this.configService.get<string>(inPersonVisitsEndpointEnvVarName)
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.sinceFieldName = this.configService.get(
