@@ -11,8 +11,9 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
-import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -25,6 +26,7 @@ describe('ServiceRequestsController', () => {
         ServiceRequestsService,
         SupportNetworkService,
         TokenRefresherService,
+        RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

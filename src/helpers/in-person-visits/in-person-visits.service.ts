@@ -1,23 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import {
-  RecordEntityMap,
-  RecordType,
-} from '../../common/constants/enumerations';
-import {
-  SupportNetworkEntity,
-  NestedSupportNetworkEntity,
-} from '../../entities/support-network.entity';
+import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  NestedInPersonVisitsEntity,
+  InPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
+import {
   baseUrlEnvVarName,
-  supportNetworkEndpointEnvVarName,
+  inPersonVisitsEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
 
 @Injectable()
-export class SupportNetworkService {
+export class InPersonVisitsService {
   url: string;
   workspace: string | undefined;
   sinceFieldName: string | undefined;
@@ -27,20 +24,20 @@ export class SupportNetworkService {
   ) {
     this.url = (
       this.configService.get<string>(baseUrlEnvVarName) +
-      this.configService.get<string>(supportNetworkEndpointEnvVarName)
+      this.configService.get<string>(inPersonVisitsEndpointEnvVarName)
     ).replace(/\s/g, '%20');
-    this.workspace = this.configService.get('workspaces.supportNetwork');
+    this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.sinceFieldName = this.configService.get(
       'sinceFieldName.supportNetwork',
     );
   }
 
-  async getSingleSupportNetworkInformationRecord(
-    type: RecordType,
+  async getSingleInPersonVisitRecord(
+    _type: RecordType,
     id: IdPathParams,
     since?: SinceQueryParams,
-  ) {
-    const baseSearchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
+    const baseSearchSpec = `([Parent Id]="${id.id}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -54,8 +51,8 @@ export class SupportNetworkService {
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {
-      return new NestedSupportNetworkEntity(response.data);
+      return new NestedInPersonVisitsEntity(response.data);
     }
-    return new SupportNetworkEntity(response.data);
+    return new InPersonVisitsEntity(response.data);
   }
 }

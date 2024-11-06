@@ -77,6 +77,14 @@ jobs:
           value: ${{ secrets.APS_NAMESPACE }}
           commitChange: false
 
+      - name: 'YAML poke: Set build number'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'vpiAppBuildLabel.version'
+          value: "${{ github.ref_name }}-${{ github.run_number }}"
+          commitChange: false
+
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@v1
         with:

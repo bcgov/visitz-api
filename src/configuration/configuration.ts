@@ -27,5 +27,19 @@ export default () => ({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
   },
+  workspaces: {
+    supportNetwork: undefined,
+    inPersonVisits: undefined,
+  },
+  sinceFieldName: {
+    supportNetwork: 'Updated',
+    inPersonVisits: undefined,
+  },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
+  buildInfo: {
+    buildNumber:
+      process.env.VPI_APP_LABEL === undefined
+        ? 'localBuild'
+        : process.env.VPI_APP_LABEL,
+  },
 });

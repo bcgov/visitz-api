@@ -1,32 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/axios';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { InPersonVisitsService } from './in-person-visits.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AxiosResponse } from 'axios';
-import { UtilitiesService } from '../utilities/utilities.service';
-import { RecordType } from '../../common/constants/enumerations';
-import { SupportNetworkService } from './support-network.service';
-import {
-  NestedSupportNetworkEntity,
-  SupportNetworkEntity,
-  SupportNetworkListResponseIncidentExample,
-  SupportNetworkListResponseSRExample,
-  SupportNetworkSingleResponseCaseExample,
-} from '../../entities/support-network.entity';
-import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import { UtilitiesService } from '../utilities/utilities.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpService } from '@nestjs/axios';
+import { AxiosResponse } from 'axios';
+import { IdPathParams } from '../../dto/id-path-params.dto';
+import { RecordType } from '../../common/constants/enumerations';
+import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import {
+  InPersonVisitsEntity,
+  InPersonVisitsListResponseCaseExample,
+  InPersonVisitsSingleResponseCaseExample,
+  NestedInPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
 
-describe('SupportNetworkService', () => {
-  let service: SupportNetworkService;
+describe('InPersonVisitsService', () => {
+  let service: InPersonVisitsService;
   let requestPreparerService: RequestPreparerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot()],
       providers: [
-        SupportNetworkService,
+        InPersonVisitsService,
         UtilitiesService,
         ConfigService,
         TokenRefresherService,
@@ -42,7 +41,7 @@ describe('SupportNetworkService', () => {
       ],
     }).compile();
 
-    service = module.get<SupportNetworkService>(SupportNetworkService);
+    service = module.get<InPersonVisitsService>(InPersonVisitsService);
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
@@ -52,17 +51,17 @@ describe('SupportNetworkService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getSingleSupportNetworkInformationRecord tests', () => {
+  describe('getSingleInPersonVisitRecord tests', () => {
     it.each([
       [
-        SupportNetworkSingleResponseCaseExample,
+        InPersonVisitsSingleResponseCaseExample,
         RecordType.Case,
         { id: 'test' } as IdPathParams,
         undefined,
       ],
       [
-        SupportNetworkListResponseSRExample.items[0],
-        RecordType.SR,
+        InPersonVisitsListResponseCaseExample.items[0],
+        RecordType.Case,
         { id: 'test' } as IdPathParams,
         { since: '2024-12-24' } as SinceQueryParams,
       ],
@@ -78,20 +77,20 @@ describe('SupportNetworkService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getSingleSupportNetworkInformationRecord(
+        const result = await service.getSingleInPersonVisitRecord(
           recordType,
           idPathParams,
           sinceQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new SupportNetworkEntity(data));
+        expect(result).toEqual(new InPersonVisitsEntity(data));
       },
     );
 
     it.each([
       [
-        SupportNetworkListResponseIncidentExample,
-        RecordType.Incident,
+        InPersonVisitsListResponseCaseExample,
+        RecordType.Case,
         { id: 'test' } as IdPathParams,
         undefined,
       ],
@@ -107,13 +106,13 @@ describe('SupportNetworkService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getSingleSupportNetworkInformationRecord(
+        const result = await service.getSingleInPersonVisitRecord(
           recordType,
           idPathParams,
           sinceQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new NestedSupportNetworkEntity(data));
+        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
       },
     );
   });

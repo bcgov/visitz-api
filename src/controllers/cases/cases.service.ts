@@ -7,16 +7,35 @@ import {
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
+import {
+  InPersonVisitsEntity,
+  NestedInPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
 
 @Injectable()
 export class CasesService {
-  constructor(private readonly supportNetworkService: SupportNetworkService) {}
+  constructor(
+    private readonly supportNetworkService: SupportNetworkService,
+    private readonly inPersonVisitsService: InPersonVisitsService,
+  ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
     id: IdPathParams,
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
+      RecordType.Case,
+      id,
+      since,
+    );
+  }
+
+  async getSingleCaseInPersonVisitRecord(
+    id: IdPathParams,
+    since?: SinceQueryParams,
+  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
+    return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
       since,

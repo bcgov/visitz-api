@@ -16,6 +16,7 @@ export class TokenRefresherService {
   accessTokenUrl: string;
   clientId: string;
   clientSecret: string;
+  buildNumber: string;
   private readonly logger = new Logger(TokenRefresherService.name);
 
   constructor(
@@ -26,6 +27,7 @@ export class TokenRefresherService {
     this.accessTokenUrl = this.configService.get('oauth.accessTokenUrl');
     this.clientId = this.configService.get('oauth.clientId');
     this.clientSecret = this.configService.get('oauth.clientSecret');
+    this.buildNumber = this.configService.get('buildInfo.buildNumber');
   }
 
   async refreshUpstreamBearerToken(): Promise<string | undefined> {
@@ -78,7 +80,12 @@ export class TokenRefresherService {
       return [bearer_token, expiryMs];
     } catch (error) {
       if (error instanceof AxiosError) {
-        this.logger.error(error.message, error.stack, error.cause);
+        this.logger.error({
+          msg: error.message,
+          stack: error.stack,
+          cause: error.cause,
+          buildNumber: this.buildNumber,
+        });
       }
       return [undefined, undefined];
     }

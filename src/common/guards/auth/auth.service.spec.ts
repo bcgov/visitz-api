@@ -15,7 +15,7 @@ import { AuthService } from './auth.service';
 import { RecordType } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
-import { TokenRefresherService } from '../../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 
 describe('AuthService', () => {
   let service: AuthService;

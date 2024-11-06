@@ -14,12 +14,14 @@ import {
 } from '../../../common/constants/parameter-constants';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
-import { TokenRefresherService } from '../../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
+import { baseUrlEnvVarName } from '../../../common/constants/upstream-constants';
 
 @Injectable()
 export class AuthService {
   cacheTime: number;
   baseUrl: string;
+  buildNumber: string;
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
@@ -30,7 +32,8 @@ export class AuthService {
     private readonly tokenRefresherService: TokenRefresherService,
   ) {
     this.cacheTime = this.configService.get<number>('recordCache.cacheTtlMs');
-    this.baseUrl = this.configService.get<string>('UPSTREAM_BASE_URL');
+    this.baseUrl = this.configService.get<string>(baseUrlEnvVarName);
+    this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
   }
 
   async getRecordAndValidate(req: Request): Promise<boolean> {
@@ -45,8 +48,6 @@ export class AuthService {
     const key = `${id}|${recordType}`;
     let upstreamResult: string | null | undefined =
       await this.cacheManager.get(key);
-    // TODO: Remove this console log once guard is verified working
-    this.logger.log(`Cache result: ${upstreamResult}`);
 
     if (upstreamResult === undefined) {
       upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
@@ -114,9 +115,14 @@ export class AuthService {
       return idir;
     } catch (error) {
       if (error instanceof AxiosError) {
-        this.logger.error(error.message, error.stack, error.cause);
+        this.logger.error({
+          msg: error.message,
+          stack: error.stack,
+          cause: error.cause,
+          buildNumber: this.buildNumber,
+        });
       } else {
-        this.logger.error(error);
+        this.logger.error({ error, buildNumber: this.buildNumber });
       }
     }
     return null;

@@ -11,9 +11,15 @@ import {
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
-import { TokenRefresherService } from '../../helpers/token-refresher/token-refresher.service';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
+import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import {
+  InPersonVisitsEntity,
+  InPersonVisitsSingleResponseCaseExample,
+} from '../../entities/in-person-visits.entity';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -27,6 +33,8 @@ describe('CasesController', () => {
         AuthService,
         SupportNetworkService,
         TokenRefresherService,
+        InPersonVisitsService,
+        RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,
@@ -67,6 +75,33 @@ describe('CasesController', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseInPersonVisitRecord tests', () => {
+    it.each([
+      [
+        InPersonVisitsSingleResponseCaseExample,
+        { id: 'test' } as IdPathParams,
+        { since: '2020-02-02' } as SinceQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseInPersonVisitRecord')
+          .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
+
+        const result = await controller.getSingleCaseInPersonVisitRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new InPersonVisitsEntity(data));
       },
     );
   });
