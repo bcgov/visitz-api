@@ -15,6 +15,7 @@ import {
   baseUrlEnvVarName,
   supportNetworkEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
+import { idName } from '../../common/constants/parameter-constants';
 
 @Injectable()
 export class SupportNetworkService {
@@ -40,7 +41,7 @@ export class SupportNetworkService {
     id: IdPathParams,
     since?: SinceQueryParams,
   ) {
-    const baseSearchSpec = `([Entity Id]="${id.id}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+    const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,

@@ -20,6 +20,7 @@ import {
   InPersonVisitsEntity,
   InPersonVisitsSingleResponseCaseExample,
 } from '../../entities/in-person-visits.entity';
+import { idName } from '../../common/constants/parameter-constants';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -55,7 +56,7 @@ describe('CasesController', () => {
     it.each([
       [
         SupportNetworkSingleResponseCaseExample,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
       ],
     ])(
@@ -83,7 +84,7 @@ describe('CasesController', () => {
     it.each([
       [
         InPersonVisitsSingleResponseCaseExample,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
       ],
     ])(

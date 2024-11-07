@@ -17,6 +17,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import { idName } from '../../common/constants/parameter-constants';
 
 describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
@@ -57,13 +58,13 @@ describe('SupportNetworkService', () => {
       [
         SupportNetworkSingleResponseCaseExample,
         RecordType.Case,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         undefined,
       ],
       [
         SupportNetworkListResponseSRExample.items[0],
         RecordType.SR,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-24' } as SinceQueryParams,
       ],
     ])(
@@ -92,7 +93,7 @@ describe('SupportNetworkService', () => {
       [
         SupportNetworkListResponseIncidentExample,
         RecordType.Incident,
-        { id: 'test' } as IdPathParams,
+        { [idName]: 'test' } as IdPathParams,
         undefined,
       ],
     ])(

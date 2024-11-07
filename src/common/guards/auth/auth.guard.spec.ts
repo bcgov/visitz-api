@@ -78,6 +78,9 @@ describe('AuthGuard', () => {
         switchToHttp: () => ({
           getRequest: () => getMockReq(),
         }),
+        getClass: () => {
+          return TestController;
+        },
       };
       const isAuthed = await guard.canActivate(execContext as ExecutionContext);
       expect(authSpy).toHaveBeenCalledTimes(0);
@@ -123,6 +126,9 @@ describe('AuthGuard', () => {
         switchToHttp: () => ({
           getRequest: () => getMockReq(),
         }),
+        getClass: () => {
+          return TestController;
+        },
       };
       const isAuthed = await guard.canActivate(execContext);
       expect(authSpy).toHaveBeenCalledTimes(1);

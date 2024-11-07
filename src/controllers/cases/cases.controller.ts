@@ -27,7 +27,10 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
-import { CONTENT_TYPE } from '../../common/constants/parameter-constants';
+import {
+  CONTENT_TYPE,
+  idName,
+} from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import {
@@ -45,7 +48,7 @@ export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/support-network')
+  @Get(`:${idName}/support-network`)
   @ApiOperation({
     description:
       'Find all Support Network entries related to a given Case entity by Case id.',
@@ -98,7 +101,7 @@ export class CasesController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id/visits')
+  @Get(`:${idName}/visits`)
   @ApiOperation({
     description:
       'Find all In Person Child / Youth Visits related to a given Case entity by Case id.',
