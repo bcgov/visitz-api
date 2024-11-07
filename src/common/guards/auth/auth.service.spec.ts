@@ -29,8 +29,6 @@ describe('AuthService', () => {
   const validRecordType = RecordType.Case;
   const validPath = `/${validRecordType}/${validId}/testendpoint`;
   const notinEnumPath = `/fjofijp/${validId}/testendpoint`;
-  const noIdPath = `/${validRecordType}`;
-  const incorrectFormatPath = 'abcdefg';
   const testIdir = 'IDIRTEST';
 
   beforeEach(async () => {
@@ -142,28 +140,32 @@ describe('AuthService', () => {
     );
   });
 
-  describe('grabRecordInfoFromPath tests', () => {
+  describe('grabRecordInfo tests', () => {
     it('returns an array of [id, type] when the correct url format is passed', () => {
-      const [id, recordType] = service.grabRecordInfoFromPath(validPath);
+      const mockRequest = getMockReq({
+        params: { [idName]: validId },
+      });
+      const [id, recordType] = service.grabRecordInfo(
+        mockRequest,
+        validRecordType,
+      );
       expect(id).toEqual(validId);
       expect(recordType).toEqual(validRecordType);
     });
 
     it(`throws an error when the enum doesn't match the record type`, () => {
+      const mockRequest = getMockReq({
+        params: { [idName]: validId },
+      });
       expect(() => {
-        service.grabRecordInfoFromPath(notinEnumPath);
+        service.grabRecordInfo(mockRequest, notinEnumPath);
       }).toThrow(EnumTypeError);
     });
 
-    it(`throws an error when the url doesn't match the correct format`, () => {
+    it(`throws an error when the parameter doesn't exist for id`, () => {
+      const mockRequest = getMockReq();
       expect(() => {
-        service.grabRecordInfoFromPath(incorrectFormatPath);
-      }).toThrow(Error);
-    });
-
-    it(`throws an error when the url doen't have an id`, () => {
-      expect(() => {
-        service.grabRecordInfoFromPath(noIdPath);
+        service.grabRecordInfo(mockRequest, validRecordType);
       }).toThrow(Error);
     });
   });

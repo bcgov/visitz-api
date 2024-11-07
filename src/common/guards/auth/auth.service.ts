@@ -66,17 +66,6 @@ export class AuthService {
     return true;
   }
 
-  grabRecordInfoFromPath(path: string): [string, RecordType] {
-    const pathParts = path.trim().slice(1).split('/', 2); // slice removes the leading / in the url
-    if (!this.utilitiesService.enumTypeGuard(RecordType, pathParts[0].trim())) {
-      throw new EnumTypeError(pathParts[0]);
-    }
-    if (pathParts.length < 2) {
-      throw new Error(`Id not found in path: '${path}'`);
-    }
-    return [pathParts[1].trim(), pathParts[0].trim() as RecordType];
-  }
-
   grabRecordInfo(req: Request, controllerPath: string): [string, RecordType] {
     if (!this.utilitiesService.enumTypeGuard(RecordType, controllerPath)) {
       throw new EnumTypeError(controllerPath);
