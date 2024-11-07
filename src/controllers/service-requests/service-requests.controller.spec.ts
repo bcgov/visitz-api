@@ -15,6 +15,7 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
+import { AuthService } from '../../common/guards/auth/auth.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -25,6 +26,7 @@ describe('ServiceRequestsController', () => {
       imports: [ConfigModule.forRoot()],
       providers: [
         ServiceRequestsService,
+        AuthService,
         SupportNetworkService,
         TokenRefresherService,
         RequestPreparerService,
