@@ -27,8 +27,7 @@ describe('AuthService', () => {
 
   const validId = 'id1234';
   const validRecordType = RecordType.Case;
-  const validPath = `/${validRecordType}/${validId}/testendpoint`;
-  const notinEnumPath = `/fjofijp/${validId}/testendpoint`;
+  const notinEnumPath = `fjofijp`;
   const testIdir = 'IDIRTEST';
 
   beforeEach(async () => {
@@ -93,7 +92,6 @@ describe('AuthService', () => {
         } as AxiosResponse<any, any>),
       );
       const mockRequest = getMockReq({
-        path: validPath,
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
             [idirUsernameHeaderField]: testIdir,
@@ -102,10 +100,9 @@ describe('AuthService', () => {
         }),
         params: { [idName]: 'id' },
       });
-      const controllerPath = 'case';
       const isAuthed = await service.getRecordAndValidate(
         mockRequest,
-        controllerPath,
+        validRecordType,
       );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(2);
@@ -122,17 +119,15 @@ describe('AuthService', () => {
           .spyOn(cache, 'get')
           .mockResolvedValueOnce(cacheReturn);
         const mockRequest = getMockReq({
-          path: validPath,
           header: jest.fn((key: string): string => {
             const headerVal: { [key: string]: string } = headers;
             return headerVal[key];
           }),
           params: { [idName]: 'id' },
         });
-        const controllerPath = 'case';
         const isAuthed = await service.getRecordAndValidate(
           mockRequest,
-          controllerPath,
+          validRecordType,
         );
         expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
         expect(isAuthed).toBe(false);
@@ -163,7 +158,7 @@ describe('AuthService', () => {
     });
 
     it(`throws an error when the parameter doesn't exist for id`, () => {
-      const mockRequest = getMockReq();
+      const mockRequest = getMockReq({ params: {} });
       expect(() => {
         service.grabRecordInfo(mockRequest, validRecordType);
       }).toThrow(Error);
