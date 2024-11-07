@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -37,8 +38,10 @@ import {
   AttachmentsSingleResponseSRExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { AuthGuard } from '../../common/guards/auth/auth.guard';
 
 @Controller('sr')
+@UseGuards(AuthGuard)
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class ServiceRequestsController {

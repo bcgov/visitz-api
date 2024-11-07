@@ -15,7 +15,8 @@ export default () => ({
     },
     sr: {
       endpoint: process.env.SR_ENDPOINT.trim().replace(/\s/g, '%20'),
-      workspace: 'dev_sadmin_4426_2',
+      workspace: 'int_lab',
+      idirField: 'Owner',
     },
     memo: {
       endpoint: process.env.MEMO_ENDPOINT.trim().replace(/\s/g, '%20'),
