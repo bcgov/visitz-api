@@ -33,6 +33,11 @@ import { AttachmentsService } from './attachments/attachments.service';
     RequestPreparerService,
     AttachmentsService,
   ],
-  exports: [SupportNetworkService, UtilitiesService, InPersonVisitsService],
+  exports: [
+    SupportNetworkService,
+    UtilitiesService,
+    InPersonVisitsService,
+    AttachmentsService,
+  ],
 })
 export class HelpersModule {}
