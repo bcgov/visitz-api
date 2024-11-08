@@ -15,6 +15,7 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -26,6 +27,7 @@ describe('ServiceRequestsController', () => {
       providers: [
         ServiceRequestsService,
         SupportNetworkService,
+        AttachmentsService,
         TokenRefresherService,
         RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },

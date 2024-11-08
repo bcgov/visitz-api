@@ -6,4 +6,16 @@ const PAGINATION = 'N';
 const idRegex = /[0-9\-A-Za-z]+/;
 const idName = 'rowId';
 
-export { VIEW_MODE, CHILD_LINKS, CONTENT_TYPE, PAGINATION, idRegex, idName };
+const srAttachmentsFieldName = 'Application No';
+const memoAttachmentsFieldName = 'MemoNumber';
+
+export {
+  VIEW_MODE,
+  CHILD_LINKS,
+  CONTENT_TYPE,
+  PAGINATION,
+  idRegex,
+  idName,
+  srAttachmentsFieldName,
+  memoAttachmentsFieldName,
+};

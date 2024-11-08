@@ -15,6 +15,7 @@ import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -26,6 +27,7 @@ describe('ServiceRequestsService', () => {
       providers: [
         ServiceRequestsService,
         SupportNetworkService,
+        AttachmentsService,
         UtilitiesService,
         TokenRefresherService,
         RequestPreparerService,

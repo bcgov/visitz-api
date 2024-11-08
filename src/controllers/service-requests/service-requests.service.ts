@@ -7,10 +7,19 @@ import {
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import { srAttachmentsFieldName } from '../../common/constants/parameter-constants';
+import {
+  AttachmentsEntity,
+  NestedAttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 @Injectable()
 export class ServiceRequestsService {
-  constructor(private readonly supportNetworkService: SupportNetworkService) {}
+  constructor(
+    private readonly supportNetworkService: SupportNetworkService,
+    private readonly attachmentsService: AttachmentsService,
+  ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
     id: IdPathParams,
@@ -19,6 +28,18 @@ export class ServiceRequestsService {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.SR,
       id,
+      since,
+    );
+  }
+
+  async getSingleSRAttachmentRecord(
+    id: IdPathParams,
+    since?: SinceQueryParams,
+  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+    return await this.attachmentsService.getSingleAttachmentRecord(
+      RecordType.SR,
+      id,
+      srAttachmentsFieldName,
       since,
     );
   }
