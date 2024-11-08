@@ -34,6 +34,12 @@ import {
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
+import {
+  AttachmentsEntity,
+  NestedAttachmentsEntity,
+  AttachmentsSingleResponseIncidentExample,
+  AttachmentsListResponseIncidentExample,
+} from '../../entities/attachments.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -90,6 +96,59 @@ export class IncidentsController {
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
+      id,
+      since,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/attachments`)
+  @ApiOperation({
+    description:
+      'Find all Attachments metadata entries related to a given Incident entity by Incident id.',
+  })
+  @ApiQuery({ name: 'since', required: false })
+  @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          oneOf: [
+            { $ref: getSchemaPath(AttachmentsEntity) },
+            { $ref: getSchemaPath(NestedAttachmentsEntity) },
+          ],
+        },
+        examples: {
+          AttachmentsSingleResponse: {
+            value: AttachmentsSingleResponseIncidentExample,
+          },
+          AttachmentsListResponse: {
+            value: AttachmentsListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentAttachmentRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    since?: SinceQueryParams,
+  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+    return await this.incidentsService.getSingleIncidentAttachmentRecord(
       id,
       since,
     );

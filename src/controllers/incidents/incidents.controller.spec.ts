@@ -16,6 +16,7 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -27,6 +28,7 @@ describe('IncidentsController', () => {
       providers: [
         IncidentsService,
         SupportNetworkService,
+        AttachmentsService,
         AuthService,
         TokenRefresherService,
         RequestPreparerService,

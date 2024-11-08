@@ -6,6 +6,7 @@ const PAGINATION = 'N';
 const idRegex = /[0-9\-A-Za-z]+/;
 const idName = 'rowId';
 
+const incidentsAttachmentsFieldName = 'Incident No';
 const srAttachmentsFieldName = 'Application No';
 const memoAttachmentsFieldName = 'MemoNumber';
 
@@ -16,6 +17,7 @@ export {
   PAGINATION,
   idRegex,
   idName,
+  incidentsAttachmentsFieldName,
   srAttachmentsFieldName,
   memoAttachmentsFieldName,
 };

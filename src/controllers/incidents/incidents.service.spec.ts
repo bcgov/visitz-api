@@ -15,6 +15,7 @@ import { RecordType } from '../../common/constants/enumerations';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -26,6 +27,7 @@ describe('IncidentsService', () => {
       providers: [
         IncidentsService,
         SupportNetworkService,
+        AttachmentsService,
         UtilitiesService,
         TokenRefresherService,
         RequestPreparerService,
