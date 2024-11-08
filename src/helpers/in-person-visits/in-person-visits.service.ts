@@ -29,7 +29,7 @@ export class InPersonVisitsService {
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.sinceFieldName = this.configService.get(
-      'sinceFieldName.supportNetwork',
+      'sinceFieldName.inPersonVisits',
     );
   }
 

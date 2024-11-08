@@ -6,7 +6,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
  */
 // TODO: Replace 'string' with something meaningful when I can actually hit the endpoint
 export const AttachmentsSingleResponseCaseExample = {
-  'Application No': 'string',
+  'Application No': '',
   Categorie: 'string',
   Category: 'string',
   'Client Flag': 'string',
@@ -17,7 +17,7 @@ export const AttachmentsSingleResponseCaseExample = {
   'Incident No': '',
   Internal: 'string',
   'Last Updated Date': 'string',
-  'No Intervention': 'string',
+  'No Intervention': 'Case-Id-Here',
   'Portal Visible': 'string',
   'Show on Contact': 'string',
   Status: 'string',
@@ -40,7 +40,7 @@ export const AttachmentsSingleResponseCaseExample = {
   UpdatedByName: 'string',
   FileName: 'string',
   'Memo Id': '',
-  MemoNumber: 'string',
+  MemoNumber: '',
   'SR Id': '',
   'Attachment Id': 'string',
   Id: 'string',
@@ -48,21 +48,20 @@ export const AttachmentsSingleResponseCaseExample = {
 
 export const AttachmentsSingleResponseIncidentExample = {
   ...AttachmentsSingleResponseCaseExample,
-  'Case Id': '',
-  'Incident Id': 'Incident-Id-Here',
-  'Incident No': 'Incident-No-Here',
+  'No Intervention': '',
+  'Incident No': 'Incident-Id-Here',
 };
 
 export const AttachmentsSingleResponseSRExample = {
   ...AttachmentsSingleResponseCaseExample,
-  'Case Id': '',
-  'SR Id': 'SR-Id-Here',
+  'No Intervention': '',
+  'Application No': 'SR-Id-Here',
 };
 
 export const AttachmentsSingleResponseMemoExample = {
   ...AttachmentsSingleResponseCaseExample,
-  'Case Id': '',
-  'Memo Id': 'Memo-Id-Here',
+  'No Intervention': '',
+  MemoNumber: 'Memo-Id-Here',
 };
 
 export const AttachmentsListResponseCaseExample = {
@@ -70,7 +69,7 @@ export const AttachmentsListResponseCaseExample = {
     AttachmentsSingleResponseCaseExample,
     {
       ...AttachmentsSingleResponseCaseExample,
-      'Case Id': 'Another-Id-here',
+      'No Intervention': 'Another-Case-Id-Here',
     },
   ],
 };
@@ -80,8 +79,7 @@ export const AttachmentsListResponseIncidentExample = {
     AttachmentsSingleResponseIncidentExample,
     {
       ...AttachmentsSingleResponseIncidentExample,
-      'Incident Id': 'Another-Incident-Id-Here',
-      'Incident No': 'Another-Incident-No-Here',
+      'Incident No': 'Another-Incident-Id-Here',
     },
   ],
 };
@@ -91,7 +89,7 @@ export const AttachmentsListResponseSRExample = {
     AttachmentsSingleResponseSRExample,
     {
       ...AttachmentsSingleResponseSRExample,
-      'SR Id': 'Another-SR-Id-Here',
+      'Application No': 'Another-SR-Id-Here',
     },
   ],
 };
@@ -101,7 +99,7 @@ export const AttachmentsListResponseMemoExample = {
     AttachmentsSingleResponseMemoExample,
     {
       ...AttachmentsSingleResponseMemoExample,
-      'Memo Id': 'Another-Memo-Id-Here',
+      MemoNumber: 'Another-Memo-Id-Here',
     },
   ],
 };
