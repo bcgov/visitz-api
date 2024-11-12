@@ -19,13 +19,21 @@ import {
   InPersonVisitsEntity,
   InPersonVisitsSingleResponseCaseExample,
 } from '../../entities/in-person-visits.entity';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  casesAttachmentsFieldName,
+  idName,
+} from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsSingleResponseCaseExample,
+  AttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 describe('CasesService', () => {
   let service: CasesService;
   let supportNetworkService: SupportNetworkService;
   let inPersonVisitsService: InPersonVisitsService;
+  let attachmentsService: AttachmentsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -55,6 +63,7 @@ describe('CasesService', () => {
     inPersonVisitsService = module.get<InPersonVisitsService>(
       InPersonVisitsService,
     );
+    attachmentsService = module.get<AttachmentsService>(AttachmentsService);
   });
 
   it('should be defined', () => {
@@ -117,6 +126,36 @@ describe('CasesService', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseCaseExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2024-12-01' } as SinceQueryParams,
+        casesAttachmentsFieldName,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams, typeFieldName) => {
+        const attachmentsSpy = jest
+          .spyOn(attachmentsService, 'getSingleAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await service.getSingleCaseAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(attachmentsSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          typeFieldName,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
       },
     );
   });

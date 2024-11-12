@@ -8,9 +8,17 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { MemosService } from './memos.service';
+import { idName } from '../../common/constants/parameter-constants';
+import { IdPathParams } from '../../dto/id-path-params.dto';
+import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import {
+  AttachmentsSingleResponseMemoExample,
+  AttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 describe('MemosController', () => {
   let controller: MemosController;
+  let memosService: MemosService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,9 +37,37 @@ describe('MemosController', () => {
     }).compile();
 
     controller = module.get<MemosController>(MemosController);
+    memosService = module.get<MemosService>(MemosService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('getSingleMemoAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2020-02-02' } as SinceQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams) => {
+        const memoServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await controller.getSingleMemoAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(memoServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
+      },
+    );
   });
 });

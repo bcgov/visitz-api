@@ -16,6 +16,10 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsEntity,
+  AttachmentsSingleResponseSRExample,
+} from '../../entities/attachments.entity';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -77,6 +81,33 @@ describe('ServiceRequestsController', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2020-02-02' } as SinceQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await controller.getSingleSRAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
       },
     );
   });

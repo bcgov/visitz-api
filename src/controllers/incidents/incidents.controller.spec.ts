@@ -17,6 +17,10 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsSingleResponseIncidentExample,
+  AttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -75,6 +79,33 @@ describe('IncidentsController', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2020-02-02' } as SinceQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams) => {
+        const incidentServiceSpy = jest
+          .spyOn(incidentsService, 'getSingleIncidentAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await controller.getSingleIncidentAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(incidentServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
       },
     );
   });
