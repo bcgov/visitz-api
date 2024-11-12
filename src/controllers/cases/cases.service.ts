@@ -12,12 +12,19 @@ import {
   InPersonVisitsEntity,
   NestedInPersonVisitsEntity,
 } from '../../entities/in-person-visits.entity';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsEntity,
+  NestedAttachmentsEntity,
+} from '../../entities/attachments.entity';
+import { casesAttachmentsFieldName } from '../../common/constants/parameter-constants';
 
 @Injectable()
 export class CasesService {
   constructor(
     private readonly supportNetworkService: SupportNetworkService,
     private readonly inPersonVisitsService: InPersonVisitsService,
+    private readonly attachmentsService: AttachmentsService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -38,6 +45,18 @@ export class CasesService {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
+      since,
+    );
+  }
+
+  async getSingleCaseAttachmentRecord(
+    id: IdPathParams,
+    since?: SinceQueryParams,
+  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+    return await this.attachmentsService.getSingleAttachmentRecord(
+      RecordType.Case,
+      id,
+      casesAttachmentsFieldName,
       since,
     );
   }

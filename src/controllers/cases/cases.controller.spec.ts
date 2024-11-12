@@ -21,6 +21,7 @@ import {
   InPersonVisitsSingleResponseCaseExample,
 } from '../../entities/in-person-visits.entity';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -33,6 +34,7 @@ describe('CasesController', () => {
         CasesService,
         AuthService,
         SupportNetworkService,
+        AttachmentsService,
         TokenRefresherService,
         InPersonVisitsService,
         RequestPreparerService,

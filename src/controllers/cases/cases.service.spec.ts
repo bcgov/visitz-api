@@ -20,6 +20,7 @@ import {
   InPersonVisitsSingleResponseCaseExample,
 } from '../../entities/in-person-visits.entity';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -32,6 +33,7 @@ describe('CasesService', () => {
       providers: [
         CasesService,
         SupportNetworkService,
+        AttachmentsService,
         UtilitiesService,
         TokenRefresherService,
         InPersonVisitsService,
