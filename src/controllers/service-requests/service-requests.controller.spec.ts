@@ -21,6 +21,9 @@ import {
   AttachmentsSingleResponseSRExample,
 } from '../../entities/attachments.entity';
 
+import { AuthService } from '../../common/guards/auth/auth.service';
+
+
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
   let serviceRequestsService: ServiceRequestsService;
@@ -30,6 +33,7 @@ describe('ServiceRequestsController', () => {
       imports: [ConfigModule.forRoot()],
       providers: [
         ServiceRequestsService,
+        AuthService,
         SupportNetworkService,
         AttachmentsService,
         TokenRefresherService,
