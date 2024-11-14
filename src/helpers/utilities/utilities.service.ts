@@ -37,5 +37,7 @@ export function isPastISO8601Date(date: string): string {
       return dateObject.toFormat(upstreamDateFormat);
     }
   }
-  throw new BadRequestException('Date / time cannot be in the future');
+  throw new BadRequestException(
+    'Date / time must met the ISO-8601 standard, and cannot be in the future',
+  );
 }
