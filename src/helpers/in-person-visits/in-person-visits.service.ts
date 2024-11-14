@@ -11,13 +11,20 @@ import {
 import {
   baseUrlEnvVarName,
   inPersonVisitsEndpointEnvVarName,
+  postInPersonVisitsEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  CONTENT_TYPE,
+  idName,
+} from '../../common/constants/parameter-constants';
+import { PostInPersonVisitDtoUpstream } from 'src/dto/post-in-person-visit.dto';
 
 @Injectable()
 export class InPersonVisitsService {
   url: string;
+  postUrl: string;
   workspace: string | undefined;
+  postWorkspace: string | undefined;
   sinceFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
@@ -27,7 +34,14 @@ export class InPersonVisitsService {
       this.configService.get<string>(baseUrlEnvVarName) +
       this.configService.get<string>(inPersonVisitsEndpointEnvVarName)
     ).replace(/\s/g, '%20');
+    this.postUrl = (
+      this.configService.get<string>(baseUrlEnvVarName) +
+      this.configService.get<string>(postInPersonVisitsEndpointEnvVarName)
+    ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.inPersonVisits');
+    this.postWorkspace = this.configService.get(
+      'workspaces.postInPersonVisits',
+    );
     this.sinceFieldName = this.configService.get(
       'sinceFieldName.inPersonVisits',
     );
@@ -55,5 +69,27 @@ export class InPersonVisitsService {
       return new NestedInPersonVisitsEntity(response.data);
     }
     return new InPersonVisitsEntity(response.data);
+  }
+
+  async postSingleInPersonVisitRecord(
+    _type: RecordType,
+    body: PostInPersonVisitDtoUpstream,
+  ): Promise<NestedInPersonVisitsEntity> {
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+    };
+    const params = {};
+    if (this.postWorkspace !== undefined) {
+      params['workspace'] = this.postWorkspace;
+    }
+    const response = await this.requestPreparerService.sendPostRequest(
+      this.postUrl,
+      body,
+      headers,
+      params,
+    );
+    return new NestedInPersonVisitsEntity(response.data);
   }
 }
