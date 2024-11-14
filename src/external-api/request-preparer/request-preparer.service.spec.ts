@@ -174,4 +174,78 @@ describe('RequestPreparerService', () => {
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('sendPostRequest tests', () => {
+    it('provides a response on sucessful http service call', async () => {
+      const spy = jest.spyOn(httpService, 'post').mockReturnValueOnce(
+        of({
+          data: {},
+          headers: {},
+          status: 200,
+          statusText: 'OK',
+        } as AxiosResponse<any, any>),
+      );
+      const result = await service.sendPostRequest('url', {}, {});
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(result.data).toEqual({});
+    });
+
+    it.each([[500]])(
+      `Should return HttpException with matching status on axios error`,
+      async (status) => {
+        const spy = jest.spyOn(httpService, 'post').mockImplementation(() => {
+          throw new AxiosError(
+            'Axios Error',
+            status.toString(),
+            {} as InternalAxiosRequestConfig,
+            {},
+            {
+              data: {},
+              status: status,
+              statusText: '',
+              headers: {} as RawAxiosRequestHeaders,
+              config: {} as InternalAxiosRequestConfig,
+            },
+          );
+        });
+
+        await expect(
+          service.sendPostRequest('url', {}, {}, {}),
+        ).rejects.toHaveProperty('status', status);
+        expect(spy).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it('Should return HttpException with status 204 on 404 from upstream', async () => {
+      const spy = jest.spyOn(httpService, 'post').mockImplementation(() => {
+        throw new AxiosError(
+          'Axios Error',
+          '404',
+          {} as InternalAxiosRequestConfig,
+          {},
+          {
+            data: {},
+            status: 404,
+            statusText: '',
+            headers: {} as RawAxiosRequestHeaders,
+            config: {} as InternalAxiosRequestConfig,
+          },
+        );
+      });
+      await expect(
+        service.sendPostRequest('url', {}, {}, {}),
+      ).rejects.toHaveProperty('status', 204);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('Should return HttpException with status 500 on bearer token undefined', async () => {
+      const spy = jest
+        .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
+        .mockResolvedValueOnce(undefined);
+      await expect(
+        service.sendPostRequest('url', {}, {}),
+      ).rejects.toHaveProperty('status', 500);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
