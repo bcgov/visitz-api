@@ -92,11 +92,11 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: ATTACHMENTS_ENDPOINT
-            - name: POST_IN_PERSON_VISITS_ENDPOINT
+            - name: IN_PERSON_VISITS_POST_ENDPOINT
               valueFrom:
                 secretKeyRef:
                     name: visitz-api
-                    key: POST_IN_PERSON_VISITS_ENDPOINT
+                    key: IN_PERSON_VISITS_POST_ENDPOINT
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
       restartPolicy: Always
