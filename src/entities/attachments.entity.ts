@@ -302,13 +302,13 @@ export class AttachmentsEntity {
   FileSrcType: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['  UpdatedByName'],
+    example: AttachmentsSingleResponseCaseExample['UpdatedByName'],
   })
   @Expose()
   UpdatedByName: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['  FileName'],
+    example: AttachmentsSingleResponseCaseExample['FileName'],
   })
   @Expose()
   FileName: string;
@@ -320,7 +320,7 @@ export class AttachmentsEntity {
   'Memo Id': string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['  MemoNumber'],
+    example: AttachmentsSingleResponseCaseExample['MemoNumber'],
   })
   @Expose()
   MemoNumber: string;
@@ -338,7 +338,7 @@ export class AttachmentsEntity {
   'Attachment Id': string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['  Id'],
+    example: AttachmentsSingleResponseCaseExample['Id'],
   })
   @Expose()
   Id: string;
