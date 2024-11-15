@@ -33,7 +33,7 @@ export function isPastISO8601Date(date: string): string {
       zone: 'UTC',
     });
     const currentTimeUTC = DateTime.now().toUTC();
-    if (dateObject < currentTimeUTC) {
+    if (dateObject <= currentTimeUTC) {
       return dateObject.toFormat(upstreamDateFormat);
     }
   }
