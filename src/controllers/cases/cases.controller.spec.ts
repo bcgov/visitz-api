@@ -21,6 +21,11 @@ import {
   InPersonVisitsSingleResponseCaseExample,
 } from '../../entities/in-person-visits.entity';
 import { idName } from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsSingleResponseCaseExample,
+  AttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -33,6 +38,7 @@ describe('CasesController', () => {
         CasesService,
         AuthService,
         SupportNetworkService,
+        AttachmentsService,
         TokenRefresherService,
         InPersonVisitsService,
         RequestPreparerService,
@@ -103,6 +109,33 @@ describe('CasesController', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseCaseExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2020-02-02' } as SinceQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams) => {
+        const caseServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await controller.getSingleCaseAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(caseServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
       },
     );
   });

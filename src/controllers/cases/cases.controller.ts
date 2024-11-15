@@ -39,6 +39,12 @@ import {
   InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
 } from '../../entities/in-person-visits.entity';
+import {
+  AttachmentsEntity,
+  AttachmentsListResponseCaseExample,
+  AttachmentsSingleResponseCaseExample,
+  NestedAttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -148,5 +154,55 @@ export class CasesController {
     since?: SinceQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.casesService.getSingleCaseInPersonVisitRecord(id, since);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/attachments`)
+  @ApiOperation({
+    description:
+      'Find all Attachments metadata entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: 'since', required: false })
+  @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          oneOf: [
+            { $ref: getSchemaPath(AttachmentsEntity) },
+            { $ref: getSchemaPath(NestedAttachmentsEntity) },
+          ],
+        },
+        examples: {
+          AttachmentsSingleResponse: {
+            value: AttachmentsSingleResponseCaseExample,
+          },
+          AttachmentsListResponse: {
+            value: AttachmentsListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseAttachmentRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    since?: SinceQueryParams,
+  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+    return await this.casesService.getSingleCaseAttachmentRecord(id, since);
   }
 }

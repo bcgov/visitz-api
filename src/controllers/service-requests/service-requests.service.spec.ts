@@ -14,11 +14,20 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  srAttachmentsFieldName,
+} from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsEntity,
+  AttachmentsSingleResponseSRExample,
+} from '../../entities/attachments.entity';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
   let supportNetworkService: SupportNetworkService;
+  let attachmentsService: AttachmentsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +35,7 @@ describe('ServiceRequestsService', () => {
       providers: [
         ServiceRequestsService,
         SupportNetworkService,
+        AttachmentsService,
         UtilitiesService,
         TokenRefresherService,
         RequestPreparerService,
@@ -44,6 +54,7 @@ describe('ServiceRequestsService', () => {
     supportNetworkService = module.get<SupportNetworkService>(
       SupportNetworkService,
     );
+    attachmentsService = module.get<AttachmentsService>(AttachmentsService);
   });
 
   it('should be defined', () => {
@@ -77,6 +88,36 @@ describe('ServiceRequestsService', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2024-12-01' } as SinceQueryParams,
+        srAttachmentsFieldName,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams, typeFieldName) => {
+        const attachmentsSpy = jest
+          .spyOn(attachmentsService, 'getSingleAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await service.getSingleSRAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(attachmentsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          typeFieldName,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
       },
     );
   });

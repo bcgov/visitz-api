@@ -31,10 +31,12 @@ export default () => ({
   workspaces: {
     supportNetwork: undefined,
     inPersonVisits: undefined,
+    attachments: 'int_lab',
   },
   sinceFieldName: {
     supportNetwork: 'Updated',
     inPersonVisits: undefined,
+    attachments: undefined,
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   buildInfo: {

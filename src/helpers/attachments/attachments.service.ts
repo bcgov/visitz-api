@@ -5,17 +5,17 @@ import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  NestedInPersonVisitsEntity,
-  InPersonVisitsEntity,
-} from '../../entities/in-person-visits.entity';
+  NestedAttachmentsEntity,
+  AttachmentsEntity,
+} from '../../entities/attachments.entity';
 import {
   baseUrlEnvVarName,
-  inPersonVisitsEndpointEnvVarName,
+  attachmentsEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
 
 @Injectable()
-export class InPersonVisitsService {
+export class AttachmentsService {
   url: string;
   workspace: string | undefined;
   sinceFieldName: string | undefined;
@@ -25,20 +25,19 @@ export class InPersonVisitsService {
   ) {
     this.url = (
       this.configService.get<string>(baseUrlEnvVarName) +
-      this.configService.get<string>(inPersonVisitsEndpointEnvVarName)
+      this.configService.get<string>(attachmentsEndpointEnvVarName)
     ).replace(/\s/g, '%20');
-    this.workspace = this.configService.get('workspaces.inPersonVisits');
-    this.sinceFieldName = this.configService.get(
-      'sinceFieldName.inPersonVisits',
-    );
+    this.workspace = this.configService.get('workspaces.attachments');
+    this.sinceFieldName = this.configService.get('sinceFieldName.attachments');
   }
 
-  async getSingleInPersonVisitRecord(
+  async getSingleAttachmentRecord(
     _type: RecordType,
     id: IdPathParams,
+    typeFieldName: string,
     since?: SinceQueryParams,
-  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
-    const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
+  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+    const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -52,8 +51,8 @@ export class InPersonVisitsService {
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {
-      return new NestedInPersonVisitsEntity(response.data);
+      return new NestedAttachmentsEntity(response.data);
     }
-    return new InPersonVisitsEntity(response.data);
+    return new AttachmentsEntity(response.data);
   }
 }

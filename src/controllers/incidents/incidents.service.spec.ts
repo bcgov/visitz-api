@@ -14,11 +14,20 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  incidentsAttachmentsFieldName,
+} from '../../common/constants/parameter-constants';
+import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import {
+  AttachmentsSingleResponseIncidentExample,
+  AttachmentsEntity,
+} from '../../entities/attachments.entity';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
   let supportNetworkService: SupportNetworkService;
+  let attachmentsService: AttachmentsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +35,7 @@ describe('IncidentsService', () => {
       providers: [
         IncidentsService,
         SupportNetworkService,
+        AttachmentsService,
         UtilitiesService,
         TokenRefresherService,
         RequestPreparerService,
@@ -43,6 +53,7 @@ describe('IncidentsService', () => {
     supportNetworkService = module.get<SupportNetworkService>(
       SupportNetworkService,
     );
+    attachmentsService = module.get<AttachmentsService>(AttachmentsService);
   });
 
   it('should be defined', () => {
@@ -77,6 +88,36 @@ describe('IncidentsService', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentAttachmentRecord tests', () => {
+    it.each([
+      [
+        AttachmentsSingleResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        { since: '2024-12-01' } as SinceQueryParams,
+        incidentsAttachmentsFieldName,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams, sinceQueryParams, typeFieldName) => {
+        const attachmentsSpy = jest
+          .spyOn(attachmentsService, 'getSingleAttachmentRecord')
+          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+
+        const result = await service.getSingleIncidentAttachmentRecord(
+          idPathParams,
+          sinceQueryParams,
+        );
+        expect(attachmentsSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          typeFieldName,
+          sinceQueryParams,
+        );
+        expect(result).toEqual(new AttachmentsEntity(data));
       },
     );
   });

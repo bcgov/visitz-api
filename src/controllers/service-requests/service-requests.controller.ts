@@ -32,6 +32,12 @@ import {
   idName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
+import {
+  AttachmentsEntity,
+  AttachmentsListResponseSRExample,
+  AttachmentsSingleResponseSRExample,
+  NestedAttachmentsEntity,
+} from '../../entities/attachments.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 
 @Controller('sr')
@@ -89,6 +95,59 @@ export class ServiceRequestsController {
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
+      id,
+      since,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/attachments`)
+  @ApiOperation({
+    description:
+      'Find all Attachments metadata entries related to a given Service Request entity by Service Request id.',
+  })
+  @ApiQuery({ name: 'since', required: false })
+  @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          oneOf: [
+            { $ref: getSchemaPath(AttachmentsEntity) },
+            { $ref: getSchemaPath(NestedAttachmentsEntity) },
+          ],
+        },
+        examples: {
+          AttachmentsSingleResponse: {
+            value: AttachmentsSingleResponseSRExample,
+          },
+          AttachmentsListResponse: {
+            value: AttachmentsListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRAttachmentRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    since?: SinceQueryParams,
+  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+    return await this.serviceRequestService.getSingleSRAttachmentRecord(
       id,
       since,
     );

@@ -11,6 +11,8 @@ import { InPersonVisitsModule } from './in-person-visits/in-person-visits.module
 import { InPersonVisitsService } from './in-person-visits/in-person-visits.service';
 import { RequestPreparerModule } from '../external-api/request-preparer/request-preparer.module';
 import { RequestPreparerService } from '../external-api/request-preparer/request-preparer.service';
+import { AttachmentsModule } from './attachments/attachments.module';
+import { AttachmentsService } from './attachments/attachments.service';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { RequestPreparerService } from '../external-api/request-preparer/request
     TokenRefresherModule,
     InPersonVisitsModule,
     RequestPreparerModule,
+    AttachmentsModule,
   ],
   providers: [
     SupportNetworkService,
@@ -28,7 +31,13 @@ import { RequestPreparerService } from '../external-api/request-preparer/request
     TokenRefresherService,
     InPersonVisitsService,
     RequestPreparerService,
+    AttachmentsService,
   ],
-  exports: [SupportNetworkService, UtilitiesService, InPersonVisitsService],
+  exports: [
+    SupportNetworkService,
+    UtilitiesService,
+    InPersonVisitsService,
+    AttachmentsService,
+  ],
 })
 export class HelpersModule {}
