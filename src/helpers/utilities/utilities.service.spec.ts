@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UtilitiesService } from './utilities.service';
+import { UtilitiesService, isPastISO8601Date } from './utilities.service';
+import { DateTime } from 'luxon';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -32,6 +34,27 @@ describe('UtilitiesService', () => {
       `should return undefined on unexpected date format`,
       (input) => {
         expect(service.convertISODateToUpstreamFormat(input)).toBe(undefined);
+      },
+    );
+  });
+
+  describe('isPastISO8601Date tests', () => {
+    it.each([[DateTime.now().toUTC().minus(60000).toJSDate().toISOString()]])(
+      `should return a string upon being given a past ISO-8601 date`,
+      (input) => {
+        expect(typeof isPastISO8601Date(input)).toBe('string');
+      },
+    );
+
+    it.each([
+      [DateTime.now().toUTC().plus(600000).toJSDate().toISOString()],
+      ['abcdefgtlom'],
+    ])(
+      `should throw BadRequestException on future date or unexpected input format`,
+      (input) => {
+        expect(() => {
+          isPastISO8601Date(input);
+        }).toThrow(BadRequestException);
       },
     );
   });

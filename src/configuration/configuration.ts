@@ -32,6 +32,7 @@ export default () => ({
     supportNetwork: undefined,
     inPersonVisits: undefined,
     attachments: 'int_lab',
+    postInPersonVisits: 'int_lab',
   },
   sinceFieldName: {
     supportNetwork: 'Updated',

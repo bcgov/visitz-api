@@ -8,15 +8,17 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { RecordType } from '../../common/constants/enumerations';
+import { RecordType, VisitDetails } from '../../common/constants/enumerations';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import {
   InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
+  PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import { idName } from '../../common/constants/parameter-constants';
+import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 
 describe('InPersonVisitsService', () => {
   let service: InPersonVisitsService;
@@ -111,6 +113,39 @@ describe('InPersonVisitsService', () => {
           recordType,
           idPathParams,
           sinceQueryParams,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleInPersonVisitRecord tests', () => {
+    it.each([
+      [
+        PostInPersonVisitResponseExample,
+        RecordType.Case,
+        new PostInPersonVisitDtoUpstream({
+          'Date of visit': '11/08/2024 08:24:11',
+          'Visit Details Value': VisitDetails.NotPrivateInHome,
+          'Visit Description': 'comment',
+        }),
+      ],
+    ])(
+      'should return post values given good input',
+      async (data, recordType, body) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendPostRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.postSingleInPersonVisitRecord(
+          recordType,
+          body,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));

@@ -1,14 +1,18 @@
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
+  Post,
   Query,
+  Req,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiCreatedResponse,
   ApiExtraModels,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -38,6 +42,7 @@ import {
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
+  PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
   AttachmentsEntity,
@@ -45,6 +50,9 @@ import {
   AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
+import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
+import { Request } from 'express';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -154,6 +162,49 @@ export class CasesController {
     since?: SinceQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.casesService.getSingleCaseInPersonVisitRecord(id, since);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/visits`)
+  @ApiOperation({
+    description:
+      'Create an in person visit record related to the given case id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          InPersonVisitCreatedResponse: {
+            value: PostInPersonVisitResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseInPersonVisitRecord(
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    inPersonVisitDto: PostInPersonVisitDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Req() req: Request,
+  ): Promise<NestedInPersonVisitsEntity> {
+    return await this.casesService.postSingleCaseInPersonVisitRecord(
+      inPersonVisitDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

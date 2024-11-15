@@ -25,6 +25,15 @@ export const InPersonVisitsListResponseCaseExample = {
   ],
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { Name, ...PostInnerBody } = InPersonVisitsSingleResponseCaseExample;
+
+export const PostInPersonVisitResponseExample = {
+  items: {
+    ...PostInnerBody,
+  },
+};
+
 /*
  * Model definitions
  */
@@ -33,6 +42,7 @@ export const InPersonVisitsListResponseCaseExample = {
 export class InPersonVisitsEntity {
   @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample['Name'],
+    required: false,
   })
   @Expose()
   Name: string;

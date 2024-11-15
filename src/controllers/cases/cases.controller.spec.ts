@@ -19,6 +19,8 @@ import { RequestPreparerService } from '../../external-api/request-preparer/requ
 import {
   InPersonVisitsEntity,
   InPersonVisitsSingleResponseCaseExample,
+  NestedInPersonVisitsEntity,
+  PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import { idName } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
@@ -26,6 +28,9 @@ import {
   AttachmentsSingleResponseCaseExample,
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { VisitDetails } from '../../common/constants/enumerations';
+import { getMockReq } from '@jest-mock/express';
+import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -109,6 +114,38 @@ describe('CasesController', () => {
           sinceQueryParams,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseInPersonVisitRecord tests', () => {
+    it.each([
+      [
+        {
+          'Date of visit': '2024-11-13T21:24:03',
+          'Visit Details Value': VisitDetails.NotPrivateInHome,
+          'Visit Description': 'comment',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostInPersonVisitResponseExample,
+      ],
+    ])(
+      'should return single values given good input',
+      async (body, idPathParams, idir, data) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'postSingleCaseInPersonVisitRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedInPersonVisitsEntity(data)),
+          );
+
+        const result = await controller.postSingleCaseInPersonVisitRecord(
+          body,
+          idPathParams,
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
       },
     );
   });

@@ -20,6 +20,7 @@ import {
   AttachmentsEntity,
   AttachmentsSingleResponseSRExample,
 } from '../../entities/attachments.entity';
+import { AuthService } from '../../common/guards/auth/auth.service';
 
 import { AuthService } from '../../common/guards/auth/auth.service';
 

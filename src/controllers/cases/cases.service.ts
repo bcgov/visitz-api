@@ -17,7 +17,18 @@ import {
   AttachmentsEntity,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
-import { casesAttachmentsFieldName } from '../../common/constants/parameter-constants';
+import {
+  casesAttachmentsFieldName,
+  idName,
+} from '../../common/constants/parameter-constants';
+import {
+  PostInPersonVisitDto,
+  PostInPersonVisitDtoUpstream,
+} from '../../dto/post-in-person-visit.dto';
+import {
+  childVisitEntityIdFieldName,
+  childVisitIdirFieldName,
+} from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class CasesService {
@@ -46,6 +57,22 @@ export class CasesService {
       RecordType.Case,
       id,
       since,
+    );
+  }
+
+  async postSingleCaseInPersonVisitRecord(
+    inPersonVisitsDto: PostInPersonVisitDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<NestedInPersonVisitsEntity> {
+    const body = new PostInPersonVisitDtoUpstream({
+      ...inPersonVisitsDto,
+      [childVisitIdirFieldName]: idir,
+      [childVisitEntityIdFieldName]: id[idName],
+    });
+    return await this.inPersonVisitsService.postSingleInPersonVisitRecord(
+      RecordType.Case,
+      body,
     );
   }
 
