@@ -21,6 +21,7 @@ export default () => ({
     memo: {
       endpoint: process.env.MEMO_ENDPOINT.trim().replace(/\s/g, '%20'),
       workspace: undefined,
+      idirField: '',
     },
   },
   oauth: {
