@@ -18,10 +18,12 @@ import {
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { getMockRes } from '@jest-mock/express';
 
 describe('MemosService', () => {
   let service: MemosService;
   let attachmentsService: AttachmentsService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +47,7 @@ describe('MemosService', () => {
 
     service = module.get<MemosService>(MemosService);
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -68,12 +71,14 @@ describe('MemosService', () => {
 
         const result = await service.getSingleMemoAttachmentRecord(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.Memo,
           idPathParams,
           typeFieldName,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));

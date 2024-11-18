@@ -1,7 +1,10 @@
 const VIEW_MODE = 'Catalog';
 const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
-const PAGINATION = 'N';
+const PAGE_SIZE = 100;
+const RECORD_COUNT_NEEDED = 'true';
+const UNIFORM_RESPONSE = 'y';
+const recordCountHeaderName = 'total-record-count';
 
 const idRegex = /[0-9\-A-Za-z]+/;
 const idName = 'rowId';
@@ -15,7 +18,10 @@ export {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGINATION,
+  PAGE_SIZE,
+  RECORD_COUNT_NEEDED,
+  UNIFORM_RESPONSE,
+  recordCountHeaderName,
   idRegex,
   idName,
   casesAttachmentsFieldName,

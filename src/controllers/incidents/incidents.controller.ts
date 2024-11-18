@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Res,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
@@ -40,6 +41,8 @@ import {
   AttachmentsSingleResponseIncidentExample,
   AttachmentsListResponseIncidentExample,
 } from '../../entities/attachments.entity';
+import { Response } from 'express';
+import { totalRecordCountHeadersSwagger } from '../../common/constants/swagger-constants';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -57,6 +60,7 @@ export class IncidentsController {
   @ApiQuery({ name: 'since', required: false })
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -85,6 +89,7 @@ export class IncidentsController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -97,6 +102,7 @@ export class IncidentsController {
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,
+      res,
       since,
     );
   }
@@ -110,6 +116,7 @@ export class IncidentsController {
   @ApiQuery({ name: 'since', required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -138,6 +145,7 @@ export class IncidentsController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -150,6 +158,7 @@ export class IncidentsController {
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.incidentsService.getSingleIncidentAttachmentRecord(
       id,
+      res,
       since,
     );
   }

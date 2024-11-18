@@ -19,10 +19,12 @@ import {
 } from '../../entities/in-person-visits.entity';
 import { idName } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
+import { getMockRes } from '@jest-mock/express';
 
 describe('InPersonVisitsService', () => {
   let service: InPersonVisitsService;
   let requestPreparerService: RequestPreparerService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +50,7 @@ describe('InPersonVisitsService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -83,6 +86,7 @@ describe('InPersonVisitsService', () => {
         const result = await service.getSingleInPersonVisitRecord(
           recordType,
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
@@ -112,6 +116,7 @@ describe('InPersonVisitsService', () => {
         const result = await service.getSingleInPersonVisitRecord(
           recordType,
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);

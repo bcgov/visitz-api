@@ -13,6 +13,7 @@ import {
   AttachmentsEntity,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { Response } from 'express';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -23,23 +24,27 @@ export class ServiceRequestsService {
 
   async getSingleSRSupportNetworkInformationRecord(
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.SR,
       id,
+      res,
       since,
     );
   }
 
   async getSingleSRAttachmentRecord(
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.SR,
       id,
       srAttachmentsFieldName,
+      res,
       since,
     );
   }

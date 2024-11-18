@@ -16,6 +16,7 @@ import {
   supportNetworkEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
+import { Response } from 'express';
 
 @Injectable()
 export class SupportNetworkService {
@@ -39,6 +40,7 @@ export class SupportNetworkService {
   async getSingleSupportNetworkInformationRecord(
     type: RecordType,
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ) {
     const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
@@ -52,6 +54,7 @@ export class SupportNetworkService {
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,
+      res,
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {

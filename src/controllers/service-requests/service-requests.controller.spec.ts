@@ -21,10 +21,12 @@ import {
   AttachmentsSingleResponseSRExample,
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
+import { getMockRes } from '@jest-mock/express';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
   let serviceRequestsService: ServiceRequestsService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +52,7 @@ describe('ServiceRequestsController', () => {
     serviceRequestsService = module.get<ServiceRequestsService>(
       ServiceRequestsService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -76,10 +79,12 @@ describe('ServiceRequestsController', () => {
         const result =
           await controller.getSingleSRSupportNetworkInformationRecord(
             idPathParams,
+            res,
             sinceQueryParams,
           );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
@@ -103,10 +108,12 @@ describe('ServiceRequestsController', () => {
 
         const result = await controller.getSingleSRAttachmentRecord(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));

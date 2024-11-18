@@ -4,7 +4,10 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGINATION,
+  PAGE_SIZE,
+  RECORD_COUNT_NEEDED,
+  recordCountHeaderName,
+  UNIFORM_RESPONSE,
   VIEW_MODE,
 } from '../../common/constants/parameter-constants';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
@@ -18,11 +21,13 @@ import {
   InternalAxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from 'axios';
+import { getMockRes } from '@jest-mock/express';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
   let httpService: HttpService;
   let tokenRefresherService: TokenRefresherService;
+  const { res, mockClear } = getMockRes();
   const validId = '1234ab';
 
   beforeEach(async () => {
@@ -52,6 +57,7 @@ describe('RequestPreparerService', () => {
     tokenRefresherService = module.get<TokenRefresherService>(
       TokenRefresherService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -76,7 +82,9 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
-          pagination: PAGINATION,
+          PageSize: PAGE_SIZE,
+          recordcountneeded: RECORD_COUNT_NEEDED,
+          uniformresponse: UNIFORM_RESPONSE,
         });
       },
     );
@@ -95,7 +103,9 @@ describe('RequestPreparerService', () => {
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
           searchspec: `${baseSearchSpec} AND [Updated] > "${expectedDate}")`,
-          pagination: PAGINATION,
+          PageSize: PAGE_SIZE,
+          recordcountneeded: RECORD_COUNT_NEEDED,
+          uniformresponse: UNIFORM_RESPONSE,
         });
       },
     );
@@ -106,14 +116,16 @@ describe('RequestPreparerService', () => {
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {},
-          headers: {},
+          headers: { [recordCountHeaderName]: 2000 } as RawAxiosRequestHeaders,
           status: 200,
           statusText: 'OK',
         } as AxiosResponse<any, any>),
       );
-      const result = await service.sendGetRequest('url', {});
+      const headerSpy = jest.spyOn(res, 'setHeader');
+      const result = await service.sendGetRequest('url', {}, res);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(result.data).toEqual({});
+      expect(headerSpy).toHaveBeenCalledWith(recordCountHeaderName, 2000);
     });
 
     it.each([[500]])(
@@ -136,7 +148,7 @@ describe('RequestPreparerService', () => {
         });
 
         await expect(
-          service.sendGetRequest('url', {}, {}),
+          service.sendGetRequest('url', {}, res, {}),
         ).rejects.toHaveProperty('status', status);
         expect(spy).toHaveBeenCalledTimes(1);
       },
@@ -159,7 +171,7 @@ describe('RequestPreparerService', () => {
         );
       });
       await expect(
-        service.sendGetRequest('url', {}, {}),
+        service.sendGetRequest('url', {}, res, {}),
       ).rejects.toHaveProperty('status', 204);
       expect(spy).toHaveBeenCalledTimes(1);
     });
@@ -169,7 +181,7 @@ describe('RequestPreparerService', () => {
         .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
         .mockResolvedValueOnce(undefined);
       await expect(
-        service.sendGetRequest('url', {}, {}),
+        service.sendGetRequest('url', {}, res, {}),
       ).rejects.toHaveProperty('status', 500);
       expect(spy).toHaveBeenCalledTimes(1);
     });

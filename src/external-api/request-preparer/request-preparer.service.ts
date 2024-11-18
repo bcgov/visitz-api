@@ -3,7 +3,10 @@ import {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGINATION,
+  PAGE_SIZE,
+  RECORD_COUNT_NEEDED,
+  recordCountHeaderName,
+  UNIFORM_RESPONSE,
 } from '../../common/constants/parameter-constants';
 import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -12,6 +15,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
 
 @Injectable()
 export class RequestPreparerService {
@@ -51,7 +55,9 @@ export class RequestPreparerService {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
-      pagination: PAGINATION,
+      recordcountneeded: RECORD_COUNT_NEEDED,
+      PageSize: PAGE_SIZE,
+      uniformresponse: UNIFORM_RESPONSE,
     };
     if (typeof workspace !== 'undefined') {
       params['workspace'] = workspace;
@@ -62,7 +68,7 @@ export class RequestPreparerService {
     return [headers, params];
   }
 
-  async sendGetRequest(url: string, headers, params?) {
+  async sendGetRequest(url: string, headers, res: Response, params?) {
     let response;
     try {
       const token =
@@ -99,6 +105,12 @@ export class RequestPreparerService {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         { cause: error },
+      );
+    }
+    if (response.headers.hasOwnProperty(recordCountHeaderName)) {
+      res.setHeader(
+        recordCountHeaderName,
+        response.headers[recordCountHeaderName],
       );
     }
     return response;

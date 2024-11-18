@@ -29,6 +29,7 @@ import {
   childVisitEntityIdFieldName,
   childVisitIdirFieldName,
 } from '../../common/constants/upstream-constants';
+import { Response } from 'express';
 
 @Injectable()
 export class CasesService {
@@ -40,22 +41,26 @@ export class CasesService {
 
   async getSingleCaseSupportNetworkInformationRecord(
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
       id,
+      res,
       since,
     );
   }
 
   async getSingleCaseInPersonVisitRecord(
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
+      res,
       since,
     );
   }
@@ -78,12 +83,14 @@ export class CasesService {
 
   async getSingleCaseAttachmentRecord(
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Case,
       id,
       casesAttachmentsFieldName,
+      res,
       since,
     );
   }

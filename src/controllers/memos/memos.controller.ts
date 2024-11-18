@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Res,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -31,6 +32,8 @@ import {
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
+import { Response } from 'express';
+import { totalRecordCountHeadersSwagger } from '../../common/constants/swagger-constants';
 
 @Controller('memo')
 @ApiNotFoundResponse({ type: ApiNotFoundEntity })
@@ -47,6 +50,7 @@ export class MemosController {
   @ApiQuery({ name: 'since', required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -75,6 +79,7 @@ export class MemosController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -85,6 +90,10 @@ export class MemosController {
     )
     since?: SinceQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
-    return await this.memosService.getSingleMemoAttachmentRecord(id, since);
+    return await this.memosService.getSingleMemoAttachmentRecord(
+      id,
+      res,
+      since,
+    );
   }
 }

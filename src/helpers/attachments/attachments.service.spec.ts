@@ -19,10 +19,12 @@ import {
   AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { getMockRes } from '@jest-mock/express';
 
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
   let requestPreparerService: RequestPreparerService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +50,7 @@ describe('AttachmentsService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -77,6 +80,7 @@ describe('AttachmentsService', () => {
           type,
           id,
           typeFieldName,
+          res,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new AttachmentsEntity(data));
@@ -106,6 +110,7 @@ describe('AttachmentsService', () => {
           type,
           id,
           typeFieldName,
+          res,
           since,
         );
         expect(spy).toHaveBeenCalledTimes(1);

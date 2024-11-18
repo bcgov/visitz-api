@@ -8,6 +8,7 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import { Response } from 'express';
 
 @Injectable()
 export class MemosService {
@@ -15,12 +16,14 @@ export class MemosService {
 
   async getSingleMemoAttachmentRecord(
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Memo,
       id,
       memoAttachmentsFieldName,
+      res,
       since,
     );
   }

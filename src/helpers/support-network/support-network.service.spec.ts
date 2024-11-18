@@ -18,10 +18,12 @@ import { SinceQueryParams } from '../../dto/since-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
+import { getMockRes } from '@jest-mock/express';
 
 describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
   let requestPreparerService: RequestPreparerService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,6 +49,7 @@ describe('SupportNetworkService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -82,6 +85,7 @@ describe('SupportNetworkService', () => {
         const result = await service.getSingleSupportNetworkInformationRecord(
           recordType,
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
@@ -111,6 +115,7 @@ describe('SupportNetworkService', () => {
         const result = await service.getSingleSupportNetworkInformationRecord(
           recordType,
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);

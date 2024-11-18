@@ -15,10 +15,12 @@ import {
   AttachmentsSingleResponseMemoExample,
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { getMockRes } from '@jest-mock/express';
 
 describe('MemosController', () => {
   let controller: MemosController;
   let memosService: MemosService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +40,7 @@ describe('MemosController', () => {
 
     controller = module.get<MemosController>(MemosController);
     memosService = module.get<MemosService>(MemosService);
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -60,10 +63,12 @@ describe('MemosController', () => {
 
         const result = await controller.getSingleMemoAttachmentRecord(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(memoServiceSpy).toHaveBeenCalledWith(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));

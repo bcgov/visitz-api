@@ -18,6 +18,7 @@ import {
   idName,
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from 'src/dto/post-in-person-visit.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -50,6 +51,7 @@ export class InPersonVisitsService {
   async getSingleInPersonVisitRecord(
     _type: RecordType,
     id: IdPathParams,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
@@ -63,6 +65,7 @@ export class InPersonVisitsService {
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,
+      res,
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {

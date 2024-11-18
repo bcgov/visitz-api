@@ -30,12 +30,14 @@ import {
   AttachmentsSingleResponseCaseExample,
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { getMockRes } from '@jest-mock/express';
 
 describe('CasesService', () => {
   let service: CasesService;
   let supportNetworkService: SupportNetworkService;
   let inPersonVisitsService: InPersonVisitsService;
   let attachmentsService: AttachmentsService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -66,6 +68,7 @@ describe('CasesService', () => {
       InPersonVisitsService,
     );
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -92,11 +95,13 @@ describe('CasesService', () => {
         const result =
           await service.getSingleCaseSupportNetworkInformationRecord(
             idPathParams,
+            res,
             sinceQueryParams,
           );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
@@ -120,11 +125,13 @@ describe('CasesService', () => {
 
         const result = await service.getSingleCaseInPersonVisitRecord(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(InPersonVisitsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
@@ -181,12 +188,14 @@ describe('CasesService', () => {
 
         const result = await service.getSingleCaseAttachmentRecord(
           idPathParams,
+          res,
           sinceQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           typeFieldName,
+          res,
           sinceQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));

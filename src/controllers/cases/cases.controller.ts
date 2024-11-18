@@ -7,6 +7,7 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
@@ -52,7 +53,8 @@ import {
 } from '../../entities/attachments.entity';
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
 import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
-import { Request } from 'express';
+import { Request, Response } from 'express';
+import { totalRecordCountHeadersSwagger } from '../../common/constants/swagger-constants';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -70,6 +72,7 @@ export class CasesController {
   @ApiQuery({ name: 'since', required: false })
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -98,6 +101,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -110,6 +114,7 @@ export class CasesController {
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
+      res,
       since,
     );
   }
@@ -123,6 +128,7 @@ export class CasesController {
   @ApiQuery({ name: 'since', required: false })
   @ApiExtraModels(InPersonVisitsEntity, NestedInPersonVisitsEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -151,6 +157,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -161,7 +168,11 @@ export class CasesController {
     )
     since?: SinceQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
-    return await this.casesService.getSingleCaseInPersonVisitRecord(id, since);
+    return await this.casesService.getSingleCaseInPersonVisitRecord(
+      id,
+      res,
+      since,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -216,6 +227,7 @@ export class CasesController {
   @ApiQuery({ name: 'since', required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -244,6 +256,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -254,6 +267,10 @@ export class CasesController {
     )
     since?: SinceQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
-    return await this.casesService.getSingleCaseAttachmentRecord(id, since);
+    return await this.casesService.getSingleCaseAttachmentRecord(
+      id,
+      res,
+      since,
+    );
   }
 }

@@ -13,6 +13,7 @@ import {
   attachmentsEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
+import { Response } from 'express';
 
 @Injectable()
 export class AttachmentsService {
@@ -35,6 +36,7 @@ export class AttachmentsService {
     _type: RecordType,
     id: IdPathParams,
     typeFieldName: string,
+    res: Response,
     since?: SinceQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
@@ -48,6 +50,7 @@ export class AttachmentsService {
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,
+      res,
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {
