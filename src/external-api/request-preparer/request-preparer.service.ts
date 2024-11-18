@@ -16,6 +16,8 @@ import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class RequestPreparerService {
@@ -35,6 +37,7 @@ export class RequestPreparerService {
     workspace: string | undefined,
     sinceFieldName: string | undefined,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ) {
     let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
@@ -61,6 +64,12 @@ export class RequestPreparerService {
     };
     if (typeof workspace !== 'undefined') {
       params['workspace'] = workspace;
+    }
+    if (
+      startRowNum !== undefined &&
+      typeof startRowNum.StartRowNum === 'number'
+    ) {
+      params[startRowNumParamName] = startRowNum.StartRowNum;
     }
     const headers = {
       Accept: CONTENT_TYPE,

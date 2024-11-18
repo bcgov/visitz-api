@@ -9,4 +9,8 @@ const totalRecordCountHeadersSwagger = {
   },
 };
 
-export { totalRecordCountHeadersSwagger };
+const noContentResponseSwagger = {
+  description: 'Empty body. Returned when no records match the given criteria.',
+};
+
+export { totalRecordCountHeadersSwagger, noContentResponseSwagger };

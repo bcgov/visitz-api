@@ -30,6 +30,7 @@ import {
   childVisitIdirFieldName,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class CasesService {
@@ -43,12 +44,14 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
       id,
       res,
       since,
+      startRowNum,
     );
   }
 
@@ -56,12 +59,14 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
       since,
+      startRowNum,
     );
   }
 
@@ -85,6 +90,7 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Case,
@@ -92,6 +98,7 @@ export class CasesService {
       casesAttachmentsFieldName,
       res,
       since,
+      startRowNum,
     );
   }
 }

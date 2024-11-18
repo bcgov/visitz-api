@@ -14,6 +14,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class AttachmentsService {
@@ -38,6 +39,7 @@ export class AttachmentsService {
     typeFieldName: string,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
     const [headers, params] =
@@ -46,6 +48,7 @@ export class AttachmentsService {
         this.workspace,
         this.sinceFieldName,
         since,
+        startRowNum,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,

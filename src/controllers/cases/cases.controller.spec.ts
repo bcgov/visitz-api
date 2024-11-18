@@ -30,7 +30,11 @@ import {
 } from '../../entities/attachments.entity';
 import { VisitDetails } from '../../common/constants/enumerations';
 import { getMockReq, getMockRes } from '@jest-mock/express';
-import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
+import {
+  idirUsernameHeaderField,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -71,10 +75,11 @@ describe('CasesController', () => {
         SupportNetworkSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseSupportNetworkInformationRecord')
           .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
@@ -84,11 +89,13 @@ describe('CasesController', () => {
             idPathParams,
             res,
             sinceQueryParams,
+            startRowNum,
           );
         expect(casesServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -101,10 +108,11 @@ describe('CasesController', () => {
         InPersonVisitsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseInPersonVisitRecord')
           .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
@@ -113,11 +121,13 @@ describe('CasesController', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(casesServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
       },
@@ -162,10 +172,11 @@ describe('CasesController', () => {
         AttachmentsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const caseServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -174,11 +185,13 @@ describe('CasesController', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(caseServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

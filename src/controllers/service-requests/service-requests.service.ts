@@ -14,6 +14,7 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -26,12 +27,14 @@ export class ServiceRequestsService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.SR,
       id,
       res,
       since,
+      startRowNum,
     );
   }
 
@@ -39,6 +42,7 @@ export class ServiceRequestsService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.SR,
@@ -46,6 +50,7 @@ export class ServiceRequestsService {
       srAttachmentsFieldName,
       res,
       since,
+      startRowNum,
     );
   }
 }

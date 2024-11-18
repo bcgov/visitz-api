@@ -16,7 +16,7 @@ import {
   ApiOkResponse,
   getSchemaPath,
   ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import {
   idName,
@@ -31,12 +31,16 @@ import {
   AttachmentsListResponseMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
-import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
 import { Response } from 'express';
-import { totalRecordCountHeadersSwagger } from '../../common/constants/swagger-constants';
+import {
+  noContentResponseSwagger,
+  totalRecordCountHeadersSwagger,
+} from '../../common/constants/swagger-constants';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 @Controller('memo')
-@ApiNotFoundResponse({ type: ApiNotFoundEntity })
+@ApiNoContentResponse(noContentResponseSwagger)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class MemosController {
   constructor(private readonly memosService: MemosService) {}
@@ -48,6 +52,7 @@ export class MemosController {
       'Find all Attachments metadata entries related to a given Memo entity by Memo id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -89,11 +94,21 @@ export class MemosController {
       }),
     )
     since?: SinceQueryParams,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.memosService.getSingleMemoAttachmentRecord(
       id,
       res,
       since,
+      startRowNum,
     );
   }
 }

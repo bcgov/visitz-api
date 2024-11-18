@@ -22,6 +22,8 @@ import {
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -61,10 +63,11 @@ describe('IncidentsController', () => {
         SupportNetworkSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const IncidentsServiceSpy = jest
           .spyOn(
             incidentsService,
@@ -77,11 +80,13 @@ describe('IncidentsController', () => {
             idPathParams,
             res,
             sinceQueryParams,
+            startRowNum,
           );
         expect(IncidentsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -94,10 +99,11 @@ describe('IncidentsController', () => {
         AttachmentsSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const incidentServiceSpy = jest
           .spyOn(incidentsService, 'getSingleIncidentAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -106,11 +112,13 @@ describe('IncidentsController', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(incidentServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

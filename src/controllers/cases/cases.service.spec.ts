@@ -31,6 +31,8 @@ import {
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -97,12 +99,14 @@ describe('CasesService', () => {
             idPathParams,
             res,
             sinceQueryParams,
+            undefined,
           );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
           sinceQueryParams,
+          undefined,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -115,10 +119,11 @@ describe('CasesService', () => {
         InPersonVisitsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-01' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const InPersonVisitsSpy = jest
           .spyOn(inPersonVisitsService, 'getSingleInPersonVisitRecord')
           .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
@@ -127,12 +132,14 @@ describe('CasesService', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(InPersonVisitsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
       },
@@ -190,6 +197,7 @@ describe('CasesService', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          undefined,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.Case,
@@ -197,6 +205,7 @@ describe('CasesService', () => {
           typeFieldName,
           res,
           sinceQueryParams,
+          undefined,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

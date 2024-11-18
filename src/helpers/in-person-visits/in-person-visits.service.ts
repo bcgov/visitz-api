@@ -17,8 +17,9 @@ import {
   CONTENT_TYPE,
   idName,
 } from '../../common/constants/parameter-constants';
-import { PostInPersonVisitDtoUpstream } from 'src/dto/post-in-person-visit.dto';
+import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -53,6 +54,7 @@ export class InPersonVisitsService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
     const [headers, params] =
@@ -61,6 +63,7 @@ export class InPersonVisitsService {
         this.workspace,
         this.sinceFieldName,
         since,
+        startRowNum,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,

@@ -8,6 +8,7 @@ const upstreamDateFormat = 'MM/dd/yyyy HH:mm:ss';
 const childVisitType = 'In Person Child Youth';
 const childVisitIdirFieldName = 'Login Name';
 const childVisitEntityIdFieldName = 'Parent Id';
+const startRowNumParamName = 'StartRowNum';
 
 export {
   baseUrlEnvVarName,
@@ -20,4 +21,5 @@ export {
   childVisitType,
   childVisitIdirFieldName,
   childVisitEntityIdFieldName,
+  startRowNumParamName,
 };

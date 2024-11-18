@@ -22,6 +22,8 @@ import {
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -65,10 +67,11 @@ describe('ServiceRequestsController', () => {
         SupportNetworkSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const SRsServiceSpy = jest
           .spyOn(
             serviceRequestsService,
@@ -81,11 +84,13 @@ describe('ServiceRequestsController', () => {
             idPathParams,
             res,
             sinceQueryParams,
+            startRowNum,
           );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -98,10 +103,11 @@ describe('ServiceRequestsController', () => {
         AttachmentsSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2020-02-02' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const SRsServiceSpy = jest
           .spyOn(serviceRequestsService, 'getSingleSRAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -110,11 +116,13 @@ describe('ServiceRequestsController', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

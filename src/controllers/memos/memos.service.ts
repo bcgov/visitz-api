@@ -9,6 +9,7 @@ import {
 } from '../../entities/attachments.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class MemosService {
@@ -18,6 +19,7 @@ export class MemosService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Memo,
@@ -25,6 +27,7 @@ export class MemosService {
       memoAttachmentsFieldName,
       res,
       since,
+      startRowNum,
     );
   }
 }

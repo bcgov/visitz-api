@@ -24,6 +24,8 @@ import {
   AttachmentsSingleResponseSRExample,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -70,10 +72,11 @@ describe('ServiceRequestsService', () => {
         SupportNetworkSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-01' } as SinceQueryParams,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, sinceQueryParams, startRowNum) => {
         const supportNetworkSpy = jest
           .spyOn(
             supportNetworkService,
@@ -85,12 +88,14 @@ describe('ServiceRequestsService', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.SR,
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -104,10 +109,17 @@ describe('ServiceRequestsService', () => {
         { [idName]: 'test' } as IdPathParams,
         { since: '2024-12-01' } as SinceQueryParams,
         srAttachmentsFieldName,
+        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, typeFieldName) => {
+      async (
+        data,
+        idPathParams,
+        sinceQueryParams,
+        typeFieldName,
+        startRowNum,
+      ) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -116,6 +128,7 @@ describe('ServiceRequestsService', () => {
           idPathParams,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.SR,
@@ -123,6 +136,7 @@ describe('ServiceRequestsService', () => {
           typeFieldName,
           res,
           sinceQueryParams,
+          startRowNum,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

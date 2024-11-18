@@ -22,13 +22,13 @@ import {
   RawAxiosRequestHeaders,
 } from 'axios';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
   let httpService: HttpService;
   let tokenRefresherService: TokenRefresherService;
   const { res, mockClear } = getMockRes();
-  const validId = '1234ab';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,9 +67,9 @@ describe('RequestPreparerService', () => {
   describe('prepareHeadersAndParams tests', () => {
     it.each([
       ['spec', undefined],
-      ['spec', { id: validId }, 'workspace'],
+      ['spec', 'workspace'],
     ])(
-      'correctly prepares headers and params with no date parameter',
+      'correctly prepares headers and params with no date or row number parameter',
       (baseSearchSpec, workspace) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
@@ -89,14 +89,50 @@ describe('RequestPreparerService', () => {
       },
     );
 
-    it.each([['spec', { since: '2024-02-20' }, '02/20/2024 00:00:00']])(
-      'correctly prepares headers and params with a date parameter',
-      (baseSearchSpec, since, expectedDate) => {
+    it.each([
+      ['spec', undefined, { [startRowNumParamName]: 2 }],
+      ['spec', 'workspace', { [startRowNumParamName]: 4 }],
+    ])(
+      'correctly prepares headers and params with a row number parameter but no date',
+      (baseSearchSpec, workspace, startRowNum) => {
+        const [headers, params] = service.prepareHeadersAndParams(
+          baseSearchSpec,
+          workspace,
+          '',
+          undefined,
+          startRowNum,
+        );
+        expect(headers).toEqual({ Accept: CONTENT_TYPE });
+        expect(params).toEqual({
+          ViewMode: VIEW_MODE,
+          ChildLinks: CHILD_LINKS,
+          searchspec: baseSearchSpec + ')',
+          workspace: workspace,
+          PageSize: PAGE_SIZE,
+          recordcountneeded: RECORD_COUNT_NEEDED,
+          uniformresponse: UNIFORM_RESPONSE,
+          [startRowNumParamName]: startRowNum[startRowNumParamName],
+        });
+      },
+    );
+
+    it.each([
+      ['spec', { since: '2024-02-20' }, undefined, '02/20/2024 00:00:00'],
+      [
+        'spec',
+        { since: '2024-02-20' },
+        { [startRowNumParamName]: 2 },
+        '02/20/2024 00:00:00',
+      ],
+    ])(
+      'correctly prepares headers and params with a date and optionally row parameter',
+      (baseSearchSpec, since, startRowNum, expectedDate) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           undefined,
           'Updated',
           since,
+          startRowNum,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
@@ -106,6 +142,9 @@ describe('RequestPreparerService', () => {
           PageSize: PAGE_SIZE,
           recordcountneeded: RECORD_COUNT_NEEDED,
           uniformresponse: UNIFORM_RESPONSE,
+          [startRowNumParamName]: startRowNum?.[startRowNumParamName]
+            ? startRowNum?.[startRowNumParamName]
+            : undefined,
         });
       },
     );

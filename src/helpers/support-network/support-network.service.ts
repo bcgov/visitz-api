@@ -17,6 +17,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
 import { Response } from 'express';
+import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class SupportNetworkService {
@@ -42,6 +43,7 @@ export class SupportNetworkService {
     id: IdPathParams,
     res: Response,
     since?: SinceQueryParams,
+    startRowNum?: StartRowNumQueryParams,
   ) {
     const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     const [headers, params] =
@@ -50,6 +52,7 @@ export class SupportNetworkService {
         this.workspace,
         this.sinceFieldName,
         since,
+        startRowNum,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
