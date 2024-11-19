@@ -7,6 +7,7 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
@@ -15,7 +16,7 @@ import {
   ApiCreatedResponse,
   ApiExtraModels,
   ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -29,11 +30,11 @@ import {
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CONTENT_TYPE,
   idName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -51,12 +52,20 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
-import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
-import { Request } from 'express';
+import {
+  idirUsernameHeaderField,
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { Request, Response } from 'express';
+import {
+  noContentResponseSwagger,
+  totalRecordCountHeadersSwagger,
+} from '../../common/constants/swagger-constants';
 
 @Controller('case')
 @UseGuards(AuthGuard)
-@ApiNotFoundResponse({ type: ApiNotFoundEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}
@@ -67,9 +76,14 @@ export class CasesController {
     description:
       'Find all Support Network entries related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -98,6 +112,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -106,11 +121,12 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
-      since,
+      res,
+      filter,
     );
   }
 
@@ -120,9 +136,14 @@ export class CasesController {
     description:
       'Find all In Person Child / Youth Visits related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(InPersonVisitsEntity, NestedInPersonVisitsEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -151,6 +172,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -159,9 +181,13 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
-    return await this.casesService.getSingleCaseInPersonVisitRecord(id, since);
+    return await this.casesService.getSingleCaseInPersonVisitRecord(
+      id,
+      res,
+      filter,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -213,9 +239,14 @@ export class CasesController {
     description:
       'Find all Attachments metadata entries related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -244,6 +275,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -252,8 +284,12 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
-    return await this.casesService.getSingleCaseAttachmentRecord(id, since);
+    return await this.casesService.getSingleCaseAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
   }
 }

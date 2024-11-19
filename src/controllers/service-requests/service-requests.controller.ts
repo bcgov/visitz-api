@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Res,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
@@ -14,8 +15,8 @@ import {
   getSchemaPath,
   ApiQuery,
   ApiOperation,
-  ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import {
@@ -25,11 +26,11 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
-import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CONTENT_TYPE,
   idName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -39,10 +40,20 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
+import { Response } from 'express';
+import {
+  noContentResponseSwagger,
+  totalRecordCountHeadersSwagger,
+} from '../../common/constants/swagger-constants';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
-@ApiNotFoundResponse({ type: ApiNotFoundEntity })
+@ApiNoContentResponse(noContentResponseSwagger)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
@@ -53,9 +64,13 @@ export class ServiceRequestsController {
     description:
       'Find all Support Network entries related to a given Service Request entity by Service Request id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -84,6 +99,7 @@ export class ServiceRequestsController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -92,11 +108,12 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
       id,
-      since,
+      res,
+      filter,
     );
   }
 
@@ -106,9 +123,13 @@ export class ServiceRequestsController {
     description:
       'Find all Attachments metadata entries related to a given Service Request entity by Service Request id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -137,6 +158,7 @@ export class ServiceRequestsController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -145,11 +167,12 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.serviceRequestService.getSingleSRAttachmentRecord(
       id,
-      since,
+      res,
+      filter,
     );
   }
 }

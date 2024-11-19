@@ -3,15 +3,24 @@ import {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGINATION,
+  recordCountHeaderName,
+  UNIFORM_RESPONSE,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 
 @Injectable()
 export class RequestPreparerService {
@@ -30,16 +39,16 @@ export class RequestPreparerService {
     baseSearchSpec: string,
     workspace: string | undefined,
     sinceFieldName: string | undefined,
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ) {
     let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
     if (
       sinceFieldName === undefined ||
-      since === undefined ||
-      typeof since.since !== 'string' ||
+      filter === undefined ||
+      typeof filter[sinceParamName] !== 'string' ||
       (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
-        since.since,
+        filter[sinceParamName],
       )) === undefined
     ) {
       searchSpec = searchSpec + `)`;
@@ -51,10 +60,21 @@ export class RequestPreparerService {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
-      pagination: PAGINATION,
+      uniformresponse: UNIFORM_RESPONSE,
     };
     if (typeof workspace !== 'undefined') {
       params['workspace'] = workspace;
+    }
+    if (filter !== undefined) {
+      if (filter[recordCountNeededParamName] === RecordCountNeededEnum.True) {
+        params[recordCountNeededParamName] = filter[recordCountNeededParamName];
+      }
+      if (typeof filter[pageSizeParamName] === 'number') {
+        params[pageSizeParamName] = filter[pageSizeParamName];
+      }
+      if (typeof filter[startRowNumParamName] === 'number') {
+        params[startRowNumParamName] = filter[startRowNumParamName];
+      }
     }
     const headers = {
       Accept: CONTENT_TYPE,
@@ -62,7 +82,7 @@ export class RequestPreparerService {
     return [headers, params];
   }
 
-  async sendGetRequest(url: string, headers, params?) {
+  async sendGetRequest(url: string, headers, res: Response, params?) {
     let response;
     try {
       const token =
@@ -99,6 +119,12 @@ export class RequestPreparerService {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         { cause: error },
+      );
+    }
+    if (response.headers.hasOwnProperty(recordCountHeaderName)) {
+      res.setHeader(
+        recordCountHeaderName,
+        response.headers[recordCountHeaderName],
       );
     }
     return response;

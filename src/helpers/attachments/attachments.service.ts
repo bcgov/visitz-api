@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
@@ -13,6 +13,7 @@ import {
   attachmentsEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
+import { Response } from 'express';
 
 @Injectable()
 export class AttachmentsService {
@@ -35,7 +36,8 @@ export class AttachmentsService {
     _type: RecordType,
     id: IdPathParams,
     typeFieldName: string,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
     const [headers, params] =
@@ -43,11 +45,12 @@ export class AttachmentsService {
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
-        since,
+        filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,
+      res,
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {

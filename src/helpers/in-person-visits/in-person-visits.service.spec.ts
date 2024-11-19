@@ -9,7 +9,7 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType, VisitDetails } from '../../common/constants/enumerations';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
@@ -17,12 +17,17 @@ import {
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
+import { getMockRes } from '@jest-mock/express';
 
 describe('InPersonVisitsService', () => {
   let service: InPersonVisitsService;
   let requestPreparerService: RequestPreparerService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +53,7 @@ describe('InPersonVisitsService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -66,11 +72,11 @@ describe('InPersonVisitsService', () => {
         InPersonVisitsListResponseCaseExample.items[0],
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-24' } as SinceQueryParams,
+        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, recordType, idPathParams, sinceQueryParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -83,7 +89,8 @@ describe('InPersonVisitsService', () => {
         const result = await service.getSingleInPersonVisitRecord(
           recordType,
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new InPersonVisitsEntity(data));
@@ -99,7 +106,7 @@ describe('InPersonVisitsService', () => {
       ],
     ])(
       'should return list values given good input',
-      async (data, recordType, idPathParams, sinceQueryParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -112,7 +119,8 @@ describe('InPersonVisitsService', () => {
         const result = await service.getSingleInPersonVisitRecord(
           recordType,
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));

@@ -8,23 +8,29 @@ import {
   SupportNetworkEntity,
   SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentsSingleResponseIncidentExample,
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
   let incidentsService: IncidentsService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +52,7 @@ describe('IncidentsController', () => {
 
     controller = module.get<IncidentsController>(IncidentsController);
     incidentsService = module.get<IncidentsService>(IncidentsService);
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -57,11 +64,14 @@ describe('IncidentsController', () => {
       [
         SupportNetworkSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, filterQueryParams) => {
         const IncidentsServiceSpy = jest
           .spyOn(
             incidentsService,
@@ -72,11 +82,13 @@ describe('IncidentsController', () => {
         const result =
           await controller.getSingleIncidentSupportNetworkInformationRecord(
             idPathParams,
-            sinceQueryParams,
+            res,
+            filterQueryParams,
           );
         expect(IncidentsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -88,22 +100,27 @@ describe('IncidentsController', () => {
       [
         AttachmentsSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, filterQueryParams) => {
         const incidentServiceSpy = jest
           .spyOn(incidentsService, 'getSingleIncidentAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
 
         const result = await controller.getSingleIncidentAttachmentRecord(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(incidentServiceSpy).toHaveBeenCalledWith(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

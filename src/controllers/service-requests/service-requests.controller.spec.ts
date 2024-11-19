@@ -9,22 +9,28 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentsEntity,
   AttachmentsSingleResponseSRExample,
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
+import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
   let serviceRequestsService: ServiceRequestsService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +56,7 @@ describe('ServiceRequestsController', () => {
     serviceRequestsService = module.get<ServiceRequestsService>(
       ServiceRequestsService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -61,11 +68,14 @@ describe('ServiceRequestsController', () => {
       [
         SupportNetworkSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, filterQueryParams) => {
         const SRsServiceSpy = jest
           .spyOn(
             serviceRequestsService,
@@ -76,11 +86,13 @@ describe('ServiceRequestsController', () => {
         const result =
           await controller.getSingleSRSupportNetworkInformationRecord(
             idPathParams,
-            sinceQueryParams,
+            res,
+            filterQueryParams,
           );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -92,22 +104,27 @@ describe('ServiceRequestsController', () => {
       [
         AttachmentsSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, filterQueryParams) => {
         const SRsServiceSpy = jest
           .spyOn(serviceRequestsService, 'getSingleSRAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
 
         const result = await controller.getSingleSRAttachmentRecord(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

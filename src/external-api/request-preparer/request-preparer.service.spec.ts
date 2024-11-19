@@ -4,7 +4,9 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGINATION,
+  recordCountHeaderName,
+  sinceParamName,
+  UNIFORM_RESPONSE,
   VIEW_MODE,
 } from '../../common/constants/parameter-constants';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
@@ -18,12 +20,20 @@ import {
   InternalAxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from 'axios';
+import { getMockRes } from '@jest-mock/express';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
   let httpService: HttpService;
   let tokenRefresherService: TokenRefresherService;
-  const validId = '1234ab';
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,6 +62,7 @@ describe('RequestPreparerService', () => {
     tokenRefresherService = module.get<TokenRefresherService>(
       TokenRefresherService,
     );
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -61,9 +72,9 @@ describe('RequestPreparerService', () => {
   describe('prepareHeadersAndParams tests', () => {
     it.each([
       ['spec', undefined],
-      ['spec', { id: validId }, 'workspace'],
+      ['spec', 'workspace'],
     ])(
-      'correctly prepares headers and params with no date parameter',
+      'correctly prepares headers and params with no date or row number parameter',
       (baseSearchSpec, workspace) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
@@ -76,26 +87,81 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
-          pagination: PAGINATION,
+          uniformresponse: UNIFORM_RESPONSE,
         });
       },
     );
 
-    it.each([['spec', { since: '2024-02-20' }, '02/20/2024 00:00:00']])(
-      'correctly prepares headers and params with a date parameter',
-      (baseSearchSpec, since, expectedDate) => {
+    it.each([
+      ['spec', undefined, { [startRowNumParamName]: 2 }],
+      [
+        'spec',
+        'workspace',
+        {
+          [pageSizeParamName]: 15,
+          [recordCountNeededParamName]: RecordCountNeededEnum.False,
+        },
+      ],
+    ])(
+      'correctly prepares headers and params with some parameters, but not all',
+      (baseSearchSpec, workspace, filterQueryParams) => {
+        const [headers, params] = service.prepareHeadersAndParams(
+          baseSearchSpec,
+          workspace,
+          '',
+          filterQueryParams,
+        );
+        expect(headers).toEqual({ Accept: CONTENT_TYPE });
+        expect(params).toEqual({
+          ViewMode: VIEW_MODE,
+          ChildLinks: CHILD_LINKS,
+          searchspec: baseSearchSpec + ')',
+          workspace: workspace,
+          [pageSizeParamName]: filterQueryParams[pageSizeParamName],
+          [recordCountNeededParamName]:
+            filterQueryParams[recordCountNeededParamName] ===
+            RecordCountNeededEnum.True
+              ? RecordCountNeededEnum.True
+              : undefined,
+          uniformresponse: UNIFORM_RESPONSE,
+          [startRowNumParamName]: filterQueryParams[startRowNumParamName],
+        });
+      },
+    );
+
+    it.each([
+      [
+        'spec',
+        {
+          [sinceParamName]: '2024-02-20',
+          [startRowNumParamName]: 2,
+          [pageSizeParamName]: 15,
+          [recordCountNeededParamName]: RecordCountNeededEnum.True,
+        } as FilterQueryParams,
+        '02/20/2024 00:00:00',
+      ],
+    ])(
+      'correctly prepares headers and params with all parameters filled',
+      (baseSearchSpec, filterQueryParams, expectedDate) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           undefined,
           'Updated',
-          since,
+          filterQueryParams,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
           searchspec: `${baseSearchSpec} AND [Updated] > "${expectedDate}")`,
-          pagination: PAGINATION,
+          [pageSizeParamName]: filterQueryParams[pageSizeParamName],
+          [recordCountNeededParamName]:
+            filterQueryParams[recordCountNeededParamName] ===
+            RecordCountNeededEnum.True
+              ? RecordCountNeededEnum.True
+              : undefined,
+          uniformresponse: UNIFORM_RESPONSE,
+          [startRowNumParamName]: filterQueryParams[startRowNumParamName],
         });
       },
     );
@@ -106,14 +172,16 @@ describe('RequestPreparerService', () => {
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {},
-          headers: {},
+          headers: { [recordCountHeaderName]: 2000 } as RawAxiosRequestHeaders,
           status: 200,
           statusText: 'OK',
         } as AxiosResponse<any, any>),
       );
-      const result = await service.sendGetRequest('url', {});
+      const headerSpy = jest.spyOn(res, 'setHeader');
+      const result = await service.sendGetRequest('url', {}, res);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(result.data).toEqual({});
+      expect(headerSpy).toHaveBeenCalledWith(recordCountHeaderName, 2000);
     });
 
     it.each([[500]])(
@@ -136,7 +204,7 @@ describe('RequestPreparerService', () => {
         });
 
         await expect(
-          service.sendGetRequest('url', {}, {}),
+          service.sendGetRequest('url', {}, res, {}),
         ).rejects.toHaveProperty('status', status);
         expect(spy).toHaveBeenCalledTimes(1);
       },
@@ -159,7 +227,7 @@ describe('RequestPreparerService', () => {
         );
       });
       await expect(
-        service.sendGetRequest('url', {}, {}),
+        service.sendGetRequest('url', {}, res, {}),
       ).rejects.toHaveProperty('status', 204);
       expect(spy).toHaveBeenCalledTimes(1);
     });
@@ -169,7 +237,7 @@ describe('RequestPreparerService', () => {
         .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
         .mockResolvedValueOnce(undefined);
       await expect(
-        service.sendGetRequest('url', {}, {}),
+        service.sendGetRequest('url', {}, res, {}),
       ).rejects.toHaveProperty('status', 500);
       expect(spy).toHaveBeenCalledTimes(1);
     });

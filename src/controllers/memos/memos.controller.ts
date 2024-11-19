@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Res,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,14 +16,15 @@ import {
   ApiOkResponse,
   getSchemaPath,
   ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import {
   idName,
   CONTENT_TYPE,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   AttachmentsEntity,
   NestedAttachmentsEntity,
@@ -30,10 +32,19 @@ import {
   AttachmentsListResponseMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
-import { ApiNotFoundEntity } from '../../entities/api-not-found.entity';
+import { Response } from 'express';
+import {
+  noContentResponseSwagger,
+  totalRecordCountHeadersSwagger,
+} from '../../common/constants/swagger-constants';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 
 @Controller('memo')
-@ApiNotFoundResponse({ type: ApiNotFoundEntity })
+@ApiNoContentResponse(noContentResponseSwagger)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class MemosController {
   constructor(private readonly memosService: MemosService) {}
@@ -44,9 +55,13 @@ export class MemosController {
     description:
       'Find all Attachments metadata entries related to a given Memo entity by Memo id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -75,6 +90,7 @@ export class MemosController {
       }),
     )
     id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -83,8 +99,12 @@ export class MemosController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
-    return await this.memosService.getSingleMemoAttachmentRecord(id, since);
+    return await this.memosService.getSingleMemoAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
   }
 }

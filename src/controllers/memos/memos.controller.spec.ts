@@ -8,17 +8,23 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { MemosService } from './memos.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   AttachmentsSingleResponseMemoExample,
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('MemosController', () => {
   let controller: MemosController;
   let memosService: MemosService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +44,7 @@ describe('MemosController', () => {
 
     controller = module.get<MemosController>(MemosController);
     memosService = module.get<MemosService>(MemosService);
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -49,22 +56,27 @@ describe('MemosController', () => {
       [
         AttachmentsSingleResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams) => {
+      async (data, idPathParams, filterQueryParams) => {
         const memoServiceSpy = jest
           .spyOn(memosService, 'getSingleMemoAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
 
         const result = await controller.getSingleMemoAttachmentRecord(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(memoServiceSpy).toHaveBeenCalledWith(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
@@ -17,7 +17,8 @@ import {
   CONTENT_TYPE,
   idName,
 } from '../../common/constants/parameter-constants';
-import { PostInPersonVisitDtoUpstream } from 'src/dto/post-in-person-visit.dto';
+import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -50,7 +51,8 @@ export class InPersonVisitsService {
   async getSingleInPersonVisitRecord(
     _type: RecordType,
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
     const [headers, params] =
@@ -58,11 +60,12 @@ export class InPersonVisitsService {
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
-        since,
+        filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,
+      res,
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {

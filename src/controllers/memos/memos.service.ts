@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { memoAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   AttachmentsEntity,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
+import { Response } from 'express';
 
 @Injectable()
 export class MemosService {
@@ -15,13 +16,15 @@ export class MemosService {
 
   async getSingleMemoAttachmentRecord(
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Memo,
       id,
       memoAttachmentsFieldName,
-      since,
+      res,
+      filter,
     );
   }
 }

@@ -9,13 +9,14 @@ import {
   NestedSupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   baseUrlEnvVarName,
   supportNetworkEndpointEnvVarName,
 } from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
+import { Response } from 'express';
 
 @Injectable()
 export class SupportNetworkService {
@@ -39,7 +40,8 @@ export class SupportNetworkService {
   async getSingleSupportNetworkInformationRecord(
     type: RecordType,
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ) {
     const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     const [headers, params] =
@@ -47,11 +49,12 @@ export class SupportNetworkService {
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
-        since,
+        filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
       headers,
+      res,
       params,
     );
     if ((response.data as object).hasOwnProperty('items')) {

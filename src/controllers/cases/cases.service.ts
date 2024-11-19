@@ -6,7 +6,7 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import {
   InPersonVisitsEntity,
@@ -29,6 +29,7 @@ import {
   childVisitEntityIdFieldName,
   childVisitIdirFieldName,
 } from '../../common/constants/upstream-constants';
+import { Response } from 'express';
 
 @Injectable()
 export class CasesService {
@@ -40,23 +41,27 @@ export class CasesService {
 
   async getSingleCaseSupportNetworkInformationRecord(
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
       id,
-      since,
+      res,
+      filter,
     );
   }
 
   async getSingleCaseInPersonVisitRecord(
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
-      since,
+      res,
+      filter,
     );
   }
 
@@ -78,13 +83,15 @@ export class CasesService {
 
   async getSingleCaseAttachmentRecord(
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Case,
       id,
       casesAttachmentsFieldName,
-      since,
+      res,
+      filter,
     );
   }
 }

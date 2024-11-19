@@ -6,7 +6,7 @@ export class IdPathParams {
   @Matches(idRegex)
   @ApiProperty({
     example: 'Entity-Id-Here',
-    description: 'The Entity Id for your selected record type',
+    description: 'The Entity Id for your selected record type.',
   })
   [idName]: string;
 }

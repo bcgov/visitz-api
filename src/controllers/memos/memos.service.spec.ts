@@ -15,13 +15,17 @@ import { RecordType } from '../../common/constants/enumerations';
 import {
   idName,
   memoAttachmentsFieldName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('MemosService', () => {
   let service: MemosService;
   let attachmentsService: AttachmentsService;
+  const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +49,7 @@ describe('MemosService', () => {
 
     service = module.get<MemosService>(MemosService);
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -56,25 +61,30 @@ describe('MemosService', () => {
       [
         AttachmentsSingleResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01' } as SinceQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
         memoAttachmentsFieldName,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, typeFieldName) => {
+      async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
 
         const result = await service.getSingleMemoAttachmentRecord(
           idPathParams,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.Memo,
           idPathParams,
           typeFieldName,
-          sinceQueryParams,
+          res,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

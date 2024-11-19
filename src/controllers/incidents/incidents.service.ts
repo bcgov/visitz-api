@@ -6,13 +6,14 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { incidentsAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
   AttachmentsEntity,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
+import { Response } from 'express';
 
 @Injectable()
 export class IncidentsService {
@@ -23,24 +24,28 @@ export class IncidentsService {
 
   async getSingleIncidentSupportNetworkInformationRecord(
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Incident,
       id,
-      since,
+      res,
+      filter,
     );
   }
 
   async getSingleIncidentAttachmentRecord(
     id: IdPathParams,
-    since?: SinceQueryParams,
+    res: Response,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Incident,
       id,
       incidentsAttachmentsFieldName,
-      since,
+      res,
+      filter,
     );
   }
 }
