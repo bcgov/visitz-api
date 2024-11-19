@@ -15,10 +15,12 @@ import { RecordType } from '../../common/constants/enumerations';
 import {
   idName,
   memoAttachmentsFieldName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -59,7 +61,10 @@ describe('MemosService', () => {
       [
         AttachmentsSingleResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01', startRowNumParamName: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
         memoAttachmentsFieldName,
       ],
     ])(

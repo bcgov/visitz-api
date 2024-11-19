@@ -5,6 +5,7 @@ import {
   CONTENT_TYPE,
   recordCountHeaderName,
   UNIFORM_RESPONSE,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -45,9 +46,9 @@ export class RequestPreparerService {
     if (
       sinceFieldName === undefined ||
       filter === undefined ||
-      typeof filter.since !== 'string' ||
+      typeof filter[sinceParamName] !== 'string' ||
       (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
-        filter.since,
+        filter[sinceParamName],
       )) === undefined
     ) {
       searchSpec = searchSpec + `)`;

@@ -31,6 +31,7 @@ import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CONTENT_TYPE,
   idName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -64,7 +65,7 @@ export class IncidentsController {
     description:
       'Find all Support Network entries related to a given Incident entity by Incident id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -123,7 +124,7 @@ export class IncidentsController {
     description:
       'Find all Attachments metadata entries related to a given Incident entity by Incident id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })

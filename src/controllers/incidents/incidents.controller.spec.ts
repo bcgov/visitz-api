@@ -15,7 +15,10 @@ import { SupportNetworkService } from '../../helpers/support-network/support-net
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentsSingleResponseIncidentExample,
@@ -61,7 +64,10 @@ describe('IncidentsController', () => {
       [
         SupportNetworkSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -94,7 +100,10 @@ describe('IncidentsController', () => {
       [
         AttachmentsSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',

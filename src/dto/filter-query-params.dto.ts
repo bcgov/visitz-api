@@ -19,6 +19,7 @@ import {
   startRowNumMin,
   startRowNumParamName,
 } from '../common/constants/upstream-constants';
+import { sinceParamName } from '../common/constants/parameter-constants';
 
 export class FilterQueryParams {
   @IsOptional()
@@ -31,7 +32,7 @@ export class FilterQueryParams {
       'The ISO8601 formatted date to narrow down searches with, expected to be provided in UTC.' +
       ' Only results after the selected datetime will appear.',
   })
-  since?: string;
+  [sinceParamName]?: string;
 
   @IsOptional()
   @IsEnum(RecordCountNeededEnum)
@@ -56,6 +57,7 @@ export class FilterQueryParams {
     default: pageSizeDefault,
     maximum: pageSizeMax,
     minimum: pageSizeMin,
+    format: 'integer',
     description:
       `The maximum number of records to return. This parameter has a maximum of` +
       ` ${pageSizeMax}. Used to enable pagination.`,
@@ -70,6 +72,7 @@ export class FilterQueryParams {
     example: 300,
     default: startRowNumDefault,
     minimum: startRowNumMin,
+    format: 'integer',
     description:
       `The row from which to start displaying results, defaults to ${startRowNumDefault}. Records are returned in batches based` +
       `on the PageSize, or less if that quantity of further records are unavailable from the provided start point.` +

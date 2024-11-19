@@ -22,7 +22,10 @@ import {
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentsSingleResponseCaseExample,
@@ -73,7 +76,10 @@ describe('CasesController', () => {
       [
         SupportNetworkSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -103,7 +109,10 @@ describe('CasesController', () => {
       [
         InPersonVisitsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -164,7 +173,10 @@ describe('CasesController', () => {
       [
         AttachmentsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',

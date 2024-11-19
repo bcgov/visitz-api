@@ -8,7 +8,10 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { MemosService } from './memos.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
@@ -16,6 +19,7 @@ import {
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -52,7 +56,10 @@ describe('MemosController', () => {
       [
         AttachmentsSingleResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', startRowNumParamName: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',

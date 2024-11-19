@@ -17,6 +17,7 @@ import { RequestPreparerService } from '../../external-api/request-preparer/requ
 import {
   idName,
   incidentsAttachmentsFieldName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -69,7 +70,10 @@ describe('IncidentsService', () => {
       [
         SupportNetworkSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -103,7 +107,10 @@ describe('IncidentsService', () => {
       [
         AttachmentsSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
         incidentsAttachmentsFieldName,
       ],
     ])(

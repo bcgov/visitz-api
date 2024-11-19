@@ -3,6 +3,7 @@ const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
 const UNIFORM_RESPONSE = 'y';
 const recordCountHeaderName = 'total-record-count';
+const sinceParamName = 'since';
 
 const idRegex = /[0-9\-A-Za-z]+/;
 const idName = 'rowId';
@@ -18,6 +19,7 @@ export {
   CONTENT_TYPE,
   UNIFORM_RESPONSE,
   recordCountHeaderName,
+  sinceParamName,
   idRegex,
   idName,
   casesAttachmentsFieldName,

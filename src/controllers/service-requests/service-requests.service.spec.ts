@@ -16,6 +16,7 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   idName,
+  sinceParamName,
   srAttachmentsFieldName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
@@ -70,7 +71,10 @@ describe('ServiceRequestsService', () => {
       [
         SupportNetworkSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -103,7 +107,10 @@ describe('ServiceRequestsService', () => {
       [
         AttachmentsSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
         srAttachmentsFieldName,
       ],
     ])(

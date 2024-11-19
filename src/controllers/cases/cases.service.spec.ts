@@ -24,6 +24,7 @@ import {
 import {
   casesAttachmentsFieldName,
   idName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -81,7 +82,7 @@ describe('CasesService', () => {
       [
         SupportNetworkSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01' } as FilterQueryParams,
+        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -115,7 +116,10 @@ describe('CasesService', () => {
       [
         InPersonVisitsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -177,7 +181,7 @@ describe('CasesService', () => {
       [
         AttachmentsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01' } as FilterQueryParams,
+        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
         casesAttachmentsFieldName,
       ],
     ])(

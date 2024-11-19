@@ -34,6 +34,7 @@ import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CONTENT_TYPE,
   idName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -75,7 +76,7 @@ export class CasesController {
     description:
       'Find all Support Network entries related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -135,7 +136,7 @@ export class CasesController {
     description:
       'Find all In Person Child / Youth Visits related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -238,7 +239,7 @@ export class CasesController {
     description:
       'Find all Attachments metadata entries related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })

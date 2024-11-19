@@ -14,7 +14,10 @@ import { SupportNetworkService } from '../../helpers/support-network/support-net
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentsEntity,
@@ -22,6 +25,7 @@ import {
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { getMockRes } from '@jest-mock/express';
+import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -64,7 +68,10 @@ describe('ServiceRequestsController', () => {
       [
         SupportNetworkSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', startRowNumParamName: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
@@ -97,7 +104,10 @@ describe('ServiceRequestsController', () => {
       [
         AttachmentsSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02', startRowNumParamName: 0 } as FilterQueryParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',

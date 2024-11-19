@@ -5,6 +5,7 @@ import {
   CHILD_LINKS,
   CONTENT_TYPE,
   recordCountHeaderName,
+  sinceParamName,
   UNIFORM_RESPONSE,
   VIEW_MODE,
 } from '../../common/constants/parameter-constants';
@@ -132,7 +133,7 @@ describe('RequestPreparerService', () => {
       [
         'spec',
         {
-          since: '2024-02-20',
+          [sinceParamName]: '2024-02-20',
           [startRowNumParamName]: 2,
           [pageSizeParamName]: 15,
           [recordCountNeededParamName]: RecordCountNeededEnum.True,

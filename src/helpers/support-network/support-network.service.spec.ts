@@ -17,7 +17,10 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { getMockRes } from '@jest-mock/express';
 
 describe('SupportNetworkService', () => {
@@ -68,7 +71,7 @@ describe('SupportNetworkService', () => {
         SupportNetworkListResponseSRExample.items[0],
         RecordType.SR,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-24' } as FilterQueryParams,
+        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',

@@ -17,7 +17,10 @@ import {
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  sinceParamName,
+} from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { getMockRes } from '@jest-mock/express';
 
@@ -69,7 +72,7 @@ describe('InPersonVisitsService', () => {
         InPersonVisitsListResponseCaseExample.items[0],
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-24' } as FilterQueryParams,
+        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',

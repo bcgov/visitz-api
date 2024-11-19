@@ -11,6 +11,7 @@ import {
   casesAttachmentsFieldName,
   idName,
   incidentsAttachmentsFieldName,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { AxiosResponse } from 'axios';
 import {
@@ -92,7 +93,7 @@ describe('AttachmentsService', () => {
         RecordType.Incident,
         { [idName]: 'id' },
         incidentsAttachmentsFieldName,
-        { since: '2023-11-13' },
+        { [sinceParamName]: '2023-11-13' },
         AttachmentsListResponseIncidentExample,
       ],
     ])(

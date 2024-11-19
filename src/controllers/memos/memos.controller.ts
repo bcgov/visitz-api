@@ -21,6 +21,7 @@ import {
 import {
   idName,
   CONTENT_TYPE,
+  sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -54,7 +55,7 @@ export class MemosController {
     description:
       'Find all Attachments metadata entries related to a given Memo entity by Memo id.',
   })
-  @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
