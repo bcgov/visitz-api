@@ -27,7 +27,7 @@ import {
   SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CONTENT_TYPE,
   idName,
@@ -45,8 +45,11 @@ import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -62,6 +65,8 @@ export class IncidentsController {
       'Find all Support Network entries related to a given Incident entity by Incident id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
@@ -103,22 +108,12 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 
@@ -129,6 +124,8 @@ export class IncidentsController {
       'Find all Attachments metadata entries related to a given Incident entity by Incident id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
@@ -170,22 +167,12 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.incidentsService.getSingleIncidentAttachmentRecord(
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 }

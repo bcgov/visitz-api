@@ -9,7 +9,7 @@ import {
   SupportNetworkEntity,
   SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
@@ -24,7 +24,6 @@ import {
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('IncidentsService', () => {
@@ -70,12 +69,11 @@ describe('IncidentsService', () => {
       [
         SupportNetworkSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const supportNetworkSpy = jest
           .spyOn(
             supportNetworkService,
@@ -87,15 +85,13 @@ describe('IncidentsService', () => {
           await service.getSingleIncidentSupportNetworkInformationRecord(
             idPathParams,
             res,
-            sinceQueryParams,
-            startRowNum,
+            filterQueryParams,
           );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Incident,
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -107,19 +103,12 @@ describe('IncidentsService', () => {
       [
         AttachmentsSingleResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01' } as SinceQueryParams,
+        { since: '2024-12-01', [startRowNumParamName]: 0 } as FilterQueryParams,
         incidentsAttachmentsFieldName,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (
-        data,
-        idPathParams,
-        sinceQueryParams,
-        typeFieldName,
-        startRowNum,
-      ) => {
+      async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -127,16 +116,14 @@ describe('IncidentsService', () => {
         const result = await service.getSingleIncidentAttachmentRecord(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.Incident,
           idPathParams,
           typeFieldName,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

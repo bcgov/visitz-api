@@ -10,14 +10,12 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { MemosService } from './memos.service';
 import { idName } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   AttachmentsSingleResponseMemoExample,
   AttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -54,12 +52,11 @@ describe('MemosController', () => {
       [
         AttachmentsSingleResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2020-02-02', startRowNumParamName: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const memoServiceSpy = jest
           .spyOn(memosService, 'getSingleMemoAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -67,14 +64,12 @@ describe('MemosController', () => {
         const result = await controller.getSingleMemoAttachmentRecord(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(memoServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

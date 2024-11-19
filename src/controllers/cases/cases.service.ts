@@ -6,7 +6,7 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import {
   InPersonVisitsEntity,
@@ -30,7 +30,6 @@ import {
   childVisitIdirFieldName,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class CasesService {
@@ -43,30 +42,26 @@ export class CasesService {
   async getSingleCaseSupportNetworkInformationRecord(
     id: IdPathParams,
     res: Response,
-    since?: SinceQueryParams,
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 
   async getSingleCaseInPersonVisitRecord(
     id: IdPathParams,
     res: Response,
-    since?: SinceQueryParams,
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 
@@ -89,16 +84,14 @@ export class CasesService {
   async getSingleCaseAttachmentRecord(
     id: IdPathParams,
     res: Response,
-    since?: SinceQueryParams,
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Case,
       id,
       casesAttachmentsFieldName,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 }

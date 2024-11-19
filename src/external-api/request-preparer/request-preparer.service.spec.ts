@@ -4,8 +4,6 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGE_SIZE,
-  RECORD_COUNT_NEEDED,
   recordCountHeaderName,
   UNIFORM_RESPONSE,
   VIEW_MODE,
@@ -22,7 +20,13 @@ import {
   RawAxiosRequestHeaders,
 } from 'axios';
 import { getMockRes } from '@jest-mock/express';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
@@ -82,8 +86,6 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
-          PageSize: PAGE_SIZE,
-          recordcountneeded: RECORD_COUNT_NEEDED,
           uniformresponse: UNIFORM_RESPONSE,
         });
       },
@@ -91,16 +93,22 @@ describe('RequestPreparerService', () => {
 
     it.each([
       ['spec', undefined, { [startRowNumParamName]: 2 }],
-      ['spec', 'workspace', { [startRowNumParamName]: 4 }],
+      [
+        'spec',
+        'workspace',
+        {
+          [pageSizeParamName]: 15,
+          [recordCountNeededParamName]: RecordCountNeededEnum.False,
+        },
+      ],
     ])(
-      'correctly prepares headers and params with a row number parameter but no date',
-      (baseSearchSpec, workspace, startRowNum) => {
+      'correctly prepares headers and params with some parameters, but not all',
+      (baseSearchSpec, workspace, filterQueryParams) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           workspace,
           '',
-          undefined,
-          startRowNum,
+          filterQueryParams,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
@@ -108,43 +116,51 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
-          PageSize: PAGE_SIZE,
-          recordcountneeded: RECORD_COUNT_NEEDED,
+          [pageSizeParamName]: filterQueryParams[pageSizeParamName],
+          [recordCountNeededParamName]:
+            filterQueryParams[recordCountNeededParamName] ===
+            RecordCountNeededEnum.True
+              ? RecordCountNeededEnum.True
+              : undefined,
           uniformresponse: UNIFORM_RESPONSE,
-          [startRowNumParamName]: startRowNum[startRowNumParamName],
+          [startRowNumParamName]: filterQueryParams[startRowNumParamName],
         });
       },
     );
 
     it.each([
-      ['spec', { since: '2024-02-20' }, undefined, '02/20/2024 00:00:00'],
       [
         'spec',
-        { since: '2024-02-20' },
-        { [startRowNumParamName]: 2 },
+        {
+          since: '2024-02-20',
+          [startRowNumParamName]: 2,
+          [pageSizeParamName]: 15,
+          [recordCountNeededParamName]: RecordCountNeededEnum.True,
+        } as FilterQueryParams,
         '02/20/2024 00:00:00',
       ],
     ])(
-      'correctly prepares headers and params with a date and optionally row parameter',
-      (baseSearchSpec, since, startRowNum, expectedDate) => {
+      'correctly prepares headers and params with all parameters filled',
+      (baseSearchSpec, filterQueryParams, expectedDate) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           undefined,
           'Updated',
-          since,
-          startRowNum,
+          filterQueryParams,
         );
         expect(headers).toEqual({ Accept: CONTENT_TYPE });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
           searchspec: `${baseSearchSpec} AND [Updated] > "${expectedDate}")`,
-          PageSize: PAGE_SIZE,
-          recordcountneeded: RECORD_COUNT_NEEDED,
+          [pageSizeParamName]: filterQueryParams[pageSizeParamName],
+          [recordCountNeededParamName]:
+            filterQueryParams[recordCountNeededParamName] ===
+            RecordCountNeededEnum.True
+              ? RecordCountNeededEnum.True
+              : undefined,
           uniformresponse: UNIFORM_RESPONSE,
-          [startRowNumParamName]: startRowNum?.[startRowNumParamName]
-            ? startRowNum?.[startRowNumParamName]
-            : undefined,
+          [startRowNumParamName]: filterQueryParams[startRowNumParamName],
         });
       },
     );

@@ -30,4 +30,15 @@ enum VisitDetails {
   NotPrivateCaregiver = 'Not private - Visit with caregiver',
 }
 
-export { RecordType, EntityType, RecordEntityMap, VisitDetails };
+enum RecordCountNeededEnum {
+  True = 'true',
+  False = 'false',
+}
+
+export {
+  RecordType,
+  EntityType,
+  RecordEntityMap,
+  VisitDetails,
+  RecordCountNeededEnum,
+};

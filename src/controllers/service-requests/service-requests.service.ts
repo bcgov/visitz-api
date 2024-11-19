@@ -6,7 +6,7 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { srAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
@@ -14,7 +14,6 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -26,31 +25,27 @@ export class ServiceRequestsService {
   async getSingleSRSupportNetworkInformationRecord(
     id: IdPathParams,
     res: Response,
-    since?: SinceQueryParams,
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.SR,
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 
   async getSingleSRAttachmentRecord(
     id: IdPathParams,
     res: Response,
-    since?: SinceQueryParams,
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.SR,
       id,
       srAttachmentsFieldName,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 }

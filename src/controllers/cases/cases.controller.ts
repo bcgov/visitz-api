@@ -30,7 +30,7 @@ import {
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CONTENT_TYPE,
   idName,
@@ -53,6 +53,8 @@ import {
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
 import {
   idirUsernameHeaderField,
+  pageSizeParamName,
+  recordCountNeededParamName,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
 import { Request, Response } from 'express';
@@ -60,7 +62,6 @@ import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -75,6 +76,8 @@ export class CasesController {
       'Find all Support Network entries related to a given Case entity by Case id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
@@ -117,22 +120,12 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 
@@ -143,6 +136,8 @@ export class CasesController {
       'Find all In Person Child / Youth Visits related to a given Case entity by Case id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(InPersonVisitsEntity, NestedInPersonVisitsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
@@ -185,22 +180,12 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
     return await this.casesService.getSingleCaseInPersonVisitRecord(
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 
@@ -254,6 +239,8 @@ export class CasesController {
       'Find all Attachments metadata entries related to a given Case entity by Case id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
@@ -296,22 +283,12 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.casesService.getSingleCaseAttachmentRecord(
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 }

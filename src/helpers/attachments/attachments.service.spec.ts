@@ -97,7 +97,7 @@ describe('AttachmentsService', () => {
       ],
     ])(
       'should return a nested attachment entity given good inputs',
-      async (type, id, typeFieldName, since, data) => {
+      async (type, id, typeFieldName, filter, data) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -111,7 +111,7 @@ describe('AttachmentsService', () => {
           id,
           typeFieldName,
           res,
-          since,
+          filter,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedAttachmentsEntity(data));

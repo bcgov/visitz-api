@@ -9,6 +9,13 @@ const childVisitType = 'In Person Child Youth';
 const childVisitIdirFieldName = 'Login Name';
 const childVisitEntityIdFieldName = 'Parent Id';
 const startRowNumParamName = 'StartRowNum';
+const recordCountNeededParamName = 'recordcountneeded';
+const pageSizeParamName = 'PageSize';
+const pageSizeMin = 1;
+const pageSizeMax = 100;
+const pageSizeDefault = 10;
+const startRowNumMin = 0;
+const startRowNumDefault = 0;
 
 export {
   baseUrlEnvVarName,
@@ -22,4 +29,11 @@ export {
   childVisitIdirFieldName,
   childVisitEntityIdFieldName,
   startRowNumParamName,
+  recordCountNeededParamName,
+  pageSizeParamName,
+  pageSizeMin,
+  pageSizeMax,
+  pageSizeDefault,
+  startRowNumMin,
+  startRowNumDefault,
 };

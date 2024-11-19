@@ -9,7 +9,7 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType, VisitDetails } from '../../common/constants/enumerations';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
@@ -69,11 +69,11 @@ describe('InPersonVisitsService', () => {
         InPersonVisitsListResponseCaseExample.items[0],
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-24' } as SinceQueryParams,
+        { since: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, recordType, idPathParams, sinceQueryParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -87,7 +87,7 @@ describe('InPersonVisitsService', () => {
           recordType,
           idPathParams,
           res,
-          sinceQueryParams,
+          filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new InPersonVisitsEntity(data));
@@ -103,7 +103,7 @@ describe('InPersonVisitsService', () => {
       ],
     ])(
       'should return list values given good input',
-      async (data, recordType, idPathParams, sinceQueryParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -117,7 +117,7 @@ describe('InPersonVisitsService', () => {
           recordType,
           idPathParams,
           res,
-          sinceQueryParams,
+          filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));

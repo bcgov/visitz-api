@@ -14,7 +14,7 @@ import {
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { idName } from '../../common/constants/parameter-constants';
@@ -68,11 +68,11 @@ describe('SupportNetworkService', () => {
         SupportNetworkListResponseSRExample.items[0],
         RecordType.SR,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-24' } as SinceQueryParams,
+        { since: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, recordType, idPathParams, sinceQueryParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -86,7 +86,7 @@ describe('SupportNetworkService', () => {
           recordType,
           idPathParams,
           res,
-          sinceQueryParams,
+          filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new SupportNetworkEntity(data));
@@ -102,7 +102,7 @@ describe('SupportNetworkService', () => {
       ],
     ])(
       'should return list values given good input',
-      async (data, recordType, idPathParams, sinceQueryParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -116,7 +116,7 @@ describe('SupportNetworkService', () => {
           recordType,
           idPathParams,
           res,
-          sinceQueryParams,
+          filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedSupportNetworkEntity(data));

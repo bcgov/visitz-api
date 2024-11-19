@@ -3,12 +3,10 @@ import {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGE_SIZE,
-  RECORD_COUNT_NEEDED,
   recordCountHeaderName,
   UNIFORM_RESPONSE,
 } from '../../common/constants/parameter-constants';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
 import { HttpService } from '@nestjs/axios';
@@ -16,8 +14,12 @@ import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 
 @Injectable()
 export class RequestPreparerService {
@@ -36,17 +38,16 @@ export class RequestPreparerService {
     baseSearchSpec: string,
     workspace: string | undefined,
     sinceFieldName: string | undefined,
-    since?: SinceQueryParams,
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ) {
     let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
     if (
       sinceFieldName === undefined ||
-      since === undefined ||
-      typeof since.since !== 'string' ||
+      filter === undefined ||
+      typeof filter.since !== 'string' ||
       (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
-        since.since,
+        filter.since,
       )) === undefined
     ) {
       searchSpec = searchSpec + `)`;
@@ -58,18 +59,21 @@ export class RequestPreparerService {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
-      recordcountneeded: RECORD_COUNT_NEEDED,
-      PageSize: PAGE_SIZE,
       uniformresponse: UNIFORM_RESPONSE,
     };
     if (typeof workspace !== 'undefined') {
       params['workspace'] = workspace;
     }
-    if (
-      startRowNum !== undefined &&
-      typeof startRowNum.StartRowNum === 'number'
-    ) {
-      params[startRowNumParamName] = startRowNum.StartRowNum;
+    if (filter !== undefined) {
+      if (filter[recordCountNeededParamName] === RecordCountNeededEnum.True) {
+        params[recordCountNeededParamName] = filter[recordCountNeededParamName];
+      }
+      if (typeof filter[pageSizeParamName] === 'number') {
+        params[pageSizeParamName] = filter[pageSizeParamName];
+      }
+      if (typeof filter[startRowNumParamName] === 'number') {
+        params[startRowNumParamName] = filter[startRowNumParamName];
+      }
     }
     const headers = {
       Accept: CONTENT_TYPE,

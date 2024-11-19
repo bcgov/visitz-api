@@ -8,7 +8,7 @@ import {
   SupportNetworkEntity,
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
@@ -34,7 +34,6 @@ import {
   idirUsernameHeaderField,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -74,12 +73,11 @@ describe('CasesController', () => {
       [
         SupportNetworkSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseSupportNetworkInformationRecord')
           .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
@@ -88,14 +86,12 @@ describe('CasesController', () => {
           await controller.getSingleCaseSupportNetworkInformationRecord(
             idPathParams,
             res,
-            sinceQueryParams,
-            startRowNum,
+            filterQueryParams,
           );
         expect(casesServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -107,12 +103,11 @@ describe('CasesController', () => {
       [
         InPersonVisitsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseInPersonVisitRecord')
           .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
@@ -120,14 +115,12 @@ describe('CasesController', () => {
         const result = await controller.getSingleCaseInPersonVisitRecord(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(casesServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
       },
@@ -171,12 +164,11 @@ describe('CasesController', () => {
       [
         AttachmentsSingleResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2020-02-02', [startRowNumParamName]: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const caseServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -184,14 +176,12 @@ describe('CasesController', () => {
         const result = await controller.getSingleCaseAttachmentRecord(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(caseServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

@@ -9,7 +9,7 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -22,8 +22,6 @@ import {
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { getMockRes } from '@jest-mock/express';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -66,12 +64,11 @@ describe('ServiceRequestsController', () => {
       [
         SupportNetworkSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2020-02-02', startRowNumParamName: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const SRsServiceSpy = jest
           .spyOn(
             serviceRequestsService,
@@ -83,14 +80,12 @@ describe('ServiceRequestsController', () => {
           await controller.getSingleSRSupportNetworkInformationRecord(
             idPathParams,
             res,
-            sinceQueryParams,
-            startRowNum,
+            filterQueryParams,
           );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -102,12 +97,11 @@ describe('ServiceRequestsController', () => {
       [
         AttachmentsSingleResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2020-02-02' } as SinceQueryParams,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
+        { since: '2020-02-02', startRowNumParamName: 0 } as FilterQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, idPathParams, sinceQueryParams, startRowNum) => {
+      async (data, idPathParams, filterQueryParams) => {
         const SRsServiceSpy = jest
           .spyOn(serviceRequestsService, 'getSingleSRAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -115,14 +109,12 @@ describe('ServiceRequestsController', () => {
         const result = await controller.getSingleSRAttachmentRecord(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

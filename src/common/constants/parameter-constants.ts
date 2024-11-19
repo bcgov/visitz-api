@@ -1,8 +1,6 @@
 const VIEW_MODE = 'Catalog';
 const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
-const PAGE_SIZE = 100;
-const RECORD_COUNT_NEEDED = 'true';
 const UNIFORM_RESPONSE = 'y';
 const recordCountHeaderName = 'total-record-count';
 
@@ -18,8 +16,6 @@ export {
   VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
-  PAGE_SIZE,
-  RECORD_COUNT_NEEDED,
   UNIFORM_RESPONSE,
   recordCountHeaderName,
   idRegex,

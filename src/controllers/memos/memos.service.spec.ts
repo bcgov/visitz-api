@@ -17,10 +17,8 @@ import {
   memoAttachmentsFieldName,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { getMockRes } from '@jest-mock/express';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -61,19 +59,12 @@ describe('MemosService', () => {
       [
         AttachmentsSingleResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
-        { since: '2024-12-01' } as SinceQueryParams,
+        { since: '2024-12-01', startRowNumParamName: 0 } as FilterQueryParams,
         memoAttachmentsFieldName,
-        { [startRowNumParamName]: 0 } as StartRowNumQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (
-        data,
-        idPathParams,
-        sinceQueryParams,
-        typeFieldName,
-        startRowNum,
-      ) => {
+      async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
           .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
@@ -81,16 +72,14 @@ describe('MemosService', () => {
         const result = await service.getSingleMemoAttachmentRecord(
           idPathParams,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
           RecordType.Memo,
           idPathParams,
           typeFieldName,
           res,
-          sinceQueryParams,
-          startRowNum,
+          filterQueryParams,
         );
         expect(result).toEqual(new AttachmentsEntity(data));
       },

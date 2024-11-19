@@ -23,7 +23,7 @@ import {
   CONTENT_TYPE,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
-import { SinceQueryParams } from '../../dto/since-query-params.dto';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   AttachmentsEntity,
   NestedAttachmentsEntity,
@@ -36,8 +36,11 @@ import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
-import { StartRowNumQueryParams } from '../../dto/start-row-num-query-params.dto';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import {
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 
 @Controller('memo')
 @ApiNoContentResponse(noContentResponseSwagger)
@@ -52,6 +55,8 @@ export class MemosController {
       'Find all Attachments metadata entries related to a given Memo entity by Memo id.',
   })
   @ApiQuery({ name: 'since', required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
   @ApiOkResponse({
@@ -93,22 +98,12 @@ export class MemosController {
         skipMissingProperties: true,
       }),
     )
-    since?: SinceQueryParams,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    startRowNum?: StartRowNumQueryParams,
+    filter?: FilterQueryParams,
   ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
     return await this.memosService.getSingleMemoAttachmentRecord(
       id,
       res,
-      since,
-      startRowNum,
+      filter,
     );
   }
 }
