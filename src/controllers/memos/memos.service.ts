@@ -3,10 +3,7 @@ import { RecordType } from '../../common/constants/enumerations';
 import { memoAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
-import {
-  AttachmentsEntity,
-  NestedAttachmentsEntity,
-} from '../../entities/attachments.entity';
+import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { Response } from 'express';
 
@@ -18,7 +15,7 @@ export class MemosService {
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+  ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Memo,
       id,

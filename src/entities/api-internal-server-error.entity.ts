@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
+@ApiSchema({ name: 'InternalServerError' })
 export class ApiInternalServerErrorEntity {
   @Expose()
   @ApiProperty({ example: 500 })

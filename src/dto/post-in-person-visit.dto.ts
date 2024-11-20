@@ -1,6 +1,6 @@
 import { Expose, Transform } from 'class-transformer';
 import { isPastISO8601Date } from '../helpers/utilities/utilities.service';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { VisitDetails } from '../common/constants/enumerations';
 import {
@@ -9,6 +9,7 @@ import {
   childVisitType,
 } from '../common/constants/upstream-constants';
 
+@ApiSchema({ name: 'PostInPersonVisitRequest' })
 export class PostInPersonVisitDto {
   @Transform(({ value }) => {
     return isPastISO8601Date(value);

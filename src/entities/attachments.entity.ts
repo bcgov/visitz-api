@@ -5,7 +5,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
  * Examples
  */
 // TODO: Replace 'string' with something meaningful when I can actually hit the endpoint
-export const AttachmentsSingleResponseCaseExample = {
+const AttachmentsSingleResponseCaseExample = {
   'Application No': '',
   Categorie: 'string',
   Category: 'string',
@@ -46,19 +46,19 @@ export const AttachmentsSingleResponseCaseExample = {
   Id: 'string',
 };
 
-export const AttachmentsSingleResponseIncidentExample = {
+const AttachmentsSingleResponseIncidentExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Incident No': 'Incident-Id-Here',
 };
 
-export const AttachmentsSingleResponseSRExample = {
+const AttachmentsSingleResponseSRExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Application No': 'SR-Id-Here',
 };
 
-export const AttachmentsSingleResponseMemoExample = {
+const AttachmentsSingleResponseMemoExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   MemoNumber: 'Memo-Id-Here',
@@ -108,8 +108,8 @@ export const AttachmentsListResponseMemoExample = {
  * Model definitions
  */
 @Exclude()
-@ApiSchema({ name: 'AttachmentsSingleResponse' })
-export class AttachmentsEntity {
+@ApiSchema({ name: 'Attachment' })
+class AttachmentsEntity {
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Name'],
   })
@@ -349,7 +349,7 @@ export class AttachmentsEntity {
 }
 
 @Exclude()
-@ApiSchema({ name: 'AttachmentsListResponse' })
+@ApiSchema({ name: 'AttachmentsResponse' })
 export class NestedAttachmentsEntity {
   @Expose()
   @ApiProperty({ type: AttachmentsEntity, isArray: true })

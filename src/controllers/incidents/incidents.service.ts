@@ -1,18 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { RecordType } from '../../common/constants/enumerations';
-import {
-  NestedSupportNetworkEntity,
-  SupportNetworkEntity,
-} from '../../entities/support-network.entity';
+import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { incidentsAttachmentsFieldName } from '../../common/constants/parameter-constants';
-import {
-  AttachmentsEntity,
-  NestedAttachmentsEntity,
-} from '../../entities/attachments.entity';
+import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
 import { Response } from 'express';
 
 @Injectable()
@@ -26,7 +20,7 @@ export class IncidentsService {
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
+  ): Promise<NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Incident,
       id,
@@ -39,7 +33,7 @@ export class IncidentsService {
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+  ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Incident,
       id,

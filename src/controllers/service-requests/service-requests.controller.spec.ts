@@ -5,8 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServiceRequestsController } from './service-requests.controller';
 import { ServiceRequestsService } from './service-requests.service';
 import {
-  SupportNetworkEntity,
-  SupportNetworkSingleResponseSRExample,
+  NestedSupportNetworkEntity,
+  SupportNetworkListResponseSRExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -20,8 +20,8 @@ import {
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
-  AttachmentsEntity,
-  AttachmentsSingleResponseSRExample,
+  AttachmentsListResponseSRExample,
+  NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { getMockRes } from '@jest-mock/express';
@@ -66,7 +66,7 @@ describe('ServiceRequestsController', () => {
   describe('getSingleSRSupportNetworkInformationRecord tests', () => {
     it.each([
       [
-        SupportNetworkSingleResponseSRExample,
+        SupportNetworkListResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2020-02-02',
@@ -74,14 +74,16 @@ describe('ServiceRequestsController', () => {
         } as FilterQueryParams,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const SRsServiceSpy = jest
           .spyOn(
             serviceRequestsService,
             'getSingleSRSupportNetworkInformationRecord',
           )
-          .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
 
         const result =
           await controller.getSingleSRSupportNetworkInformationRecord(
@@ -94,7 +96,7 @@ describe('ServiceRequestsController', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new SupportNetworkEntity(data));
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });
@@ -102,7 +104,7 @@ describe('ServiceRequestsController', () => {
   describe('getSingleSRAttachmentRecord tests', () => {
     it.each([
       [
-        AttachmentsSingleResponseSRExample,
+        AttachmentsListResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2020-02-02',
@@ -110,11 +112,13 @@ describe('ServiceRequestsController', () => {
         } as FilterQueryParams,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const SRsServiceSpy = jest
           .spyOn(serviceRequestsService, 'getSingleSRAttachmentRecord')
-          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
 
         const result = await controller.getSingleSRAttachmentRecord(
           idPathParams,
@@ -126,7 +130,7 @@ describe('ServiceRequestsController', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new AttachmentsEntity(data));
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

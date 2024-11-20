@@ -6,8 +6,8 @@ import { IncidentsService } from './incidents.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
-  SupportNetworkEntity,
-  SupportNetworkSingleResponseIncidentExample,
+  NestedSupportNetworkEntity,
+  SupportNetworkListResponseIncidentExample,
 } from '../../entities/support-network.entity';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { IdPathParams } from '../../dto/id-path-params.dto';
@@ -21,8 +21,8 @@ import {
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
-  AttachmentsSingleResponseIncidentExample,
-  AttachmentsEntity,
+  AttachmentsListResponseIncidentExample,
+  NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
@@ -68,7 +68,7 @@ describe('IncidentsService', () => {
   describe('getSingleIncidentSupportNetworkInformationRecord tests', () => {
     it.each([
       [
-        SupportNetworkSingleResponseIncidentExample,
+        SupportNetworkListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2024-12-01',
@@ -76,14 +76,16 @@ describe('IncidentsService', () => {
         } as FilterQueryParams,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const supportNetworkSpy = jest
           .spyOn(
             supportNetworkService,
             'getSingleSupportNetworkInformationRecord',
           )
-          .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
 
         const result =
           await service.getSingleIncidentSupportNetworkInformationRecord(
@@ -97,7 +99,7 @@ describe('IncidentsService', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new SupportNetworkEntity(data));
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });
@@ -105,7 +107,7 @@ describe('IncidentsService', () => {
   describe('getSingleIncidentAttachmentRecord tests', () => {
     it.each([
       [
-        AttachmentsSingleResponseIncidentExample,
+        AttachmentsListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2024-12-01',
@@ -114,11 +116,13 @@ describe('IncidentsService', () => {
         incidentsAttachmentsFieldName,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
-          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
 
         const result = await service.getSingleIncidentAttachmentRecord(
           idPathParams,
@@ -132,7 +136,7 @@ describe('IncidentsService', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new AttachmentsEntity(data));
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

@@ -5,7 +5,7 @@ import { EntityType } from '../common/constants/enumerations';
 /*
  * Examples
  */
-export const SupportNetworkSingleResponseCaseExample = {
+const SupportNetworkSingleResponseCaseExample = {
   'Cell Phone Number': '12345678910',
   'Entity Name': EntityType.Case,
   Name: 'Name',
@@ -26,12 +26,12 @@ export const SupportNetworkSingleResponseCaseExample = {
   'Created By': 'Creater-Id',
 };
 
-export const SupportNetworkSingleResponseSRExample = {
+const SupportNetworkSingleResponseSRExample = {
   ...SupportNetworkSingleResponseCaseExample,
   'Entity Name': EntityType.SR,
 };
 
-export const SupportNetworkSingleResponseIncidentExample = {
+const SupportNetworkSingleResponseIncidentExample = {
   ...SupportNetworkSingleResponseCaseExample,
   'Entity Name': EntityType.Incident,
 };
@@ -70,8 +70,8 @@ export const SupportNetworkListResponseIncidentExample = {
  * Model definitions
  */
 @Exclude()
-@ApiSchema({ name: 'SupportNetworkSingleResponse' })
-export class SupportNetworkEntity {
+@ApiSchema({ name: 'SupportNetwork' })
+class SupportNetworkEntity {
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['Cell Phone Number'],
   })
@@ -171,7 +171,7 @@ export class SupportNetworkEntity {
 }
 
 @Exclude()
-@ApiSchema({ name: 'SupportNetworkListResponse' })
+@ApiSchema({ name: 'SupportNetworkResponse' })
 export class NestedSupportNetworkEntity {
   @Expose()
   @ApiProperty({ type: SupportNetworkEntity, isArray: true })

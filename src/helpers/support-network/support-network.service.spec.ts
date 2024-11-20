@@ -8,10 +8,8 @@ import { RecordType } from '../../common/constants/enumerations';
 import { SupportNetworkService } from './support-network.service';
 import {
   NestedSupportNetworkEntity,
-  SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
   SupportNetworkListResponseSRExample,
-  SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -62,46 +60,16 @@ describe('SupportNetworkService', () => {
   describe('getSingleSupportNetworkInformationRecord tests', () => {
     it.each([
       [
-        SupportNetworkSingleResponseCaseExample,
-        RecordType.Case,
-        { [idName]: 'test' } as IdPathParams,
-        undefined,
-      ],
-      [
-        SupportNetworkListResponseSRExample.items[0],
-        RecordType.SR,
-        { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
-      ],
-    ])(
-      'should return single values given good input',
-      async (data, recordType, idPathParams, filterQueryParams) => {
-        const spy = jest
-          .spyOn(requestPreparerService, 'sendGetRequest')
-          .mockResolvedValueOnce({
-            data: data,
-            headers: {},
-            status: 200,
-            statusText: 'OK',
-          } as AxiosResponse<any, any>);
-
-        const result = await service.getSingleSupportNetworkInformationRecord(
-          recordType,
-          idPathParams,
-          res,
-          filterQueryParams,
-        );
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new SupportNetworkEntity(data));
-      },
-    );
-
-    it.each([
-      [
         SupportNetworkListResponseIncidentExample,
         RecordType.Incident,
         { [idName]: 'test' } as IdPathParams,
         undefined,
+      ],
+      [
+        SupportNetworkListResponseSRExample,
+        RecordType.SR,
+        { [idName]: 'test' } as IdPathParams,
+        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return list values given good input',

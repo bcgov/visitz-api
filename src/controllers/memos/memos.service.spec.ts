@@ -8,8 +8,8 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
-  AttachmentsEntity,
-  AttachmentsSingleResponseMemoExample,
+  AttachmentsListResponseMemoExample,
+  NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { RecordType } from '../../common/constants/enumerations';
 import {
@@ -59,7 +59,7 @@ describe('MemosService', () => {
   describe('getSingleMemoAttachmentRecord tests', () => {
     it.each([
       [
-        AttachmentsSingleResponseMemoExample,
+        AttachmentsListResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2024-12-01',
@@ -68,11 +68,13 @@ describe('MemosService', () => {
         memoAttachmentsFieldName,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
-          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
 
         const result = await service.getSingleMemoAttachmentRecord(
           idPathParams,
@@ -86,7 +88,7 @@ describe('MemosService', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new AttachmentsEntity(data));
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

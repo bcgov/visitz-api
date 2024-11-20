@@ -4,7 +4,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 /*
  * Examples
  */
-export const InPersonVisitsSingleResponseCaseExample = {
+const InPersonVisitsSingleResponseCaseExample = {
   Name: 'Id-here',
   'Visit Description': 'description',
   Id: 'Id-here',
@@ -29,17 +29,15 @@ export const InPersonVisitsListResponseCaseExample = {
 const { Name, ...PostInnerBody } = InPersonVisitsSingleResponseCaseExample;
 
 export const PostInPersonVisitResponseExample = {
-  items: {
-    ...PostInnerBody,
-  },
+  items: [PostInnerBody],
 };
 
 /*
  * Model definitions
  */
 @Exclude()
-@ApiSchema({ name: 'InPersonVisitsSingleResponse' })
-export class InPersonVisitsEntity {
+@ApiSchema({ name: 'InPersonVisit' })
+class InPersonVisitsEntity {
   @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample['Name'],
     required: false,
@@ -95,7 +93,7 @@ export class InPersonVisitsEntity {
 }
 
 @Exclude()
-@ApiSchema({ name: 'InPersonVisitsListResponse' })
+@ApiSchema({ name: 'InPersonVisitsResponse' })
 export class NestedInPersonVisitsEntity {
   @Expose()
   @ApiProperty({ type: InPersonVisitsEntity, isArray: true })

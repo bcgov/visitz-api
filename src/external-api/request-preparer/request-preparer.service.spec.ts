@@ -7,6 +7,7 @@ import {
   recordCountHeaderName,
   sinceParamName,
   UNIFORM_RESPONSE,
+  uniformResponseParamName,
   VIEW_MODE,
 } from '../../common/constants/parameter-constants';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
@@ -87,7 +88,7 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
-          uniformresponse: UNIFORM_RESPONSE,
+          [uniformResponseParamName]: UNIFORM_RESPONSE,
         });
       },
     );
@@ -123,7 +124,7 @@ describe('RequestPreparerService', () => {
             RecordCountNeededEnum.True
               ? RecordCountNeededEnum.True
               : undefined,
-          uniformresponse: UNIFORM_RESPONSE,
+          [uniformResponseParamName]: UNIFORM_RESPONSE,
           [startRowNumParamName]: filterQueryParams[startRowNumParamName],
         });
       },
@@ -160,7 +161,7 @@ describe('RequestPreparerService', () => {
             RecordCountNeededEnum.True
               ? RecordCountNeededEnum.True
               : undefined,
-          uniformresponse: UNIFORM_RESPONSE,
+          [uniformResponseParamName]: UNIFORM_RESPONSE,
           [startRowNumParamName]: filterQueryParams[startRowNumParamName],
         });
       },

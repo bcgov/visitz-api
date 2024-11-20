@@ -4,10 +4,7 @@ import {
   RecordEntityMap,
   RecordType,
 } from '../../common/constants/enumerations';
-import {
-  SupportNetworkEntity,
-  NestedSupportNetworkEntity,
-} from '../../entities/support-network.entity';
+import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
@@ -57,9 +54,6 @@ export class SupportNetworkService {
       res,
       params,
     );
-    if ((response.data as object).hasOwnProperty('items')) {
-      return new NestedSupportNetworkEntity(response.data);
-    }
-    return new SupportNetworkEntity(response.data);
+    return new NestedSupportNetworkEntity(response.data);
   }
 }

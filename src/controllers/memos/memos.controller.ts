@@ -26,9 +26,7 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  AttachmentsEntity,
   NestedAttachmentsEntity,
-  AttachmentsSingleResponseMemoExample,
   AttachmentsListResponseMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
@@ -59,22 +57,16 @@ export class MemosController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(AttachmentsEntity) },
-            { $ref: getSchemaPath(NestedAttachmentsEntity) },
-          ],
+          $ref: getSchemaPath(NestedAttachmentsEntity),
         },
         examples: {
-          AttachmentsSingleResponse: {
-            value: AttachmentsSingleResponseMemoExample,
-          },
-          AttachmentsListResponse: {
+          AttachmentsResponse: {
             value: AttachmentsListResponseMemoExample,
           },
         },
@@ -100,7 +92,7 @@ export class MemosController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+  ): Promise<NestedAttachmentsEntity> {
     return await this.memosService.getSingleMemoAttachmentRecord(
       id,
       res,

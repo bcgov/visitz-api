@@ -11,9 +11,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType, VisitDetails } from '../../common/constants/enumerations';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
-  InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
@@ -63,46 +61,16 @@ describe('InPersonVisitsService', () => {
   describe('getSingleInPersonVisitRecord tests', () => {
     it.each([
       [
-        InPersonVisitsSingleResponseCaseExample,
-        RecordType.Case,
-        { [idName]: 'test' } as IdPathParams,
-        undefined,
-      ],
-      [
-        InPersonVisitsListResponseCaseExample.items[0],
-        RecordType.Case,
-        { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
-      ],
-    ])(
-      'should return single values given good input',
-      async (data, recordType, idPathParams, filterQueryParams) => {
-        const spy = jest
-          .spyOn(requestPreparerService, 'sendGetRequest')
-          .mockResolvedValueOnce({
-            data: data,
-            headers: {},
-            status: 200,
-            statusText: 'OK',
-          } as AxiosResponse<any, any>);
-
-        const result = await service.getSingleInPersonVisitRecord(
-          recordType,
-          idPathParams,
-          res,
-          filterQueryParams,
-        );
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new InPersonVisitsEntity(data));
-      },
-    );
-
-    it.each([
-      [
         InPersonVisitsListResponseCaseExample,
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
         undefined,
+      ],
+      [
+        InPersonVisitsListResponseCaseExample,
+        RecordType.Case,
+        { [idName]: 'test' } as IdPathParams,
+        { [sinceParamName]: '2020-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return list values given good input',
