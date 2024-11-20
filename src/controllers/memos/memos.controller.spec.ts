@@ -15,8 +15,8 @@ import {
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  AttachmentsSingleResponseMemoExample,
-  AttachmentsEntity,
+  AttachmentsListResponseMemoExample,
+  NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
@@ -54,7 +54,7 @@ describe('MemosController', () => {
   describe('getSingleMemoAttachmentRecord tests', () => {
     it.each([
       [
-        AttachmentsSingleResponseMemoExample,
+        AttachmentsListResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2020-02-02',
@@ -62,11 +62,13 @@ describe('MemosController', () => {
         } as FilterQueryParams,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const memoServiceSpy = jest
           .spyOn(memosService, 'getSingleMemoAttachmentRecord')
-          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
 
         const result = await controller.getSingleMemoAttachmentRecord(
           idPathParams,
@@ -78,7 +80,7 @@ describe('MemosController', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new AttachmentsEntity(data));
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

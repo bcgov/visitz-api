@@ -6,8 +6,8 @@ import { CasesService } from './cases.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
-  SupportNetworkEntity,
-  SupportNetworkSingleResponseCaseExample,
+  NestedSupportNetworkEntity,
+  SupportNetworkListResponseCaseExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -16,8 +16,7 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  InPersonVisitsEntity,
-  InPersonVisitsSingleResponseCaseExample,
+  InPersonVisitsListResponseCaseExample,
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
@@ -28,8 +27,8 @@ import {
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
-  AttachmentsSingleResponseCaseExample,
-  AttachmentsEntity,
+  AttachmentsListResponseCaseExample,
+  NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
@@ -80,19 +79,21 @@ describe('CasesService', () => {
   describe('getSingleCaseSupportNetworkInformationRecord tests', () => {
     it.each([
       [
-        SupportNetworkSingleResponseCaseExample,
+        SupportNetworkListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const supportNetworkSpy = jest
           .spyOn(
             supportNetworkService,
             'getSingleSupportNetworkInformationRecord',
           )
-          .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
 
         const result =
           await service.getSingleCaseSupportNetworkInformationRecord(
@@ -106,7 +107,7 @@ describe('CasesService', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new SupportNetworkEntity(data));
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });
@@ -114,7 +115,7 @@ describe('CasesService', () => {
   describe('getSingleCaseInPersonVisitRecord tests', () => {
     it.each([
       [
-        InPersonVisitsSingleResponseCaseExample,
+        InPersonVisitsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
           [sinceParamName]: '2024-12-01',
@@ -122,11 +123,13 @@ describe('CasesService', () => {
         } as FilterQueryParams,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const InPersonVisitsSpy = jest
           .spyOn(inPersonVisitsService, 'getSingleInPersonVisitRecord')
-          .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedInPersonVisitsEntity(data)),
+          );
 
         const result = await service.getSingleCaseInPersonVisitRecord(
           idPathParams,
@@ -139,7 +142,7 @@ describe('CasesService', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new InPersonVisitsEntity(data));
+        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
       },
     );
   });
@@ -157,7 +160,7 @@ describe('CasesService', () => {
         PostInPersonVisitResponseExample,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (body, idir, idPathParams, data) => {
         const InPersonVisitsSpy = jest
           .spyOn(inPersonVisitsService, 'postSingleInPersonVisitRecord')
@@ -179,17 +182,19 @@ describe('CasesService', () => {
   describe('getSingleCaseAttachmentRecord tests', () => {
     it.each([
       [
-        AttachmentsSingleResponseCaseExample,
+        AttachmentsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
         casesAttachmentsFieldName,
       ],
     ])(
-      'should return single values given good input',
+      'should return nested values given good input',
       async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentRecord')
-          .mockReturnValueOnce(Promise.resolve(new AttachmentsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
 
         const result = await service.getSingleCaseAttachmentRecord(
           idPathParams,
@@ -203,7 +208,7 @@ describe('CasesService', () => {
           res,
           filterQueryParams,
         );
-        expect(result).toEqual(new AttachmentsEntity(data));
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

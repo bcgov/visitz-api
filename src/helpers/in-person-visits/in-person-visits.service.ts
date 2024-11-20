@@ -4,10 +4,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import {
-  NestedInPersonVisitsEntity,
-  InPersonVisitsEntity,
-} from '../../entities/in-person-visits.entity';
+import { NestedInPersonVisitsEntity } from '../../entities/in-person-visits.entity';
 import {
   baseUrlEnvVarName,
   inPersonVisitsEndpointEnvVarName,
@@ -16,6 +13,8 @@ import {
 import {
   CONTENT_TYPE,
   idName,
+  UNIFORM_RESPONSE,
+  uniformResponseParamName,
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { Response } from 'express';
@@ -53,7 +52,7 @@ export class InPersonVisitsService {
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
+  ): Promise<NestedInPersonVisitsEntity> {
     const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
@@ -68,10 +67,7 @@ export class InPersonVisitsService {
       res,
       params,
     );
-    if ((response.data as object).hasOwnProperty('items')) {
-      return new NestedInPersonVisitsEntity(response.data);
-    }
-    return new InPersonVisitsEntity(response.data);
+    return new NestedInPersonVisitsEntity(response.data);
   }
 
   async postSingleInPersonVisitRecord(
@@ -83,7 +79,9 @@ export class InPersonVisitsService {
       'Content-Type': CONTENT_TYPE,
       'Accept-Encoding': '*',
     };
-    const params = {};
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
     if (this.postWorkspace !== undefined) {
       params['workspace'] = this.postWorkspace;
     }

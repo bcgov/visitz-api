@@ -6,6 +6,7 @@ import {
   recordCountHeaderName,
   UNIFORM_RESPONSE,
   sinceParamName,
+  uniformResponseParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -60,7 +61,7 @@ export class RequestPreparerService {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
-      uniformresponse: UNIFORM_RESPONSE,
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
     };
     if (typeof workspace !== 'undefined') {
       params['workspace'] = workspace;

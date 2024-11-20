@@ -25,9 +25,7 @@ import {
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
-  SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
-  SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -39,16 +37,12 @@ import {
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import {
-  InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
-  InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
-  AttachmentsEntity,
   AttachmentsListResponseCaseExample,
-  AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
@@ -80,23 +74,17 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
+  @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(SupportNetworkEntity) },
-            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
-          ],
+          $ref: getSchemaPath(NestedSupportNetworkEntity),
         },
         examples: {
-          SupportNetworkSingleResponse: {
-            value: SupportNetworkSingleResponseCaseExample,
-          },
-          SupportNetworkListResponse: {
+          SupportNetworkResponse: {
             value: SupportNetworkListResponseCaseExample,
           },
         },
@@ -122,7 +110,7 @@ export class CasesController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
+  ): Promise<NestedSupportNetworkEntity> {
     return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
       res,
@@ -140,23 +128,17 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(InPersonVisitsEntity, NestedInPersonVisitsEntity)
+  @ApiExtraModels(NestedInPersonVisitsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(InPersonVisitsEntity) },
-            { $ref: getSchemaPath(NestedInPersonVisitsEntity) },
-          ],
+          $ref: getSchemaPath(NestedInPersonVisitsEntity),
         },
         examples: {
-          InPersonVisitsSingleResponse: {
-            value: InPersonVisitsSingleResponseCaseExample,
-          },
-          InPersonVisitsListResponse: {
+          InPersonVisitsResponse: {
             value: InPersonVisitsListResponseCaseExample,
           },
         },
@@ -182,7 +164,7 @@ export class CasesController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<InPersonVisitsEntity | NestedInPersonVisitsEntity> {
+  ): Promise<NestedInPersonVisitsEntity> {
     return await this.casesService.getSingleCaseInPersonVisitRecord(
       id,
       res,
@@ -243,23 +225,17 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiExtraModels(NestedAttachmentsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(AttachmentsEntity) },
-            { $ref: getSchemaPath(NestedAttachmentsEntity) },
-          ],
+          $ref: getSchemaPath(NestedAttachmentsEntity),
         },
         examples: {
-          AttachmentsSingleResponse: {
-            value: AttachmentsSingleResponseCaseExample,
-          },
-          AttachmentsListResponse: {
+          AttachmentsResponse: {
             value: AttachmentsListResponseCaseExample,
           },
         },
@@ -285,7 +261,7 @@ export class CasesController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+  ): Promise<NestedAttachmentsEntity> {
     return await this.casesService.getSingleCaseAttachmentRecord(
       id,
       res,

@@ -21,9 +21,7 @@ import {
 import { ServiceRequestsService } from './service-requests.service';
 import {
   NestedSupportNetworkEntity,
-  SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
-  SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -34,9 +32,7 @@ import {
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
-  AttachmentsEntity,
   AttachmentsListResponseSRExample,
-  AttachmentsSingleResponseSRExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -68,22 +64,16 @@ export class ServiceRequestsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
+  @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(SupportNetworkEntity) },
-            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
-          ],
+          $ref: getSchemaPath(NestedSupportNetworkEntity),
         },
         examples: {
-          SupportNetworkSingleResponse: {
-            value: SupportNetworkSingleResponseSRExample,
-          },
-          SupportNetworkListResponse: {
+          SupportNetworkResponse: {
             value: SupportNetworkListResponseSRExample,
           },
         },
@@ -109,7 +99,7 @@ export class ServiceRequestsController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
+  ): Promise<NestedSupportNetworkEntity> {
     return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
       id,
       res,
@@ -127,22 +117,16 @@ export class ServiceRequestsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(AttachmentsEntity, NestedAttachmentsEntity)
+  @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(AttachmentsEntity) },
-            { $ref: getSchemaPath(NestedAttachmentsEntity) },
-          ],
+          $ref: getSchemaPath(NestedAttachmentsEntity),
         },
         examples: {
-          AttachmentsSingleResponse: {
-            value: AttachmentsSingleResponseSRExample,
-          },
-          AttachmentsListResponse: {
+          AttachmentsResponse: {
             value: AttachmentsListResponseSRExample,
           },
         },
@@ -168,7 +152,7 @@ export class ServiceRequestsController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+  ): Promise<NestedAttachmentsEntity> {
     return await this.serviceRequestService.getSingleSRAttachmentRecord(
       id,
       res,

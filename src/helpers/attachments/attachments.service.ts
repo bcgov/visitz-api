@@ -4,10 +4,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import {
-  NestedAttachmentsEntity,
-  AttachmentsEntity,
-} from '../../entities/attachments.entity';
+import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
 import {
   baseUrlEnvVarName,
   attachmentsEndpointEnvVarName,
@@ -38,7 +35,7 @@ export class AttachmentsService {
     typeFieldName: string,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<AttachmentsEntity | NestedAttachmentsEntity> {
+  ): Promise<NestedAttachmentsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
@@ -53,9 +50,6 @@ export class AttachmentsService {
       res,
       params,
     );
-    if ((response.data as object).hasOwnProperty('items')) {
-      return new NestedAttachmentsEntity(response.data);
-    }
-    return new AttachmentsEntity(response.data);
+    return new NestedAttachmentsEntity(response.data);
   }
 }

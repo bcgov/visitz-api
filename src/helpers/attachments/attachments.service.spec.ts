@@ -8,16 +8,13 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { UtilitiesService } from '../utilities/utilities.service';
 import { RecordType } from '../../common/constants/enumerations';
 import {
-  casesAttachmentsFieldName,
   idName,
   incidentsAttachmentsFieldName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { AxiosResponse } from 'axios';
 import {
-  AttachmentsEntity,
   AttachmentsListResponseIncidentExample,
-  AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
@@ -59,35 +56,6 @@ describe('AttachmentsService', () => {
   });
 
   describe('getSingleAttachmentRecord tests', () => {
-    it.each([
-      [
-        RecordType.Case,
-        { [idName]: 'id' },
-        casesAttachmentsFieldName,
-        AttachmentsSingleResponseCaseExample,
-      ],
-    ])(
-      'should return a single attachment entity given good inputs',
-      async (type, id, typeFieldName, data) => {
-        const spy = jest
-          .spyOn(requestPreparerService, 'sendGetRequest')
-          .mockResolvedValueOnce({
-            data: data,
-            headers: {},
-            status: 200,
-            statusText: 'OK',
-          } as AxiosResponse<any, any>);
-        const result = await service.getSingleAttachmentRecord(
-          type,
-          id,
-          typeFieldName,
-          res,
-        );
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new AttachmentsEntity(data));
-      },
-    );
-
     it.each([
       [
         RecordType.Incident,

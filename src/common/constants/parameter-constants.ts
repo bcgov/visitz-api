@@ -2,6 +2,7 @@ const VIEW_MODE = 'Catalog';
 const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
 const UNIFORM_RESPONSE = 'y';
+const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const sinceParamName = 'since';
 
@@ -18,6 +19,7 @@ export {
   CHILD_LINKS,
   CONTENT_TYPE,
   UNIFORM_RESPONSE,
+  uniformResponseParamName,
   recordCountHeaderName,
   sinceParamName,
   idRegex,
