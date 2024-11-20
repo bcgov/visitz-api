@@ -11,6 +11,7 @@ import {
   InternalAxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from 'axios';
+import configuration from '../../configuration/configuration';
 
 describe('TokenRefresherService', () => {
   let service: TokenRefresherService;
@@ -19,7 +20,7 @@ describe('TokenRefresherService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         TokenRefresherService,
         { provide: HttpService, useValue: { get: jest.fn(), post: jest.fn() } },

@@ -6,11 +6,6 @@ import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { NestedInPersonVisitsEntity } from '../../entities/in-person-visits.entity';
 import {
-  baseUrlEnvVarName,
-  inPersonVisitsEndpointEnvVarName,
-  postInPersonVisitsEndpointEnvVarName,
-} from '../../common/constants/upstream-constants';
-import {
   CONTENT_TYPE,
   idName,
   UNIFORM_RESPONSE,
@@ -31,12 +26,12 @@ export class InPersonVisitsService {
     private readonly requestPreparerService: RequestPreparerService,
   ) {
     this.url = (
-      this.configService.get<string>(baseUrlEnvVarName) +
-      this.configService.get<string>(inPersonVisitsEndpointEnvVarName)
+      this.configService.get<string>('endpointUrls.baseUrl') +
+      this.configService.get<string>('endpointUrls.inPersonVisits')
     ).replace(/\s/g, '%20');
     this.postUrl = (
-      this.configService.get<string>(baseUrlEnvVarName) +
-      this.configService.get<string>(postInPersonVisitsEndpointEnvVarName)
+      this.configService.get<string>('endpointUrls.baseUrl') +
+      this.configService.get<string>('endpointUrls.postInPersonVisits')
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.postWorkspace = this.configService.get(

@@ -5,10 +5,6 @@ import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
-import {
-  baseUrlEnvVarName,
-  attachmentsEndpointEnvVarName,
-} from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
 import { Response } from 'express';
 
@@ -22,8 +18,8 @@ export class AttachmentsService {
     private readonly requestPreparerService: RequestPreparerService,
   ) {
     this.url = (
-      this.configService.get<string>(baseUrlEnvVarName) +
-      this.configService.get<string>(attachmentsEndpointEnvVarName)
+      this.configService.get<string>('endpointUrls.baseUrl') +
+      this.configService.get<string>('endpointUrls.attachments')
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.attachments');
     this.sinceFieldName = this.configService.get('sinceFieldName.attachments');

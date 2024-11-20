@@ -8,10 +8,6 @@ import { NestedSupportNetworkEntity } from '../../entities/support-network.entit
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import {
-  baseUrlEnvVarName,
-  supportNetworkEndpointEnvVarName,
-} from '../../common/constants/upstream-constants';
 import { idName } from '../../common/constants/parameter-constants';
 import { Response } from 'express';
 
@@ -24,9 +20,10 @@ export class SupportNetworkService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
+    // console.log(this.configService.get<string>('endpointUrls.baseUrl'));
     this.url = (
-      this.configService.get<string>(baseUrlEnvVarName) +
-      this.configService.get<string>(supportNetworkEndpointEnvVarName)
+      this.configService.get<string>('endpointUrls.baseUrl') +
+      this.configService.get<string>('endpointUrls.supportNetwork')
     ).replace(/\s/g, '%20');
     this.workspace = this.configService.get('workspaces.supportNetwork');
     this.sinceFieldName = this.configService.get(
