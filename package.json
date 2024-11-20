@@ -90,8 +90,8 @@
 	"outputName": "jest-junit.xml",
 	"ancestorSeparator": " › ",
 	"uniqueOutputName": "false",
-	"suiteNameTemplate": "{classname}-{title}",
-	"classNameTemplate": "{classname}-{title}",
+	"suiteNameTemplate": "{title}",
+	"classNameTemplate": "{title}",
 	"titleTemplate": "{title}"
   }
 }
