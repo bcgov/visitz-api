@@ -26,6 +26,7 @@ import {
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import configuration from '../../configuration/configuration';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -34,7 +35,7 @@ describe('IncidentsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         IncidentsService,
         SupportNetworkService,

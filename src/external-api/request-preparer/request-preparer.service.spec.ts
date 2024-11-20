@@ -29,6 +29,7 @@ import {
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
+import configuration from '../../configuration/configuration';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
@@ -38,7 +39,7 @@ describe('RequestPreparerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         RequestPreparerService,
         UtilitiesService,

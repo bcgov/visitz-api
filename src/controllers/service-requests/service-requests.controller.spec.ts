@@ -26,6 +26,7 @@ import {
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import configuration from '../../configuration/configuration';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -34,7 +35,7 @@ describe('ServiceRequestsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         ServiceRequestsService,
         AuthService,

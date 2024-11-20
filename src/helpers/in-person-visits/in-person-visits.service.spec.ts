@@ -21,6 +21,7 @@ import {
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { getMockRes } from '@jest-mock/express';
+import configuration from '../../configuration/configuration';
 
 describe('InPersonVisitsService', () => {
   let service: InPersonVisitsService;
@@ -29,7 +30,7 @@ describe('InPersonVisitsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         InPersonVisitsService,
         UtilitiesService,

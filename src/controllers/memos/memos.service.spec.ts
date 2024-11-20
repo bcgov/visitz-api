@@ -21,6 +21,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import configuration from '../../configuration/configuration';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -29,7 +30,7 @@ describe('MemosService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         MemosService,
         AttachmentsService,

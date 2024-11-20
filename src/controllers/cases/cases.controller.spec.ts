@@ -36,6 +36,7 @@ import {
   idirUsernameHeaderField,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
+import configuration from '../../configuration/configuration';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -44,7 +45,7 @@ describe('CasesController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         CasesService,
         AuthService,

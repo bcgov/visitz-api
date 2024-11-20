@@ -18,6 +18,7 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
+import configuration from '../../configuration/configuration';
 
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
@@ -26,7 +27,7 @@ describe('AttachmentsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         AttachmentsService,
         UtilitiesService,
