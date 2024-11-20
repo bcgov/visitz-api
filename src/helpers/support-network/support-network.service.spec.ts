@@ -20,13 +20,11 @@ import {
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { getMockRes } from '@jest-mock/express';
-import { log } from 'console';
 import configuration from '../../configuration/configuration';
 
 describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
   let requestPreparerService: RequestPreparerService;
-  let configService: ConfigService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -53,12 +51,10 @@ describe('SupportNetworkService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
-    configService = module.get<ConfigService>(ConfigService);
     mockClear();
   });
 
   it('should be defined a', () => {
-    log(configService.get<string>('endpointUrls.baseUrl'));
     expect(service).toBeDefined();
   });
 

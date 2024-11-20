@@ -20,7 +20,6 @@ export class SupportNetworkService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
-    // console.log(this.configService.get<string>('endpointUrls.baseUrl'));
     this.url = (
       this.configService.get<string>('endpointUrls.baseUrl') +
       this.configService.get<string>('endpointUrls.supportNetwork')
