@@ -1,4 +1,4 @@
-name: Test only Pipeline
+name: Unit Test
 
 on:
   push:
