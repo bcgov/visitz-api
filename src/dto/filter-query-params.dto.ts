@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
@@ -21,6 +21,7 @@ import {
 } from '../common/constants/upstream-constants';
 import { sinceParamName } from '../common/constants/parameter-constants';
 
+@Exclude()
 export class FilterQueryParams {
   @IsOptional()
   @IsISO8601({ strict: true })

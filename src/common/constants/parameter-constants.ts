@@ -6,7 +6,8 @@ const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const sinceParamName = 'since';
 
-const idRegex = /[0-9\-A-Za-z]+/;
+const idMaxLength = 100;
+const idRegex = /^[0-9\-A-Za-z]{1,100}$/;
 const idName = 'rowId';
 
 const casesAttachmentsFieldName = 'No Intervention';
@@ -22,6 +23,7 @@ export {
   uniformResponseParamName,
   recordCountHeaderName,
   sinceParamName,
+  idMaxLength,
   idRegex,
   idName,
   casesAttachmentsFieldName,
