@@ -16,6 +16,8 @@ const pageSizeMax = 100;
 const pageSizeDefault = 10;
 const startRowNumMin = 0;
 const startRowNumDefault = 0;
+const visitDetailsMax = 100;
+const visitDescriptionMax = 4000;
 
 export {
   baseUrlEnvVarName,
@@ -36,4 +38,6 @@ export {
   pageSizeDefault,
   startRowNumMin,
   startRowNumDefault,
+  visitDetailsMax,
+  visitDescriptionMax,
 };

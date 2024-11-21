@@ -1,14 +1,17 @@
-import { Expose, Transform } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import { isPastISO8601Date } from '../helpers/utilities/utilities.service';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
 import { VisitDetails } from '../common/constants/enumerations';
 import {
   childVisitEntityIdFieldName,
   childVisitIdirFieldName,
   childVisitType,
+  visitDescriptionMax,
+  visitDetailsMax,
 } from '../common/constants/upstream-constants';
 
+@Exclude()
 @ApiSchema({ name: 'PostInPersonVisitRequest' })
 export class PostInPersonVisitDto {
   @Transform(({ value }) => {
@@ -24,21 +27,24 @@ export class PostInPersonVisitDto {
   })
   'Date of visit': string;
 
-  // TODO: limit string length once given info about limits
   @IsNotEmpty()
+  @MaxLength(visitDescriptionMax)
   @Expose()
   @ApiProperty({
     example: 'Comments here',
     description: 'Visit comments',
+    maxLength: visitDescriptionMax,
   })
   'Visit Description': string;
 
   @IsEnum(VisitDetails)
+  @MaxLength(visitDetailsMax)
   @Expose()
   @ApiProperty({
     example: VisitDetails.PrivateVisitInHome,
     description: 'The visit type',
     enum: VisitDetails,
+    maxLength: visitDetailsMax,
   })
   'Visit Details Value': string;
 }
