@@ -1,4 +1,4 @@
-import { Expose, Transform } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import { isPastISO8601Date } from '../helpers/utilities/utilities.service';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
@@ -11,6 +11,7 @@ import {
   visitDetailsMax,
 } from '../common/constants/upstream-constants';
 
+@Exclude()
 @ApiSchema({ name: 'PostInPersonVisitRequest' })
 export class PostInPersonVisitDto {
   @Transform(({ value }) => {
