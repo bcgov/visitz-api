@@ -11,8 +11,10 @@ import {
 } from '@nestjs/common';
 import {
   ApiExtraModels,
+  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiOAuth2,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -39,6 +41,7 @@ import {
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -52,6 +55,8 @@ import {
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
+@ApiOAuth2([])
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 

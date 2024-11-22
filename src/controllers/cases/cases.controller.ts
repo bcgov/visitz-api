@@ -15,8 +15,10 @@ import {
 import {
   ApiCreatedResponse,
   ApiExtraModels,
+  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiOAuth2,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -54,6 +56,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { Request, Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -61,6 +64,8 @@ import {
 @Controller('case')
 @UseGuards(AuthGuard)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
+@ApiOAuth2([])
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 

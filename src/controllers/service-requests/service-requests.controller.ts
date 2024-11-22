@@ -17,6 +17,8 @@ import {
   ApiOperation,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiHeaders,
+  ApiOAuth2,
 } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import {
@@ -38,6 +40,7 @@ import {
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -51,6 +54,8 @@ import {
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
+@ApiOAuth2([])
 export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
 

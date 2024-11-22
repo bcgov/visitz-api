@@ -17,6 +17,8 @@ import {
   getSchemaPath,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiHeaders,
+  ApiOAuth2,
 } from '@nestjs/swagger';
 import {
   idName,
@@ -32,6 +34,7 @@ import {
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -44,6 +47,8 @@ import {
 @Controller('memo')
 @ApiNoContentResponse(noContentResponseSwagger)
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
+@ApiOAuth2([])
 export class MemosController {
   constructor(private readonly memosService: MemosService) {}
 

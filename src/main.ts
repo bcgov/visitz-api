@@ -16,6 +16,27 @@ async function bootstrap() {
     .setDescription('Middleware API for the MCFD Mobility app.')
     .setVersion('1.0')
     .addTag('visitz')
+    .addOAuth2(
+      {
+        type: 'oauth2',
+        description:
+          'OAuth2.0 used for access on the server. Not required for local development.',
+        // scheme?: string;
+        // bearerFormat?: string;
+        flows: {
+          authorizationCode: {
+            authorizationUrl: 'url here?',
+            tokenUrl: 'url here?',
+            scopes: {
+              'do we specify this': '??',
+            },
+          },
+        },
+        // Technically, shouldn't this be OIDC instead? Not sure if we have all the info for this right now
+        // openIdConnectUrl?: string;
+      },
+      'Server Auth',
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-spec', app, documentFactory, {
