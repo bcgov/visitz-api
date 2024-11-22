@@ -5,7 +5,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
  * Examples
  */
 const InPersonVisitsSingleResponseCaseExample = {
-  Name: 'Id-here',
+  Name: 'Name here',
   'Visit Description': 'description',
   Id: 'Id-here',
   Type: 'In Person Child Youth',
@@ -13,6 +13,10 @@ const InPersonVisitsSingleResponseCaseExample = {
   'Visit Details Value': 'comment',
   'Parent Id': 'Entity-Id-here',
   'Login Name': 'Idir-here',
+  Created: '11/09/2024 09:33:23',
+  Updated: '11/09/2024 09:33:23',
+  'Updated By': 'Idir-here',
+  'Created By': 'Idir-here',
 };
 
 export const InPersonVisitsListResponseCaseExample = {
@@ -86,6 +90,30 @@ class InPersonVisitsEntity {
   })
   @Expose()
   'Login Name': string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Created'],
+  })
+  @Expose()
+  Created: string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Updated'],
+  })
+  @Expose()
+  Updated: string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
 
   constructor(partial: Partial<InPersonVisitsEntity>) {
     Object.assign(this, partial);

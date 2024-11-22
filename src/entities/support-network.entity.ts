@@ -21,9 +21,9 @@ const SupportNetworkSingleResponseCaseExample = {
   Address: 'Test Address',
   Active: 'Yes',
   Created: '12/22/2024 00:32:54',
-  'Updated By': 'Updater-Id',
+  'Updated By': 'Updater-Idir-Here',
   'ICM SNC Case Con Flag': 'N',
-  'Created By': 'Creater-Id',
+  'Created By': 'Creater-Idir-Here',
 };
 
 const SupportNetworkSingleResponseSRExample = {

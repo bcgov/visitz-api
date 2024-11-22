@@ -83,7 +83,10 @@ describe('RequestPreparerService', () => {
           workspace,
           '',
         );
-        expect(headers).toEqual({ Accept: CONTENT_TYPE });
+        expect(headers).toEqual({
+          Accept: CONTENT_TYPE,
+          'Accept-Encoding': '*',
+        });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
@@ -113,7 +116,10 @@ describe('RequestPreparerService', () => {
           '',
           filterQueryParams,
         );
-        expect(headers).toEqual({ Accept: CONTENT_TYPE });
+        expect(headers).toEqual({
+          Accept: CONTENT_TYPE,
+          'Accept-Encoding': '*',
+        });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
@@ -151,7 +157,10 @@ describe('RequestPreparerService', () => {
           'Updated',
           filterQueryParams,
         );
-        expect(headers).toEqual({ Accept: CONTENT_TYPE });
+        expect(headers).toEqual({
+          Accept: CONTENT_TYPE,
+          'Accept-Encoding': '*',
+        });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
           ChildLinks: CHILD_LINKS,
