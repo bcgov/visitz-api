@@ -10,10 +10,10 @@ const idMaxLength = 100;
 const idRegex = /^[0-9\-A-Za-z]{1,100}$/;
 const idName = 'rowId';
 
-const casesAttachmentsFieldName = 'No Intervention';
-const incidentsAttachmentsFieldName = 'Incident No';
-const srAttachmentsFieldName = 'Application No';
-const memoAttachmentsFieldName = 'MemoNumber';
+const casesAttachmentsFieldName = 'Case Id';
+const incidentsAttachmentsFieldName = 'Incident Id';
+const srAttachmentsFieldName = 'SR Id';
+const memoAttachmentsFieldName = 'Memo Id';
 
 export {
   VIEW_MODE,

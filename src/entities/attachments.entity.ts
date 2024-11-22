@@ -4,64 +4,69 @@ import { Exclude, Expose, Type } from 'class-transformer';
 /*
  * Examples
  */
-// TODO: Replace 'string' with something meaningful when I can actually hit the endpoint
 const AttachmentsSingleResponseCaseExample = {
   'Application No': '',
-  Categorie: 'string',
-  Category: 'string',
-  'Client Flag': 'string',
-  'End Date': 'string',
-  'Final Flag': 'string',
-  'Form Description': 'string',
+  Categorie: 'Attachment',
+  Category: 'Assessment',
+  'Client Flag': 'N',
+  'End Date': '07/09/2024 00:00:00',
+  'Final Flag': 'Y',
+  'Form Description': 'Reportable Circumstance',
   'Incident Id': '',
   'Incident No': '',
-  Internal: 'string',
-  'Last Updated Date': 'string',
-  'No Intervention': 'Case-Id-Here',
-  'Portal Visible': 'string',
-  'Show on Contact': 'string',
-  Status: 'string',
-  'Sub-Category': 'string',
-  Template: 'string',
-  'Template Type': 'string',
-  'Case Id': 'string',
-  Comments: 'string',
-  'Created Date': 'string',
-  CreatedByName: 'string',
-  FileAutoUpdFlg: 'string',
-  FileDate: 'string',
-  FileDeferFlg: 'string',
-  FileDockReqFlg: 'string',
-  FileDockStatFlg: 'string',
-  FileExt: 'string',
-  FileSize: 'string',
-  FileSrcPath: 'string',
-  FileSrcType: 'string',
-  UpdatedByName: 'string',
-  FileName: 'string',
+  Internal: 'N',
+  'Last Updated Date': '07/09/2024 07:08:22',
+  'No Intervention': 'Numeric-Case-Id-Here',
+  'Portal Visible': 'No',
+  'Show on Contact': 'N',
+  Status: 'Complete',
+  'Sub-Category': 'Identification',
+  Template: 'CF0659',
+  'Template Type': 'Form',
+  'Case Id': 'Case-Id-Here',
+  Comments: 'comments here',
+  'Created Date': '07/09/2024 07:00:00',
+  CreatedByName: 'Creator-IDIR-Here',
+  FileAutoUpdFlg: 'Y',
+  FileDate: '07/09/2024 07:08:22',
+  FileDeferFlg: 'P',
+  FileDockReqFlg: 'N',
+  FileDockStatFlg: 'E',
+  FileExt: 'png',
+  FileSize: '16635',
+  FileSrcPath: 'file\\path\\here',
+  FileSrcType: 'FILE',
+  UpdatedByName: 'Updater-IDIR-Here',
+  FileName: 'File_Name_Here',
   'Memo Id': '',
   MemoNumber: '',
   'SR Id': '',
-  'Attachment Id': 'string',
-  Id: 'string',
+  'Attachment Id': 'Siebel Link Here',
+  Id: 'Attachment-Id-Here',
 };
 
 const AttachmentsSingleResponseIncidentExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
-  'Incident No': 'Incident-Id-Here',
+  'Case Id': '',
+  'Incident Id': 'Incident-Id-Here',
+  'Incident No': 'Numeric-Incident-Id-Here',
 };
 
 const AttachmentsSingleResponseSRExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
-  'Application No': 'SR-Id-Here',
+  'Case Id': '',
+  'Application No': 'Numeric-SR-Id-Here',
+  'SR Id': 'SR-Id-Here',
 };
 
 const AttachmentsSingleResponseMemoExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
-  MemoNumber: 'Memo-Id-Here',
+  'Case Id': '',
+  MemoNumber: 'Numeric-Memo-Id-Here',
+  'Memo Id': 'Memo-Id-Here',
 };
 
 export const AttachmentsListResponseCaseExample = {
@@ -69,7 +74,8 @@ export const AttachmentsListResponseCaseExample = {
     AttachmentsSingleResponseCaseExample,
     {
       ...AttachmentsSingleResponseCaseExample,
-      'No Intervention': 'Another-Case-Id-Here',
+      'No Intervention': 'Another-Numeric-Case-Id-Here',
+      'Case Id': 'Another-Case-Id-Here',
     },
   ],
 };
@@ -79,7 +85,8 @@ export const AttachmentsListResponseIncidentExample = {
     AttachmentsSingleResponseIncidentExample,
     {
       ...AttachmentsSingleResponseIncidentExample,
-      'Incident No': 'Another-Incident-Id-Here',
+      'Incident No': 'Another-Numeric-Incident-Id-Here',
+      'Incident Id': 'Another-Incident-Id-Here',
     },
   ],
 };
@@ -89,7 +96,8 @@ export const AttachmentsListResponseSRExample = {
     AttachmentsSingleResponseSRExample,
     {
       ...AttachmentsSingleResponseSRExample,
-      'Application No': 'Another-SR-Id-Here',
+      'Application No': 'Another-Numeric-SR-Id-Here',
+      'SR Id': 'Another-SR-Id-Here',
     },
   ],
 };
@@ -99,7 +107,8 @@ export const AttachmentsListResponseMemoExample = {
     AttachmentsSingleResponseMemoExample,
     {
       ...AttachmentsSingleResponseMemoExample,
-      MemoNumber: 'Another-Memo-Id-Here',
+      MemoNumber: 'Another-Numeric-Memo-Id-Here',
+      'Memo Id': 'Another-Memo-Id-Here',
     },
   ],
 };
@@ -124,12 +133,14 @@ class AttachmentsEntity {
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Categorie'],
+    // "Service Request", "Attachment", "HLS Case"
   })
   @Expose()
   Categorie: string;
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Category'],
+    // "Assessment", "Vineland", "Identification"
   })
   @Expose()
   Category: string;
@@ -202,23 +213,27 @@ class AttachmentsEntity {
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Status'],
+    // "Open", "Profiled", "Complete"
   })
   @Expose()
   Status: string;
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Sub-Category'],
+    // "Resume", "Identification", "Language", "Legal/Court Documents", "Program Eligibility"
   })
   @Expose()
   'Sub-Category': string;
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Template'],
+    // "CF0659"
   })
   @Expose()
   Template: string;
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Template Type'],
+    // "Form", "Document"
   })
   @Expose()
   'Template Type': string;
@@ -297,6 +312,7 @@ class AttachmentsEntity {
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['FileSrcType'],
+    // "FILE"
   })
   @Expose()
   FileSrcType: string;

@@ -39,7 +39,7 @@ export default () => ({
   sinceFieldName: {
     supportNetwork: 'Updated',
     inPersonVisits: undefined,
-    attachments: undefined,
+    attachments: 'Last Updated Date',
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {
