@@ -22,7 +22,7 @@ export default () => ({
     },
     memo: {
       endpoint: (process.env.MEMO_ENDPOINT ?? ' ').trim().replace(/\s/g, '%20'),
-      workspace: undefined,
+      workspace: 'int_lab',
     },
   },
   oauth: {
@@ -31,14 +31,14 @@ export default () => ({
     clientSecret: process.env.CLIENT_SECRET ?? ' ',
   },
   workspaces: {
-    supportNetwork: undefined,
-    inPersonVisits: undefined,
+    supportNetwork: 'int_lab',
+    inPersonVisits: 'int_lab',
     attachments: 'int_lab',
     postInPersonVisits: 'int_lab',
   },
   sinceFieldName: {
     supportNetwork: 'Updated',
-    inPersonVisits: undefined,
+    inPersonVisits: 'Updated',
     attachments: 'Last Updated Date',
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',

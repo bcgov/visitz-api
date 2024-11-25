@@ -79,6 +79,7 @@ export class RequestPreparerService {
     }
     const headers = {
       Accept: CONTENT_TYPE,
+      'Accept-Encoding': '*',
     };
     return [headers, params];
   }

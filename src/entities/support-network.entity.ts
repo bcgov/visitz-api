@@ -9,7 +9,7 @@ const SupportNetworkSingleResponseCaseExample = {
   'Cell Phone Number': '12345678910',
   'Entity Name': EntityType.Case,
   Name: 'Name',
-  Updated: '12/22/2024 00:33:37',
+  Updated: '01/01/1970 00:00:00',
   Comments: 'test',
   'ICM SNC SR Con Flag': 'N',
   'Emergency Contact': 'N',
@@ -20,10 +20,10 @@ const SupportNetworkSingleResponseCaseExample = {
   Id: 'Id-Here',
   Address: 'Test Address',
   Active: 'Yes',
-  Created: '12/22/2024 00:32:54',
-  'Updated By': 'Updater-Id',
+  Created: '01/01/1970 00:00:00',
+  'Updated By': 'Updater-Idir-Here',
   'ICM SNC Case Con Flag': 'N',
-  'Created By': 'Creater-Id',
+  'Created By': 'Creater-Idir-Here',
 };
 
 const SupportNetworkSingleResponseSRExample = {

@@ -20,7 +20,7 @@ export class PostInPersonVisitDto {
   @IsNotEmpty()
   @Expose()
   @ApiProperty({
-    example: '2024-10-28T19:34:54',
+    example: '1970-01-01T00:00:00',
     format: 'date-time',
     description:
       'The ISO8601 formatted date of the visit, expected to be provided in UTC. Must not be a future date or time.',
