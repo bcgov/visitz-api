@@ -24,7 +24,7 @@ const headerInfo = [
   {
     name: idirUsernameHeaderField,
     description: `User's IDIR. Only required for local development when using auth, as this will be populated from the user's JWT on the server.`,
-    schema: { type: 'integer', default: 2, example: 2 },
+    schema: { type: 'string', example: 'Idir-Here' },
     required: false,
   },
 ];
