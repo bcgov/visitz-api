@@ -33,6 +33,7 @@ import {
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -46,6 +47,7 @@ describe('CasesService', () => {
       imports: [HttpModule, ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         CasesService,
+        ContactsService,
         SupportNetworkService,
         AttachmentsService,
         UtilitiesService,

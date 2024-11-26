@@ -57,6 +57,10 @@ import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
+import {
+  NestedContactsEntity,
+  ContactsListResponseCaseExample,
+} from '../../entities/contacts.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -267,5 +271,55 @@ export class CasesController {
       res,
       filter,
     );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts`)
+  @ApiOperation({
+    description:
+      'Find all Contact entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedContactsEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactsEntity),
+        },
+        examples: {
+          ContactsResponse: {
+            value: ContactsListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.casesService.getSingleCaseContactRecord(id, res, filter);
   }
 }

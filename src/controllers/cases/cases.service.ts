@@ -21,6 +21,8 @@ import {
   childVisitIdirFieldName,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
+import { NestedContactsEntity } from '../../entities/contacts.entity';
 
 @Injectable()
 export class CasesService {
@@ -28,6 +30,7 @@ export class CasesService {
     private readonly supportNetworkService: SupportNetworkService,
     private readonly inPersonVisitsService: InPersonVisitsService,
     private readonly attachmentsService: AttachmentsService,
+    private readonly contactsService: ContactsService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -81,6 +84,19 @@ export class CasesService {
       RecordType.Case,
       id,
       casesAttachmentsFieldName,
+      res,
+      filter,
+    );
+  }
+
+  async getSingleCaseContactRecord(
+    id: IdPathParams,
+    res: Response,
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.contactsService.getSingleAttachmentRecord(
+      RecordType.Case,
+      id,
       res,
       filter,
     );

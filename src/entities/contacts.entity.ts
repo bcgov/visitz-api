@@ -81,10 +81,13 @@ const {
   ...ContactsSingleResponseIncidentExample
 } = ContactsSingleResponseCaseExample;
 
+// TODO: Add memos fields once we figure out if the fields are extraneous?
+const { ...ContactsSingleResponseMemoExample } =
+  ContactsSingleResponseIncidentExample;
+
 const { ...ContactsSingleResponseSRExample } =
   ContactsSingleResponseIncidentExample;
 
-// TODO: Add memos once we figure out if the fields are extraneous?
 export const ContactsListResponseCaseExample = {
   items: [
     ContactsSingleResponseCaseExample,
@@ -102,6 +105,18 @@ export const ContactsListResponseIncidentExample = {
     ContactsSingleResponseIncidentExample,
     {
       ...ContactsSingleResponseIncidentExample,
+      Id: 'Another-Row-Id-Here',
+      'Party UId': 'Another-Row-Id-Here',
+      'Person UId': 'Another-Row-Id-Here',
+    },
+  ],
+};
+
+export const ContactsListResponseMemoExample = {
+  items: [
+    ContactsSingleResponseMemoExample,
+    {
+      ...ContactsSingleResponseMemoExample,
       Id: 'Another-Row-Id-Here',
       'Party UId': 'Another-Row-Id-Here',
       'Person UId': 'Another-Row-Id-Here',

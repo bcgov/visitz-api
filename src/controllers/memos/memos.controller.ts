@@ -40,6 +40,10 @@ import {
   recordCountNeededParamName,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
+import {
+  NestedContactsEntity,
+  ContactsListResponseMemoExample,
+} from '../../entities/contacts.entity';
 
 @Controller('memo')
 @ApiNoContentResponse(noContentResponseSwagger)
@@ -98,5 +102,54 @@ export class MemosController {
       res,
       filter,
     );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts`)
+  @ApiOperation({
+    description:
+      'Find all Contact entries related to a given Memo entity by Memo id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedContactsEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactsEntity),
+        },
+        examples: {
+          ContactsResponse: {
+            value: ContactsListResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.memosService.getSingleMemoContactRecord(id, res, filter);
   }
 }

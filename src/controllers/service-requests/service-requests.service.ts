@@ -8,12 +8,15 @@ import { AttachmentsService } from '../../helpers/attachments/attachments.servic
 import { srAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
 import { Response } from 'express';
+import { NestedContactsEntity } from '../../entities/contacts.entity';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
 
 @Injectable()
 export class ServiceRequestsService {
   constructor(
     private readonly supportNetworkService: SupportNetworkService,
     private readonly attachmentsService: AttachmentsService,
+    private readonly contactsService: ContactsService,
   ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
@@ -38,6 +41,19 @@ export class ServiceRequestsService {
       RecordType.SR,
       id,
       srAttachmentsFieldName,
+      res,
+      filter,
+    );
+  }
+
+  async getSingleSRContactRecord(
+    id: IdPathParams,
+    res: Response,
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.contactsService.getSingleAttachmentRecord(
+      RecordType.SR,
+      id,
       res,
       filter,
     );

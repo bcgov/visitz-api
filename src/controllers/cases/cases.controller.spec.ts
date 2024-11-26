@@ -37,6 +37,7 @@ import {
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -49,6 +50,7 @@ describe('CasesController', () => {
       providers: [
         CasesService,
         AuthService,
+        ContactsService,
         SupportNetworkService,
         AttachmentsService,
         TokenRefresherService,

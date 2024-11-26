@@ -8,12 +8,15 @@ import { AttachmentsService } from '../../helpers/attachments/attachments.servic
 import { incidentsAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
 import { Response } from 'express';
+import { NestedContactsEntity } from '../../entities/contacts.entity';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
 
 @Injectable()
 export class IncidentsService {
   constructor(
     private readonly supportNetworkService: SupportNetworkService,
     private readonly attachmentsService: AttachmentsService,
+    private readonly contactsService: ContactsService,
   ) {}
 
   async getSingleIncidentSupportNetworkInformationRecord(
@@ -38,6 +41,19 @@ export class IncidentsService {
       RecordType.Incident,
       id,
       incidentsAttachmentsFieldName,
+      res,
+      filter,
+    );
+  }
+
+  async getSingleIncidentContactRecord(
+    id: IdPathParams,
+    res: Response,
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.contactsService.getSingleAttachmentRecord(
+      RecordType.Incident,
+      id,
       res,
       filter,
     );

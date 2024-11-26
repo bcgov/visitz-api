@@ -27,6 +27,7 @@ import {
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -39,6 +40,7 @@ describe('IncidentsController', () => {
       providers: [
         IncidentsService,
         SupportNetworkService,
+        ContactsService,
         AttachmentsService,
         AuthService,
         TokenRefresherService,

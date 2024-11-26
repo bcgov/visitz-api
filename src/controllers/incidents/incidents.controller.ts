@@ -47,6 +47,10 @@ import {
   recordCountNeededParamName,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
+import {
+  NestedContactsEntity,
+  ContactsListResponseIncidentExample,
+} from '../../entities/contacts.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -156,6 +160,59 @@ export class IncidentsController {
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.incidentsService.getSingleIncidentAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts`)
+  @ApiOperation({
+    description:
+      'Find all Contact entries related to a given Incident entity by Incident id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedContactsEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactsEntity),
+        },
+        examples: {
+          ContactsResponse: {
+            value: ContactsListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.incidentsService.getSingleIncidentContactRecord(
       id,
       res,
       filter,
