@@ -28,11 +28,16 @@ import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
+import {
+  ContactsListResponseSRExample,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
   let supportNetworkService: SupportNetworkService;
   let attachmentsService: AttachmentsService;
+  let contactsService: ContactsService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -62,6 +67,7 @@ describe('ServiceRequestsService', () => {
       SupportNetworkService,
     );
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
+    contactsService = module.get<ContactsService>(ContactsService);
     mockClear();
   });
 
@@ -140,6 +146,39 @@ describe('ServiceRequestsService', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRContactRecord tests', () => {
+    it.each([
+      [
+        ContactsListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
+
+        const result = await service.getSingleSRContactRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactsEntity(data));
       },
     );
   });

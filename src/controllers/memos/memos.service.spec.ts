@@ -23,10 +23,15 @@ import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
+import {
+  ContactsListResponseMemoExample,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
 
 describe('MemosService', () => {
   let service: MemosService;
   let attachmentsService: AttachmentsService;
+  let contactsService: ContactsService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -52,6 +57,7 @@ describe('MemosService', () => {
 
     service = module.get<MemosService>(MemosService);
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
+    contactsService = module.get<ContactsService>(ContactsService);
     mockClear();
   });
 
@@ -92,6 +98,39 @@ describe('MemosService', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoContactRecord tests', () => {
+    it.each([
+      [
+        ContactsListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
+
+        const result = await service.getSingleMemoContactRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactsEntity(data));
       },
     );
   });

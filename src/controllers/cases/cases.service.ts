@@ -94,7 +94,7 @@ export class CasesService {
     res: Response,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.contactsService.getSingleAttachmentRecord(
+    return await this.contactsService.getSingleContactRecord(
       RecordType.Case,
       id,
       res,

@@ -38,7 +38,7 @@ export class ContactsService {
     this.sinceFieldName = this.configService.get('sinceFieldName.contacts');
   }
 
-  async getSingleAttachmentRecord(
+  async getSingleContactRecord(
     type: RecordType,
     id: IdPathParams,
     res: Response,

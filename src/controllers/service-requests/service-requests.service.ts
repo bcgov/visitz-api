@@ -51,7 +51,7 @@ export class ServiceRequestsService {
     res: Response,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.contactsService.getSingleAttachmentRecord(
+    return await this.contactsService.getSingleContactRecord(
       RecordType.SR,
       id,
       res,
