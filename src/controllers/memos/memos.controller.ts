@@ -17,6 +17,10 @@ import {
   getSchemaPath,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiHeaders,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import {
   idName,
@@ -32,6 +36,7 @@ import {
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -44,10 +49,17 @@ import {
   NestedContactsEntity,
   ContactsListResponseMemoExample,
 } from '../../entities/contacts.entity';
+import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
+import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 
 @Controller('memo')
 @ApiNoContentResponse(noContentResponseSwagger)
+@ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
+@ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
+@ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
 export class MemosController {
   constructor(private readonly memosService: MemosService) {}
 

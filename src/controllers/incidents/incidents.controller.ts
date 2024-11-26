@@ -10,12 +10,16 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
+  ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 
@@ -39,6 +43,7 @@ import {
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -51,11 +56,18 @@ import {
   NestedContactsEntity,
   ContactsListResponseIncidentExample,
 } from '../../entities/contacts.entity';
+import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
+import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
+@ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
+@ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
+@ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 

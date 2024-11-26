@@ -13,13 +13,17 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
+  ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 import { CasesService } from './cases.service';
@@ -54,6 +58,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { Request, Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -61,10 +66,17 @@ import {
   NestedContactsEntity,
   ContactsListResponseCaseExample,
 } from '../../entities/contacts.entity';
+import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
+import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
+@ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
+@ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
+@ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 

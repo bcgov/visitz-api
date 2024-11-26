@@ -17,6 +17,10 @@ import {
   ApiOperation,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiHeaders,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import {
@@ -38,6 +42,7 @@ import {
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -50,11 +55,18 @@ import {
   ContactsListResponseSRExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
+import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
+@ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
+@ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
+@ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
 export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
 
