@@ -57,6 +57,9 @@ export class RequestPreparerService {
       searchSpec =
         searchSpec + ` AND [${sinceFieldName}] > "${formattedDate}")`;
     }
+    if (baseSearchSpec === '') {
+      searchSpec = searchSpec.replace(')', '').replace(' AND ', '');
+    }
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,

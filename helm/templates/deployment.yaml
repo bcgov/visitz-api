@@ -97,6 +97,26 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: IN_PERSON_VISITS_POST_ENDPOINT
+            - name: CASE_CONTACTS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_CONTACTS_ENDPOINT
+            - name: INCIDENT_CONTACTS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_CONTACTS_ENDPOINT
+            - name: SR_CONTACTS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_CONTACTS_ENDPOINT
+            - name: MEMO_CONTACTS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MEMO_CONTACTS_ENDPOINT
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
       restartPolicy: Always

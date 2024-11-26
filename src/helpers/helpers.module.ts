@@ -13,6 +13,8 @@ import { RequestPreparerModule } from '../external-api/request-preparer/request-
 import { RequestPreparerService } from '../external-api/request-preparer/request-preparer.service';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { AttachmentsService } from './attachments/attachments.service';
+import { ContactsModule } from './contacts/contacts.module';
+import { ContactsService } from './contacts/contacts.service';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { AttachmentsService } from './attachments/attachments.service';
     InPersonVisitsModule,
     RequestPreparerModule,
     AttachmentsModule,
+    ContactsModule,
   ],
   providers: [
     SupportNetworkService,
@@ -32,12 +35,14 @@ import { AttachmentsService } from './attachments/attachments.service';
     InPersonVisitsService,
     RequestPreparerService,
     AttachmentsService,
+    ContactsService,
   ],
   exports: [
     SupportNetworkService,
     UtilitiesService,
     InPersonVisitsService,
     AttachmentsService,
+    ContactsService,
   ],
 })
 export class HelpersModule {}
