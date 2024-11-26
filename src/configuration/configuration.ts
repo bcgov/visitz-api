@@ -41,7 +41,7 @@ export default () => ({
     supportNetwork: 'Updated',
     inPersonVisits: 'Updated',
     attachments: 'Last Updated Date',
-    contacts: undefined,
+    contacts: 'Updated',
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {
