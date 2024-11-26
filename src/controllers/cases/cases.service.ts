@@ -2,12 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { RecordType } from '../../common/constants/enumerations';
 import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { NestedInPersonVisitsEntity } from '../../entities/in-person-visits.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
-import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
+import {
+  AttachmentDetailsEntity,
+  NestedAttachmentsEntity,
+} from '../../entities/attachments.entity';
 import {
   casesAttachmentsFieldName,
   idName,
@@ -81,6 +87,20 @@ export class CasesService {
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
+      RecordType.Case,
+      id,
+      casesAttachmentsFieldName,
+      res,
+      filter,
+    );
+  }
+
+  async getSingleCaseAttachmentDetailsRecord(
+    id: AttachmentIdPathParams,
+    res: Response,
+    filter?: FilterQueryParams,
+  ): Promise<AttachmentDetailsEntity> {
+    return await this.attachmentsService.getSingleAttachmentDetailsRecord(
       RecordType.Case,
       id,
       casesAttachmentsFieldName,

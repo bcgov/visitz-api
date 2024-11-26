@@ -96,6 +96,9 @@ export class RequestPreparerService {
         throw new Error('Upstream auth failed');
       }
       headers['Authorization'] = token;
+      console.log(url);
+      console.log(params);
+      console.log(headers);
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
@@ -132,6 +135,7 @@ export class RequestPreparerService {
         response.headers[recordCountHeaderName],
       );
     }
+    console.log(response.data);
     return response;
   }
 

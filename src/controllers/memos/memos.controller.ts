@@ -26,12 +26,18 @@ import {
   idName,
   CONTENT_TYPE,
   sinceParamName,
+  attachmentIdName,
 } from '../../common/constants/parameter-constants';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   NestedAttachmentsEntity,
   AttachmentsListResponseMemoExample,
+  AttachmentDetailsEntity,
+  AttachmentDetailsMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { Response } from 'express';
@@ -110,6 +116,59 @@ export class MemosController {
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.memosService.getSingleMemoAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/attachments/:${attachmentIdName}`)
+  @ApiOperation({
+    description:
+      'Download an Attachment related to a given Memo Id by its Attachment Id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(AttachmentDetailsEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(AttachmentDetailsEntity),
+        },
+        examples: {
+          AttachmentDetailsResponse: {
+            value: AttachmentDetailsMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoAttachmentDetailsRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: AttachmentIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<AttachmentDetailsEntity> {
+    return await this.memosService.getSingleMemoAttachmentDetailsRecord(
       id,
       res,
       filter,

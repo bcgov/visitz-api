@@ -27,15 +27,21 @@ import {
   NestedSupportNetworkEntity,
   SupportNetworkListResponseSRExample,
 } from '../../entities/support-network.entity';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
+  attachmentIdName,
   CONTENT_TYPE,
   idName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
+  AttachmentDetailsEntity,
+  AttachmentDetailsSRExample,
   AttachmentsListResponseSRExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
@@ -170,6 +176,59 @@ export class ServiceRequestsController {
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.serviceRequestService.getSingleSRAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/attachments/:${attachmentIdName}`)
+  @ApiOperation({
+    description:
+      'Download an Attachment related to a given Service Request Id by its Attachment Id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(AttachmentDetailsEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(AttachmentDetailsEntity),
+        },
+        examples: {
+          AttachmentDetailsResponse: {
+            value: AttachmentDetailsSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRAttachmentDetailsRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: AttachmentIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<AttachmentDetailsEntity> {
+    return await this.serviceRequestService.getSingleSRAttachmentDetailsRecord(
       id,
       res,
       filter,

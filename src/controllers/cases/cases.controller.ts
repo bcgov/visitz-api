@@ -31,9 +31,13 @@ import {
   NestedSupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
 } from '../../entities/support-network.entity';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
+  attachmentIdName,
   CONTENT_TYPE,
   idName,
   sinceParamName,
@@ -46,6 +50,8 @@ import {
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
+  AttachmentDetailsCaseExample,
+  AttachmentDetailsEntity,
   AttachmentsListResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
@@ -279,6 +285,60 @@ export class CasesController {
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.casesService.getSingleCaseAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/attachments/:${attachmentIdName}`)
+  @ApiOperation({
+    description:
+      'Download an Attachment related to a given Case Id by its Attachment Id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(AttachmentDetailsEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(AttachmentDetailsEntity),
+        },
+        examples: {
+          AttachmentDetailsResponse: {
+            value: AttachmentDetailsCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseAttachmentDetailsRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: AttachmentIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<AttachmentDetailsEntity> {
+    return await this.casesService.getSingleCaseAttachmentDetailsRecord(
       id,
       res,
       filter,
