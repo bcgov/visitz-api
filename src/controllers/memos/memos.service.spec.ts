@@ -8,16 +8,22 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
+  AttachmentDetailsEntity,
+  AttachmentDetailsMemoExample,
   AttachmentsListResponseMemoExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { RecordType } from '../../common/constants/enumerations';
 import {
+  attachmentIdName,
   idName,
   memoAttachmentsFieldName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
@@ -98,6 +104,43 @@ describe('MemosService', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSinglememoAttachmentDetailsRecord tests', () => {
+    it.each([
+      [
+        AttachmentDetailsMemoExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
+        memoAttachmentsFieldName,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams, typeFieldName) => {
+        const attachmentsSpy = jest
+          .spyOn(attachmentsService, 'getSingleAttachmentDetailsRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new AttachmentDetailsEntity(data)),
+          );
+
+        const result = await service.getSingleMemoAttachmentDetailsRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(attachmentsSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          typeFieldName,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new AttachmentDetailsEntity(data));
       },
     );
   });

@@ -9,12 +9,18 @@ import { AttachmentsService } from '../../helpers/attachments/attachments.servic
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { MemosService } from './memos.service';
 import {
+  attachmentIdName,
   idName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
+  AttachmentDetailsEntity,
+  AttachmentDetailsMemoExample,
   AttachmentsListResponseMemoExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
@@ -88,6 +94,43 @@ describe('MemosController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoAttachmentDetailsRecord tests', () => {
+    it.each([
+      [
+        AttachmentDetailsMemoExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const memoServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoAttachmentDetailsRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new AttachmentDetailsEntity(data)),
+          );
+
+        const result = await controller.getSingleMemoAttachmentDetailsRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(memoServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new AttachmentDetailsEntity(data));
       },
     );
   });
