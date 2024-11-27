@@ -16,6 +16,7 @@ import {
   ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -65,6 +66,7 @@ import {
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
+import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -72,6 +74,7 @@ import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.e
 @ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
 @ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
 @ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
+@ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 @ApiHeaders(headerInfo)
 export class IncidentsController {

@@ -21,6 +21,7 @@ import {
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import {
@@ -64,6 +65,7 @@ import {
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
 import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
+import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -71,6 +73,7 @@ import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.e
 @ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
 @ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
 @ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
+@ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 @ApiHeaders(headerInfo)
 export class ServiceRequestsController {
