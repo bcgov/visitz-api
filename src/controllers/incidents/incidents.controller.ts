@@ -10,12 +10,16 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
+  ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 
@@ -39,6 +43,7 @@ import {
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
 import {
+  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
@@ -47,11 +52,22 @@ import {
   recordCountNeededParamName,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
+import {
+  NestedContactsEntity,
+  ContactsListResponseIncidentExample,
+} from '../../entities/contacts.entity';
+import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
+import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
+@ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
+@ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
+@ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
+@ApiHeaders(headerInfo)
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
@@ -156,6 +172,59 @@ export class IncidentsController {
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.incidentsService.getSingleIncidentAttachmentRecord(
+      id,
+      res,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts`)
+  @ApiOperation({
+    description:
+      'Find all Contact entries related to a given Incident entity by Incident id.',
+  })
+  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedContactsEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactsEntity),
+        },
+        examples: {
+          ContactsResponse: {
+            value: ContactsListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedContactsEntity> {
+    return await this.incidentsService.getSingleIncidentContactRecord(
       id,
       res,
       filter,

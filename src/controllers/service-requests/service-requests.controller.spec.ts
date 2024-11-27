@@ -27,6 +27,11 @@ import { AuthService } from '../../common/guards/auth/auth.service';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
+import {
+  ContactsListResponseSRExample,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -39,6 +44,7 @@ describe('ServiceRequestsController', () => {
       providers: [
         ServiceRequestsService,
         AuthService,
+        ContactsService,
         SupportNetworkService,
         AttachmentsService,
         TokenRefresherService,
@@ -132,6 +138,38 @@ describe('ServiceRequestsController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRContactRecord tests', () => {
+    it.each([
+      [
+        ContactsListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
+
+        const result = await controller.getSingleSRContactRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactsEntity(data));
       },
     );
   });

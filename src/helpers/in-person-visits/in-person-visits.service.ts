@@ -25,14 +25,14 @@ export class InPersonVisitsService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
-    this.url = (
+    this.url = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
-      this.configService.get<string>('endpointUrls.inPersonVisits')
-    ).replace(/\s/g, '%20');
-    this.postUrl = (
+        this.configService.get<string>('endpointUrls.inPersonVisits'),
+    );
+    this.postUrl = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
-      this.configService.get<string>('endpointUrls.postInPersonVisits')
-    ).replace(/\s/g, '%20');
+        this.configService.get<string>('endpointUrls.postInPersonVisits'),
+    );
     this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.postWorkspace = this.configService.get(
       'workspaces.postInPersonVisits',

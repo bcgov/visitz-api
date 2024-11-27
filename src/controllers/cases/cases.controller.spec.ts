@@ -37,6 +37,11 @@ import {
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
+import { ContactsService } from '../../helpers/contacts/contacts.service';
+import {
+  ContactsListResponseCaseExample,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -49,6 +54,7 @@ describe('CasesController', () => {
       providers: [
         CasesService,
         AuthService,
+        ContactsService,
         SupportNetworkService,
         AttachmentsService,
         TokenRefresherService,
@@ -202,6 +208,38 @@ describe('CasesController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseContactRecord tests', () => {
+    it.each([
+      [
+        ContactsListResponseCaseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const caseServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
+
+        const result = await controller.getSingleCaseContactRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(caseServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactsEntity(data));
       },
     );
   });

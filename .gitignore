@@ -134,3 +134,6 @@ dist
 
 # test reports
 reports/
+
+#local files
+testjsons/

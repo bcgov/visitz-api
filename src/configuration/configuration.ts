@@ -4,24 +4,22 @@ export default () => ({
   },
   upstreamAuth: {
     case: {
-      endpoint: (process.env.CASE_ENDPOINT ?? ' ').trim().replace(/\s/g, '%20'),
+      endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
       idirField: 'Sales Rep',
     },
     incident: {
-      endpoint: (process.env.INCIDENT_ENDPOINT ?? ' ')
-        .trim()
-        .replace(/\s/g, '%20'),
+      endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
       idirField: 'Owned By',
     },
     sr: {
-      endpoint: (process.env.SR_ENDPOINT ?? ' ').trim().replace(/\s/g, '%20'),
+      endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
       idirField: 'Owner',
     },
     memo: {
-      endpoint: (process.env.MEMO_ENDPOINT ?? ' ').trim().replace(/\s/g, '%20'),
+      endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
     },
   },
@@ -35,11 +33,13 @@ export default () => ({
     inPersonVisits: 'int_lab',
     attachments: 'int_lab',
     postInPersonVisits: 'int_lab',
+    contacts: 'int_lab',
   },
   sinceFieldName: {
     supportNetwork: 'Updated',
     inPersonVisits: 'Updated',
     attachments: 'Last Updated Date',
+    contacts: 'Updated',
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {
@@ -48,6 +48,10 @@ export default () => ({
     inPersonVisits: process.env.IN_PERSON_VISITS_ENDPOINT ?? ' ',
     postInPersonVisits: process.env.IN_PERSON_VISITS_POST_ENDPOINT ?? ' ',
     attachments: process.env.ATTACHMENTS_ENDPOINT ?? ' ',
+    caseContacts: process.env.CASE_CONTACTS_ENDPOINT ?? ' ',
+    incidentContacts: process.env.INCIDENT_CONTACTS_ENDPOINT ?? ' ',
+    srContacts: process.env.SR_CONTACTS_ENDPOINT ?? ' ',
+    memoContacts: process.env.MEMO_CONTACTS_ENDPOINT ?? ' ',
   },
   buildInfo: {
     buildNumber: process.env.VPI_APP_LABEL ?? 'localBuild',
