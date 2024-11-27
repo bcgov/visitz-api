@@ -17,22 +17,22 @@ export class ContactsService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
-    this.baseUrl = this.configService
-      .get<string>('endpointUrls.baseUrl')
-      .replace(/\s/g, '%20');
+    this.baseUrl = encodeURIComponent(
+      this.configService.get<string>('endpointUrls.baseUrl'),
+    );
     this.endpointUrls = {
-      [RecordType.Case]: this.configService
-        .get<string>('endpointUrls.caseContacts')
-        .replace(/\s/g, '%20'),
-      [RecordType.Incident]: this.configService
-        .get<string>('endpointUrls.incidentContacts')
-        .replace(/\s/g, '%20'),
-      [RecordType.SR]: this.configService
-        .get<string>('endpointUrls.srContacts')
-        .replace(/\s/g, '%20'),
-      [RecordType.Memo]: this.configService
-        .get<string>('endpointUrls.memoContacts')
-        .replace(/\s/g, '%20'),
+      [RecordType.Case]: encodeURIComponent(
+        this.configService.get<string>('endpointUrls.caseContacts'),
+      ),
+      [RecordType.Incident]: encodeURIComponent(
+        this.configService.get<string>('endpointUrls.incidentContacts'),
+      ),
+      [RecordType.SR]: encodeURIComponent(
+        this.configService.get<string>('endpointUrls.srContacts'),
+      ),
+      [RecordType.Memo]: encodeURIComponent(
+        this.configService.get<string>('endpointUrls.memoContacts'),
+      ),
     };
     this.workspace = this.configService.get('workspaces.contacts');
     this.sinceFieldName = this.configService.get('sinceFieldName.contacts');
@@ -45,8 +45,7 @@ export class ContactsService {
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     const baseSearchSpec = ``;
-    const upstreamUrl =
-      this.baseUrl + this.endpointUrls[type].replace('{rowId}', id.rowId);
+    const upstreamUrl = this.constructUpstreamUrl(type, id);
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -61,5 +60,9 @@ export class ContactsService {
       params,
     );
     return new NestedContactsEntity(response.data);
+  }
+
+  constructUpstreamUrl(type: RecordType, id: IdPathParams): string {
+    return this.baseUrl + this.endpointUrls[type].replace('{rowId}', id.rowId);
   }
 }

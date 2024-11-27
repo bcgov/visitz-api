@@ -17,10 +17,10 @@ export class AttachmentsService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
-    this.url = (
+    this.url = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
-      this.configService.get<string>('endpointUrls.attachments')
-    ).replace(/\s/g, '%20');
+        this.configService.get<string>('endpointUrls.attachments'),
+    );
     this.workspace = this.configService.get('workspaces.attachments');
     this.sinceFieldName = this.configService.get('sinceFieldName.attachments');
   }

@@ -20,10 +20,10 @@ export class SupportNetworkService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
-    this.url = (
+    this.url = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
-      this.configService.get<string>('endpointUrls.supportNetwork')
-    ).replace(/\s/g, '%20');
+        this.configService.get<string>('endpointUrls.supportNetwork'),
+    );
     this.workspace = this.configService.get('workspaces.supportNetwork');
     this.sinceFieldName = this.configService.get(
       'sinceFieldName.supportNetwork',
