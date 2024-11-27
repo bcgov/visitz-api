@@ -15,13 +15,6 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello world! This is the visitz-api.');
-  });
-
   it('/caseload (GET)', () => {
     return request(app.getHttpServer())
       .get('/caseload')

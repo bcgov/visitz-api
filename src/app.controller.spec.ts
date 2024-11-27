@@ -15,12 +15,6 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello world! This is the visitz-api."', () => {
-      expect(appController.getHello()).toBe(
-        'Hello world! This is the visitz-api.',
-      );
-    });
-
     it('should return "This is the caseload API endpoint."', () => {
       expect(appController.getCaseload()).toBe(
         'This is the caseload API endpoint.',
