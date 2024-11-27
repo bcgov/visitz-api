@@ -4,24 +4,22 @@ export default () => ({
   },
   upstreamAuth: {
     case: {
-      endpoint: encodeURIComponent((process.env.CASE_ENDPOINT ?? ' ').trim()),
+      endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
       idirField: 'Sales Rep',
     },
     incident: {
-      endpoint: encodeURIComponent(
-        (process.env.INCIDENT_ENDPOINT ?? ' ').trim(),
-      ),
+      endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
       idirField: 'Owned By',
     },
     sr: {
-      endpoint: encodeURIComponent((process.env.SR_ENDPOINT ?? ' ').trim()),
+      endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
       idirField: 'Owner',
     },
     memo: {
-      endpoint: encodeURIComponent((process.env.MEMO_ENDPOINT ?? ' ').trim()),
+      endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
       workspace: 'int_lab',
     },
   },

@@ -17,20 +17,20 @@ export class ContactsService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
-    this.baseUrl = encodeURIComponent(
+    this.baseUrl = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl'),
     );
     this.endpointUrls = {
-      [RecordType.Case]: encodeURIComponent(
+      [RecordType.Case]: encodeURI(
         this.configService.get<string>('endpointUrls.caseContacts'),
       ),
-      [RecordType.Incident]: encodeURIComponent(
+      [RecordType.Incident]: encodeURI(
         this.configService.get<string>('endpointUrls.incidentContacts'),
       ),
-      [RecordType.SR]: encodeURIComponent(
+      [RecordType.SR]: encodeURI(
         this.configService.get<string>('endpointUrls.srContacts'),
       ),
-      [RecordType.Memo]: encodeURIComponent(
+      [RecordType.Memo]: encodeURI(
         this.configService.get<string>('endpointUrls.memoContacts'),
       ),
     };
@@ -63,6 +63,6 @@ export class ContactsService {
   }
 
   constructUpstreamUrl(type: RecordType, id: IdPathParams): string {
-    return this.baseUrl + this.endpointUrls[type].replace('{rowId}', id.rowId);
+    return this.baseUrl + this.endpointUrls[type].replace('rowId', id.rowId);
   }
 }

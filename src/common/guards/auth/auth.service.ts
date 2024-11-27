@@ -16,10 +16,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
-import {
-  baseUrlEnvVarName,
-  idirUsernameHeaderField,
-} from '../../../common/constants/upstream-constants';
+import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +33,9 @@ export class AuthService {
     private readonly tokenRefresherService: TokenRefresherService,
   ) {
     this.cacheTime = this.configService.get<number>('recordCache.cacheTtlMs');
-    this.baseUrl = this.configService.get<string>(baseUrlEnvVarName);
+    this.baseUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.baseUrl'),
+    );
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
   }
 
