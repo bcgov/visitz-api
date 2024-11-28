@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Matches } from 'class-validator';
 import {
+  attachmentIdName,
   idMaxLength,
   idName,
   idRegex,
@@ -15,4 +16,15 @@ export class IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [idName]: string;
+}
+
+export class AttachmentIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Attachment-Id-Here',
+    description: 'The Id of the attachment you wish to download.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [attachmentIdName]: string;
 }

@@ -8,12 +8,15 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { UtilitiesService } from '../utilities/utilities.service';
 import { RecordType } from '../../common/constants/enumerations';
 import {
+  attachmentIdName,
   idName,
   incidentsAttachmentsFieldName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { AxiosResponse } from 'axios';
 import {
+  AttachmentDetailsEntity,
+  AttachmentDetailsIncidentExample,
   AttachmentsListResponseIncidentExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
@@ -85,6 +88,39 @@ describe('AttachmentsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleAttachmentDetailsRecord tests', () => {
+    it.each([
+      [
+        RecordType.Incident,
+        { [idName]: 'id', [attachmentIdName]: 'attachmentId' },
+        incidentsAttachmentsFieldName,
+        { [sinceParamName]: '2023-11-13' },
+        AttachmentDetailsIncidentExample,
+      ],
+    ])(
+      'should return a nested attachment entity given good inputs',
+      async (type, id, typeFieldName, filter, data) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+        const result = await service.getSingleAttachmentDetailsRecord(
+          type,
+          id,
+          typeFieldName,
+          res,
+          filter,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new AttachmentDetailsEntity(data));
       },
     );
   });

@@ -11,7 +11,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-	"test:gh": "jest --ci --reporters=default --reporters=jest-junit",
+    "test:gh": "jest --ci --reporters=default --reporters=jest-junit",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -81,19 +81,19 @@
       "**/*.(t|j)s",
       "!**/*.module.(t|j)s",
       "!**/main.ts",
-	  "!**/*.entity.(t|j)s",
-	  "!**/configuration.(t|j)s"
+      "!**/*.entity.(t|j)s",
+      "!**/configuration.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
   "jest-junit": {
-	"outputDirectory": "reports",
-	"outputName": "jest-junit.xml",
-	"ancestorSeparator": " › ",
-	"uniqueOutputName": "false",
-	"suiteNameTemplate": "{title}",
-	"classNameTemplate": "{title}",
-	"titleTemplate": "{title}"
+    "outputDirectory": "reports",
+    "outputName": "jest-junit.xml",
+    "ancestorSeparator": " › ",
+    "uniqueOutputName": "false",
+    "suiteNameTemplate": "{title}",
+    "classNameTemplate": "{title}",
+    "titleTemplate": "{title}"
   }
 }

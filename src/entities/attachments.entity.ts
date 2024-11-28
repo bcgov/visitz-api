@@ -41,8 +41,12 @@ const AttachmentsSingleResponseCaseExample = {
   'Memo Id': '',
   MemoNumber: '',
   'SR Id': '',
-  'Attachment Id': 'Siebel Link Here',
   Id: 'Attachment-Id-Here',
+};
+
+export const AttachmentDetailsCaseExample = {
+  ...AttachmentsSingleResponseCaseExample,
+  'Attachment Id': 'base64 inline attachment here',
 };
 
 const AttachmentsSingleResponseIncidentExample = {
@@ -53,6 +57,11 @@ const AttachmentsSingleResponseIncidentExample = {
   'Incident No': 'Numeric-Incident-Id-Here',
 };
 
+export const AttachmentDetailsIncidentExample = {
+  ...AttachmentsSingleResponseIncidentExample,
+  'Attachment Id': 'base64 inline attachment here',
+};
+
 const AttachmentsSingleResponseSRExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
@@ -61,12 +70,22 @@ const AttachmentsSingleResponseSRExample = {
   'SR Id': 'SR-Id-Here',
 };
 
+export const AttachmentDetailsSRExample = {
+  ...AttachmentsSingleResponseSRExample,
+  'Attachment Id': 'base64 inline attachment here',
+};
+
 const AttachmentsSingleResponseMemoExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
   MemoNumber: 'Numeric-Memo-Id-Here',
   'Memo Id': 'Memo-Id-Here',
+};
+
+export const AttachmentDetailsMemoExample = {
+  ...AttachmentsSingleResponseMemoExample,
+  'Attachment Id': 'base64 inline attachment here',
 };
 
 export const AttachmentsListResponseCaseExample = {
@@ -348,12 +367,6 @@ class AttachmentsEntity {
   'SR Id': string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['Attachment Id'],
-  })
-  @Expose()
-  'Attachment Id': string;
-
-  @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Id'],
   })
   @Expose()
@@ -362,6 +375,16 @@ class AttachmentsEntity {
   constructor(partial: Partial<AttachmentsEntity>) {
     Object.assign(this, partial);
   }
+}
+
+@Exclude()
+@ApiSchema({ name: 'AttachmentDetailsResponse' })
+export class AttachmentDetailsEntity extends AttachmentsEntity {
+  @ApiProperty({
+    example: AttachmentDetailsCaseExample['Attachment Id'],
+  })
+  @Expose()
+  'Attachment Id': string;
 }
 
 @Exclude()

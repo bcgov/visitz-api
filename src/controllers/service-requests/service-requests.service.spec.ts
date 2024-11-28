@@ -10,17 +10,23 @@ import {
   SupportNetworkListResponseSRExample,
 } from '../../entities/support-network.entity';
 import { RecordType } from '../../common/constants/enumerations';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  attachmentIdName,
   idName,
   sinceParamName,
   srAttachmentsFieldName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
+  AttachmentDetailsEntity,
+  AttachmentDetailsSRExample,
   AttachmentsListResponseSRExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
@@ -146,6 +152,43 @@ describe('ServiceRequestsService', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRAttachmentDetailsRecord tests', () => {
+    it.each([
+      [
+        AttachmentDetailsSRExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
+        srAttachmentsFieldName,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams, typeFieldName) => {
+        const attachmentsSpy = jest
+          .spyOn(attachmentsService, 'getSingleAttachmentDetailsRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new AttachmentDetailsEntity(data)),
+          );
+
+        const result = await service.getSingleSRAttachmentDetailsRecord(
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(attachmentsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          typeFieldName,
+          res,
+          filterQueryParams,
+        );
+        expect(result).toEqual(new AttachmentDetailsEntity(data));
       },
     );
   });

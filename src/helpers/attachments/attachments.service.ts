@@ -1,11 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  AttachmentIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { NestedAttachmentsEntity } from '../../entities/attachments.entity';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  AttachmentDetailsEntity,
+  NestedAttachmentsEntity,
+} from '../../entities/attachments.entity';
+import {
+  attachmentIdName,
+  idName,
+  INLINE_ATTACHMENT,
+  inlineAttachmentParamName,
+  uniformResponseParamName,
+} from '../../common/constants/parameter-constants';
 import { Response } from 'express';
 
 @Injectable()
@@ -47,5 +59,31 @@ export class AttachmentsService {
       params,
     );
     return new NestedAttachmentsEntity(response.data);
+  }
+
+  async getSingleAttachmentDetailsRecord(
+    _type: RecordType,
+    id: AttachmentIdPathParams,
+    typeFieldName: string,
+    res: Response,
+    filter?: FilterQueryParams,
+  ): Promise<AttachmentDetailsEntity> {
+    const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.workspace,
+        this.sinceFieldName,
+        filter,
+      );
+    params[inlineAttachmentParamName] = INLINE_ATTACHMENT;
+    params[uniformResponseParamName] = undefined;
+    const response = await this.requestPreparerService.sendGetRequest(
+      this.url + `/${id[attachmentIdName]}`,
+      headers,
+      res,
+      params,
+    );
+    return new AttachmentDetailsEntity(response.data);
   }
 }

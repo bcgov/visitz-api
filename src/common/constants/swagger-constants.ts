@@ -13,13 +13,16 @@ const noContentResponseSwagger = {
   description: 'Empty body. Returned when no records match the given criteria.',
 };
 
-const headerInfo = [
-  {
-    name: 'version',
-    description: 'API version number.',
-    schema: { type: 'integer', default: 2, example: 2 },
-    required: true,
-  },
-];
+const versionInfo = {
+  name: 'version',
+  type: 'integer',
+  description: 'API version number.',
+  example: 2,
+  required: true,
+};
 
-export { totalRecordCountHeadersSwagger, noContentResponseSwagger, headerInfo };
+export {
+  totalRecordCountHeadersSwagger,
+  noContentResponseSwagger,
+  versionInfo,
+};
