@@ -17,11 +17,11 @@ import {
   ApiOperation,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
-  ApiHeaders,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import {
@@ -49,9 +49,9 @@ import {
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { Response } from 'express';
 import {
-  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
+  versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
   pageSizeParamName,
@@ -75,7 +75,7 @@ import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entit
 @ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
-@ApiHeaders(headerInfo)
+@ApiParam(versionInfo)
 export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
 

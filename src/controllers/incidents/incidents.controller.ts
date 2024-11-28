@@ -13,12 +13,12 @@ import {
   ApiBadRequestResponse,
   ApiExtraModels,
   ApiForbiddenResponse,
-  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
   getSchemaPath,
@@ -50,9 +50,9 @@ import {
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
 import {
-  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
+  versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
   pageSizeParamName,
@@ -76,7 +76,7 @@ import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entit
 @ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
-@ApiHeaders(headerInfo)
+@ApiParam(versionInfo)
 export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 

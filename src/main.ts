@@ -4,12 +4,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
 import { Logger as NestJSLogger } from '@nestjs/common';
+import { versionRegexString } from './common/constants/parameter-constants';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
   app.useLogger(app.get(Logger));
+
+  app.setGlobalPrefix(versionRegexString);
 
   const config = new DocumentBuilder()
     .setTitle('Visitz API')
@@ -18,8 +21,8 @@ async function bootstrap() {
     .addTag('visitz')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-spec', app, documentFactory, {
-    jsonDocumentUrl: 'api-spec/json',
+  SwaggerModule.setup(`${versionRegexString}/api-spec`, app, documentFactory, {
+    jsonDocumentUrl: `${versionRegexString}/api-spec/json`,
   });
 
   const port = process.env.PORT ?? 3000;

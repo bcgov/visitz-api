@@ -9,6 +9,7 @@ const inlineAttachmentParamName = 'inlineattachment';
 const sinceParamName = 'since';
 
 const idMaxLength = 100;
+const versionRegexString = 'v:version(\\d+)';
 const idRegex = /^[0-9\-A-Za-z]{1,100}$/;
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
@@ -29,6 +30,7 @@ export {
   inlineAttachmentParamName,
   sinceParamName,
   idMaxLength,
+  versionRegexString,
   idRegex,
   idName,
   attachmentIdName,

@@ -17,12 +17,12 @@ import {
   ApiCreatedResponse,
   ApiExtraModels,
   ApiForbiddenResponse,
-  ApiHeaders,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
   getSchemaPath,
@@ -65,9 +65,9 @@ import {
 } from '../../common/constants/upstream-constants';
 import { Request, Response } from 'express';
 import {
-  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
+  versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
   NestedContactsEntity,
@@ -85,7 +85,7 @@ import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entit
 @ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
-@ApiHeaders(headerInfo)
+@ApiParam(versionInfo)
 export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 

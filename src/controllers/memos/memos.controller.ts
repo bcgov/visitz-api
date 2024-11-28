@@ -17,11 +17,11 @@ import {
   getSchemaPath,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
-  ApiHeaders,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import {
   idName,
@@ -43,9 +43,9 @@ import {
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { Response } from 'express';
 import {
-  headerInfo,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
+  versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
   pageSizeParamName,
@@ -68,7 +68,7 @@ import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entit
 @ApiForbiddenResponse({ type: ApiForbiddenErrorEntity })
 @ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
-@ApiHeaders(headerInfo)
+@ApiParam(versionInfo)
 export class MemosController {
   constructor(private readonly memosService: MemosService) {}
 
