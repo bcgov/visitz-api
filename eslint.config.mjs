@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.eslintrc.js', '.husky/install.mjs'],
+    ignores: ['**/.eslintrc.js', '.husky/install.mjs', 'cypress.config.ts'],
   },
   ...compat.extends(
     'plugin:@typescript-eslint/recommended',
