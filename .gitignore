@@ -137,3 +137,4 @@ reports/
 
 #local files
 testjsons/
+cypress/screenshots/
