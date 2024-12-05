@@ -61,7 +61,7 @@ Standalone App / JavaScript | https://insomnia.rest/ | [GitHub](https://github.c
 * Good, because you can write resuable test suites in JavaScript
 * Good, because Insomnia is open source
 * Good, because Inso CLI is a CLI collection runner tool with reporting options
-* Bad, because newer builds (past 2023.5.8) severly limit what can be done without a cloud account, including the collection runner and CLI
+* Bad, because newer builds (past 2023.5.8) severely limit what can be done without a cloud account, including the collection runner and CLI
 
 ### Cypress
 
@@ -70,7 +70,7 @@ TypeScript/JavaScript | https://www.cypress.io/ | [GitHub](https://github.com/cy
 > Fast, easy and reliable testing for anything that runs in a browser. 
 
 * Good, because Cypress is open source
-* Good, because you can write resuable test suites in TypeScript/ JavaScript
+* Good, because you can write resuable test suites in TypeScript / JavaScript
 * Good, because Cypress has API testing options, including GUI and CLI reporting
 * Neutral, because while it has API testing options, it is more designed with FE testing in mind
 * Neutral, because it has cloud options, but they can be ignored and an account is not required to run tests
