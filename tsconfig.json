@@ -18,5 +18,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "exclude": ["cypress.config.ts", "cypress", "node_modules"]
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["./cypress.config.ts", "cypress"]
 }
