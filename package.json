@@ -4,6 +4,8 @@
   "description": "Middleware API for the MCFD Mobility app.",
   "scripts": {
     "build": "nest build",
+    "cy:gui": "cypress open",
+    "cy:run": "cypress run --browser firefox",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start | pino-pretty -S -t SYS:standard",
     "start:dev": "nest start --watch | pino-pretty -S -t SYS:standard",
@@ -51,6 +53,9 @@
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "cypress": "^13.16.0",
+    "cypress-plugin-api": "^2.11.2",
+    "dotenv": "^16.4.7",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
