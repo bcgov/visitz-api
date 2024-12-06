@@ -10,6 +10,9 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# MacOS files
+.DS_STORE
+
 # Runtime data
 pids
 *.pid
@@ -128,3 +131,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# test reports
+reports/
+
+#local files
+testjsons/
+cypress/screenshots/

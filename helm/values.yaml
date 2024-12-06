@@ -1,0 +1,25 @@
+replicaCount: 1
+ 
+image:
+  repository: ghcr.io/bcgov/visitz-api
+  tag: '<set by CI/CD>'
+  pullPolicy: Always
+ 
+service:
+  type: ClusterIP
+  port: 80
+  containerPort: 3000
+ 
+resources: {}
+ 
+nodeSelector: {}
+ 
+tolerations: []
+ 
+affinity: {}
+
+aps:
+  namespace: '<set by CI/CD>'
+
+vpiAppBuildLabel:
+  version: '<set by CI/CD>'

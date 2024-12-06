@@ -1,0 +1,4 @@
+apiVersion: v2
+name: visitz-api
+description: A Helm chart for deploying visitz-api
+version: 0.1.0

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vpi-app-service
+  labels:
+    app.kubernetes.io/name: vpi-app-service
+spec:
+  selector:
+    app.kubernetes.io/name: vpi-app
+  ports:
+    - name: vpi-app-service-port
+      protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.containerPort }}
