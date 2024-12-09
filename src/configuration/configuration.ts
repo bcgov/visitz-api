@@ -5,22 +5,22 @@ export default () => ({
   upstreamAuth: {
     case: {
       endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
-      workspace: 'int_lab',
+      workspace: process.env.CASE_WORKSPACE ?? undefined,
       idirField: 'Sales Rep',
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
-      workspace: 'int_lab',
+      workspace: process.env.INCIDENT_WORKSPACE ?? undefined,
       idirField: 'Owned By',
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
-      workspace: 'int_lab',
+      workspace: process.env.SR_WORKSPACE ?? undefined,
       idirField: 'Owner',
     },
     memo: {
       endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
-      workspace: 'int_lab',
+      workspace: process.env.MEMO_WORKSPACE ?? undefined,
     },
   },
   oauth: {
@@ -29,11 +29,12 @@ export default () => ({
     clientSecret: process.env.CLIENT_SECRET ?? ' ',
   },
   workspaces: {
-    supportNetwork: 'int_lab',
-    inPersonVisits: 'int_lab',
-    attachments: 'int_lab',
-    postInPersonVisits: 'int_lab',
-    contacts: 'int_lab',
+    supportNetwork: process.env.SUPPORT_NETWORK_WORKSPACE ?? undefined,
+    inPersonVisits: process.env.IN_PERSON_VISITS_WORKSPACE ?? undefined,
+    attachments: process.env.ATTACHMENTS_WORKSPACE ?? undefined,
+    postInPersonVisits:
+      process.env.IN_PERSON_VISITS_POST_WORKSPACE ?? undefined,
+    contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
   },
   sinceFieldName: {
     supportNetwork: 'Updated',
