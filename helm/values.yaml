@@ -23,3 +23,6 @@ aps:
 
 vpiAppBuildLabel:
   version: '<set by CI/CD>'
+
+upstream:
+  baseUrl: '<set by CI/CD>'
