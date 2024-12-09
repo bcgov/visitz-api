@@ -85,6 +85,14 @@ jobs:
           value: "${{ github.ref_name }}-${{ github.run_number }}"
           commitChange: false
 
+      - name: 'YAML poke: Set upstream url'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'upstream.baseUrl'
+          value: "${{ secrets.SIEBEL_API_URL }}"
+          commitChange: false
+
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@v1
         with:

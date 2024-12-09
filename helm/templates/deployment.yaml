@@ -33,10 +33,7 @@ spec:
                     name: visitz-api
                     key: RECORD_CACHE_MS
             - name: UPSTREAM_BASE_URL
-              valueFrom:
-                secretKeyRef:
-                    name: visitz-api
-                    key: UPSTREAM_BASE_URL
+              value: {{ .Values.upstream.baseUrl }}
             - name: SUPPORT_NETWORK_ENDPOINT
               valueFrom:
                 secretKeyRef:
@@ -117,6 +114,51 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: MEMO_CONTACTS_ENDPOINT
+            - name: CASE_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_WORKSPACE
+            - name: INCIDENT_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_WORKSPACE
+            - name: SR_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_WORKSPACE
+            - name: MEMO_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MEMO_WORKSPACE
+            - name: SUPPORT_NETWORK_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SUPPORT_NETWORK_WORKSPACE
+            - name: IN_PERSON_VISITS_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: IN_PERSON_VISITS_WORKSPACE
+            - name: ATTACHMENTS_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: ATTACHMENTS_WORKSPACE
+            - name: IN_PERSON_VISITS_POST_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: IN_PERSON_VISITS_POST_WORKSPACE
+            - name: CONTACTS_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CONTACTS_WORKSPACE
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
       restartPolicy: Always
