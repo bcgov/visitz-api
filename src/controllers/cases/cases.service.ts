@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { RecordType } from '../../common/constants/enumerations';
-import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
+import {
+  NestedSupportNetworkEntity,
+  SupportNetworkEntity,
+} from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
@@ -40,10 +44,10 @@ export class CasesService {
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
-    id: IdPathParams,
+    id: SupportNetworkIdPathParams,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
       id,

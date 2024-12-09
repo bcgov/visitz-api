@@ -27,11 +27,14 @@ import {
 import { IncidentsService } from './incidents.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
+  SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
@@ -39,6 +42,7 @@ import {
   CONTENT_TYPE,
   idName,
   sinceParamName,
+  supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -81,26 +85,32 @@ export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(`:${idName}/support-network`)
+  @Get(`:${idName}/support-network/:${supportNetworkIdName}?`)
   @ApiOperation({
     description:
-      'Find all Support Network entries related to a given Incident entity by Incident id.',
+      `Find all Support Network entries related to a given Incident entity by Incident id. Optionally, if` +
+      ` ${supportNetworkIdName} is given, will display that single result if it is related to the given Incident id.`,
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(NestedSupportNetworkEntity)
+  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          $ref: getSchemaPath(NestedSupportNetworkEntity),
+          oneOf: [
+            { $ref: getSchemaPath(SupportNetworkEntity) },
+            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
+          ],
         },
-
         examples: {
-          SupportNetworkResponse: {
+          SupportNetworkSingleResponse: {
+            value: SupportNetworkSingleResponseIncidentExample,
+          },
+          SupportNetworkListResponse: {
             value: SupportNetworkListResponseIncidentExample,
           },
         },
@@ -115,7 +125,7 @@ export class IncidentsController {
         forbidNonWhitelisted: true,
       }),
     )
-    id: IdPathParams,
+    id: SupportNetworkIdPathParams,
     @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
@@ -126,7 +136,7 @@ export class IncidentsController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,
       res,

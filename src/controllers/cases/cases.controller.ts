@@ -30,11 +30,14 @@ import {
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
+  SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
@@ -42,6 +45,7 @@ import {
   CONTENT_TYPE,
   idName,
   sinceParamName,
+  supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -90,26 +94,33 @@ export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(`:${idName}/support-network`)
+  @Get(`:${idName}/support-network/:${supportNetworkIdName}?`)
   @ApiOperation({
     description:
-      'Find all Support Network entries related to a given Case entity by Case id.',
+      `Find all Support Network entries related to a given Case entity by Case id. Optionally, if` +
+      ` ${supportNetworkIdName} is given, will display that single result if it is related to the given Case id.`,
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          $ref: getSchemaPath(NestedSupportNetworkEntity),
+          oneOf: [
+            { $ref: getSchemaPath(SupportNetworkEntity) },
+            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
+          ],
         },
         examples: {
-          SupportNetworkResponse: {
+          SupportNetworkSingleResponse: {
+            value: SupportNetworkSingleResponseCaseExample,
+          },
+          SupportNetworkListResponse: {
             value: SupportNetworkListResponseCaseExample,
           },
         },
@@ -124,7 +135,7 @@ export class CasesController {
         forbidNonWhitelisted: true,
       }),
     )
-    id: IdPathParams,
+    id: SupportNetworkIdPathParams,
     @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
@@ -135,7 +146,7 @@ export class CasesController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
       res,

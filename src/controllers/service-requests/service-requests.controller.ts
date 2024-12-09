@@ -26,11 +26,14 @@ import {
 import { ServiceRequestsService } from './service-requests.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
+  SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
@@ -38,6 +41,7 @@ import {
   CONTENT_TYPE,
   idName,
   sinceParamName,
+  supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -80,25 +84,32 @@ export class ServiceRequestsController {
   constructor(private readonly serviceRequestService: ServiceRequestsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(`:${idName}/support-network`)
+  @Get(`:${idName}/support-network/:${supportNetworkIdName}?`)
   @ApiOperation({
     description:
-      'Find all Support Network entries related to a given Service Request entity by Service Request id.',
+      `Find all Support Network entries related to a given Service Request entity by Service Request id. Optionally, if` +
+      ` ${supportNetworkIdName} is given, will display that single result if it is related to the given Service Request id.`,
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(NestedSupportNetworkEntity)
+  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          $ref: getSchemaPath(NestedSupportNetworkEntity),
+          oneOf: [
+            { $ref: getSchemaPath(SupportNetworkEntity) },
+            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
+          ],
         },
         examples: {
-          SupportNetworkResponse: {
+          SupportNetworkSingleResponse: {
+            value: SupportNetworkSingleResponseSRExample,
+          },
+          SupportNetworkListResponse: {
             value: SupportNetworkListResponseSRExample,
           },
         },
@@ -113,7 +124,7 @@ export class ServiceRequestsController {
         forbidNonWhitelisted: true,
       }),
     )
-    id: IdPathParams,
+    id: SupportNetworkIdPathParams,
     @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
@@ -124,7 +135,7 @@ export class ServiceRequestsController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
       id,
       res,

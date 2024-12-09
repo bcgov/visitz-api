@@ -4,11 +4,17 @@ import {
   RecordEntityMap,
   RecordType,
 } from '../../common/constants/enumerations';
-import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  NestedSupportNetworkEntity,
+  SupportNetworkEntity,
+} from '../../entities/support-network.entity';
+import { SupportNetworkIdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { idName } from '../../common/constants/parameter-constants';
+import {
+  idName,
+  supportNetworkIdName,
+} from '../../common/constants/parameter-constants';
 import { Response } from 'express';
 
 @Injectable()
@@ -32,11 +38,15 @@ export class SupportNetworkService {
 
   async getSingleSupportNetworkInformationRecord(
     type: RecordType,
-    id: IdPathParams,
+    id: SupportNetworkIdPathParams,
     res: Response,
     filter?: FilterQueryParams,
   ) {
-    const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+    let baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+    if (id[supportNetworkIdName] !== undefined) {
+      baseSearchSpec =
+        baseSearchSpec + ` AND [Id]="${id[supportNetworkIdName]}"`;
+    }
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -50,6 +60,9 @@ export class SupportNetworkService {
       res,
       params,
     );
+    if (id[supportNetworkIdName] !== undefined) {
+      return new SupportNetworkEntity(response.data.items[0]);
+    }
     return new NestedSupportNetworkEntity(response.data);
   }
 }

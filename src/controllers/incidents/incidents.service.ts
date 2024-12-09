@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { RecordType } from '../../common/constants/enumerations';
-import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
+import {
+  NestedSupportNetworkEntity,
+  SupportNetworkEntity,
+} from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
   IdPathParams,
@@ -29,7 +32,7 @@ export class IncidentsService {
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
-  ): Promise<NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Incident,
       id,
