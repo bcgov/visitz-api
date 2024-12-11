@@ -56,6 +56,7 @@ export class AuthService {
       await this.cacheManager.get(key);
 
     if (upstreamResult === undefined) {
+      this.logger.log(`Cache not hit, going upstream...`);
       upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
       await this.cacheManager.set(key, upstreamResult, this.cacheTime);
     } else {
