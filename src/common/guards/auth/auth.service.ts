@@ -58,6 +58,8 @@ export class AuthService {
     if (upstreamResult === undefined) {
       upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
       await this.cacheManager.set(key, upstreamResult, this.cacheTime);
+    } else {
+      this.logger.log(`Cache hit!`);
     }
     if (upstreamResult !== idir) {
       return false;
@@ -116,6 +118,9 @@ export class AuthService {
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
         ];
       if (idir === undefined) {
+        this.logger.error(
+          `${this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)} field not found in request`,
+        );
         return null;
       }
       return idir;
@@ -123,6 +128,7 @@ export class AuthService {
       if (error instanceof AxiosError) {
         this.logger.error({
           msg: error.message,
+          errorDetails: error.response?.data,
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,

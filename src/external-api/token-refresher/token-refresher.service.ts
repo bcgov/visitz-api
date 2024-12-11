@@ -82,6 +82,7 @@ export class TokenRefresherService {
       if (error instanceof AxiosError) {
         this.logger.error({
           msg: error.message,
+          errorDetails: error.response?.data,
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
