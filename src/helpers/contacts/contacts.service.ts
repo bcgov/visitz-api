@@ -3,9 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  ContactIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { NestedContactsEntity } from '../../entities/contacts.entity';
+import {
+  ContactsEntity,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
+import { contactIdName } from 'src/common/constants/parameter-constants';
 
 @Injectable()
 export class ContactsService {
@@ -40,6 +47,29 @@ export class ContactsService {
 
   async getSingleContactRecord(
     type: RecordType,
+    id: ContactIdPathParams,
+    res: Response,
+  ): Promise<ContactsEntity> {
+    const baseSearchSpec = `([Id]="${id[contactIdName]}"`;
+    const upstreamUrl = this.constructUpstreamUrl(type, id);
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.workspace,
+        this.sinceFieldName,
+        false,
+      );
+    const response = await this.requestPreparerService.sendGetRequest(
+      upstreamUrl,
+      headers,
+      res,
+      params,
+    );
+    return new ContactsEntity(response.data);
+  }
+
+  async getListContactRecord(
+    type: RecordType,
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
@@ -51,6 +81,7 @@ export class ContactsService {
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
+        true,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(

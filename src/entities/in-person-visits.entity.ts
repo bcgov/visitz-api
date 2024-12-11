@@ -8,7 +8,7 @@ import {
 /*
  * Examples
  */
-const InPersonVisitsSingleResponseCaseExample = {
+export const InPersonVisitsSingleResponseCaseExample = {
   Name: 'Name here',
   'Visit Description': 'description',
   Id: 'Id-here',
@@ -45,7 +45,7 @@ export const PostInPersonVisitResponseExample = {
  */
 @Exclude()
 @ApiSchema({ name: 'InPersonVisit' })
-class InPersonVisitsEntity {
+export class InPersonVisitsEntity {
   @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample['Name'],
     required: false,

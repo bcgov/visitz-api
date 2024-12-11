@@ -8,7 +8,10 @@ import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
-import { SupportNetworkIdPathParams } from '../../dto/id-path-params.dto';
+import {
+  IdPathParams,
+  SupportNetworkIdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
@@ -40,18 +43,39 @@ export class SupportNetworkService {
     type: RecordType,
     id: SupportNetworkIdPathParams,
     res: Response,
-    filter?: FilterQueryParams,
   ) {
-    let baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
-    if (id[supportNetworkIdName] !== undefined) {
-      baseSearchSpec =
-        baseSearchSpec + ` AND [Id]="${id[supportNetworkIdName]}"`;
-    }
+    const baseSearchSpec =
+      `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"` +
+      ` AND [Id]="${id[supportNetworkIdName]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
+        false,
+      );
+    const response = await this.requestPreparerService.sendGetRequest(
+      this.url,
+      headers,
+      res,
+      params,
+    );
+    return new SupportNetworkEntity(response.data);
+  }
+
+  async getListSupportNetworkInformationRecord(
+    type: RecordType,
+    id: IdPathParams,
+    res: Response,
+    filter?: FilterQueryParams,
+  ) {
+    const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.workspace,
+        this.sinceFieldName,
+        true,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
@@ -60,9 +84,6 @@ export class SupportNetworkService {
       res,
       params,
     );
-    if (id[supportNetworkIdName] !== undefined) {
-      return new SupportNetworkEntity(response.data.items[0]);
-    }
     return new NestedSupportNetworkEntity(response.data);
   }
 }

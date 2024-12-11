@@ -5,7 +5,7 @@ import { createdDateFieldName } from '../common/constants/upstream-constants';
 /*
  * Examples
  */
-const AttachmentsSingleResponseCaseExample = {
+export const AttachmentsSingleResponseCaseExample = {
   'Application No': '',
   Categorie: 'Attachment',
   Category: 'Assessment',
@@ -50,7 +50,7 @@ export const AttachmentDetailsCaseExample = {
   'Attachment Id': 'base64 inline attachment here',
 };
 
-const AttachmentsSingleResponseIncidentExample = {
+export const AttachmentsSingleResponseIncidentExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
@@ -63,7 +63,7 @@ export const AttachmentDetailsIncidentExample = {
   'Attachment Id': 'base64 inline attachment here',
 };
 
-const AttachmentsSingleResponseSRExample = {
+export const AttachmentsSingleResponseSRExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
@@ -76,7 +76,7 @@ export const AttachmentDetailsSRExample = {
   'Attachment Id': 'base64 inline attachment here',
 };
 
-const AttachmentsSingleResponseMemoExample = {
+export const AttachmentsSingleResponseMemoExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
@@ -138,7 +138,7 @@ export const AttachmentsListResponseMemoExample = {
  */
 @Exclude()
 @ApiSchema({ name: 'Attachment' })
-class AttachmentsEntity {
+export class AttachmentsEntity {
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Name'],
   })

@@ -40,6 +40,7 @@ export class RequestPreparerService {
     baseSearchSpec: string,
     workspace: string | undefined,
     sinceFieldName: string | undefined,
+    uniformResponse: boolean,
     filter?: FilterQueryParams,
   ) {
     let searchSpec = baseSearchSpec;
@@ -64,9 +65,11 @@ export class RequestPreparerService {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       searchspec: searchSpec,
-      [uniformResponseParamName]: UNIFORM_RESPONSE,
     };
-    if (typeof workspace !== 'undefined') {
+    if (uniformResponse === true) {
+      params[uniformResponseParamName] = UNIFORM_RESPONSE;
+    }
+    if (typeof workspace !== 'undefined' && workspace.trim() !== '') {
       params['workspace'] = workspace;
     }
     if (filter !== undefined) {
@@ -132,6 +135,7 @@ export class RequestPreparerService {
         response.headers[recordCountHeaderName],
       );
     }
+    console.log(response.data);
     return response;
   }
 

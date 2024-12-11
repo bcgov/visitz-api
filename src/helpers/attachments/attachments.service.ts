@@ -4,7 +4,10 @@ import {
   AttachmentIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
@@ -50,6 +53,7 @@ export class AttachmentsService {
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
+        true,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
@@ -66,7 +70,7 @@ export class AttachmentsService {
     id: AttachmentIdPathParams,
     typeFieldName: string,
     res: Response,
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
     const [headers, params] =
@@ -74,9 +78,12 @@ export class AttachmentsService {
         baseSearchSpec,
         this.workspace,
         this.sinceFieldName,
+        true,
         filter,
       );
-    params[inlineAttachmentParamName] = INLINE_ATTACHMENT;
+    if (id[inlineAttachmentParamName] !== false) {
+      params[inlineAttachmentParamName] = INLINE_ATTACHMENT;
+    }
     params[uniformResponseParamName] = undefined;
     const response = await this.requestPreparerService.sendGetRequest(
       this.url + `/${id[attachmentIdName]}`,
@@ -84,6 +91,9 @@ export class AttachmentsService {
       res,
       params,
     );
+    if (id[inlineAttachmentParamName] === false) {
+      delete response.data[`${attachmentIdName}`]; // prevents exposing url in this field when not a download
+    }
     return new AttachmentDetailsEntity(response.data);
   }
 }

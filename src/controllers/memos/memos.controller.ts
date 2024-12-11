@@ -28,9 +28,11 @@ import {
   CONTENT_TYPE,
   sinceParamName,
   attachmentIdName,
+  contactIdName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -55,6 +57,8 @@ import {
 import {
   NestedContactsEntity,
   ContactsListResponseMemoExample,
+  ContactsEntity,
+  ContactsSingleResponseMemoExample,
 } from '../../entities/contacts.entity';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
@@ -197,14 +201,14 @@ export class MemosController {
           $ref: getSchemaPath(NestedContactsEntity),
         },
         examples: {
-          ContactsResponse: {
+          ContactsListResponse: {
             value: ContactsListResponseMemoExample,
           },
         },
       },
     },
   })
-  async getSingleMemoContactRecord(
+  async getListMemoContactRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -224,6 +228,40 @@ export class MemosController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.memosService.getSingleMemoContactRecord(id, res, filter);
+    return await this.memosService.getListMemoContactRecord(id, res, filter);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${contactIdName} result if it is related to the given Memo id.`,
+  })
+  @ApiExtraModels(ContactsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactsEntity),
+        },
+        examples: {
+          ContactsSingleResponse: {
+            value: ContactsSingleResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactsEntity> {
+    return await this.memosService.getSingleMemoContactRecord(id, res);
   }
 }

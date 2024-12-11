@@ -33,12 +33,14 @@ import {
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
+  contactIdName,
   CONTENT_TYPE,
   idName,
   sinceParamName,
@@ -66,6 +68,8 @@ import {
 import {
   NestedContactsEntity,
   ContactsListResponseIncidentExample,
+  ContactsEntity,
+  ContactsSingleResponseIncidentExample,
 } from '../../entities/contacts.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
@@ -85,33 +89,72 @@ export class IncidentsController {
   constructor(private readonly incidentsService: IncidentsService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(`:${idName}/support-network/:${supportNetworkIdName}?`)
+  @Get(`:${idName}/support-network`)
   @ApiOperation({
-    description:
-      `Find all Support Network entries related to a given Incident entity by Incident id. Optionally, if` +
-      ` ${supportNetworkIdName} is given, will display that single result if it is related to the given Incident id.`,
+    description: `Find all Support Network entries related to a given Incident entity by Incident id.`,
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(SupportNetworkEntity, NestedSupportNetworkEntity)
+  @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          oneOf: [
-            { $ref: getSchemaPath(SupportNetworkEntity) },
-            { $ref: getSchemaPath(NestedSupportNetworkEntity) },
-          ],
+          $ref: getSchemaPath(NestedSupportNetworkEntity),
+        },
+        examples: {
+          SupportNetworkListResponse: {
+            value: SupportNetworkListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentSupportNetworkInformationRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    return await this.incidentsService.getListIncidentSupportNetworkInformationRecord(
+      id,
+      res,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/support-network/:${supportNetworkIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${supportNetworkIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(SupportNetworkEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(SupportNetworkEntity),
         },
         examples: {
           SupportNetworkSingleResponse: {
             value: SupportNetworkSingleResponseIncidentExample,
-          },
-          SupportNetworkListResponse: {
-            value: SupportNetworkListResponseIncidentExample,
           },
         },
       },
@@ -127,20 +170,10 @@ export class IncidentsController {
     )
     id: SupportNetworkIdPathParams,
     @Res({ passthrough: true }) res: Response,
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-        skipMissingProperties: true,
-      }),
-    )
-    filter?: FilterQueryParams,
-  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity> {
     return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,
       res,
-      filter,
     );
   }
 
@@ -269,14 +302,14 @@ export class IncidentsController {
           $ref: getSchemaPath(NestedContactsEntity),
         },
         examples: {
-          ContactsResponse: {
+          ContactsListResponse: {
             value: ContactsListResponseIncidentExample,
           },
         },
       },
     },
   })
-  async getSingleIncidentContactRecord(
+  async getListIncidentContactRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -296,10 +329,44 @@ export class IncidentsController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.incidentsService.getSingleIncidentContactRecord(
+    return await this.incidentsService.getListIncidentContactRecord(
       id,
       res,
       filter,
     );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${contactIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(ContactsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactsEntity),
+        },
+        examples: {
+          ContactsSingleResponse: {
+            value: ContactsSingleResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactsEntity> {
+    return await this.incidentsService.getSingleIncidentContactRecord(id, res);
   }
 }

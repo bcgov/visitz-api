@@ -51,9 +51,8 @@ export class SupportNetworkIdPathParams extends IdPathParams {
     description: 'The Id of the support network you wish to find.',
     maxLength: idMaxLength,
     pattern: idRegex.toString().replaceAll('/', ''),
-    required: false,
   })
-  [supportNetworkIdName]?: string;
+  [supportNetworkIdName]: string;
 }
 
 export class VisitIdPathParams extends IdPathParams {

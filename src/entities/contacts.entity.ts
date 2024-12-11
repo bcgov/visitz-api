@@ -100,7 +100,7 @@ export const ContactsListResponseSRExample = {
  */
 @Exclude()
 @ApiSchema({ name: 'Contact' })
-class ContactsEntity {
+export class ContactsEntity {
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Id'],
   })

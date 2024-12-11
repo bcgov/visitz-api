@@ -7,12 +7,17 @@ import {
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
-import { NestedInPersonVisitsEntity } from '../../entities/in-person-visits.entity';
+import {
+  InPersonVisitsEntity,
+  NestedInPersonVisitsEntity,
+} from '../../entities/in-person-visits.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentDetailsEntity,
@@ -32,7 +37,10 @@ import {
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
-import { NestedContactsEntity } from '../../entities/contacts.entity';
+import {
+  ContactsEntity,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
 
 @Injectable()
 export class CasesService {
@@ -46,9 +54,20 @@ export class CasesService {
   async getSingleCaseSupportNetworkInformationRecord(
     id: SupportNetworkIdPathParams,
     res: Response,
-    filter?: FilterQueryParams,
-  ): Promise<SupportNetworkEntity | NestedSupportNetworkEntity> {
+  ): Promise<SupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
+      RecordType.Case,
+      id,
+      res,
+    );
+  }
+
+  async getListCaseSupportNetworkInformationRecord(
+    id: IdPathParams,
+    res: Response,
+    filter?: FilterQueryParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    return await this.supportNetworkService.getListSupportNetworkInformationRecord(
       RecordType.Case,
       id,
       res,
@@ -57,11 +76,22 @@ export class CasesService {
   }
 
   async getSingleCaseInPersonVisitRecord(
+    id: VisitIdPathParams,
+    res: Response,
+  ): Promise<InPersonVisitsEntity> {
+    return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
+      RecordType.Case,
+      id,
+      res,
+    );
+  }
+
+  async getListCaseInPersonVisitRecord(
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
   ): Promise<NestedInPersonVisitsEntity> {
-    return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
+    return await this.inPersonVisitsService.getListInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
@@ -114,11 +144,22 @@ export class CasesService {
   }
 
   async getSingleCaseContactRecord(
+    id: ContactIdPathParams,
+    res: Response,
+  ): Promise<ContactsEntity> {
+    return await this.contactsService.getSingleContactRecord(
+      RecordType.Case,
+      id,
+      res,
+    );
+  }
+
+  async getListCaseContactRecord(
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.contactsService.getSingleContactRecord(
+    return await this.contactsService.getListContactRecord(
       RecordType.Case,
       id,
       res,
