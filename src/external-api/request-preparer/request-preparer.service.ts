@@ -103,7 +103,7 @@ export class RequestPreparerService {
       if (error instanceof AxiosError) {
         this.logger.error({
           msg: error.message,
-          upstreamMsg: error.response?.data,
+          errorDetails: error.response?.data,
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
@@ -151,7 +151,7 @@ export class RequestPreparerService {
       if (error instanceof AxiosError) {
         this.logger.error({
           msg: error.message,
-          upstreamMsg: error.response?.data,
+          errorDetails: error.response?.data,
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
