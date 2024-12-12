@@ -11,7 +11,8 @@ export default () => ({
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: process.env.INCIDENT_WORKSPACE ?? undefined,
-      idirField: 'Assigned To',
+      idirField: 'Owned By',
+      // TODO: change to Assigned To when this is ready
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
