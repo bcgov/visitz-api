@@ -31,7 +31,7 @@ export const ContactsSingleResponseCaseExample = {
   'Case Con End Dt': '',
   'Created By': 'Creator-Idir-Here',
   'Created By Id': 'Creator-Id-Here',
-  'Created Date': 'Updater-Id-Here',
+  'Created Date': '01/01/1970 00:00:00',
   'Updated By': 'Updater-Idir-Here',
   'Updated By Id': 'Updater-Id-Here',
   'Updated Date': '01/01/1970 00:00:00',

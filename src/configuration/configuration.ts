@@ -39,10 +39,10 @@ export default () => ({
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
   },
   sinceFieldName: {
-    supportNetwork: 'Updated',
-    inPersonVisits: 'Updated',
-    attachments: 'Last Updated Date',
-    contacts: 'Updated',
+    supportNetwork: 'Updated Date',
+    inPersonVisits: 'Updated Date',
+    attachments: 'Updated Date',
+    contacts: 'Updated Date',
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {

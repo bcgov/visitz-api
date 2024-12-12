@@ -25,8 +25,6 @@ const AttachmentsSingleResponseCaseExample = {
   'Template Type': 'Form',
   'Case Id': 'Case-Id-Here',
   Comments: 'comments here',
-  'Created Date': '01/01/1970 00:00:00',
-  CreatedByName: 'Creator-IDIR-Here',
   FileAutoUpdFlg: 'Y',
   FileDate: '01/01/1970 00:00:00',
   FileDeferFlg: 'P',
@@ -36,12 +34,17 @@ const AttachmentsSingleResponseCaseExample = {
   FileSize: '16635',
   FileSrcPath: 'file\\path\\here',
   FileSrcType: 'FILE',
-  UpdatedByName: 'Updater-IDIR-Here',
   FileName: 'File_Name_Here',
   'Memo Id': '',
   MemoNumber: '',
   'SR Id': '',
   Id: 'Attachment-Id-Here',
+  'Created By': 'Creator-Idir-Here',
+  'Created By Id': 'Creator-Id-Here',
+  'Created Date': '01/01/1970 00:00:00',
+  'Updated By': 'Updater-Idir-Here',
+  'Updated By Id': 'Updater-Id-Here',
+  'Updated Date': '01/01/1970 00:00:00',
 };
 
 export const AttachmentDetailsCaseExample = {
@@ -270,18 +273,6 @@ class AttachmentsEntity {
   Comments: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['Created Date'],
-  })
-  @Expose()
-  'Created Date': string;
-
-  @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['CreatedByName'],
-  })
-  @Expose()
-  CreatedByName: string;
-
-  @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['FileAutoUpdFlg'],
   })
   @Expose()
@@ -337,12 +328,6 @@ class AttachmentsEntity {
   FileSrcType: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['UpdatedByName'],
-  })
-  @Expose()
-  UpdatedByName: string;
-
-  @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['FileName'],
   })
   @Expose()
@@ -371,6 +356,42 @@ class AttachmentsEntity {
   })
   @Expose()
   Id: string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Updated By Id'],
+  })
+  @Expose()
+  'Updated By Id': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Updated Date'],
+  })
+  @Expose()
+  'Updated Date': string;
 
   constructor(partial: Partial<AttachmentsEntity>) {
     Object.assign(this, partial);

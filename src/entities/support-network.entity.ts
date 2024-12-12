@@ -9,7 +9,6 @@ const SupportNetworkSingleResponseCaseExample = {
   'Cell Phone Number': '12345678910',
   'Entity Name': EntityType.Case,
   Name: 'Name',
-  Updated: '01/01/1970 00:00:00',
   Comments: 'test',
   'ICM SNC SR Con Flag': 'N',
   'Emergency Contact': 'N',
@@ -20,10 +19,13 @@ const SupportNetworkSingleResponseCaseExample = {
   Id: 'Id-Here',
   Address: 'Test Address',
   Active: 'Yes',
-  Created: '01/01/1970 00:00:00',
-  'Updated By': 'Updater-Idir-Here',
   'ICM SNC Case Con Flag': 'N',
-  'Created By': 'Creater-Idir-Here',
+  'Created By': 'Creator-Idir-Here',
+  'Created By Id': 'Creator-Id-Here',
+  'Created Date': '01/01/1970 00:00:00',
+  'Updated By': 'Updater-Idir-Here',
+  'Updated By Id': 'Updater-Id-Here',
+  'Updated Date': '01/01/1970 00:00:00',
 };
 
 const SupportNetworkSingleResponseSRExample = {
@@ -40,7 +42,7 @@ export const SupportNetworkListResponseCaseExample = {
   items: [
     {
       ...SupportNetworkSingleResponseCaseExample,
-      Updated: '12/25/2024 00:33:37',
+      'Updated Date': '12/25/2024 00:33:37',
     },
     SupportNetworkSingleResponseCaseExample,
   ],
@@ -50,7 +52,7 @@ export const SupportNetworkListResponseSRExample = {
   items: [
     {
       ...SupportNetworkSingleResponseSRExample,
-      Updated: '12/25/2024 00:33:37',
+      'Updated Date': '12/25/2024 00:33:37',
     },
     SupportNetworkSingleResponseSRExample,
   ],
@@ -60,7 +62,7 @@ export const SupportNetworkListResponseIncidentExample = {
   items: [
     {
       ...SupportNetworkSingleResponseIncidentExample,
-      Updated: '12/25/2024 00:33:37',
+      'Updated Date': '12/25/2024 00:33:37',
     },
     SupportNetworkSingleResponseIncidentExample,
   ],
@@ -88,10 +90,6 @@ class SupportNetworkEntity {
   @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Name'] })
   @Expose()
   Name: string;
-
-  @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Updated'] })
-  @Expose()
-  Updated: string;
 
   @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Comments'] })
   @Expose()
@@ -143,16 +141,6 @@ class SupportNetworkEntity {
   @Expose()
   Active: string;
 
-  @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Created'] })
-  @Expose()
-  Created: string;
-
-  @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Updated By'],
-  })
-  @Expose()
-  'Updated By': string;
-
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['ICM SNC Case Con Flag'],
   })
@@ -164,6 +152,36 @@ class SupportNetworkEntity {
   })
   @Expose()
   'Created By': string;
+
+  @ApiProperty({
+    example: SupportNetworkSingleResponseCaseExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: SupportNetworkSingleResponseCaseExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
+
+  @ApiProperty({
+    example: SupportNetworkSingleResponseCaseExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
+
+  @ApiProperty({
+    example: SupportNetworkSingleResponseCaseExample['Updated By Id'],
+  })
+  @Expose()
+  'Updated By Id': string;
+
+  @ApiProperty({
+    example: SupportNetworkSingleResponseCaseExample['Updated Date'],
+  })
+  @Expose()
+  'Updated Date': string;
 
   constructor(partial: Partial<SupportNetworkEntity>) {
     Object.assign(this, partial);

@@ -13,10 +13,12 @@ const InPersonVisitsSingleResponseCaseExample = {
   'Visit Details Value': 'comment',
   'Parent Id': 'Entity-Id-here',
   'Login Name': 'Idir-here',
-  Created: '01/01/1970 00:00:00',
-  Updated: '01/01/1970 00:00:00',
-  'Updated By': 'Idir-here',
-  'Created By': 'Idir-here',
+  'Created By': 'Creator-Idir-Here',
+  'Created By Id': 'Creator-Id-Here',
+  'Created Date': '01/01/1970 00:00:00',
+  'Updated By': 'Updater-Idir-Here',
+  'Updated By Id': 'Updater-Id-Here',
+  'Updated Date': '01/01/1970 00:00:00',
 };
 
 export const InPersonVisitsListResponseCaseExample = {
@@ -92,22 +94,22 @@ class InPersonVisitsEntity {
   'Login Name': string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Created'],
-  })
-  @Expose()
-  Created: string;
-
-  @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Updated'],
-  })
-  @Expose()
-  Updated: string;
-
-  @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample['Created By'],
   })
   @Expose()
   'Created By': string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
 
   @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample['Updated By'],
@@ -115,9 +117,17 @@ class InPersonVisitsEntity {
   @Expose()
   'Updated By': string;
 
-  constructor(partial: Partial<InPersonVisitsEntity>) {
-    Object.assign(this, partial);
-  }
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Updated By Id'],
+  })
+  @Expose()
+  'Updated By Id': string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Updated Date'],
+  })
+  @Expose()
+  'Updated Date': string;
 }
 
 @Exclude()
