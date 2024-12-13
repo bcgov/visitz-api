@@ -1,3 +1,5 @@
+import { updatedDateFieldName } from '../common/constants/upstream-constants';
+
 export default () => ({
   recordCache: {
     cacheTtlMs: parseInt(process.env.RECORD_CACHE_MS) || 5 * 60 * 1000, // 5 minutes
@@ -39,10 +41,10 @@ export default () => ({
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
   },
   sinceFieldName: {
-    supportNetwork: 'Updated',
-    inPersonVisits: 'Updated',
-    attachments: 'Last Updated Date',
-    contacts: 'Updated',
+    supportNetwork: updatedDateFieldName,
+    inPersonVisits: updatedDateFieldName,
+    attachments: updatedDateFieldName,
+    contacts: updatedDateFieldName,
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {
