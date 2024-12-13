@@ -1,5 +1,13 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 // TODO: Add more string examples once we can query the endpoint
 /*
@@ -29,12 +37,12 @@ export const ContactsSingleResponseCaseExample = {
   'Case Con Original Start Dt': '',
   'Case Con Start Dt': '01/01/1970 00:00:00',
   'Case Con End Dt': '',
-  'Created By': 'Creator-Idir-Here',
-  'Created By Id': 'Creator-Id-Here',
-  'Created Date': '01/01/1970 00:00:00',
-  'Updated By': 'Updater-Idir-Here',
-  'Updated By Id': 'Updater-Id-Here',
-  'Updated Date': '01/01/1970 00:00:00',
+  [createdByFieldName]: 'Creator-Idir-Here',
+  [createdByIdFieldName]: 'Creator-Id-Here',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
+  [updatedByFieldName]: 'Updater-Idir-Here',
+  [updatedByIdFieldName]: 'Updater-Id-Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 export const { ...ContactsSingleResponseIncidentExample } =
@@ -232,40 +240,40 @@ class ContactsEntity {
   'Case Con End Dt': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Created By'],
+    example: ContactsSingleResponseCaseExample[createdByFieldName],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Created By Id'],
+    example: ContactsSingleResponseCaseExample[createdByIdFieldName],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Created Date'],
+    example: ContactsSingleResponseCaseExample[createdDateFieldName],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Updated By'],
+    example: ContactsSingleResponseCaseExample[updatedByFieldName],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Updated By Id'],
+    example: ContactsSingleResponseCaseExample[updatedByIdFieldName],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Updated Date'],
+    example: ContactsSingleResponseCaseExample[updatedDateFieldName],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   constructor(object) {
     Object.assign(this, object);

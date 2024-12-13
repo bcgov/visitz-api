@@ -1,5 +1,13 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 /*
  * Examples
@@ -13,12 +21,12 @@ const InPersonVisitsSingleResponseCaseExample = {
   'Visit Details Value': 'comment',
   'Parent Id': 'Entity-Id-here',
   'Login Name': 'Idir-here',
-  'Created By': 'Creator-Idir-Here',
-  'Created By Id': 'Creator-Id-Here',
-  'Created Date': '01/01/1970 00:00:00',
-  'Updated By': 'Updater-Idir-Here',
-  'Updated By Id': 'Updater-Id-Here',
-  'Updated Date': '01/01/1970 00:00:00',
+  [createdByFieldName]: 'Creator-Idir-Here',
+  [createdByIdFieldName]: 'Creator-Id-Here',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
+  [updatedByFieldName]: 'Updater-Idir-Here',
+  [updatedByIdFieldName]: 'Updater-Id-Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 export const InPersonVisitsListResponseCaseExample = {
@@ -94,40 +102,40 @@ class InPersonVisitsEntity {
   'Login Name': string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Created By'],
+    example: InPersonVisitsSingleResponseCaseExample[createdByFieldName],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Created By Id'],
+    example: InPersonVisitsSingleResponseCaseExample[createdByIdFieldName],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Created Date'],
+    example: InPersonVisitsSingleResponseCaseExample[createdDateFieldName],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Updated By'],
+    example: InPersonVisitsSingleResponseCaseExample[updatedByFieldName],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Updated By Id'],
+    example: InPersonVisitsSingleResponseCaseExample[updatedByIdFieldName],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Updated Date'],
+    example: InPersonVisitsSingleResponseCaseExample[updatedDateFieldName],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 }
 
 @Exclude()

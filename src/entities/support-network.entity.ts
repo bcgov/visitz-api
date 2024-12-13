@@ -1,6 +1,14 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { EntityType } from '../common/constants/enumerations';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 /*
  * Examples
@@ -20,12 +28,12 @@ const SupportNetworkSingleResponseCaseExample = {
   Address: 'Test Address',
   Active: 'Yes',
   'ICM SNC Case Con Flag': 'N',
-  'Created By': 'Creator-Idir-Here',
-  'Created By Id': 'Creator-Id-Here',
-  'Created Date': '01/01/1970 00:00:00',
-  'Updated By': 'Updater-Idir-Here',
-  'Updated By Id': 'Updater-Id-Here',
-  'Updated Date': '01/01/1970 00:00:00',
+  [createdByFieldName]: 'Creator-Idir-Here',
+  [createdByIdFieldName]: 'Creator-Id-Here',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
+  [updatedByFieldName]: 'Updater-Idir-Here',
+  [updatedByIdFieldName]: 'Updater-Id-Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 const SupportNetworkSingleResponseSRExample = {
@@ -42,7 +50,7 @@ export const SupportNetworkListResponseCaseExample = {
   items: [
     {
       ...SupportNetworkSingleResponseCaseExample,
-      'Updated Date': '12/25/2024 00:33:37',
+      [updatedDateFieldName]: '12/25/2024 00:33:37',
     },
     SupportNetworkSingleResponseCaseExample,
   ],
@@ -52,7 +60,7 @@ export const SupportNetworkListResponseSRExample = {
   items: [
     {
       ...SupportNetworkSingleResponseSRExample,
-      'Updated Date': '12/25/2024 00:33:37',
+      [updatedDateFieldName]: '12/25/2024 00:33:37',
     },
     SupportNetworkSingleResponseSRExample,
   ],
@@ -62,7 +70,7 @@ export const SupportNetworkListResponseIncidentExample = {
   items: [
     {
       ...SupportNetworkSingleResponseIncidentExample,
-      'Updated Date': '12/25/2024 00:33:37',
+      [updatedDateFieldName]: '12/25/2024 00:33:37',
     },
     SupportNetworkSingleResponseIncidentExample,
   ],
@@ -148,40 +156,40 @@ class SupportNetworkEntity {
   'ICM SNC Case Con Flag': string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Created By'],
+    example: SupportNetworkSingleResponseCaseExample[createdByFieldName],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Created By Id'],
+    example: SupportNetworkSingleResponseCaseExample[createdByIdFieldName],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Created Date'],
+    example: SupportNetworkSingleResponseCaseExample[createdDateFieldName],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Updated By'],
+    example: SupportNetworkSingleResponseCaseExample[updatedByFieldName],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Updated By Id'],
+    example: SupportNetworkSingleResponseCaseExample[updatedByIdFieldName],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Updated Date'],
+    example: SupportNetworkSingleResponseCaseExample[updatedDateFieldName],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   constructor(partial: Partial<SupportNetworkEntity>) {
     Object.assign(this, partial);

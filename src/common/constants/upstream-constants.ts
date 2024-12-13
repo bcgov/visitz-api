@@ -11,6 +11,12 @@ const childVisitEntityIdFieldName = 'Parent Id';
 const startRowNumParamName = 'StartRowNum';
 const recordCountNeededParamName = 'recordcountneeded';
 const pageSizeParamName = 'PageSize';
+const createdByFieldName = 'Created By';
+const createdByIdFieldName = 'Created By Id';
+const createdDateFieldName = 'Created Date';
+const updatedByFieldName = 'Updated By';
+const updatedByIdFieldName = 'Updated By Id';
+const updatedDateFieldName = 'Updated Date';
 const pageSizeMin = 1;
 const pageSizeMax = 100;
 const pageSizeDefault = 10;
@@ -33,6 +39,12 @@ export {
   startRowNumParamName,
   recordCountNeededParamName,
   pageSizeParamName,
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
   pageSizeMin,
   pageSizeMax,
   pageSizeDefault,
