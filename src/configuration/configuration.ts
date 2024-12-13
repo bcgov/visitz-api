@@ -1,3 +1,5 @@
+import { updatedDateFieldName } from '../common/constants/upstream-constants';
+
 export default () => ({
   recordCache: {
     cacheTtlMs: parseInt(process.env.RECORD_CACHE_MS) || 5 * 60 * 1000, // 5 minutes
@@ -6,21 +8,23 @@ export default () => ({
     case: {
       endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: process.env.CASE_WORKSPACE ?? undefined,
-      idirField: 'Sales Rep',
+      idirField: 'Assigned To',
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: process.env.INCIDENT_WORKSPACE ?? undefined,
       idirField: 'Owned By',
+      // TODO: change to Assigned To when this is ready
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
       workspace: process.env.SR_WORKSPACE ?? undefined,
-      idirField: 'Owner',
+      idirField: 'Assigned To',
     },
     memo: {
       endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
       workspace: process.env.MEMO_WORKSPACE ?? undefined,
+      idirField: 'Assigned To',
     },
   },
   oauth: {
@@ -37,10 +41,10 @@ export default () => ({
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
   },
   sinceFieldName: {
-    supportNetwork: 'Updated',
-    inPersonVisits: 'Updated',
-    attachments: 'Last Updated Date',
-    contacts: 'Updated',
+    supportNetwork: updatedDateFieldName,
+    inPersonVisits: updatedDateFieldName,
+    attachments: updatedDateFieldName,
+    contacts: updatedDateFieldName,
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {

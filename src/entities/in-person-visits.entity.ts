@@ -1,5 +1,13 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 /*
  * Examples
@@ -13,10 +21,12 @@ const InPersonVisitsSingleResponseCaseExample = {
   'Visit Details Value': 'comment',
   'Parent Id': 'Entity-Id-here',
   'Login Name': 'Idir-here',
-  Created: '01/01/1970 00:00:00',
-  Updated: '01/01/1970 00:00:00',
-  'Updated By': 'Idir-here',
-  'Created By': 'Idir-here',
+  [createdByFieldName]: 'Creator-Idir-Here',
+  [createdByIdFieldName]: 'Creator-Id-Here',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
+  [updatedByFieldName]: 'Updater-Idir-Here',
+  [updatedByIdFieldName]: 'Updater-Id-Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 export const InPersonVisitsListResponseCaseExample = {
@@ -92,32 +102,40 @@ class InPersonVisitsEntity {
   'Login Name': string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Created'],
+    example: InPersonVisitsSingleResponseCaseExample[createdByFieldName],
   })
   @Expose()
-  Created: string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Updated'],
+    example: InPersonVisitsSingleResponseCaseExample[createdByIdFieldName],
   })
   @Expose()
-  Updated: string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Created By'],
+    example: InPersonVisitsSingleResponseCaseExample[createdDateFieldName],
   })
   @Expose()
-  'Created By': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['Updated By'],
+    example: InPersonVisitsSingleResponseCaseExample[updatedByFieldName],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
-  constructor(partial: Partial<InPersonVisitsEntity>) {
-    Object.assign(this, partial);
-  }
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample[updatedByIdFieldName],
+  })
+  @Expose()
+  [updatedByIdFieldName]: string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample[updatedDateFieldName],
+  })
+  @Expose()
+  [updatedDateFieldName]: string;
 }
 
 @Exclude()
