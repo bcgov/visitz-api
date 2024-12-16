@@ -2,11 +2,7 @@ import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
-  createdByIdFieldName,
-  createdDateFieldName,
   updatedByFieldName,
-  updatedByIdFieldName,
-  updatedDateFieldName,
 } from '../common/constants/upstream-constants';
 
 /*
@@ -21,12 +17,10 @@ const InPersonVisitsSingleResponseCaseExample = {
   'Visit Details Value': 'comment',
   'Parent Id': 'Entity-Id-here',
   'Login Name': 'Idir-here',
-  [createdByFieldName]: 'Creator-Idir-Here',
-  [createdByIdFieldName]: 'Creator-Id-Here',
-  [createdDateFieldName]: '01/01/1970 00:00:00',
-  [updatedByFieldName]: 'Updater-Idir-Here',
-  [updatedByIdFieldName]: 'Updater-Id-Here',
-  [updatedDateFieldName]: '01/01/1970 00:00:00',
+  [createdByFieldName]: 'Creator-Id-Here',
+  Created: '01/01/1970 00:00:00',
+  [updatedByFieldName]: 'Updater-Id-Here',
+  Updated: '01/01/1970 00:00:00',
 };
 
 export const InPersonVisitsListResponseCaseExample = {
@@ -108,16 +102,10 @@ class InPersonVisitsEntity {
   [createdByFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample[createdByIdFieldName],
+    example: InPersonVisitsSingleResponseCaseExample['Created'],
   })
   @Expose()
-  [createdByIdFieldName]: string;
-
-  @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample[createdDateFieldName],
-  })
-  @Expose()
-  [createdDateFieldName]: string;
+  'Created': string;
 
   @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample[updatedByFieldName],
@@ -126,16 +114,10 @@ class InPersonVisitsEntity {
   [updatedByFieldName]: string;
 
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample[updatedByIdFieldName],
+    example: InPersonVisitsSingleResponseCaseExample['Updated'],
   })
   @Expose()
-  [updatedByIdFieldName]: string;
-
-  @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample[updatedDateFieldName],
-  })
-  @Expose()
-  [updatedDateFieldName]: string;
+  'Updated': string;
 }
 
 @Exclude()
