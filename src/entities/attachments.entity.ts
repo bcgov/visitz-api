@@ -1,13 +1,6 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import {
-  createdByFieldName,
-  createdByIdFieldName,
-  createdDateFieldName,
-  updatedByFieldName,
-  updatedByIdFieldName,
-  updatedDateFieldName,
-} from '../common/constants/upstream-constants';
+import { createdDateFieldName } from '../common/constants/upstream-constants';
 
 /*
  * Examples
@@ -23,7 +16,6 @@ const AttachmentsSingleResponseCaseExample = {
   'Incident Id': '',
   'Incident No': '',
   Internal: 'N',
-  'Last Updated Date': '01/01/1970 00:00:00',
   'No Intervention': 'Numeric-Case-Id-Here',
   'Portal Visible': 'No',
   'Show on Contact': 'N',
@@ -47,12 +39,10 @@ const AttachmentsSingleResponseCaseExample = {
   MemoNumber: '',
   'SR Id': '',
   Id: 'Attachment-Id-Here',
-  [createdByFieldName]: 'Creator-Idir-Here',
-  [createdByIdFieldName]: 'Creator-Id-Here',
+  CreatedByName: 'Creator-Idir-Here',
   [createdDateFieldName]: '01/01/1970 00:00:00',
-  [updatedByFieldName]: 'Updater-Idir-Here',
-  [updatedByIdFieldName]: 'Updater-Id-Here',
-  [updatedDateFieldName]: '01/01/1970 00:00:00',
+  UpdatedByName: 'Updater-Idir-Here',
+  'Last Updated Date': '01/01/1970 00:00:00',
 };
 
 export const AttachmentDetailsCaseExample = {
@@ -218,12 +208,6 @@ class AttachmentsEntity {
   Internal: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['Last Updated Date'],
-  })
-  @Expose()
-  'Last Updated Date': string;
-
-  @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['No Intervention'],
   })
   @Expose()
@@ -366,16 +350,10 @@ class AttachmentsEntity {
   Id: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample[createdByFieldName],
+    example: AttachmentsSingleResponseCaseExample['CreatedByName'],
   })
   @Expose()
-  [createdByFieldName]: string;
-
-  @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample[createdByIdFieldName],
-  })
-  @Expose()
-  [createdByIdFieldName]: string;
+  'CreatedByName': string;
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample[createdDateFieldName],
@@ -384,22 +362,16 @@ class AttachmentsEntity {
   [createdDateFieldName]: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample[updatedByFieldName],
+    example: AttachmentsSingleResponseCaseExample['UpdatedByName'],
   })
   @Expose()
-  [updatedByFieldName]: string;
+  'UpdatedByName': string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample[updatedByIdFieldName],
+    example: AttachmentsSingleResponseCaseExample['Last Updated Date'],
   })
   @Expose()
-  [updatedByIdFieldName]: string;
-
-  @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample[updatedDateFieldName],
-  })
-  @Expose()
-  [updatedDateFieldName]: string;
+  'Last Updated Date': string;
 
   constructor(partial: Partial<AttachmentsEntity>) {
     Object.assign(this, partial);
