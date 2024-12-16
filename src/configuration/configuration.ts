@@ -42,7 +42,7 @@ export default () => ({
   },
   sinceFieldName: {
     supportNetwork: updatedDateFieldName,
-    inPersonVisits: updatedDateFieldName,
+    inPersonVisits: 'Updated',
     attachments: 'Last Updated Date',
     contacts: updatedDateFieldName,
   },
