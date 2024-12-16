@@ -42,8 +42,8 @@ export default () => ({
   },
   sinceFieldName: {
     supportNetwork: updatedDateFieldName,
-    inPersonVisits: updatedDateFieldName,
-    attachments: updatedDateFieldName,
+    inPersonVisits: 'Updated',
+    attachments: 'Last Updated Date',
     contacts: updatedDateFieldName,
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
