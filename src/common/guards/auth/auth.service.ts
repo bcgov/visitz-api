@@ -97,6 +97,7 @@ export class AuthService {
     }
     const headers = {
       Accept: CONTENT_TYPE,
+      'Accept-Encoding': '*',
     };
     const url =
       this.baseUrl +
