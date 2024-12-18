@@ -8,23 +8,23 @@ export default () => ({
     case: {
       endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: process.env.CASE_WORKSPACE ?? undefined,
-      idirField: 'Assigned To',
+      idirField: process.env.CASE_IDIR_FIELD ?? undefined,
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: process.env.INCIDENT_WORKSPACE ?? undefined,
-      idirField: 'Owned By',
+      idirField: process.env.INCIDENT_IDIR_FIELD ?? undefined,
       // TODO: change to Assigned To when this is ready
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
       workspace: process.env.SR_WORKSPACE ?? undefined,
-      idirField: 'Assigned To',
+      idirField: process.env.SR_IDIR_FIELD ?? undefined,
     },
     memo: {
       endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
       workspace: process.env.MEMO_WORKSPACE ?? undefined,
-      idirField: 'Assigned To',
+      idirField: process.env.MEMO_IDIR_FIELD ?? undefined,
     },
   },
   oauth: {

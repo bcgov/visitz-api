@@ -60,7 +60,7 @@ export class AuthService {
       upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
       await this.cacheManager.set(key, upstreamResult, this.cacheTime);
     } else {
-      this.logger.log(`Cache hit!`);
+      this.logger.log(`Cache hit! Result: ${upstreamResult}`);
     }
     if (upstreamResult !== idir) {
       return false;
