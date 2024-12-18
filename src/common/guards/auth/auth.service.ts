@@ -60,7 +60,7 @@ export class AuthService {
       upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
       await this.cacheManager.set(key, upstreamResult, this.cacheTime);
     } else {
-      this.logger.log(`Cache hit!`);
+      this.logger.log(`Cache hit! Result: ${upstreamResult}`);
     }
     if (upstreamResult !== idir) {
       return false;
@@ -103,6 +103,8 @@ export class AuthService {
       this.configService.get<string>(`upstreamAuth.${recordType}.endpoint`) +
       id;
 
+    this.logger.log({ url, params });
+
     let response;
     try {
       const token =
@@ -114,6 +116,7 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
+      this.logger.log({ data: response.data });
       const idir =
         response.data[
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
