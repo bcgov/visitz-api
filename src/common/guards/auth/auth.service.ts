@@ -103,8 +103,6 @@ export class AuthService {
       this.configService.get<string>(`upstreamAuth.${recordType}.endpoint`) +
       id;
 
-    this.logger.log({ url, params });
-
     let response;
     try {
       const token =
@@ -116,7 +114,6 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      this.logger.log({ data: response.data });
       const idir =
         response.data[
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
