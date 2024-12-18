@@ -8,7 +8,7 @@ export default () => ({
     case: {
       endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: process.env.CASE_WORKSPACE ?? undefined,
-      idirField: 'Assigned To Id',
+      idirField: 'Sales Rep',
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
