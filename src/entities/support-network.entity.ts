@@ -13,7 +13,7 @@ import {
 /*
  * Examples
  */
-const SupportNetworkSingleResponseCaseExample = {
+export const SupportNetworkSingleResponseCaseExample = {
   'Cell Phone Number': '12345678910',
   'Entity Name': EntityType.Case,
   Name: 'Name',
@@ -36,12 +36,12 @@ const SupportNetworkSingleResponseCaseExample = {
   [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
-const SupportNetworkSingleResponseSRExample = {
+export const SupportNetworkSingleResponseSRExample = {
   ...SupportNetworkSingleResponseCaseExample,
   'Entity Name': EntityType.SR,
 };
 
-const SupportNetworkSingleResponseIncidentExample = {
+export const SupportNetworkSingleResponseIncidentExample = {
   ...SupportNetworkSingleResponseCaseExample,
   'Entity Name': EntityType.Incident,
 };
@@ -81,7 +81,7 @@ export const SupportNetworkListResponseIncidentExample = {
  */
 @Exclude()
 @ApiSchema({ name: 'SupportNetwork' })
-class SupportNetworkEntity {
+export class SupportNetworkEntity {
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['Cell Phone Number'],
   })

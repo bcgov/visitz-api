@@ -26,24 +26,35 @@ import {
 import { ServiceRequestsService } from './service-requests.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
+  SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
+  contactIdName,
   CONTENT_TYPE,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
+  supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
   AttachmentDetailsEntity,
   AttachmentDetailsSRExample,
   AttachmentsListResponseSRExample,
+  AttachmentsSingleResponseSRExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -59,7 +70,9 @@ import {
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
 import {
+  ContactsEntity,
   ContactsListResponseSRExample,
+  ContactsSingleResponseSRExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
@@ -82,8 +95,7 @@ export class ServiceRequestsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(`:${idName}/support-network`)
   @ApiOperation({
-    description:
-      'Find all Support Network entries related to a given Service Request entity by Service Request id.',
+    description: `Find all Support Network entries related to a given Service Request entity by Service Request id.`,
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
@@ -98,14 +110,14 @@ export class ServiceRequestsController {
           $ref: getSchemaPath(NestedSupportNetworkEntity),
         },
         examples: {
-          SupportNetworkResponse: {
+          SupportNetworkListResponse: {
             value: SupportNetworkListResponseSRExample,
           },
         },
       },
     },
   })
-  async getSingleSRSupportNetworkInformationRecord(
+  async getListSRSupportNetworkInformationRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -125,10 +137,47 @@ export class ServiceRequestsController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
-    return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
+    return await this.serviceRequestService.getListSRSupportNetworkInformationRecord(
       id,
       res,
       filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/support-network/:${supportNetworkIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${supportNetworkIdName} result if it is related to the given Service Request id.`,
+  })
+  @ApiExtraModels(SupportNetworkEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(SupportNetworkEntity),
+        },
+        examples: {
+          SupportNetworkSingleResponse: {
+            value: SupportNetworkSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRSupportNetworkInformationRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: SupportNetworkIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<SupportNetworkEntity> {
+    return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
+      id,
+      res,
     );
   }
 
@@ -189,12 +238,13 @@ export class ServiceRequestsController {
   @Get(`:${idName}/attachments/:${attachmentIdName}`)
   @ApiOperation({
     description:
-      'Download an Attachment related to a given Service Request Id by its Attachment Id.',
+      'Download an Attachment or retreive metadata related to a given Service Request Id by its Attachment Id.',
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -204,8 +254,11 @@ export class ServiceRequestsController {
           $ref: getSchemaPath(AttachmentDetailsEntity),
         },
         examples: {
-          AttachmentDetailsResponse: {
+          AttachmentDetailsDownloadResponse: {
             value: AttachmentDetailsSRExample,
+          },
+          AttachmentDetailsNoDownloadResponse: {
+            value: AttachmentsSingleResponseSRExample,
           },
         },
       },
@@ -229,7 +282,7 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.serviceRequestService.getSingleSRAttachmentDetailsRecord(
       id,
@@ -257,14 +310,14 @@ export class ServiceRequestsController {
           $ref: getSchemaPath(NestedContactsEntity),
         },
         examples: {
-          ContactsResponse: {
+          ContactsListResponse: {
             value: ContactsListResponseSRExample,
           },
         },
       },
     },
   })
-  async getSingleSRContactRecord(
+  async getListSRContactRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -284,10 +337,44 @@ export class ServiceRequestsController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.serviceRequestService.getSingleSRContactRecord(
+    return await this.serviceRequestService.getListSRContactRecord(
       id,
       res,
       filter,
     );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${contactIdName} result if it is related to the given Service Request id.`,
+  })
+  @ApiExtraModels(ContactsEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactsEntity),
+        },
+        examples: {
+          ContactsSingleResponse: {
+            value: ContactsSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactsEntity> {
+    return await this.serviceRequestService.getSingleSRContactRecord(id, res);
   }
 }

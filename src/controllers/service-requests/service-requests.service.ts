@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
 import { RecordType } from '../../common/constants/enumerations';
-import { NestedSupportNetworkEntity } from '../../entities/support-network.entity';
+import {
+  NestedSupportNetworkEntity,
+  SupportNetworkEntity,
+} from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { srAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
@@ -14,7 +22,10 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
-import { NestedContactsEntity } from '../../entities/contacts.entity';
+import {
+  ContactsEntity,
+  NestedContactsEntity,
+} from '../../entities/contacts.entity';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 
 @Injectable()
@@ -26,11 +37,22 @@ export class ServiceRequestsService {
   ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
+    id: SupportNetworkIdPathParams,
+    res: Response,
+  ): Promise<SupportNetworkEntity> {
+    return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
+      RecordType.SR,
+      id,
+      res,
+    );
+  }
+
+  async getListSRSupportNetworkInformationRecord(
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
-    return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
+    return await this.supportNetworkService.getListSupportNetworkInformationRecord(
       RecordType.SR,
       id,
       res,
@@ -55,7 +77,7 @@ export class ServiceRequestsService {
   async getSingleSRAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
       RecordType.SR,
@@ -67,11 +89,22 @@ export class ServiceRequestsService {
   }
 
   async getSingleSRContactRecord(
+    id: ContactIdPathParams,
+    res: Response,
+  ): Promise<ContactsEntity> {
+    return await this.contactsService.getSingleContactRecord(
+      RecordType.SR,
+      id,
+      res,
+    );
+  }
+
+  async getListSRContactRecord(
     id: IdPathParams,
     res: Response,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.contactsService.getSingleContactRecord(
+    return await this.contactsService.getListContactRecord(
       RecordType.SR,
       id,
       res,

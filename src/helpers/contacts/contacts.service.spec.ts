@@ -10,13 +10,19 @@ import { UtilitiesService } from '../utilities/utilities.service';
 import { RecordType } from '../../common/constants/enumerations';
 import { AxiosResponse } from 'axios';
 import {
+  contactIdName,
   idName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
-import { IdPathParams } from '../../dto/id-path-params.dto';
 import {
+  ContactIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
+import {
+  ContactsEntity,
   ContactsListResponseCaseExample,
+  ContactsSingleResponseCaseExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { getMockRes } from '@jest-mock/express';
@@ -58,7 +64,7 @@ describe('ContactsService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getSingleContactRecord tests', () => {
+  describe('getListContactRecord tests', () => {
     it.each([
       [
         ContactsListResponseCaseExample,
@@ -84,7 +90,7 @@ describe('ContactsService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getSingleContactRecord(
+        const result = await service.getListContactRecord(
           recordType,
           idPathParams,
           res,
@@ -92,6 +98,36 @@ describe('ContactsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleContactRecord tests', () => {
+    it.each([
+      [
+        ContactsSingleResponseCaseExample,
+        RecordType.Case,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, recordType, idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getSingleContactRecord(
+          recordType,
+          idPathParams,
+          res,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new ContactsEntity(data));
       },
     );
   });

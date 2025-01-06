@@ -10,18 +10,25 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { MemosService } from './memos.service';
 import {
   attachmentIdName,
+  contactIdName,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   AttachmentDetailsEntity,
   AttachmentDetailsMemoExample,
   AttachmentsListResponseMemoExample,
+  AttachmentsSingleResponseMemoExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
@@ -29,6 +36,7 @@ import { startRowNumParamName } from '../../common/constants/upstream-constants'
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
+  ContactsEntity,
   ContactsListResponseMemoExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
@@ -109,10 +117,22 @@ describe('MemosController', () => {
         {
           [sinceParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
-        } as FilterQueryParams,
+        } as AttachmentDetailsQueryParams,
+      ],
+      [
+        AttachmentsSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+          [inlineAttachmentParamName]: 'false',
+        } as AttachmentDetailsQueryParams,
       ],
     ])(
-      'should return nested values given good input',
+      'should return single values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const memoServiceSpy = jest
           .spyOn(memosService, 'getSingleMemoAttachmentDetailsRecord')
@@ -135,7 +155,7 @@ describe('MemosController', () => {
     );
   });
 
-  describe('getSingleMemoContactRecord tests', () => {
+  describe('getListMemoContactRecord tests', () => {
     it.each([
       [
         ContactsListResponseMemoExample,
@@ -149,10 +169,10 @@ describe('MemosController', () => {
       'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const memoServiceSpy = jest
-          .spyOn(memosService, 'getSingleMemoContactRecord')
+          .spyOn(memosService, 'getListMemoContactRecord')
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
-        const result = await controller.getSingleMemoContactRecord(
+        const result = await controller.getListMemoContactRecord(
           idPathParams,
           res,
           filterQueryParams,
@@ -163,6 +183,29 @@ describe('MemosController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoContactRecord tests', () => {
+    it.each([
+      [
+        ContactsListResponseMemoExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const memoServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
+
+        const result = await controller.getSingleMemoContactRecord(
+          idPathParams,
+          res,
+        );
+        expect(memoServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(result).toEqual(new ContactsEntity(data));
       },
     );
   });
