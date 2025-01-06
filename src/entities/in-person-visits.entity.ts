@@ -118,6 +118,10 @@ export class InPersonVisitsEntity {
   })
   @Expose()
   'Updated': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
 }
 
 @Exclude()
