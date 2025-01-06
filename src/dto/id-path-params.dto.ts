@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, Matches } from 'class-validator';
+import { Matches } from 'class-validator';
 import {
   attachmentIdName,
   contactIdName,
@@ -44,7 +44,6 @@ export class ContactIdPathParams extends IdPathParams {
 }
 
 export class SupportNetworkIdPathParams extends IdPathParams {
-  @IsOptional()
   @Matches(idRegex)
   @ApiProperty({
     example: 'Support-Network-Id-Here',

@@ -73,15 +73,16 @@ describe('RequestPreparerService', () => {
 
   describe('prepareHeadersAndParams tests', () => {
     it.each([
-      ['spec', undefined],
-      ['spec', 'workspace'],
+      ['spec', undefined, true],
+      ['spec', 'workspace', false],
     ])(
       'correctly prepares headers and params with no date or row number parameter',
-      (baseSearchSpec, workspace) => {
+      (baseSearchSpec, workspace, uniformResponse) => {
         const [headers, params] = service.prepareHeadersAndParams(
           baseSearchSpec,
           workspace,
           '',
+          uniformResponse,
         );
         expect(headers).toEqual({
           Accept: CONTENT_TYPE,
@@ -92,7 +93,9 @@ describe('RequestPreparerService', () => {
           ChildLinks: CHILD_LINKS,
           searchspec: baseSearchSpec + ')',
           workspace: workspace,
-          [uniformResponseParamName]: UNIFORM_RESPONSE,
+          [uniformResponseParamName]: uniformResponse
+            ? UNIFORM_RESPONSE
+            : undefined,
         });
       },
     );
@@ -114,6 +117,7 @@ describe('RequestPreparerService', () => {
           baseSearchSpec,
           workspace,
           '',
+          true,
           filterQueryParams,
         );
         expect(headers).toEqual({
@@ -155,6 +159,7 @@ describe('RequestPreparerService', () => {
           baseSearchSpec,
           undefined,
           'Updated',
+          true,
           filterQueryParams,
         );
         expect(headers).toEqual({

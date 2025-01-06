@@ -11,26 +11,35 @@ import {
   AttachmentDetailsEntity,
   AttachmentDetailsMemoExample,
   AttachmentsListResponseMemoExample,
+  AttachmentsSingleResponseMemoExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { RecordType } from '../../common/constants/enumerations';
 import {
   attachmentIdName,
+  contactIdName,
   idName,
+  inlineAttachmentParamName,
   memoAttachmentsFieldName,
   sinceParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { getMockRes } from '@jest-mock/express';
 import { startRowNumParamName } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
+  ContactsEntity,
   ContactsListResponseMemoExample,
+  ContactsSingleResponseMemoExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 
@@ -108,7 +117,7 @@ describe('MemosService', () => {
     );
   });
 
-  describe('getSinglememoAttachmentDetailsRecord tests', () => {
+  describe('getSingleMemoAttachmentDetailsRecord tests', () => {
     it.each([
       [
         AttachmentDetailsMemoExample,
@@ -116,11 +125,23 @@ describe('MemosService', () => {
           [idName]: 'test',
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
-        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
+        { [sinceParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
+        memoAttachmentsFieldName,
+      ],
+      [
+        AttachmentsSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        {
+          [sinceParamName]: '2024-12-01',
+          [inlineAttachmentParamName]: 'false',
+        } as AttachmentDetailsQueryParams,
         memoAttachmentsFieldName,
       ],
     ])(
-      'should return nested values given good input',
+      'should return single values given good input',
       async (data, idPathParams, filterQueryParams, typeFieldName) => {
         const attachmentsSpy = jest
           .spyOn(attachmentsService, 'getSingleAttachmentDetailsRecord')
@@ -145,7 +166,7 @@ describe('MemosService', () => {
     );
   });
 
-  describe('getSingleMemoContactRecord tests', () => {
+  describe('getListMemoContactRecord tests', () => {
     it.each([
       [
         ContactsListResponseMemoExample,
@@ -159,10 +180,10 @@ describe('MemosService', () => {
       'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const contactsSpy = jest
-          .spyOn(contactsService, 'getSingleContactRecord')
+          .spyOn(contactsService, 'getListContactRecord')
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
-        const result = await service.getSingleMemoContactRecord(
+        const result = await service.getListMemoContactRecord(
           idPathParams,
           res,
           filterQueryParams,
@@ -174,6 +195,33 @@ describe('MemosService', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoContactRecord tests', () => {
+    it.each([
+      [
+        ContactsSingleResponseMemoExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
+
+        const result = await service.getSingleMemoContactRecord(
+          idPathParams,
+          res,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+        );
+        expect(result).toEqual(new ContactsEntity(data));
       },
     );
   });

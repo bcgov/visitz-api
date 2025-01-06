@@ -282,8 +282,8 @@ export class CasesController {
     )
     id: VisitIdPathParams,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<NestedInPersonVisitsEntity> {
-    return await this.casesService.getListCaseInPersonVisitRecord(id, res);
+  ): Promise<InPersonVisitsEntity> {
+    return await this.casesService.getSingleCaseInPersonVisitRecord(id, res);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

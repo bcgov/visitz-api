@@ -6,12 +6,19 @@ import { IncidentsController } from './incidents.controller';
 import { IncidentsService } from './incidents.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
+  SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
@@ -20,14 +27,18 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   attachmentIdName,
+  contactIdName,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
+  supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentDetailsEntity,
   AttachmentDetailsIncidentExample,
   AttachmentsListResponseIncidentExample,
+  AttachmentsSingleResponseIncidentExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
@@ -35,7 +46,9 @@ import { startRowNumParamName } from '../../common/constants/upstream-constants'
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
+  ContactsEntity,
   ContactsListResponseIncidentExample,
+  ContactsSingleResponseIncidentExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 
@@ -72,7 +85,7 @@ describe('IncidentsController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getSingleIncidentSupportNetworkInformationRecord tests', () => {
+  describe('getListIncidentSupportNetworkInformationRecord tests', () => {
     it.each([
       [
         SupportNetworkListResponseIncidentExample,
@@ -88,14 +101,14 @@ describe('IncidentsController', () => {
         const IncidentsServiceSpy = jest
           .spyOn(
             incidentsService,
-            'getSingleIncidentSupportNetworkInformationRecord',
+            'getListIncidentSupportNetworkInformationRecord',
           )
           .mockReturnValueOnce(
             Promise.resolve(new NestedSupportNetworkEntity(data)),
           );
 
         const result =
-          await controller.getSingleIncidentSupportNetworkInformationRecord(
+          await controller.getListIncidentSupportNetworkInformationRecord(
             idPathParams,
             res,
             filterQueryParams,
@@ -106,6 +119,36 @@ describe('IncidentsController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentSupportNetworkInformationRecord tests', () => {
+    it.each([
+      [
+        SupportNetworkSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [supportNetworkIdName]: 'test2',
+        } as SupportNetworkIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const IncidentsServiceSpy = jest
+          .spyOn(
+            incidentsService,
+            'getSingleIncidentSupportNetworkInformationRecord',
+          )
+          .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
+
+        const result =
+          await controller.getSingleIncidentSupportNetworkInformationRecord(
+            idPathParams,
+            res,
+          );
+        expect(IncidentsServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(result).toEqual(new SupportNetworkEntity(data));
       },
     );
   });
@@ -155,10 +198,22 @@ describe('IncidentsController', () => {
         {
           [sinceParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
-        } as FilterQueryParams,
+        } as AttachmentDetailsQueryParams,
+      ],
+      [
+        AttachmentsSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+          [inlineAttachmentParamName]: 'false',
+        } as AttachmentDetailsQueryParams,
       ],
     ])(
-      'should return nested values given good input',
+      'should return single values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const incidentServiceSpy = jest
           .spyOn(incidentsService, 'getSingleIncidentAttachmentDetailsRecord')
@@ -182,7 +237,7 @@ describe('IncidentsController', () => {
     );
   });
 
-  describe('getSingleIncidentContactRecord tests', () => {
+  describe('getListIncidentContactRecord tests', () => {
     it.each([
       [
         ContactsListResponseIncidentExample,
@@ -196,10 +251,10 @@ describe('IncidentsController', () => {
       'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const incidentServiceSpy = jest
-          .spyOn(incidentsService, 'getSingleIncidentContactRecord')
+          .spyOn(incidentsService, 'getListIncidentContactRecord')
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
-        const result = await controller.getSingleIncidentContactRecord(
+        const result = await controller.getListIncidentContactRecord(
           idPathParams,
           res,
           filterQueryParams,
@@ -210,6 +265,29 @@ describe('IncidentsController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentContactRecord tests', () => {
+    it.each([
+      [
+        ContactsSingleResponseIncidentExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentServiceSpy = jest
+          .spyOn(incidentsService, 'getSingleIncidentContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
+
+        const result = await controller.getSingleIncidentContactRecord(
+          idPathParams,
+          res,
+        );
+        expect(incidentServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(result).toEqual(new ContactsEntity(data));
       },
     );
   });

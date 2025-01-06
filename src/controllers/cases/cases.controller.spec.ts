@@ -6,12 +6,20 @@ import { CasesController } from './cases.controller';
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
+  SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
+  VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
@@ -20,20 +28,27 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
+  InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
   attachmentIdName,
+  contactIdName,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
+  supportNetworkIdName,
+  visitIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
   AttachmentDetailsCaseExample,
   AttachmentDetailsEntity,
   AttachmentsListResponseCaseExample,
+  AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { VisitDetails } from '../../common/constants/enumerations';
@@ -45,6 +60,7 @@ import {
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
+  ContactsEntity,
   ContactsListResponseCaseExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
@@ -69,7 +85,7 @@ describe('CasesController', () => {
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,
-        { provide: HttpService, useValue: { get: jest.fn() } },
+        { provide: HttpService, useValue: { get: jest.fn(), post: jest.fn() } },
       ],
       controllers: [CasesController],
     }).compile();
@@ -83,7 +99,7 @@ describe('CasesController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getSingleCaseSupportNetworkInformationRecord tests', () => {
+  describe('getListCaseSupportNetworkInformationRecord tests', () => {
     it.each([
       [
         SupportNetworkListResponseCaseExample,
@@ -97,13 +113,13 @@ describe('CasesController', () => {
       'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const casesServiceSpy = jest
-          .spyOn(casesService, 'getSingleCaseSupportNetworkInformationRecord')
+          .spyOn(casesService, 'getListCaseSupportNetworkInformationRecord')
           .mockReturnValueOnce(
             Promise.resolve(new NestedSupportNetworkEntity(data)),
           );
 
         const result =
-          await controller.getSingleCaseSupportNetworkInformationRecord(
+          await controller.getListCaseSupportNetworkInformationRecord(
             idPathParams,
             res,
             filterQueryParams,
@@ -118,7 +134,34 @@ describe('CasesController', () => {
     );
   });
 
-  describe('getSingleCaseInPersonVisitRecord tests', () => {
+  describe('getSingleCaseSupportNetworkInformationRecord tests', () => {
+    it.each([
+      [
+        SupportNetworkSingleResponseCaseExample,
+        {
+          [idName]: 'test',
+          [supportNetworkIdName]: 'test2',
+        } as SupportNetworkIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseSupportNetworkInformationRecord')
+          .mockReturnValueOnce(Promise.resolve(new SupportNetworkEntity(data)));
+
+        const result =
+          await controller.getSingleCaseSupportNetworkInformationRecord(
+            idPathParams,
+            res,
+          );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseInPersonVisitRecord tests', () => {
     it.each([
       [
         InPersonVisitsListResponseCaseExample,
@@ -132,12 +175,12 @@ describe('CasesController', () => {
       'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const casesServiceSpy = jest
-          .spyOn(casesService, 'getSingleCaseInPersonVisitRecord')
+          .spyOn(casesService, 'getListCaseInPersonVisitRecord')
           .mockReturnValueOnce(
             Promise.resolve(new NestedInPersonVisitsEntity(data)),
           );
 
-        const result = await controller.getSingleCaseInPersonVisitRecord(
+        const result = await controller.getListCaseInPersonVisitRecord(
           idPathParams,
           res,
           filterQueryParams,
@@ -148,6 +191,29 @@ describe('CasesController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseInPersonVisitRecord tests', () => {
+    it.each([
+      [
+        InPersonVisitsSingleResponseCaseExample,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseInPersonVisitRecord')
+          .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
+
+        const result = await controller.getSingleCaseInPersonVisitRecord(
+          idPathParams,
+          res,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(result).toEqual(new InPersonVisitsEntity(data));
       },
     );
   });
@@ -165,7 +231,7 @@ describe('CasesController', () => {
         PostInPersonVisitResponseExample,
       ],
     ])(
-      'should return nested values given good input',
+      'should return a single nested given good input',
       async (body, idPathParams, idir, data) => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'postSingleCaseInPersonVisitRecord')
@@ -229,10 +295,22 @@ describe('CasesController', () => {
         {
           [sinceParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
-        } as FilterQueryParams,
+        } as AttachmentDetailsQueryParams,
+      ],
+      [
+        AttachmentsSingleResponseCaseExample,
+        {
+          [idName]: 'test',
+          [attachmentIdName]: 'attachmenttest',
+        } as AttachmentIdPathParams,
+        {
+          [sinceParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+          [inlineAttachmentParamName]: 'false',
+        } as AttachmentDetailsQueryParams,
       ],
     ])(
-      'should return nested values given good input',
+      'should return single values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const caseServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseAttachmentDetailsRecord')
@@ -255,7 +333,7 @@ describe('CasesController', () => {
     );
   });
 
-  describe('getSingleCaseContactRecord tests', () => {
+  describe('getListCaseContactRecord tests', () => {
     it.each([
       [
         ContactsListResponseCaseExample,
@@ -269,10 +347,10 @@ describe('CasesController', () => {
       'should return nested values given good input',
       async (data, idPathParams, filterQueryParams) => {
         const caseServiceSpy = jest
-          .spyOn(casesService, 'getSingleCaseContactRecord')
+          .spyOn(casesService, 'getListCaseContactRecord')
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
-        const result = await controller.getSingleCaseContactRecord(
+        const result = await controller.getListCaseContactRecord(
           idPathParams,
           res,
           filterQueryParams,
@@ -283,6 +361,29 @@ describe('CasesController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseContactRecord tests', () => {
+    it.each([
+      [
+        ContactsListResponseCaseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const caseServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseContactRecord')
+          .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
+
+        const result = await controller.getSingleCaseContactRecord(
+          idPathParams,
+          res,
+        );
+        expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(result).toEqual(new ContactsEntity(data));
       },
     );
   });

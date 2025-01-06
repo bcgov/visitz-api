@@ -12,7 +12,7 @@ import {
   ContactsEntity,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
-import { contactIdName } from 'src/common/constants/parameter-constants';
+import { contactIdName } from '../../common/constants/parameter-constants';
 
 @Injectable()
 export class ContactsService {

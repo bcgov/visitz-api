@@ -8,16 +8,22 @@ import { RecordType } from '../../common/constants/enumerations';
 import { SupportNetworkService } from './support-network.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
   SupportNetworkListResponseSRExample,
+  SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  IdPathParams,
+  SupportNetworkIdPathParams,
+} from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   idName,
   sinceParamName,
+  supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
@@ -58,7 +64,7 @@ describe('SupportNetworkService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getSingleSupportNetworkInformationRecord tests', () => {
+  describe('getListSupportNetworkInformationRecord tests', () => {
     it.each([
       [
         SupportNetworkListResponseIncidentExample,
@@ -84,7 +90,7 @@ describe('SupportNetworkService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getSingleSupportNetworkInformationRecord(
+        const result = await service.getListSupportNetworkInformationRecord(
           recordType,
           idPathParams,
           res,
@@ -92,6 +98,39 @@ describe('SupportNetworkService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSupportNetworkInformationRecord tests', () => {
+    it.each([
+      [
+        SupportNetworkSingleResponseIncidentExample,
+        RecordType.Incident,
+        {
+          [idName]: 'test',
+          [supportNetworkIdName]: 'test2',
+        } as SupportNetworkIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, recordType, idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getSingleSupportNetworkInformationRecord(
+          recordType,
+          idPathParams,
+          res,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new SupportNetworkEntity(data));
       },
     );
   });

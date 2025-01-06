@@ -7,17 +7,20 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType, VisitDetails } from '../../common/constants/enumerations';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
+  InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
+  InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
   idName,
   sinceParamName,
+  visitIdName,
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { getMockRes } from '@jest-mock/express';
@@ -59,7 +62,7 @@ describe('InPersonVisitsService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getSingleInPersonVisitRecord tests', () => {
+  describe('getListInPersonVisitRecord tests', () => {
     it.each([
       [
         InPersonVisitsListResponseCaseExample,
@@ -85,7 +88,7 @@ describe('InPersonVisitsService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getSingleInPersonVisitRecord(
+        const result = await service.getListInPersonVisitRecord(
           recordType,
           idPathParams,
           res,
@@ -93,6 +96,36 @@ describe('InPersonVisitsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleInPersonVisitRecord tests', () => {
+    it.each([
+      [
+        InPersonVisitsSingleResponseCaseExample,
+        RecordType.Case,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, recordType, idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getSingleInPersonVisitRecord(
+          recordType,
+          idPathParams,
+          res,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new InPersonVisitsEntity(data));
       },
     );
   });
