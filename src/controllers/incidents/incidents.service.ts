@@ -11,7 +11,10 @@ import {
   IdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { incidentsAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
@@ -74,7 +77,7 @@ export class IncidentsService {
   async getSingleIncidentAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
       RecordType.Incident,

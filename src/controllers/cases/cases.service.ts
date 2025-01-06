@@ -12,7 +12,10 @@ import {
   SupportNetworkIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import {
   InPersonVisitsEntity,
@@ -132,7 +135,7 @@ export class CasesService {
   async getSingleCaseAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
       RecordType.Case,

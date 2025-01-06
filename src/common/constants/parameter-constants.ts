@@ -21,6 +21,7 @@ const casesAttachmentsFieldName = 'Case Id';
 const incidentsAttachmentsFieldName = 'Incident Id';
 const srAttachmentsFieldName = 'SR Id';
 const memoAttachmentsFieldName = 'Memo Id';
+const attachmentIdFieldName = 'Attachment Id';
 
 export {
   VIEW_MODE,
@@ -44,4 +45,5 @@ export {
   incidentsAttachmentsFieldName,
   srAttachmentsFieldName,
   memoAttachmentsFieldName,
+  attachmentIdFieldName,
 };

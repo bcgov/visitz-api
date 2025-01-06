@@ -6,7 +6,10 @@ import {
   ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   AttachmentDetailsEntity,
   NestedAttachmentsEntity,
@@ -43,7 +46,7 @@ export class MemosService {
   async getSingleMemoAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
       RecordType.Memo,

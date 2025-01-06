@@ -29,18 +29,23 @@ import {
   sinceParamName,
   attachmentIdName,
   contactIdName,
+  inlineAttachmentParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   NestedAttachmentsEntity,
   AttachmentsListResponseMemoExample,
   AttachmentDetailsEntity,
   AttachmentDetailsMemoExample,
+  AttachmentsSingleResponseMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { Response } from 'express';
@@ -139,6 +144,7 @@ export class MemosController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -148,8 +154,11 @@ export class MemosController {
           $ref: getSchemaPath(AttachmentDetailsEntity),
         },
         examples: {
-          AttachmentDetailsResponse: {
+          AttachmentDetailsDownloadResponse: {
             value: AttachmentDetailsMemoExample,
+          },
+          AttachmentDetailsNoDownloadResponse: {
+            value: AttachmentsSingleResponseMemoExample,
           },
         },
       },
@@ -173,7 +182,7 @@ export class MemosController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.memosService.getSingleMemoAttachmentDetailsRecord(
       id,

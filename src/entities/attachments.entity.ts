@@ -1,6 +1,7 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { createdDateFieldName } from '../common/constants/upstream-constants';
+import { IsOptional } from 'class-validator';
 
 /*
  * Examples
@@ -383,9 +384,11 @@ export class AttachmentsEntity {
 export class AttachmentDetailsEntity extends AttachmentsEntity {
   @ApiProperty({
     example: AttachmentDetailsCaseExample['Attachment Id'],
+    required: false,
   })
+  @IsOptional()
   @Expose()
-  'Attachment Id': string;
+  'Attachment Id'?: string;
 }
 
 @Exclude()

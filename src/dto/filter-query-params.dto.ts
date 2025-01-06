@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import {
-  IsBoolean,
+  IsBooleanString,
   IsEnum,
   IsInt,
   IsISO8601,
@@ -90,13 +90,14 @@ export class FilterQueryParams {
 @Exclude()
 export class AttachmentDetailsQueryParams extends FilterQueryParams {
   @IsOptional()
-  @IsBoolean()
+  @IsBooleanString()
   @Expose()
   @ApiProperty({
     example: true,
     default: true,
+    type: 'boolean',
     description:
       'Whether or not you want the inline attachment download to be included in the request.',
   })
-  [inlineAttachmentParamName]?: boolean = true;
+  [inlineAttachmentParamName]?: string = 'true';
 }

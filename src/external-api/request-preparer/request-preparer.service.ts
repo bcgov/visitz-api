@@ -135,7 +135,6 @@ export class RequestPreparerService {
         response.headers[recordCountHeaderName],
       );
     }
-    console.log(response.data);
     return response;
   }
 

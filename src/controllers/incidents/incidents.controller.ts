@@ -37,12 +37,16 @@ import {
   IdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
   contactIdName,
   CONTENT_TYPE,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
@@ -53,6 +57,7 @@ import {
   AttachmentsListResponseIncidentExample,
   AttachmentDetailsEntity,
   AttachmentDetailsIncidentExample,
+  AttachmentsSingleResponseIncidentExample,
 } from '../../entities/attachments.entity';
 import { Response } from 'express';
 import {
@@ -240,6 +245,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -249,8 +255,11 @@ export class IncidentsController {
           $ref: getSchemaPath(AttachmentDetailsEntity),
         },
         examples: {
-          AttachmentDetailsResponse: {
+          AttachmentDetailsDownloadResponse: {
             value: AttachmentDetailsIncidentExample,
+          },
+          AttachmentDetailsNoDownloadResponse: {
+            value: AttachmentsSingleResponseIncidentExample,
           },
         },
       },
@@ -274,7 +283,7 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.incidentsService.getSingleIncidentAttachmentDetailsRecord(
       id,

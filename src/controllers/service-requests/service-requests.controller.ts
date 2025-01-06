@@ -54,6 +54,7 @@ import {
   AttachmentDetailsEntity,
   AttachmentDetailsSRExample,
   AttachmentsListResponseSRExample,
+  AttachmentsSingleResponseSRExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -253,8 +254,11 @@ export class ServiceRequestsController {
           $ref: getSchemaPath(AttachmentDetailsEntity),
         },
         examples: {
-          AttachmentDetailsResponse: {
+          AttachmentDetailsDownloadResponse: {
             value: AttachmentDetailsSRExample,
+          },
+          AttachmentDetailsNoDownloadResponse: {
+            value: AttachmentsSingleResponseSRExample,
           },
         },
       },

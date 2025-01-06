@@ -41,12 +41,16 @@ import {
   SupportNetworkIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
   contactIdName,
   CONTENT_TYPE,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
   supportNetworkIdName,
   visitIdName,
@@ -64,6 +68,7 @@ import {
   AttachmentDetailsCaseExample,
   AttachmentDetailsEntity,
   AttachmentsListResponseCaseExample,
+  AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
@@ -388,6 +393,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -398,8 +404,11 @@ export class CasesController {
           $ref: getSchemaPath(AttachmentDetailsEntity),
         },
         examples: {
-          AttachmentDetailsResponse: {
+          AttachmentDetailsDownloadResponse: {
             value: AttachmentDetailsCaseExample,
+          },
+          AttachmentDetailsNoDownloadResponse: {
+            value: AttachmentsSingleResponseCaseExample,
           },
         },
       },
@@ -423,7 +432,7 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.casesService.getSingleCaseAttachmentDetailsRecord(
       id,

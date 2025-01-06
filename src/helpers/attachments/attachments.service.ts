@@ -15,6 +15,7 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import {
+  attachmentIdFieldName,
   attachmentIdName,
   idName,
   INLINE_ATTACHMENT,
@@ -81,7 +82,7 @@ export class AttachmentsService {
         true,
         filter,
       );
-    if (id[inlineAttachmentParamName] !== false) {
+    if (filter[inlineAttachmentParamName] !== 'false') {
       params[inlineAttachmentParamName] = INLINE_ATTACHMENT;
     }
     params[uniformResponseParamName] = undefined;
@@ -91,8 +92,8 @@ export class AttachmentsService {
       res,
       params,
     );
-    if (id[inlineAttachmentParamName] === false) {
-      delete response.data[`${attachmentIdName}`]; // prevents exposing url in this field when not a download
+    if (filter[inlineAttachmentParamName] === 'false') {
+      delete response.data[attachmentIdFieldName]; // prevents exposing url in this field when not a download
     }
     return new AttachmentDetailsEntity(response.data);
   }
