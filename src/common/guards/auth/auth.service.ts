@@ -11,6 +11,8 @@ import {
   CHILD_LINKS,
   CONTENT_TYPE,
   idName,
+  UNIFORM_RESPONSE,
+  uniformResponseParamName,
   VIEW_MODE,
 } from '../../../common/constants/parameter-constants';
 import { firstValueFrom } from 'rxjs';
@@ -87,6 +89,7 @@ export class AuthService {
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
     };
     if (
       (workspace = this.configService.get(
@@ -112,13 +115,12 @@ export class AuthService {
         throw new Error('Upstream auth failed');
       }
       headers['Authorization'] = token;
-      this.logger.log(url, params, headers);
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      this.logger.log(response);
+
       const idir =
-        response.data[
+        response.data['items'][0][
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
         ];
       if (idir === undefined) {
