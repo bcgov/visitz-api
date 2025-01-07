@@ -112,9 +112,11 @@ export class AuthService {
         throw new Error('Upstream auth failed');
       }
       headers['Authorization'] = token;
+      this.logger.log(url, params, headers);
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
+      this.logger.log(response);
       const idir =
         response.data[
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
