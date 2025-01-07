@@ -118,11 +118,12 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-
+      this.logger.log(response);
       const idir =
         response.data['items'][0][
           this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
         ];
+      this.logger.log(idir);
       if (idir === undefined) {
         this.logger.error(
           `${this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)} field not found in request`,
