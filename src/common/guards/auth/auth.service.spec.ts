@@ -79,8 +79,13 @@ describe('AuthService', () => {
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {
-            [configService.get(`upstreamAuth.${validRecordType}.idirField`)]:
-              testIdir,
+            items: [
+              {
+                [configService.get(
+                  `upstreamAuth.${validRecordType}.idirField`,
+                )]: testIdir,
+              },
+            ],
           },
           headers: {},
           config: {
@@ -174,8 +179,12 @@ describe('AuthService', () => {
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {
-            [configService.get(`upstreamAuth.${recordType}.idirField`)]:
-              testIdir,
+            items: [
+              {
+                [configService.get(`upstreamAuth.${recordType}.idirField`)]:
+                  testIdir,
+              },
+            ],
           },
           headers: {},
           config: {
