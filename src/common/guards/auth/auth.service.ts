@@ -51,7 +51,6 @@ export class AuthService {
       [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
       this.logger.error({ error });
-      this.logger.log({ msg: `Auth status: 403`, authStatusCode: 403 });
       return false;
     }
     const key = `${id}|${recordType}`;
@@ -69,10 +68,8 @@ export class AuthService {
       this.logger.log(`Cache hit! Result: ${upstreamResult}`);
     }
     if (upstreamResult !== idir) {
-      this.logger.log({ msg: `Auth status: 403`, authStatusCode: 403 });
       return false;
     }
-    this.logger.log({ msg: `Auth status: 200`, authStatusCode: 200 });
     return true;
   }
 
