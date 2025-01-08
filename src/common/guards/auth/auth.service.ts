@@ -51,6 +51,7 @@ export class AuthService {
       [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
       this.logger.error({ error });
+      this.logger.log({ msg: `Auth status: 403`, authStatusCode: 403 });
       return false;
     }
     const key = `${id}|${recordType}`;
@@ -60,13 +61,18 @@ export class AuthService {
     if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit, going upstream...`);
       upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
-      await this.cacheManager.set(key, upstreamResult, this.cacheTime);
+      if (upstreamResult !== null) {
+        await this.cacheManager.set(key, upstreamResult, this.cacheTime);
+      }
+      this.logger.log(`Upstream result: ${upstreamResult}`);
     } else {
       this.logger.log(`Cache hit! Result: ${upstreamResult}`);
     }
     if (upstreamResult !== idir) {
+      this.logger.log({ msg: `Auth status: 403`, authStatusCode: 403 });
       return false;
     }
+    this.logger.log({ msg: `Auth status: 200`, authStatusCode: 200 });
     return true;
   }
 
@@ -118,16 +124,12 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      this.logger.log(response);
-      const idir =
-        response.data['items'][0][
-          this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)
-        ];
-      this.logger.log(idir);
+      const fieldName = this.configService.get<string>(
+        `upstreamAuth.${recordType}.idirField`,
+      );
+      const idir = response.data['items'][0][`${fieldName}`];
       if (idir === undefined) {
-        this.logger.error(
-          `${this.configService.get<string>(`upstreamAuth.${recordType}.idirField`)} field not found in request`,
-        );
+        this.logger.error(`${fieldName} field not found in request`);
         return null;
       }
       return idir;

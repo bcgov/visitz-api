@@ -27,12 +27,14 @@ import {
           customSuccessObject: (req, res, loggableObject) => {
             return {
               ...loggableObject,
+              res,
               buildNumber: configService.get('buildInfo.buildNumber'),
             };
           },
           customErrorObject: (req, res, loggableObject) => {
             return {
               ...loggableObject,
+              res,
               buildNumber: configService.get('buildInfo.buildNumber'),
             };
           },
@@ -40,6 +42,7 @@ import {
             return {
               ...loggableObject,
               buildNumber: configService.get('buildInfo.buildNumber'),
+              msg: 'Request received',
             };
           },
           serializers: {
