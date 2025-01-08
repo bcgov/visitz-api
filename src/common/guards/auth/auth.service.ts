@@ -63,9 +63,9 @@ export class AuthService {
       if (upstreamResult !== null) {
         await this.cacheManager.set(key, upstreamResult, this.cacheTime);
       }
-      this.logger.log(`Upstream result: ${upstreamResult}`);
+      this.logger.log(`Upstream result: '${upstreamResult}'`);
     } else {
-      this.logger.log(`Cache hit! Result: ${upstreamResult}`);
+      this.logger.log(`Cache hit! Result: '${upstreamResult}'`);
     }
     if (upstreamResult !== idir) {
       return false;
