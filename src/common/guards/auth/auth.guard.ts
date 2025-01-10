@@ -24,7 +24,6 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    this.logger.log({ request: request });
     const controllerPath =
       Reflect.getMetadata('path', context.getClass()) || '';
     const isAuthorized = await this.authService.getRecordAndValidate(

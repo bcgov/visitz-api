@@ -18,6 +18,7 @@ import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
 import { idName } from '../../../common/constants/parameter-constants';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -51,12 +52,14 @@ describe('AuthService', () => {
                 [`upstreamAuth.${validRecordType}.idirField`]: 'testfield',
                 [`upstreamAuth.${validRecordType}.workspace`]: 'testspace',
                 'recordCache.cacheTtlMs': 1000000,
+                skipJWTCache: true,
               };
               return lookup[key];
             }),
           },
         },
         { provide: HttpService, useValue: { get: jest.fn() } },
+        JwtService,
       ],
     }).compile();
 
@@ -116,7 +119,7 @@ describe('AuthService', () => {
 
     it.each([
       [{}, undefined, 0],
-      [{ [idirUsernameHeaderField]: testIdir }, null, 1],
+      [{ [idirUsernameHeaderField]: testIdir }, 403, 1],
     ])(
       'should return false with invalid record',
       async (headers, cacheReturn, cacheSpyCallTimes) => {

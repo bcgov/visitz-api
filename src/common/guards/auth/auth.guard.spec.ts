@@ -8,6 +8,7 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { getMockReq } from '@jest-mock/express';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
+import { JwtModule } from '@nestjs/jwt';
 
 describe('AuthGuard', () => {
   let service: AuthService;
@@ -51,6 +52,7 @@ describe('AuthGuard', () => {
         },
         { provide: HttpService, useValue: { get: jest.fn() } },
       ],
+      imports: [JwtModule.register({ global: true })],
       controllers: [TestController],
     }).compile();
 
@@ -109,6 +111,7 @@ describe('AuthGuard', () => {
 
           { provide: HttpService, useValue: { get: jest.fn() } },
         ],
+        imports: [JwtModule.register({ global: true })],
       }).compile();
       service = module.get<AuthService>(AuthService);
       configService = module.get<ConfigService>(ConfigService);

@@ -19,9 +19,11 @@ import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  skipJWT: boolean;
   cacheTime: number;
   baseUrl: string;
   buildNumber: string;
@@ -33,44 +35,66 @@ export class AuthService {
     private readonly utilitiesService: UtilitiesService,
     private readonly httpService: HttpService,
     private readonly tokenRefresherService: TokenRefresherService,
+    private readonly jwtService: JwtService,
   ) {
     this.cacheTime = this.configService.get<number>('recordCache.cacheTtlMs');
     this.baseUrl = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl'),
     );
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
+    this.skipJWT = this.configService.get<boolean>('skipJWTCache');
   }
 
   async getRecordAndValidate(
     req: Request,
     controllerPath: string,
   ): Promise<boolean> {
-    let idir: string, id: string, recordType: RecordType;
+    let idir: string, jti: string, id: string, recordType: RecordType;
     try {
       idir = req.header(idirUsernameHeaderField).trim();
+      if (this.skipJWT) {
+        jti = 'local'; // we won't have a JWT locally
+      } else {
+        jti = this.grabJTI(req);
+      }
       [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
       this.logger.error({ error });
       return false;
     }
-    const key = `${id}|${recordType}`;
-    let upstreamResult: string | null | undefined =
+    const key = `${idir}|${recordType}|${id}|${jti}`;
+    let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
 
     if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit, going upstream...`);
-      upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
-      if (upstreamResult !== null) {
-        await this.cacheManager.set(key, upstreamResult, this.cacheTime);
+      const upstreamIdir = await this.getAssignedIdirUpstream(id, recordType);
+      const authStatus = upstreamIdir === idir ? 200 : 403;
+      if (upstreamIdir !== null) {
+        await this.cacheManager.set(key, authStatus, this.cacheTime);
       }
-      this.logger.log(`Upstream result: '${upstreamResult}'`);
+      upstreamResult = authStatus;
+      this.logger.log(
+        `Upstream idir: '${upstreamIdir}' Result: ${upstreamResult}`,
+      );
     } else {
-      this.logger.log(`Cache hit! Result: '${upstreamResult}'`);
+      this.logger.log(`Cache hit! Key: ${key} Result: ${upstreamResult}`);
     }
-    if (upstreamResult !== idir) {
+    if (upstreamResult === 403) {
       return false;
     }
     return true;
+  }
+
+  grabJTI(req: Request): string {
+    const authToken = req.header('authorization').split(/\s+/)[1];
+    const decoded = this.jwtService.decode(authToken);
+    const jti = decoded['jti'];
+    if (typeof jti !== 'string' || jti.length !== 36) {
+      // uuid, so length should always be 36
+      throw new Error(`Invalid JWT`);
+    }
+    return jti;
   }
 
   grabRecordInfo(req: Request, controllerPath: string): [string, RecordType] {
