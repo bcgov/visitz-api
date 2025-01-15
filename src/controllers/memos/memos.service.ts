@@ -32,6 +32,7 @@ export class MemosService {
   async getSingleMemoAttachmentRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
@@ -39,6 +40,7 @@ export class MemosService {
       id,
       memoAttachmentsFieldName,
       res,
+      idir,
       filter,
     );
   }
@@ -46,6 +48,7 @@ export class MemosService {
   async getSingleMemoAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
+    idir: string,
     filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
@@ -53,6 +56,7 @@ export class MemosService {
       id,
       memoAttachmentsFieldName,
       res,
+      idir,
       filter,
     );
   }
@@ -60,23 +64,27 @@ export class MemosService {
   async getSingleMemoContactRecord(
     id: ContactIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<ContactsEntity> {
     return await this.contactsService.getSingleContactRecord(
       RecordType.Memo,
       id,
       res,
+      idir,
     );
   }
 
   async getListMemoContactRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
       RecordType.Memo,
       id,
       res,
+      idir,
       filter,
     );
   }

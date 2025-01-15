@@ -57,23 +57,27 @@ export class CasesService {
   async getSingleCaseSupportNetworkInformationRecord(
     id: SupportNetworkIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<SupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Case,
       id,
       res,
+      idir,
     );
   }
 
   async getListCaseSupportNetworkInformationRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getListSupportNetworkInformationRecord(
       RecordType.Case,
       id,
       res,
+      idir,
       filter,
     );
   }
@@ -81,23 +85,27 @@ export class CasesService {
   async getSingleCaseInPersonVisitRecord(
     id: VisitIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<InPersonVisitsEntity> {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
+      idir,
     );
   }
 
   async getListCaseInPersonVisitRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedInPersonVisitsEntity> {
     return await this.inPersonVisitsService.getListInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
+      idir,
       filter,
     );
   }
@@ -115,12 +123,14 @@ export class CasesService {
     return await this.inPersonVisitsService.postSingleInPersonVisitRecord(
       RecordType.Case,
       body,
+      idir,
     );
   }
 
   async getSingleCaseAttachmentRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
@@ -128,6 +138,7 @@ export class CasesService {
       id,
       casesAttachmentsFieldName,
       res,
+      idir,
       filter,
     );
   }
@@ -135,6 +146,7 @@ export class CasesService {
   async getSingleCaseAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
+    idir: string,
     filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
@@ -142,6 +154,7 @@ export class CasesService {
       id,
       casesAttachmentsFieldName,
       res,
+      idir,
       filter,
     );
   }
@@ -149,23 +162,27 @@ export class CasesService {
   async getSingleCaseContactRecord(
     id: ContactIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<ContactsEntity> {
     return await this.contactsService.getSingleContactRecord(
       RecordType.Case,
       id,
       res,
+      idir,
     );
   }
 
   async getListCaseContactRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
       RecordType.Case,
       id,
       res,
+      idir,
       filter,
     );
   }

@@ -18,7 +18,10 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
-import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
+import {
+  idirUsernameHeaderField,
+  trustedIdirHeaderName,
+} from '../../../common/constants/upstream-constants';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -68,7 +71,11 @@ export class AuthService {
 
     if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit, going upstream...`);
-      const upstreamIdir = await this.getAssignedIdirUpstream(id, recordType);
+      const upstreamIdir = await this.getAssignedIdirUpstream(
+        id,
+        recordType,
+        idir,
+      );
       const authStatus = upstreamIdir === idir ? 200 : 403;
       if (upstreamIdir !== null) {
         await this.cacheManager.set(key, authStatus, this.cacheTime);
@@ -111,6 +118,7 @@ export class AuthService {
   async getAssignedIdirUpstream(
     id: string,
     recordType: RecordType,
+    idir: string,
   ): Promise<string | null> {
     let workspace;
     const params = {
@@ -128,6 +136,7 @@ export class AuthService {
     const headers = {
       Accept: CONTENT_TYPE,
       'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
     };
     const url =
       this.baseUrl +

@@ -41,8 +41,11 @@ import {
   AttachmentsSingleResponseIncidentExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
-import { getMockRes } from '@jest-mock/express';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { getMockReq, getMockRes } from '@jest-mock/express';
+import {
+  idirUsernameHeaderField,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
@@ -57,6 +60,7 @@ describe('IncidentsController', () => {
   let controller: IncidentsController;
   let incidentsService: IncidentsService;
   const { res, mockClear } = getMockRes();
+  const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -113,6 +117,7 @@ describe('IncidentsController', () => {
 
         const result =
           await controller.getListIncidentSupportNetworkInformationRecord(
+            req,
             idPathParams,
             res,
             filterQueryParams,
@@ -120,6 +125,7 @@ describe('IncidentsController', () => {
         expect(IncidentsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
@@ -148,10 +154,15 @@ describe('IncidentsController', () => {
 
         const result =
           await controller.getSingleIncidentSupportNetworkInformationRecord(
+            req,
             idPathParams,
             res,
           );
-        expect(IncidentsServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(IncidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
     );
@@ -177,6 +188,7 @@ describe('IncidentsController', () => {
           );
 
         const result = await controller.getSingleIncidentAttachmentRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -184,6 +196,7 @@ describe('IncidentsController', () => {
         expect(incidentServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -227,6 +240,7 @@ describe('IncidentsController', () => {
 
         const result =
           await controller.getSingleIncidentAttachmentDetailsRecord(
+            req,
             idPathParams,
             res,
             filterQueryParams,
@@ -234,6 +248,7 @@ describe('IncidentsController', () => {
         expect(incidentServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -259,6 +274,7 @@ describe('IncidentsController', () => {
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
         const result = await controller.getListIncidentContactRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -266,6 +282,7 @@ describe('IncidentsController', () => {
         expect(incidentServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -287,10 +304,15 @@ describe('IncidentsController', () => {
           .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
 
         const result = await controller.getSingleIncidentContactRecord(
+          req,
           idPathParams,
           res,
         );
-        expect(incidentServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(incidentServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
         expect(result).toEqual(new ContactsEntity(data));
       },
     );

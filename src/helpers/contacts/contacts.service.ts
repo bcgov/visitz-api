@@ -49,6 +49,7 @@ export class ContactsService {
     type: RecordType,
     id: ContactIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<ContactsEntity> {
     const baseSearchSpec = `([Id]="${id[contactIdName]}"`;
     const upstreamUrl = this.constructUpstreamUrl(type, id);
@@ -58,6 +59,7 @@ export class ContactsService {
         this.workspace,
         this.sinceFieldName,
         false,
+        idir,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       upstreamUrl,
@@ -72,6 +74,7 @@ export class ContactsService {
     type: RecordType,
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     const baseSearchSpec = ``;
@@ -82,6 +85,7 @@ export class ContactsService {
         this.workspace,
         this.sinceFieldName,
         true,
+        idir,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(

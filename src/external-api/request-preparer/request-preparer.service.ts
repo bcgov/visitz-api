@@ -27,6 +27,7 @@ import {
   pageSizeParamName,
   recordCountNeededParamName,
   startRowNumParamName,
+  trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
@@ -50,6 +51,7 @@ export class RequestPreparerService {
     workspace: string | undefined,
     sinceFieldName: string | undefined,
     uniformResponse: boolean,
+    idir: string,
     filter?: FilterQueryParams,
   ) {
     let searchSpec = baseSearchSpec;
@@ -95,6 +97,7 @@ export class RequestPreparerService {
     const headers = {
       Accept: CONTENT_TYPE,
       'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
     };
     return [headers, params];
   }

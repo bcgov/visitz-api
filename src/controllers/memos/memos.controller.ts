@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Req,
   Res,
   UseInterceptors,
   ValidationPipe,
@@ -48,13 +49,14 @@ import {
   AttachmentsSingleResponseMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
+  idirUsernameHeaderField,
   pageSizeParamName,
   recordCountNeededParamName,
   startRowNumParamName,
@@ -108,6 +110,7 @@ export class MemosController {
     },
   })
   async getSingleMemoAttachmentRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -130,6 +133,7 @@ export class MemosController {
     return await this.memosService.getSingleMemoAttachmentRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -165,6 +169,7 @@ export class MemosController {
     },
   })
   async getSingleMemoAttachmentDetailsRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -187,6 +192,7 @@ export class MemosController {
     return await this.memosService.getSingleMemoAttachmentDetailsRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -218,6 +224,7 @@ export class MemosController {
     },
   })
   async getListMemoContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -237,7 +244,12 @@ export class MemosController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.memosService.getListMemoContactRecord(id, res, filter);
+    return await this.memosService.getListMemoContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -261,6 +273,7 @@ export class MemosController {
     },
   })
   async getSingleMemoContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -271,6 +284,10 @@ export class MemosController {
     id: ContactIdPathParams,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
-    return await this.memosService.getSingleMemoContactRecord(id, res);
+    return await this.memosService.getSingleMemoContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
   }
 }

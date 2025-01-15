@@ -198,7 +198,11 @@ describe('AuthService', () => {
           statusText: 'OK',
         } as AxiosResponse<any, any>),
       );
-      const result = await service.getAssignedIdirUpstream(id, recordType);
+      const result = await service.getAssignedIdirUpstream(
+        id,
+        recordType,
+        'idir',
+      );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(testIdir);
@@ -223,6 +227,7 @@ describe('AuthService', () => {
         const result = await service.getAssignedIdirUpstream(
           validId,
           validRecordType,
+          'idir',
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
@@ -252,6 +257,7 @@ describe('AuthService', () => {
         const idir = await service.getAssignedIdirUpstream(
           validId,
           RecordType.Case,
+          'idir',
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
@@ -266,6 +272,7 @@ describe('AuthService', () => {
       const result = await service.getAssignedIdirUpstream(
         validId,
         validRecordType,
+        'idir',
       );
       expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(null);
