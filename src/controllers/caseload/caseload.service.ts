@@ -4,18 +4,28 @@ import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  RecordCountNeededEnum,
   RecordType,
   RestrictedRecordEnum,
 } from '../../common/constants/enumerations';
-import { SinceQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  FilterQueryParams,
+  SinceQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { DateTime } from 'luxon';
 import { ParalellResponse } from '../../dto/parallel-response.dto';
 import { plainToInstance } from 'class-transformer';
+import {
+  pageSizeMax,
+  pageSizeParamName,
+  recordCountNeededParamName,
+} from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class CaseloadService {
   recordTypes: Array<string>;
+  maxParallelRequests: number;
 
   caseIdirFieldName: string;
   incidentIdirFieldName: string;
@@ -34,6 +44,7 @@ export class CaseloadService {
     private readonly requestPreparerService: RequestPreparerService,
     private readonly utilitiesService: UtilitiesService,
   ) {
+    this.maxParallelRequests = 4;
     this.recordTypes = [RecordType.Case, RecordType.Incident];
     this.caseIdirFieldName = this.configService.get<string>(
       `upstreamAuth.case.idirField`,
@@ -68,7 +79,10 @@ export class CaseloadService {
     this.baseUrl = this.configService.get<string>(`endpointUrls.baseUrl`);
   }
 
-  caseloadUpstreamRequestPreparer(idir: string): Array<GetRequestDetails> {
+  caseloadUpstreamRequestPreparer(
+    idir: string,
+    filter: FilterQueryParams,
+  ): Array<GetRequestDetails> {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of this.recordTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
@@ -80,8 +94,9 @@ export class CaseloadService {
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
-          this[`${type}SinceFieldName`],
+          undefined, // we filter for since ourselves
           true,
+          filter,
         );
       getRequestSpecs.push(
         new GetRequestDetails({
@@ -152,13 +167,26 @@ export class CaseloadService {
     idir: string,
     filter?: SinceQueryParams,
   ): Promise<CaseloadEntity> {
-    const getRequestSpecs = this.caseloadUpstreamRequestPreparer(idir);
+    const filterObject = {
+      [recordCountNeededParamName]: RecordCountNeededEnum.True,
+      [pageSizeParamName]: pageSizeMax,
+    };
+    const initialFilter = plainToInstance(FilterQueryParams, filterObject, {
+      enableImplicitConversion: true,
+    });
+    const getRequestSpecs = this.caseloadUpstreamRequestPreparer(
+      idir,
+      initialFilter,
+    );
     const results =
       await this.requestPreparerService.parallelGetRequest(getRequestSpecs);
 
     if (results.overallError !== undefined) {
       throw results.overallError;
     }
+
+    // Check if we need to do more parallel requests via the response headers
+
     let response = this.caseloadMapResponse(results);
     if (filter?.since !== undefined) {
       response = this.caseloadFilterItems(response, filter.since);

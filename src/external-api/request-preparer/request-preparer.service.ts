@@ -202,8 +202,10 @@ export class RequestPreparerService {
       if (authToken === undefined) {
         throw new Error('Upstream auth failed');
       }
-      for (const req of requestSpecs) {
-        req.headers['Authorization'] = authToken;
+      for (const type of requestSpecs) {
+        for (const req of type.requests) {
+          req.headers['Authorization'] = authToken;
+        }
       }
     } catch (error) {
       this.logger.error({ error, buildNumber: this.buildNumber });
@@ -221,18 +223,21 @@ export class RequestPreparerService {
     }
 
     const requestArray: Array<Observable<any>> = [];
-    for (const req of requestSpecs) {
-      requestArray.push(
-        this.httpService
-          .get(req.url, {
-            params: req.params,
-            headers: req.headers,
-          })
-          .pipe(catchError((err) => of(err))),
-      );
+    for (const type of requestSpecs) {
+      for (const req of type.requests) {
+        requestArray.push(
+          this.httpService
+            .get(req.url, {
+              params: req.params,
+              headers: req.headers,
+            })
+            .pipe(catchError((err) => of(err))),
+        );
+      }
     }
     const parallelObservable = forkJoin(requestArray);
     const outputArray = await lastValueFrom(parallelObservable);
+    console.log(outputArray[0]);
     return new ParalellResponse({ responses: outputArray });
   }
 }
