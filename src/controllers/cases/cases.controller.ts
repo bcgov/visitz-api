@@ -30,23 +30,37 @@ import {
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
+  SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
+  SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  ContactIdPathParams,
   IdPathParams,
+  SupportNetworkIdPathParams,
+  VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  AttachmentDetailsQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
+  contactIdName,
   CONTENT_TYPE,
   idName,
+  inlineAttachmentParamName,
   sinceParamName,
+  supportNetworkIdName,
+  visitIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import {
+  InPersonVisitsEntity,
   InPersonVisitsListResponseCaseExample,
+  InPersonVisitsSingleResponseCaseExample,
   NestedInPersonVisitsEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
@@ -54,6 +68,7 @@ import {
   AttachmentDetailsCaseExample,
   AttachmentDetailsEntity,
   AttachmentsListResponseCaseExample,
+  AttachmentsSingleResponseCaseExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
@@ -72,6 +87,8 @@ import {
 import {
   NestedContactsEntity,
   ContactsListResponseCaseExample,
+  ContactsEntity,
+  ContactsSingleResponseCaseExample,
 } from '../../entities/contacts.entity';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
@@ -92,15 +109,14 @@ export class CasesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(`:${idName}/support-network`)
   @ApiOperation({
-    description:
-      'Find all Support Network entries related to a given Case entity by Case id.',
+    description: `Find all Support Network entries related to a given Case entity by Case id.`,
   })
   @ApiQuery({ name: sinceParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
@@ -109,14 +125,14 @@ export class CasesController {
           $ref: getSchemaPath(NestedSupportNetworkEntity),
         },
         examples: {
-          SupportNetworkResponse: {
+          SupportNetworkListResponse: {
             value: SupportNetworkListResponseCaseExample,
           },
         },
       },
     },
   })
-  async getSingleCaseSupportNetworkInformationRecord(
+  async getListCaseSupportNetworkInformationRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -136,10 +152,48 @@ export class CasesController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
-    return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
+    return await this.casesService.getListCaseSupportNetworkInformationRecord(
       id,
       res,
       filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/support-network/:${supportNetworkIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${supportNetworkIdName} result if it is related to the given Case id.`,
+  })
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiExtraModels(SupportNetworkEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(SupportNetworkEntity),
+        },
+        examples: {
+          SupportNetworkSingleResponse: {
+            value: SupportNetworkSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseSupportNetworkInformationRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: SupportNetworkIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<SupportNetworkEntity> {
+    return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
+      id,
+      res,
     );
   }
 
@@ -163,14 +217,14 @@ export class CasesController {
           $ref: getSchemaPath(NestedInPersonVisitsEntity),
         },
         examples: {
-          InPersonVisitsResponse: {
+          InPersonVisitsListResponse: {
             value: InPersonVisitsListResponseCaseExample,
           },
         },
       },
     },
   })
-  async getSingleCaseInPersonVisitRecord(
+  async getListCaseInPersonVisitRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -190,11 +244,46 @@ export class CasesController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedInPersonVisitsEntity> {
-    return await this.casesService.getSingleCaseInPersonVisitRecord(
+    return await this.casesService.getListCaseInPersonVisitRecord(
       id,
       res,
       filter,
     );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/visits/:${visitIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${visitIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(InPersonVisitsEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(InPersonVisitsEntity),
+        },
+        examples: {
+          InPersonVisitsSingleResponse: {
+            value: InPersonVisitsSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseInPersonVisitRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: VisitIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<InPersonVisitsEntity> {
+    return await this.casesService.getSingleCaseInPersonVisitRecord(id, res);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -304,6 +393,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -314,8 +404,11 @@ export class CasesController {
           $ref: getSchemaPath(AttachmentDetailsEntity),
         },
         examples: {
-          AttachmentDetailsResponse: {
+          AttachmentDetailsDownloadResponse: {
             value: AttachmentDetailsCaseExample,
+          },
+          AttachmentDetailsNoDownloadResponse: {
+            value: AttachmentsSingleResponseCaseExample,
           },
         },
       },
@@ -339,7 +432,7 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.casesService.getSingleCaseAttachmentDetailsRecord(
       id,
@@ -368,14 +461,14 @@ export class CasesController {
           $ref: getSchemaPath(NestedContactsEntity),
         },
         examples: {
-          ContactsResponse: {
+          ContactsListResponse: {
             value: ContactsListResponseCaseExample,
           },
         },
       },
     },
   })
-  async getSingleCaseContactRecord(
+  async getListCaseContactRecord(
     @Param(
       new ValidationPipe({
         transform: true,
@@ -395,6 +488,41 @@ export class CasesController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.casesService.getSingleCaseContactRecord(id, res, filter);
+    return await this.casesService.getListCaseContactRecord(id, res, filter);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${contactIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(ContactsEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactsEntity),
+        },
+        examples: {
+          ContactsSingleResponse: {
+            value: ContactsSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseContactRecord(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactsEntity> {
+    return await this.casesService.getSingleCaseContactRecord(id, res);
   }
 }

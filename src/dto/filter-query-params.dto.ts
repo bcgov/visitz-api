@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import {
+  IsBooleanString,
   IsEnum,
   IsInt,
   IsISO8601,
@@ -19,7 +20,10 @@ import {
   startRowNumMin,
   startRowNumParamName,
 } from '../common/constants/upstream-constants';
-import { sinceParamName } from '../common/constants/parameter-constants';
+import {
+  inlineAttachmentParamName,
+  sinceParamName,
+} from '../common/constants/parameter-constants';
 
 @Exclude()
 export class FilterQueryParams {
@@ -81,4 +85,19 @@ export class FilterQueryParams {
       ` response header and PageSize parameter to enable pagination.`,
   })
   [startRowNumParamName]?: number;
+}
+
+@Exclude()
+export class AttachmentDetailsQueryParams extends FilterQueryParams {
+  @IsOptional()
+  @IsBooleanString()
+  @Expose()
+  @ApiProperty({
+    example: true,
+    default: true,
+    type: 'boolean',
+    description:
+      'Whether or not you want the inline attachment download to be included in the request.',
+  })
+  [inlineAttachmentParamName]?: string = 'true';
 }

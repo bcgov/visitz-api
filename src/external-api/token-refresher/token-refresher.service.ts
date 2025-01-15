@@ -65,10 +65,6 @@ export class TokenRefresherService {
       response = await firstValueFrom(
         this.httpService.post(this.accessTokenUrl, data, { headers }),
       );
-      this.logger.log({
-        functionName: 'authenticateUpstream',
-        data: response.data,
-      });
       const access_token = response.data['access_token'];
       const token_type = response.data['token_type'];
       const expirySeconds = response.data['expires_in'];
