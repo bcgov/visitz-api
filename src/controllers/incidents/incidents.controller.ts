@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Req,
   Res,
   UseGuards,
   UseInterceptors,
@@ -59,13 +60,14 @@ import {
   AttachmentDetailsIncidentExample,
   AttachmentsSingleResponseIncidentExample,
 } from '../../entities/attachments.entity';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
+  idirUsernameHeaderField,
   pageSizeParamName,
   recordCountNeededParamName,
   startRowNumParamName,
@@ -119,6 +121,7 @@ export class IncidentsController {
     },
   })
   async getListIncidentSupportNetworkInformationRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -141,6 +144,7 @@ export class IncidentsController {
     return await this.incidentsService.getListIncidentSupportNetworkInformationRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -166,6 +170,7 @@ export class IncidentsController {
     },
   })
   async getSingleIncidentSupportNetworkInformationRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -179,6 +184,7 @@ export class IncidentsController {
     return await this.incidentsService.getSingleIncidentSupportNetworkInformationRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 
@@ -209,6 +215,7 @@ export class IncidentsController {
     },
   })
   async getSingleIncidentAttachmentRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -231,6 +238,7 @@ export class IncidentsController {
     return await this.incidentsService.getSingleIncidentAttachmentRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -266,6 +274,7 @@ export class IncidentsController {
     },
   })
   async getSingleIncidentAttachmentDetailsRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -288,6 +297,7 @@ export class IncidentsController {
     return await this.incidentsService.getSingleIncidentAttachmentDetailsRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -319,6 +329,7 @@ export class IncidentsController {
     },
   })
   async getListIncidentContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -341,6 +352,7 @@ export class IncidentsController {
     return await this.incidentsService.getListIncidentContactRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -366,6 +378,7 @@ export class IncidentsController {
     },
   })
   async getSingleIncidentContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -376,6 +389,10 @@ export class IncidentsController {
     id: ContactIdPathParams,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
-    return await this.incidentsService.getSingleIncidentContactRecord(id, res);
+    return await this.incidentsService.getSingleIncidentContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
   }
 }

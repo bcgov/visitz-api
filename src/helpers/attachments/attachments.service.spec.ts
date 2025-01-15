@@ -84,6 +84,7 @@ describe('AttachmentsService', () => {
           id,
           typeFieldName,
           res,
+          'idir',
           filter,
         );
         expect(spy).toHaveBeenCalledTimes(1);
@@ -117,6 +118,7 @@ describe('AttachmentsService', () => {
           id,
           typeFieldName,
           res,
+          'idir',
           filter,
         );
         expect(spy).toHaveBeenCalledTimes(1);

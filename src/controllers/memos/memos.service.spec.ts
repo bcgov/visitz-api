@@ -103,6 +103,7 @@ describe('MemosService', () => {
         const result = await service.getSingleMemoAttachmentRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
@@ -110,6 +111,7 @@ describe('MemosService', () => {
           idPathParams,
           typeFieldName,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -152,6 +154,7 @@ describe('MemosService', () => {
         const result = await service.getSingleMemoAttachmentDetailsRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
@@ -159,6 +162,7 @@ describe('MemosService', () => {
           idPathParams,
           typeFieldName,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -186,12 +190,14 @@ describe('MemosService', () => {
         const result = await service.getListMemoContactRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(contactsSpy).toHaveBeenCalledWith(
           RecordType.Memo,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -215,11 +221,13 @@ describe('MemosService', () => {
         const result = await service.getSingleMemoContactRecord(
           idPathParams,
           res,
+          'idir',
         );
         expect(contactsSpy).toHaveBeenCalledWith(
           RecordType.Memo,
           idPathParams,
           res,
+          'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
       },

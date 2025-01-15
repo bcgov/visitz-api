@@ -94,6 +94,7 @@ describe('ContactsService', () => {
           recordType,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
@@ -125,6 +126,7 @@ describe('ContactsService', () => {
           recordType,
           idPathParams,
           res,
+          'idir',
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ContactsEntity(data));
