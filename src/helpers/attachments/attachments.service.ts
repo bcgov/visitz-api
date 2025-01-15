@@ -46,6 +46,7 @@ export class AttachmentsService {
     id: IdPathParams,
     typeFieldName: string,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
@@ -55,6 +56,7 @@ export class AttachmentsService {
         this.workspace,
         this.sinceFieldName,
         true,
+        idir,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
@@ -71,6 +73,7 @@ export class AttachmentsService {
     id: AttachmentIdPathParams,
     typeFieldName: string,
     res: Response,
+    idir: string,
     filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
@@ -80,6 +83,7 @@ export class AttachmentsService {
         this.workspace,
         this.sinceFieldName,
         true,
+        idir,
         filter,
       );
     if (filter[inlineAttachmentParamName] !== 'false') {

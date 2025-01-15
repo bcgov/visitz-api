@@ -27,6 +27,7 @@ import {
   pageSizeParamName,
   recordCountNeededParamName,
   startRowNumParamName,
+  trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 import configuration from '../../configuration/configuration';
@@ -83,10 +84,12 @@ describe('RequestPreparerService', () => {
           workspace,
           '',
           uniformResponse,
+          'idir',
         );
         expect(headers).toEqual({
           Accept: CONTENT_TYPE,
           'Accept-Encoding': '*',
+          [trustedIdirHeaderName]: 'idir',
         });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
@@ -118,11 +121,13 @@ describe('RequestPreparerService', () => {
           workspace,
           '',
           true,
+          'idir',
           filterQueryParams,
         );
         expect(headers).toEqual({
           Accept: CONTENT_TYPE,
           'Accept-Encoding': '*',
+          [trustedIdirHeaderName]: 'idir',
         });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,
@@ -160,11 +165,13 @@ describe('RequestPreparerService', () => {
           undefined,
           'Updated',
           true,
+          'idir',
           filterQueryParams,
         );
         expect(headers).toEqual({
           Accept: CONTENT_TYPE,
           'Accept-Encoding': '*',
+          [trustedIdirHeaderName]: 'idir',
         });
         expect(params).toEqual({
           ViewMode: VIEW_MODE,

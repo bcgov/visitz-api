@@ -119,12 +119,14 @@ describe('IncidentsService', () => {
           await service.getListIncidentSupportNetworkInformationRecord(
             idPathParams,
             res,
+            'idir',
             filterQueryParams,
           );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Incident,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
@@ -155,11 +157,13 @@ describe('IncidentsService', () => {
           await service.getSingleIncidentSupportNetworkInformationRecord(
             idPathParams,
             res,
+            'idir',
           );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Incident,
           idPathParams,
           res,
+          'idir',
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -189,6 +193,7 @@ describe('IncidentsService', () => {
         const result = await service.getSingleIncidentAttachmentRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
@@ -196,6 +201,7 @@ describe('IncidentsService', () => {
           idPathParams,
           typeFieldName,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -238,6 +244,7 @@ describe('IncidentsService', () => {
         const result = await service.getSingleIncidentAttachmentDetailsRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
@@ -245,6 +252,7 @@ describe('IncidentsService', () => {
           idPathParams,
           typeFieldName,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -272,12 +280,14 @@ describe('IncidentsService', () => {
         const result = await service.getListIncidentContactRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(contactsSpy).toHaveBeenCalledWith(
           RecordType.Incident,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -301,11 +311,13 @@ describe('IncidentsService', () => {
         const result = await service.getSingleIncidentContactRecord(
           idPathParams,
           res,
+          'idir',
         );
         expect(contactsSpy).toHaveBeenCalledWith(
           RecordType.Incident,
           idPathParams,
           res,
+          'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
       },

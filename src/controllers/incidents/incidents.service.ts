@@ -39,23 +39,27 @@ export class IncidentsService {
   async getSingleIncidentSupportNetworkInformationRecord(
     id: SupportNetworkIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<SupportNetworkEntity> {
     return await this.supportNetworkService.getSingleSupportNetworkInformationRecord(
       RecordType.Incident,
       id,
       res,
+      idir,
     );
   }
 
   async getListIncidentSupportNetworkInformationRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getListSupportNetworkInformationRecord(
       RecordType.Incident,
       id,
       res,
+      idir,
       filter,
     );
   }
@@ -63,6 +67,7 @@ export class IncidentsService {
   async getSingleIncidentAttachmentRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
@@ -70,6 +75,7 @@ export class IncidentsService {
       id,
       incidentsAttachmentsFieldName,
       res,
+      idir,
       filter,
     );
   }
@@ -77,6 +83,7 @@ export class IncidentsService {
   async getSingleIncidentAttachmentDetailsRecord(
     id: AttachmentIdPathParams,
     res: Response,
+    idir: string,
     filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
     return await this.attachmentsService.getSingleAttachmentDetailsRecord(
@@ -84,6 +91,7 @@ export class IncidentsService {
       id,
       incidentsAttachmentsFieldName,
       res,
+      idir,
       filter,
     );
   }
@@ -91,23 +99,27 @@ export class IncidentsService {
   async getSingleIncidentContactRecord(
     id: ContactIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<ContactsEntity> {
     return await this.contactsService.getSingleContactRecord(
       RecordType.Incident,
       id,
       res,
+      idir,
     );
   }
 
   async getListIncidentContactRecord(
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
       RecordType.Incident,
       id,
       res,
+      idir,
       filter,
     );
   }

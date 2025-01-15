@@ -41,8 +41,11 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthService } from '../../common/guards/auth/auth.service';
-import { getMockRes } from '@jest-mock/express';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { getMockReq, getMockRes } from '@jest-mock/express';
+import {
+  idirUsernameHeaderField,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
@@ -56,6 +59,7 @@ describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
   let serviceRequestsService: ServiceRequestsService;
   const { res, mockClear } = getMockRes();
+  const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -113,6 +117,7 @@ describe('ServiceRequestsController', () => {
 
         const result =
           await controller.getListSRSupportNetworkInformationRecord(
+            req,
             idPathParams,
             res,
             filterQueryParams,
@@ -120,6 +125,7 @@ describe('ServiceRequestsController', () => {
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
@@ -148,10 +154,11 @@ describe('ServiceRequestsController', () => {
 
         const result =
           await controller.getSingleSRSupportNetworkInformationRecord(
+            req,
             idPathParams,
             res,
           );
-        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
     );
@@ -177,6 +184,7 @@ describe('ServiceRequestsController', () => {
           );
 
         const result = await controller.getSingleSRAttachmentRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -184,6 +192,7 @@ describe('ServiceRequestsController', () => {
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -226,6 +235,7 @@ describe('ServiceRequestsController', () => {
           );
 
         const result = await controller.getSingleSRAttachmentDetailsRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -233,6 +243,7 @@ describe('ServiceRequestsController', () => {
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -258,6 +269,7 @@ describe('ServiceRequestsController', () => {
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
         const result = await controller.getListSRContactRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -265,6 +277,7 @@ describe('ServiceRequestsController', () => {
         expect(SRsServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -290,10 +303,11 @@ describe('ServiceRequestsController', () => {
           .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
 
         const result = await controller.getSingleSRContactRecord(
+          req,
           idPathParams,
           res,
         );
-        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactsEntity(data));
       },
     );

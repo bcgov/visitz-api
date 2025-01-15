@@ -92,6 +92,7 @@ describe('InPersonVisitsService', () => {
           recordType,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
@@ -123,6 +124,7 @@ describe('InPersonVisitsService', () => {
           recordType,
           idPathParams,
           res,
+          'idir',
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new InPersonVisitsEntity(data));
@@ -156,6 +158,7 @@ describe('InPersonVisitsService', () => {
         const result = await service.postSingleInPersonVisitRecord(
           recordType,
           body,
+          'idir',
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));

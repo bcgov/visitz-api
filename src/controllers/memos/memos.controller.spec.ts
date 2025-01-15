@@ -31,8 +31,11 @@ import {
   AttachmentsSingleResponseMemoExample,
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
-import { getMockRes } from '@jest-mock/express';
-import { startRowNumParamName } from '../../common/constants/upstream-constants';
+import { getMockReq, getMockRes } from '@jest-mock/express';
+import {
+  idirUsernameHeaderField,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import {
@@ -45,6 +48,7 @@ describe('MemosController', () => {
   let controller: MemosController;
   let memosService: MemosService;
   const { res, mockClear } = getMockRes();
+  const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -92,6 +96,7 @@ describe('MemosController', () => {
           );
 
         const result = await controller.getSingleMemoAttachmentRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -99,6 +104,7 @@ describe('MemosController', () => {
         expect(memoServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -141,6 +147,7 @@ describe('MemosController', () => {
           );
 
         const result = await controller.getSingleMemoAttachmentDetailsRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -148,6 +155,7 @@ describe('MemosController', () => {
         expect(memoServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -173,6 +181,7 @@ describe('MemosController', () => {
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
         const result = await controller.getListMemoContactRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -180,6 +189,7 @@ describe('MemosController', () => {
         expect(memoServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -201,10 +211,11 @@ describe('MemosController', () => {
           .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
 
         const result = await controller.getSingleMemoContactRecord(
+          req,
           idPathParams,
           res,
         );
-        expect(memoServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(memoServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactsEntity(data));
       },
     );

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Query,
+  Req,
   Res,
   UseGuards,
   UseInterceptors,
@@ -58,13 +59,14 @@ import {
   NestedAttachmentsEntity,
 } from '../../entities/attachments.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
 } from '../../common/constants/swagger-constants';
 import {
+  idirUsernameHeaderField,
   pageSizeParamName,
   recordCountNeededParamName,
   startRowNumParamName,
@@ -118,6 +120,7 @@ export class ServiceRequestsController {
     },
   })
   async getListSRSupportNetworkInformationRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -140,6 +143,7 @@ export class ServiceRequestsController {
     return await this.serviceRequestService.getListSRSupportNetworkInformationRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -165,6 +169,7 @@ export class ServiceRequestsController {
     },
   })
   async getSingleSRSupportNetworkInformationRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -178,6 +183,7 @@ export class ServiceRequestsController {
     return await this.serviceRequestService.getSingleSRSupportNetworkInformationRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 
@@ -208,6 +214,7 @@ export class ServiceRequestsController {
     },
   })
   async getSingleSRAttachmentRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -230,6 +237,7 @@ export class ServiceRequestsController {
     return await this.serviceRequestService.getSingleSRAttachmentRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -265,6 +273,7 @@ export class ServiceRequestsController {
     },
   })
   async getSingleSRAttachmentDetailsRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -287,6 +296,7 @@ export class ServiceRequestsController {
     return await this.serviceRequestService.getSingleSRAttachmentDetailsRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -318,6 +328,7 @@ export class ServiceRequestsController {
     },
   })
   async getListSRContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -340,6 +351,7 @@ export class ServiceRequestsController {
     return await this.serviceRequestService.getListSRContactRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -365,6 +377,7 @@ export class ServiceRequestsController {
     },
   })
   async getSingleSRContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -375,6 +388,10 @@ export class ServiceRequestsController {
     id: ContactIdPathParams,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
-    return await this.serviceRequestService.getSingleSRContactRecord(id, res);
+    return await this.serviceRequestService.getSingleSRContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
   }
 }

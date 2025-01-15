@@ -130,12 +130,14 @@ describe('CasesService', () => {
         const result = await service.getListCaseSupportNetworkInformationRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
@@ -166,11 +168,13 @@ describe('CasesService', () => {
           await service.getSingleCaseSupportNetworkInformationRecord(
             idPathParams,
             res,
+            'idir',
           );
         expect(supportNetworkSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
+          'idir',
         );
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
@@ -199,12 +203,14 @@ describe('CasesService', () => {
         const result = await service.getListCaseInPersonVisitRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(InPersonVisitsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));
@@ -228,11 +234,13 @@ describe('CasesService', () => {
         const result = await service.getSingleCaseInPersonVisitRecord(
           idPathParams,
           res,
+          'idir',
         );
         expect(InPersonVisitsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
+          'idir',
         );
         expect(result).toEqual(new InPersonVisitsEntity(data));
       },
@@ -291,6 +299,7 @@ describe('CasesService', () => {
         const result = await service.getSingleCaseAttachmentRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
@@ -298,6 +307,7 @@ describe('CasesService', () => {
           idPathParams,
           typeFieldName,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -340,6 +350,7 @@ describe('CasesService', () => {
         const result = await service.getSingleCaseAttachmentDetailsRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(attachmentsSpy).toHaveBeenCalledWith(
@@ -347,6 +358,7 @@ describe('CasesService', () => {
           idPathParams,
           typeFieldName,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -374,12 +386,14 @@ describe('CasesService', () => {
         const result = await service.getListCaseContactRecord(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(contactsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -403,11 +417,13 @@ describe('CasesService', () => {
         const result = await service.getSingleCaseContactRecord(
           idPathParams,
           res,
+          'idir',
         );
         expect(contactsSpy).toHaveBeenCalledWith(
           RecordType.Case,
           idPathParams,
           res,
+          'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
       },

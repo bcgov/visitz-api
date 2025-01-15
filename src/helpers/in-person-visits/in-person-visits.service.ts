@@ -17,6 +17,7 @@ import {
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { Response } from 'express';
+import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -50,6 +51,7 @@ export class InPersonVisitsService {
     _type: RecordType,
     id: VisitIdPathParams,
     res: Response,
+    idir: string,
   ): Promise<InPersonVisitsEntity> {
     const baseSearchSpec = `([Parent Id]="${id[idName]}" AND [Id]="${id[visitIdName]}"`;
     const [headers, params] =
@@ -58,6 +60,7 @@ export class InPersonVisitsService {
         this.workspace,
         this.sinceFieldName,
         false,
+        idir,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
@@ -72,6 +75,7 @@ export class InPersonVisitsService {
     _type: RecordType,
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedInPersonVisitsEntity> {
     const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
@@ -81,6 +85,7 @@ export class InPersonVisitsService {
         this.workspace,
         this.sinceFieldName,
         true,
+        idir,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(
@@ -95,11 +100,13 @@ export class InPersonVisitsService {
   async postSingleInPersonVisitRecord(
     _type: RecordType,
     body: PostInPersonVisitDtoUpstream,
+    idir: string,
   ): Promise<NestedInPersonVisitsEntity> {
     const headers = {
       Accept: CONTENT_TYPE,
       'Content-Type': CONTENT_TYPE,
       'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
     };
     const params = {
       [uniformResponseParamName]: UNIFORM_RESPONSE,
