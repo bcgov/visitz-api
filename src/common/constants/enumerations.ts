@@ -35,10 +35,16 @@ enum RecordCountNeededEnum {
   False = 'false',
 }
 
+enum RestrictedRecordEnum {
+  True = 'Y',
+  False = 'N',
+}
+
 export {
   RecordType,
   EntityType,
   RecordEntityMap,
   VisitDetails,
   RecordCountNeededEnum,
+  RestrictedRecordEnum,
 };

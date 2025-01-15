@@ -26,7 +26,7 @@ import {
 } from '../common/constants/parameter-constants';
 
 @Exclude()
-export class FilterQueryParams {
+export class SinceQueryParams {
   @IsOptional()
   @IsISO8601({ strict: true })
   @Expose()
@@ -38,7 +38,10 @@ export class FilterQueryParams {
       ' Only results after the selected datetime will appear.',
   })
   [sinceParamName]?: string;
+}
 
+@Exclude()
+export class FilterQueryParams extends SinceQueryParams {
   @IsOptional()
   @IsEnum(RecordCountNeededEnum)
   @Expose()

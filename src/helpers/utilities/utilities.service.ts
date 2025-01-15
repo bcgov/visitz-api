@@ -20,6 +20,21 @@ export class UtilitiesService {
     return upstreamDate;
   }
 
+  /**
+   * Converts a MM/dd/yyyy HH:mm:ss formatted date to a DateTime object.
+   * @param upstreamDate a MM/dd/yyyy HH:mm:ss formatted string. Assumes the date given is provided in UTC
+   * @returns luxon DateTime object if valid formatted date is provided, or undefined if not
+   */
+  convertUpstreamDateFormatToDateTime(
+    upstreamDate: string,
+  ): DateTime | undefined {
+    const dateObject = DateTime.fromFormat(upstreamDate, upstreamDateFormat);
+    if (dateObject.isValid === false) {
+      return undefined;
+    }
+    return dateObject;
+  }
+
   enumTypeGuard<T>(object: T, possibleValue: any): possibleValue is T[keyof T] {
     return Object.values(object).includes(possibleValue);
   }
