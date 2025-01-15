@@ -2,8 +2,8 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
-  Headers,
   Query,
+  Req,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -79,7 +79,7 @@ export class CaseloadController {
     },
   })
   async getCaseload(
-    @Headers() headers: object,
+    @Req() req: Request,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -90,7 +90,9 @@ export class CaseloadController {
     )
     filter?: SinceQueryParams,
   ): Promise<CaseloadEntity> {
-    const idir = headers[idirUsernameHeaderField];
-    return await this.caseloadService.getCaseload(idir, filter);
+    return await this.caseloadService.getCaseload(
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
   }
 }

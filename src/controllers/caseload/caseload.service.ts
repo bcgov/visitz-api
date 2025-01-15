@@ -96,6 +96,7 @@ export class CaseloadService {
           this[`${type}Workspace`],
           undefined, // we filter for since ourselves
           true,
+          idir,
           filter,
         );
       getRequestSpecs.push(
