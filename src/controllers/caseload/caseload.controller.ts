@@ -42,6 +42,7 @@ import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.enti
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { Request } from 'express';
 
 @Controller('')
 @ApiParam(versionInfo)
@@ -92,6 +93,7 @@ export class CaseloadController {
   ): Promise<CaseloadEntity> {
     return await this.caseloadService.getCaseload(
       req.headers[idirUsernameHeaderField] as string,
+      req,
       filter,
     );
   }

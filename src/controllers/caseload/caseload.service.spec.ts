@@ -7,6 +7,7 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '../../configuration/configuration';
+import { JwtService } from '@nestjs/jwt';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
@@ -17,6 +18,7 @@ describe('CaseloadService', () => {
       providers: [
         CaseloadService,
         UtilitiesService,
+        JwtService,
         TokenRefresherService,
         RequestPreparerService,
         {

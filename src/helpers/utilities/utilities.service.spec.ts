@@ -2,13 +2,29 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UtilitiesService, isPastISO8601Date } from './utilities.service';
 import { DateTime } from 'luxon';
 import { BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UtilitiesService],
+      providers: [
+        UtilitiesService,
+        JwtService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              const lookup = {
+                skipJWT: true,
+              };
+              return lookup[key];
+            }),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<UtilitiesService>(UtilitiesService);

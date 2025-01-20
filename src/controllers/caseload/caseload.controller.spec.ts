@@ -8,6 +8,7 @@ import { RequestPreparerService } from '../../external-api/request-preparer/requ
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import configuration from '../../configuration/configuration';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('CaseloadController', () => {
   let controller: CaseloadController;
@@ -23,6 +24,7 @@ describe('CaseloadController', () => {
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,
+        JwtService,
         { provide: HttpService, useValue: { get: jest.fn(), post: jest.fn() } },
       ],
     }).compile();
