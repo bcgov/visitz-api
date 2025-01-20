@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CaseloadEntity } from '../../entities/caseload.entity';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
@@ -21,11 +21,13 @@ import {
   pageSizeParamName,
   recordCountNeededParamName,
 } from '../../common/constants/upstream-constants';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { Request } from 'express';
 
 @Injectable()
 export class CaseloadService {
   recordTypes: Array<string>;
-  maxParallelRequests: number;
 
   caseIdirFieldName: string;
   incidentIdirFieldName: string;
@@ -43,8 +45,8 @@ export class CaseloadService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
     private readonly utilitiesService: UtilitiesService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
-    this.maxParallelRequests = 4;
     this.recordTypes = [RecordType.Case, RecordType.Incident];
     this.caseIdirFieldName = this.configService.get<string>(
       `upstreamAuth.case.idirField`,
@@ -164,8 +166,26 @@ export class CaseloadService {
     return response;
   }
 
+  async caseloadUnsetCacheItems(response, idir: string, req: Request) {
+    const jti = this.utilitiesService.grabJTI(req);
+    const baseReplaceKey = `${idir}|{type}|{id}|${jti}`;
+    for (const type of this.recordTypes) {
+      for (const id of response[`${type}s`]['assignedIds']) {
+        try {
+          const replaceKey = baseReplaceKey
+            .replace('|{id}|', `|${id}|`)
+            .replace('|{type}|', `|${type}|`);
+          await this.cacheManager.del(replaceKey);
+        } catch {
+          continue;
+        }
+      }
+    }
+  }
+
   async getCaseload(
     idir: string,
+    req: Request,
     filter?: SinceQueryParams,
   ): Promise<CaseloadEntity> {
     const filterObject = {
@@ -186,14 +206,14 @@ export class CaseloadService {
       throw results.overallError;
     }
 
-    // Check if we need to do more parallel requests via the response headers
-
     let response = this.caseloadMapResponse(results);
     if (filter?.since !== undefined) {
       response = this.caseloadFilterItems(response, filter.since);
     }
+
+    await this.caseloadUnsetCacheItems(response, idir, req);
+
     return plainToInstance(CaseloadEntity, response, {
-      excludeExtraneousValues: true,
       enableImplicitConversion: true,
     });
   }
