@@ -14,7 +14,7 @@ import { TokenRefresherService } from '../token-refresher/token-refresher.servic
 import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import {
   AxiosError,
   AxiosResponse,
@@ -32,6 +32,8 @@ import {
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
+import { GetRequestDetails } from '../../dto/get-request-details.dto';
+import { HttpException } from '@nestjs/common';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
@@ -339,6 +341,74 @@ describe('RequestPreparerService', () => {
         service.sendPostRequest('url', {}, {}),
       ).rejects.toHaveProperty('status', 500);
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('parallelGetRequest tests', () => {
+    it('provides a response on multiple sucessful http service calls', async () => {
+      const requestSpecs: Array<GetRequestDetails> = [
+        { url: 'url', headers: {} },
+        { url: 'url', headers: {} },
+      ];
+      const responseObservable = of({
+        data: { test: 'test' },
+        headers: {} as RawAxiosRequestHeaders,
+        status: 200,
+        statusText: 'OK',
+      } as AxiosResponse<any, any>);
+      const spy = jest
+        .spyOn(httpService, 'get')
+        .mockReturnValueOnce(responseObservable)
+        .mockReturnValueOnce(responseObservable);
+      const result = await service.parallelGetRequest(requestSpecs);
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(result.responses).toHaveLength(2);
+      expect(result.responses[0].data).toMatchObject({ test: 'test' });
+      expect(result.responses[1].data).toMatchObject({ test: 'test' });
+    });
+
+    it('provides a response on one success and one failure', async () => {
+      const requestSpecs: Array<GetRequestDetails> = [
+        { url: 'url', headers: {} },
+        { url: 'url', headers: {} },
+      ];
+      const responseObservable = of({
+        data: { test: 'test' },
+        headers: {} as RawAxiosRequestHeaders,
+        status: 200,
+        statusText: 'OK',
+      } as AxiosResponse<any, any>);
+      const spy = jest
+        .spyOn(httpService, 'get')
+        .mockReturnValueOnce(responseObservable)
+        .mockReturnValueOnce(
+          throwError(() => {
+            return new AxiosError('message', '500', undefined, undefined, {
+              data: {
+                message: 'this is an error',
+              },
+            } as AxiosResponse);
+          }),
+        );
+      const result = await service.parallelGetRequest(requestSpecs);
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(result.responses).toHaveLength(2);
+      expect(result.responses[0].data).toMatchObject({ test: 'test' });
+      expect(result.responses[1].response.data).toMatchObject({
+        message: 'this is an error',
+      });
+    });
+
+    it('provides an overall error on bearer token failure', async () => {
+      const requestSpecs: Array<GetRequestDetails> = [
+        { url: 'url', headers: {} },
+      ];
+      const spy = jest
+        .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.parallelGetRequest(requestSpecs);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(result.overallError).toBeInstanceOf(HttpException);
     });
   });
 });
