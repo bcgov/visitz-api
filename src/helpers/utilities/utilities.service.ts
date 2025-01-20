@@ -39,7 +39,9 @@ export class UtilitiesService {
   convertUpstreamDateFormatToDateTime(
     upstreamDate: string,
   ): DateTime | undefined {
-    const dateObject = DateTime.fromFormat(upstreamDate, upstreamDateFormat);
+    const dateObject = DateTime.fromFormat(upstreamDate, upstreamDateFormat, {
+      zone: 'UTC',
+    });
     if (dateObject.isValid === false) {
       return undefined;
     }
@@ -52,12 +54,12 @@ export class UtilitiesService {
     }
     const authToken = req.header('authorization').split(/\s+/)[1];
     const decoded = this.jwtService.decode(authToken);
-    const jti = decoded['jti'];
-    if (typeof jti !== 'string' || jti.length !== 36) {
-      // uuid, so length should always be 36
+    try {
+      const jti = decoded['jti'];
+      return jti;
+    } catch {
       throw new Error(`Invalid JWT`);
     }
-    return jti;
   }
 
   enumTypeGuard<T>(object: T, possibleValue: any): possibleValue is T[keyof T] {
