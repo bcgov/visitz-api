@@ -14,7 +14,7 @@ import {
 } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { DateTime } from 'luxon';
-import { ParalellResponse } from '../../dto/parallel-response.dto';
+import { ParallelResponse } from '../../dto/parallel-response.dto';
 import { plainToInstance } from 'class-transformer';
 import {
   pageSizeMax,
@@ -110,7 +110,7 @@ export class CaseloadService {
     return getRequestSpecs;
   }
 
-  caseloadMapResponse(results: ParalellResponse) {
+  caseloadMapResponse(results: ParallelResponse) {
     const caseStatus: number =
       results.responses[0].status !== 404 ? results.responses[0].status : 204;
     const caseIsError: boolean = caseStatus >= 300 || caseStatus == 204;
