@@ -6,7 +6,6 @@ import { UtilitiesModule } from '../../../helpers/utilities/utilities.module';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import { TokenRefresherModule } from '../../../external-api/token-refresher/token-refresher.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   providers: [
@@ -15,12 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
     UtilitiesService,
     ConfigService,
   ],
-  imports: [
-    JwtModule.register({ global: true }),
-    UtilitiesModule,
-    HttpModule,
-    TokenRefresherModule,
-  ],
+  imports: [UtilitiesModule, HttpModule, TokenRefresherModule],
   exports: [AuthService],
 })
 export class AuthModule {}

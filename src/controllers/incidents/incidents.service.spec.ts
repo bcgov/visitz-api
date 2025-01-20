@@ -51,6 +51,7 @@ import {
   ContactsSingleResponseIncidentExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtService } from '@nestjs/jwt';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -69,6 +70,7 @@ describe('IncidentsService', () => {
         AttachmentsService,
         UtilitiesService,
         TokenRefresherService,
+        JwtService,
         RequestPreparerService,
         {
           provide: CACHE_MANAGER,

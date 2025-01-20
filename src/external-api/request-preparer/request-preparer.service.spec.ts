@@ -31,6 +31,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 import configuration from '../../configuration/configuration';
+import { JwtService } from '@nestjs/jwt';
 
 describe('RequestPreparerService', () => {
   let service: RequestPreparerService;
@@ -45,6 +46,7 @@ describe('RequestPreparerService', () => {
         RequestPreparerService,
         UtilitiesService,
         TokenRefresherService,
+        JwtService,
         {
           provide: HttpService,
           useValue: { get: () => jest.fn(), post: () => jest.fn() },

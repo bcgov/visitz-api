@@ -22,6 +22,7 @@ import {
 } from '../../entities/attachments.entity';
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
@@ -35,6 +36,7 @@ describe('AttachmentsService', () => {
         AttachmentsService,
         UtilitiesService,
         ConfigService,
+        JwtService,
         TokenRefresherService,
         RequestPreparerService,
         { provide: HttpService, useValue: { get: jest.fn() } },

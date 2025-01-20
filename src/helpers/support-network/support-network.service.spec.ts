@@ -27,6 +27,7 @@ import {
 } from '../../common/constants/parameter-constants';
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
+import { JwtService } from '@nestjs/jwt';
 
 describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
@@ -42,6 +43,7 @@ describe('SupportNetworkService', () => {
         ConfigService,
         TokenRefresherService,
         RequestPreparerService,
+        JwtService,
         { provide: HttpService, useValue: { get: jest.fn() } },
         {
           provide: CACHE_MANAGER,

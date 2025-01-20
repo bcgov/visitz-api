@@ -25,6 +25,7 @@ import {
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
+import { JwtService } from '@nestjs/jwt';
 
 describe('InPersonVisitsService', () => {
   let service: InPersonVisitsService;
@@ -37,6 +38,7 @@ describe('InPersonVisitsService', () => {
       providers: [
         InPersonVisitsService,
         UtilitiesService,
+        JwtService,
         ConfigService,
         TokenRefresherService,
         RequestPreparerService,

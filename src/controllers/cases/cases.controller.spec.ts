@@ -64,7 +64,7 @@ import {
   ContactsListResponseCaseExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -87,6 +87,7 @@ describe('CasesController', () => {
         TokenRefresherService,
         InPersonVisitsService,
         RequestPreparerService,
+        JwtService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

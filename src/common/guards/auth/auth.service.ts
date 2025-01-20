@@ -22,7 +22,6 @@ import {
   idirUsernameHeaderField,
   trustedIdirHeaderName,
 } from '../../../common/constants/upstream-constants';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -38,7 +37,6 @@ export class AuthService {
     private readonly utilitiesService: UtilitiesService,
     private readonly httpService: HttpService,
     private readonly tokenRefresherService: TokenRefresherService,
-    private readonly jwtService: JwtService,
   ) {
     this.cacheTime = this.configService.get<number>('recordCache.cacheTtlMs');
     this.baseUrl = encodeURI(
@@ -55,11 +53,7 @@ export class AuthService {
     let idir: string, jti: string, id: string, recordType: RecordType;
     try {
       idir = req.header(idirUsernameHeaderField).trim();
-      if (this.skipJWT) {
-        jti = 'local'; // we won't have a JWT locally
-      } else {
-        jti = this.grabJTI(req);
-      }
+      jti = this.utilitiesService.grabJTI(req);
       [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
       this.logger.error({ error });
@@ -91,17 +85,6 @@ export class AuthService {
       return false;
     }
     return true;
-  }
-
-  grabJTI(req: Request): string {
-    const authToken = req.header('authorization').split(/\s+/)[1];
-    const decoded = this.jwtService.decode(authToken);
-    const jti = decoded['jti'];
-    if (typeof jti !== 'string' || jti.length !== 36) {
-      // uuid, so length should always be 36
-      throw new Error(`Invalid JWT`);
-    }
-    return jti;
   }
 
   grabRecordInfo(req: Request, controllerPath: string): [string, RecordType] {
