@@ -184,6 +184,26 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: MEMO_IDIR_FIELD
+            - name: CASE_SINCE_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_SINCE_FIELD
+            - name: CASE_RESTRICTED_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_RESTRICTED_FIELD
+            - name: INCIDENT_SINCE_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_SINCE_FIELD
+            - name: INCIDENT_RESTRICTED_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_RESTRICTED_FIELD
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
       restartPolicy: Always

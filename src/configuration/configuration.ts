@@ -9,14 +9,13 @@ export default () => ({
       endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: process.env.CASE_WORKSPACE ?? undefined,
       idirField: process.env.CASE_IDIR_FIELD ?? undefined,
-      restrictedField: 'Restricted Flag',
+      restrictedField: process.env.CASE_RESTRICTED_FIELD ?? undefined,
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: process.env.INCIDENT_WORKSPACE ?? undefined,
       idirField: process.env.INCIDENT_IDIR_FIELD ?? undefined,
-      // TODO: change to Assigned To when this is ready
-      restrictedField: 'Restricted Flag',
+      restrictedField: process.env.INCIDENT_RESTRICTED_FIELD ?? undefined,
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
@@ -47,11 +46,11 @@ export default () => ({
     inPersonVisits: 'Updated',
     attachments: 'Last Updated Date',
     contacts: updatedDateFieldName,
-    cases: 'Last Updated Date',
-    incidents: 'Last Updated',
+    cases: process.env.CASE_SINCE_FIELD ?? undefined,
+    incidents: process.env.INCIDENT_SINCE_FIELD ?? undefined,
   },
   skipAuthGuard: process.env.SKIP_AUTH_GUARD === 'true',
-  skipJWTCache: process.env.SKIP_JWT_CACHE === 'true',
+  skipJWTCache: process.env.SKIP_JWT_CACHE !== 'false',
   endpointUrls: {
     baseUrl: process.env.UPSTREAM_BASE_URL ?? ' ',
     supportNetwork: process.env.SUPPORT_NETWORK_ENDPOINT ?? ' ',
