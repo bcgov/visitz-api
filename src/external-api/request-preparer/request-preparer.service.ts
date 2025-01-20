@@ -31,7 +31,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
-import { ParalellResponse } from '../../dto/parallel-response.dto';
+import { ParallelResponse } from '../../dto/parallel-response.dto';
 
 @Injectable()
 export class RequestPreparerService {
@@ -194,22 +194,20 @@ export class RequestPreparerService {
 
   async parallelGetRequest(
     requestSpecs: Array<GetRequestDetails>,
-  ): Promise<ParalellResponse> {
-    let response: ParalellResponse;
+  ): Promise<ParallelResponse> {
+    let response: ParallelResponse;
     try {
       const authToken =
         await this.tokenRefresherService.refreshUpstreamBearerToken();
       if (authToken === undefined) {
         throw new Error('Upstream auth failed');
       }
-      for (const type of requestSpecs) {
-        for (const req of type.requests) {
-          req.headers['Authorization'] = authToken;
-        }
+      for (const req of requestSpecs) {
+        req.headers['Authorization'] = authToken;
       }
     } catch (error) {
       this.logger.error({ error, buildNumber: this.buildNumber });
-      response = new ParalellResponse({
+      response = new ParallelResponse({
         overallError: new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -223,21 +221,18 @@ export class RequestPreparerService {
     }
 
     const requestArray: Array<Observable<any>> = [];
-    for (const type of requestSpecs) {
-      for (const req of type.requests) {
-        requestArray.push(
-          this.httpService
-            .get(req.url, {
-              params: req.params,
-              headers: req.headers,
-            })
-            .pipe(catchError((err) => of(err))),
-        );
-      }
+    for (const req of requestSpecs) {
+      requestArray.push(
+        this.httpService
+          .get(req.url, {
+            params: req.params,
+            headers: req.headers,
+          })
+          .pipe(catchError((err) => of(err))),
+      );
     }
     const parallelObservable = forkJoin(requestArray);
     const outputArray = await lastValueFrom(parallelObservable);
-    console.log(outputArray[0]);
-    return new ParalellResponse({ responses: outputArray });
+    return new ParallelResponse({ responses: outputArray });
   }
 }

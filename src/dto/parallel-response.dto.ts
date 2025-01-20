@@ -1,4 +1,4 @@
-export class ParalellResponse {
+export class ParallelResponse {
   responses?: Array<any>;
   overallError?: any;
 
