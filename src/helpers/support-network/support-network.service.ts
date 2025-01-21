@@ -43,6 +43,7 @@ export class SupportNetworkService {
     type: RecordType,
     id: SupportNetworkIdPathParams,
     res: Response,
+    idir: string,
   ) {
     const baseSearchSpec =
       `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"` +
@@ -53,6 +54,7 @@ export class SupportNetworkService {
         this.workspace,
         this.sinceFieldName,
         false,
+        idir,
       );
     const response = await this.requestPreparerService.sendGetRequest(
       this.url,
@@ -67,6 +69,7 @@ export class SupportNetworkService {
     type: RecordType,
     id: IdPathParams,
     res: Response,
+    idir: string,
     filter?: FilterQueryParams,
   ) {
     const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
@@ -76,6 +79,7 @@ export class SupportNetworkService {
         this.workspace,
         this.sinceFieldName,
         true,
+        idir,
         filter,
       );
     const response = await this.requestPreparerService.sendGetRequest(

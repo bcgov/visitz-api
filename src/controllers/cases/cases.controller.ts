@@ -133,6 +133,7 @@ export class CasesController {
     },
   })
   async getListCaseSupportNetworkInformationRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -155,6 +156,7 @@ export class CasesController {
     return await this.casesService.getListCaseSupportNetworkInformationRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -181,6 +183,7 @@ export class CasesController {
     },
   })
   async getSingleCaseSupportNetworkInformationRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -194,6 +197,7 @@ export class CasesController {
     return await this.casesService.getSingleCaseSupportNetworkInformationRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 
@@ -225,6 +229,7 @@ export class CasesController {
     },
   })
   async getListCaseInPersonVisitRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -247,6 +252,7 @@ export class CasesController {
     return await this.casesService.getListCaseInPersonVisitRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -273,6 +279,7 @@ export class CasesController {
     },
   })
   async getSingleCaseInPersonVisitRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -283,7 +290,11 @@ export class CasesController {
     id: VisitIdPathParams,
     @Res({ passthrough: true }) res: Response,
   ): Promise<InPersonVisitsEntity> {
-    return await this.casesService.getSingleCaseInPersonVisitRecord(id, res);
+    return await this.casesService.getSingleCaseInPersonVisitRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -304,6 +315,7 @@ export class CasesController {
     },
   })
   async postSingleCaseInPersonVisitRecord(
+    @Req() req: Request,
     @Body(
       new ValidationPipe({
         transform: true,
@@ -320,7 +332,6 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
-    @Req() req: Request,
   ): Promise<NestedInPersonVisitsEntity> {
     return await this.casesService.postSingleCaseInPersonVisitRecord(
       inPersonVisitDto,
@@ -357,6 +368,7 @@ export class CasesController {
     },
   })
   async getSingleCaseAttachmentRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -379,6 +391,7 @@ export class CasesController {
     return await this.casesService.getSingleCaseAttachmentRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -415,6 +428,7 @@ export class CasesController {
     },
   })
   async getSingleCaseAttachmentDetailsRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -437,6 +451,7 @@ export class CasesController {
     return await this.casesService.getSingleCaseAttachmentDetailsRecord(
       id,
       res,
+      req.headers[idirUsernameHeaderField] as string,
       filter,
     );
   }
@@ -469,6 +484,7 @@ export class CasesController {
     },
   })
   async getListCaseContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -488,7 +504,12 @@ export class CasesController {
     )
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
-    return await this.casesService.getListCaseContactRecord(id, res, filter);
+    return await this.casesService.getListCaseContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -513,6 +534,7 @@ export class CasesController {
     },
   })
   async getSingleCaseContactRecord(
+    @Req() req: Request,
     @Param(
       new ValidationPipe({
         transform: true,
@@ -523,6 +545,10 @@ export class CasesController {
     id: ContactIdPathParams,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
-    return await this.casesService.getSingleCaseContactRecord(id, res);
+    return await this.casesService.getSingleCaseContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
   }
 }

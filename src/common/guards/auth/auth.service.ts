@@ -18,7 +18,10 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
-import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
+import {
+  idirUsernameHeaderField,
+  trustedIdirHeaderName,
+} from '../../../common/constants/upstream-constants';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +62,7 @@ export class AuthService {
 
     if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit, going upstream...`);
-      upstreamResult = await this.getAssignedIdirUpstream(id, recordType);
+      upstreamResult = await this.getAssignedIdirUpstream(id, recordType, idir);
       if (upstreamResult !== null) {
         await this.cacheManager.set(key, upstreamResult, this.cacheTime);
       }
@@ -87,6 +90,7 @@ export class AuthService {
   async getAssignedIdirUpstream(
     id: string,
     recordType: RecordType,
+    idir: string,
   ): Promise<string | null> {
     let workspace;
     const params = {
@@ -104,6 +108,7 @@ export class AuthService {
     const headers = {
       Accept: CONTENT_TYPE,
       'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
     };
     const url =
       this.baseUrl +

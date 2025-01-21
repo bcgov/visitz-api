@@ -17,6 +17,7 @@ const createdDateFieldName = 'Created Date';
 const updatedByFieldName = 'Updated By';
 const updatedByIdFieldName = 'Updated By Id';
 const updatedDateFieldName = 'Updated Date';
+const trustedIdirHeaderName = 'X-ICM-TrustedUsername';
 const pageSizeMin = 1;
 const pageSizeMax = 100;
 const pageSizeDefault = 10;
@@ -45,6 +46,7 @@ export {
   updatedByFieldName,
   updatedByIdFieldName,
   updatedDateFieldName,
+  trustedIdirHeaderName,
   pageSizeMin,
   pageSizeMax,
   pageSizeDefault,

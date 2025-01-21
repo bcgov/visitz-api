@@ -69,6 +69,7 @@ describe('CasesController', () => {
   let controller: CasesController;
   let casesService: CasesService;
   const { res, mockClear } = getMockRes();
+  const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -120,6 +121,7 @@ describe('CasesController', () => {
 
         const result =
           await controller.getListCaseSupportNetworkInformationRecord(
+            req,
             idPathParams,
             res,
             filterQueryParams,
@@ -127,6 +129,7 @@ describe('CasesController', () => {
         expect(casesServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
@@ -152,10 +155,11 @@ describe('CasesController', () => {
 
         const result =
           await controller.getSingleCaseSupportNetworkInformationRecord(
+            req,
             idPathParams,
             res,
           );
-        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new SupportNetworkEntity(data));
       },
     );
@@ -181,6 +185,7 @@ describe('CasesController', () => {
           );
 
         const result = await controller.getListCaseInPersonVisitRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -188,6 +193,7 @@ describe('CasesController', () => {
         expect(casesServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));
@@ -209,10 +215,11 @@ describe('CasesController', () => {
           .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
 
         const result = await controller.getSingleCaseInPersonVisitRecord(
+          req,
           idPathParams,
           res,
         );
-        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new InPersonVisitsEntity(data));
       },
     );
@@ -240,9 +247,9 @@ describe('CasesController', () => {
           );
 
         const result = await controller.postSingleCaseInPersonVisitRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
           body,
           idPathParams,
-          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
         );
         expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
         expect(result).toEqual(new NestedInPersonVisitsEntity(data));
@@ -270,6 +277,7 @@ describe('CasesController', () => {
           );
 
         const result = await controller.getSingleCaseAttachmentRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -277,6 +285,7 @@ describe('CasesController', () => {
         expect(caseServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedAttachmentsEntity(data));
@@ -319,6 +328,7 @@ describe('CasesController', () => {
           );
 
         const result = await controller.getSingleCaseAttachmentDetailsRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -326,6 +336,7 @@ describe('CasesController', () => {
         expect(caseServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
@@ -351,6 +362,7 @@ describe('CasesController', () => {
           .mockReturnValueOnce(Promise.resolve(new NestedContactsEntity(data)));
 
         const result = await controller.getListCaseContactRecord(
+          req,
           idPathParams,
           res,
           filterQueryParams,
@@ -358,6 +370,7 @@ describe('CasesController', () => {
         expect(caseServiceSpy).toHaveBeenCalledWith(
           idPathParams,
           res,
+          'idir',
           filterQueryParams,
         );
         expect(result).toEqual(new NestedContactsEntity(data));
@@ -379,10 +392,11 @@ describe('CasesController', () => {
           .mockReturnValueOnce(Promise.resolve(new ContactsEntity(data)));
 
         const result = await controller.getSingleCaseContactRecord(
+          req,
           idPathParams,
           res,
         );
-        expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res);
+        expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactsEntity(data));
       },
     );
