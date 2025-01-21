@@ -59,7 +59,12 @@ export class AuthService {
       this.logger.error({ error });
       return false;
     }
-    const key = `${idir}|${recordType}|${id}|${jti}`;
+    const key = this.utilitiesService.cacheKeyPreparer(
+      idir,
+      recordType,
+      id,
+      jti,
+    );
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
 

@@ -166,13 +166,15 @@ export class CaseloadService {
 
   async caseloadUnsetCacheItems(response, idir: string, req: Request) {
     const jti = this.utilitiesService.grabJTI(req);
-    const baseReplaceKey = `${idir}|{type}|{id}|${jti}`;
     for (const type of this.recordTypes) {
       for (const id of response[`${type}s`]['assignedIds']) {
         try {
-          const replaceKey = baseReplaceKey
-            .replace('|{id}|', `|${id}|`)
-            .replace('|{type}|', `|${type}|`);
+          const replaceKey = this.utilitiesService.cacheKeyPreparer(
+            idir,
+            type as RecordType,
+            id,
+            jti,
+          );
           await this.cacheManager.del(replaceKey);
         } catch {
           continue;

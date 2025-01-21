@@ -5,6 +5,7 @@ import { upstreamDateFormat } from '../../common/constants/upstream-constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { RecordType } from '../../common/constants/enumerations';
 
 @Injectable()
 export class UtilitiesService {
@@ -60,6 +61,15 @@ export class UtilitiesService {
     } catch {
       throw new Error(`Invalid JWT`);
     }
+  }
+
+  cacheKeyPreparer(
+    idir: string,
+    recordType: RecordType,
+    id: string,
+    jti: string,
+  ): string {
+    return `${idir}|${recordType}|${id}|${jti}`;
   }
 
   enumTypeGuard<T>(object: T, possibleValue: any): possibleValue is T[keyof T] {
