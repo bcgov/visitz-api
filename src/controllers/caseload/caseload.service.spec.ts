@@ -100,10 +100,10 @@ describe('CaseloadService', () => {
         `upstreamAuth.incident.endpoint`,
       );
       const caseIdirFieldName = configService.get<string>(
-        `upstreamAuth.case.idirField`,
+        `upstreamAuth.case.searchspecIdirField`,
       );
       const incidentIdirFieldName = configService.get<string>(
-        `upstreamAuth.incident.idirField`,
+        `upstreamAuth.incident.searchspecIdirField`,
       );
       const caseRestrictedFieldName = configService.get<string>(
         `upstreamAuth.case.restrictedField`,

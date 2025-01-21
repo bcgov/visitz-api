@@ -47,10 +47,10 @@ export class CaseloadService {
   ) {
     this.recordTypes = [RecordType.Case, RecordType.Incident];
     this.caseIdirFieldName = this.configService.get<string>(
-      `upstreamAuth.case.idirField`,
+      `upstreamAuth.case.searchspecIdirField`,
     );
     this.incidentIdirFieldName = this.configService.get<string>(
-      `upstreamAuth.incident.idirField`,
+      `upstreamAuth.incident.searchspecIdirField`,
     );
     this.caseSinceFieldName =
       this.configService.get<string>(`sinceFieldName.cases`);

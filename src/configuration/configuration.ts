@@ -9,12 +9,15 @@ export default () => ({
       endpoint: encodeURI((process.env.CASE_ENDPOINT ?? ' ').trim()),
       workspace: process.env.CASE_WORKSPACE ?? undefined,
       idirField: process.env.CASE_IDIR_FIELD ?? undefined,
+      searchspecIdirField: process.env.CASE_SEARCHSPEC_IDIR_FIELD ?? undefined,
       restrictedField: process.env.CASE_RESTRICTED_FIELD ?? undefined,
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
       workspace: process.env.INCIDENT_WORKSPACE ?? undefined,
       idirField: process.env.INCIDENT_IDIR_FIELD ?? undefined,
+      searchspecIdirField:
+        process.env.INCIDENT_SEARCHSPEC_IDIR_FIELD ?? undefined,
       restrictedField: process.env.INCIDENT_RESTRICTED_FIELD ?? undefined,
     },
     sr: {
