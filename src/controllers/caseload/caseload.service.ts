@@ -4,7 +4,6 @@ import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  RecordCountNeededEnum,
   RecordType,
   RestrictedRecordEnum,
 } from '../../common/constants/enumerations';
@@ -19,7 +18,6 @@ import { plainToInstance } from 'class-transformer';
 import {
   pageSizeMax,
   pageSizeParamName,
-  recordCountNeededParamName,
 } from '../../common/constants/upstream-constants';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -150,7 +148,7 @@ export class CaseloadService {
   }
 
   caseloadFilterItems(response, since: string) {
-    const sinceDateTime = DateTime.fromISO(since);
+    const sinceDateTime = DateTime.fromISO(since, { zone: 'utc' });
     for (const type of this.recordTypes) {
       const items = response[`${type}s`][`items`];
       const typeFieldName = `${type}SinceFieldName`;
@@ -189,7 +187,6 @@ export class CaseloadService {
     filter?: SinceQueryParams,
   ): Promise<CaseloadEntity> {
     const filterObject = {
-      [recordCountNeededParamName]: RecordCountNeededEnum.True,
       [pageSizeParamName]: pageSizeMax,
     };
     const initialFilter = plainToInstance(FilterQueryParams, filterObject, {

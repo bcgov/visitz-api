@@ -7,7 +7,7 @@ import { IsOptional } from 'class-validator';
 /*
  * Examples
  */
-const IncidentExample = {
+export const IncidentExample = {
   Id: 'Id Here',
   'Activity UID': 'Id Here',
   'After Hours Flag': 'N',
@@ -54,7 +54,7 @@ const IncidentExample = {
   'Last Updated Login': 'Id Here',
 };
 
-const CaseExample = {
+export const CaseExample = {
   Id: 'Id Here',
   'Row Id': 'Id Here',
   'Case Num': 'Id Here',
@@ -94,6 +94,19 @@ export const CaseloadCompleteResponseExample = {
     assignedIds: [CaseExample['Id']],
     status: 200,
     items: [CaseExample],
+  },
+  incidents: {
+    assignedIds: [IncidentExample['Id']],
+    status: 200,
+    items: [IncidentExample],
+  },
+};
+
+export const CaseloadLaterDateResponseExample = {
+  cases: {
+    assignedIds: [CaseExample['Id']],
+    status: 200,
+    items: [{ ...CaseExample, 'Last Updated Date': '01/01/2025 00:00:00' }],
   },
   incidents: {
     assignedIds: [IncidentExample['Id']],
