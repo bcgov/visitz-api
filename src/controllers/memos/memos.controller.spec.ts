@@ -43,6 +43,7 @@ import {
   ContactsListResponseMemoExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtService } from '@nestjs/jwt';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -59,6 +60,7 @@ describe('MemosController', () => {
         AttachmentsService,
         TokenRefresherService,
         RequestPreparerService,
+        JwtService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

@@ -61,6 +61,7 @@ import {
   ContactsSingleResponseCaseExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtService } from '@nestjs/jwt';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -79,6 +80,7 @@ describe('CasesService', () => {
         SupportNetworkService,
         AttachmentsService,
         UtilitiesService,
+        JwtService,
         TokenRefresherService,
         InPersonVisitsService,
         RequestPreparerService,
