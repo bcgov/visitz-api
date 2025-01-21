@@ -70,6 +70,8 @@ describe('CaseloadService', () => {
     );
 
     configService.set('skipJWTCache', true);
+    configService.set('sinceFieldName.cases', 'Last Updated Date');
+    configService.set('sinceFieldName.incidents', 'Last Updated');
   });
 
   it('should be defined', () => {
