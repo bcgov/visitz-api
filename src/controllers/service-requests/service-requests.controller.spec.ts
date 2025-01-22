@@ -54,6 +54,7 @@ import {
   ContactsSingleResponseSRExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -63,7 +64,10 @@ describe('ServiceRequestsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot({ load: [configuration] })],
+      imports: [
+        ConfigModule.forRoot({ load: [configuration] }),
+        JwtModule.register({ global: true }),
+      ],
       providers: [
         ServiceRequestsService,
         AuthService,

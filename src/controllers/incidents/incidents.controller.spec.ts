@@ -54,6 +54,7 @@ import {
   ContactsSingleResponseIncidentExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -63,7 +64,10 @@ describe('IncidentsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot({ load: [configuration] })],
+      imports: [
+        ConfigModule.forRoot({ load: [configuration] }),
+        JwtModule.register({ global: true }),
+      ],
       providers: [
         IncidentsService,
         SupportNetworkService,
@@ -72,6 +76,7 @@ describe('IncidentsController', () => {
         AuthService,
         TokenRefresherService,
         RequestPreparerService,
+        JwtService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

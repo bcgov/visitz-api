@@ -26,6 +26,7 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { getMockRes } from '@jest-mock/express';
+import { JwtService } from '@nestjs/jwt';
 
 describe('ContactsService', () => {
   let service: ContactsService;
@@ -40,6 +41,7 @@ describe('ContactsService', () => {
         ContactsService,
         UtilitiesService,
         ConfigService,
+        JwtService,
         TokenRefresherService,
         RequestPreparerService,
         { provide: HttpService, useValue: { get: jest.fn() } },

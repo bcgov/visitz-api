@@ -42,6 +42,7 @@ import {
   ContactsSingleResponseMemoExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtService } from '@nestjs/jwt';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -57,6 +58,7 @@ describe('MemosService', () => {
         ContactsService,
         AttachmentsService,
         UtilitiesService,
+        JwtService,
         TokenRefresherService,
         RequestPreparerService,
         { provide: HttpService, useValue: { get: jest.fn() } },

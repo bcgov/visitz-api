@@ -1,0 +1,356 @@
+/*
+	To use, uncomment the code, remove the .txt extension and move to src/controllers/caseload/caseload.service.ts
+
+  	This snippet contains the parallelization logic for caseload that was scrapped due to 
+	complications with error handling. Basically, the overall idea was as follows:
+	1. Get the results for cases and incidents in parallel using getEntity
+		a. Get the initial results in with a record count. If recordcount < maxPageSize (100), 
+		then return the error / success of that entity, status, and all assigned Ids
+		b. If recordcount > 100 for either, batch the requests, up to the max page size and max batch size,
+		and issue requests for entries in parallel (ex: get a request with 100-199, 200-299, 300-399 all at once).
+		Return 200 as the overall status, regardless of error, but add an array of encountered error messages
+			- This causes problems with consumers of the API, as they assumes any case ids they can't see
+			were cases they were unassigned from
+	2. Combine and filter the results by the since parameter.
+
+	We removed step 1.b. in our final version due to its complexity, as we realized we should never need more than 
+	100 cases per assignee. We leave it here for potential later use along with the altered caseload entity used for it
+*/
+
+/*
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { CaseloadEntity } from '../../entities/caseload.entity';
+import { GetRequestDetails } from '../../dto/get-request-details.dto';
+import { ConfigService } from '@nestjs/config';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import {
+  RecordCountNeededEnum,
+  RecordType,
+  RestrictedRecordEnum,
+} from '../../common/constants/enumerations';
+import {
+  FilterQueryParams,
+  SinceQueryParams,
+} from '../../dto/filter-query-params.dto';
+import { UtilitiesService } from '../../helpers/utilities/utilities.service';
+import { DateTime } from 'luxon';
+import { ParallelResponse } from '../../dto/parallel-response.dto';
+import { plainToInstance } from 'class-transformer';
+import {
+  pageSizeMax,
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { recordCountHeaderName } from '../../common/constants/parameter-constants';
+
+@Injectable()
+export class CaseloadService {
+  recordTypes: Array<string>;
+  maxParallelRequests: number;
+
+  caseIdirFieldName: string;
+  incidentIdirFieldName: string;
+  caseSinceFieldName: string;
+  incidentSinceFieldName: string;
+  caseRestrictedFieldName: string;
+  incidentRestrictedFieldName: string;
+  caseWorkspace: string;
+  incidentWorkspace: string;
+  caseEndpoint: string;
+  incidentEndpoint: string;
+  baseUrl: string;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly requestPreparerService: RequestPreparerService,
+    private readonly utilitiesService: UtilitiesService,
+  ) {
+    this.maxParallelRequests = 4;
+    this.recordTypes = [RecordType.Case, RecordType.Incident];
+    // TODO: Change or report bug if it is also in dev?
+    this.caseIdirFieldName = 'Sales Rep'; // there's a bug in lab :(
+    this.incidentIdirFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.idirField`,
+    );
+    this.caseSinceFieldName =
+      this.configService.get<string>(`sinceFieldName.cases`);
+    this.incidentSinceFieldName = this.configService.get<string>(
+      `sinceFieldName.incidents`,
+    );
+    this.caseRestrictedFieldName = this.configService.get<string>(
+      `upstreamAuth.case.restrictedField`,
+    );
+    this.incidentRestrictedFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.restrictedField`,
+    );
+    this.caseWorkspace = this.configService.get<string>(
+      `upstreamAuth.case.workspace`,
+    );
+    this.incidentWorkspace = this.configService.get<string>(
+      `upstreamAuth.incident.workspace`,
+    );
+    this.caseEndpoint = this.configService.get<string>(
+      `upstreamAuth.case.endpoint`,
+    );
+    this.incidentEndpoint = this.configService.get<string>(
+      `upstreamAuth.incident.endpoint`,
+    );
+
+    this.baseUrl = this.configService.get<string>(`endpointUrls.baseUrl`);
+  }
+
+  caseloadUpstreamRequestPreparer(
+    idir: string,
+    type: RecordType,
+    filter: FilterQueryParams,
+  ): GetRequestDetails {
+    const idirFieldVarName = `${type}IdirFieldName`;
+    const restrictedFieldVarName = `${type}RestrictedFieldName`;
+    const baseSearchSpec =
+      `([${this[idirFieldVarName]}]="${idir}"` +
+      ` AND [${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this[`${type}Workspace`],
+        undefined, // we filter for since ourselves
+        true,
+        idir,
+        filter,
+      );
+    const getRequestSpecs = new GetRequestDetails({
+      url: this.baseUrl + this[`${type}Endpoint`],
+      headers: headers,
+      params: params,
+    });
+    return getRequestSpecs;
+  }
+
+  statusIsError(inputStatus: number): boolean {
+    const status =
+      inputStatus !== HttpStatus.NOT_FOUND
+        ? inputStatus
+        : HttpStatus.NO_CONTENT;
+    const isError: boolean = status >= 300 || status == HttpStatus.NO_CONTENT;
+    return isError;
+  }
+
+  mapEntityErrorAndResult(
+    responses: ParallelResponse['responses'],
+    status: number,
+  ) {
+    const errorItems = [];
+    let resultItems = [];
+    let ids = [];
+    for (const res of responses) {
+      const isError = this.statusIsError(res.status);
+      if (isError) {
+        errorItems.push(res.response.data);
+      } else {
+        resultItems = resultItems.concat(res.data.items);
+        ids = ids.concat(res.data.items.map((entry) => entry['Id']));
+      }
+    }
+    return {
+      assignedIds: ids,
+      messages: errorItems.length > 0 ? errorItems : undefined,
+      items: resultItems.length > 0 ? resultItems : undefined,
+      status,
+    };
+  }
+
+  caseloadMapResponse(
+    caseResults: ParallelResponse,
+    incidentResults: ParallelResponse,
+  ) {
+    let caseStatus: number, incidentStatus: number;
+
+    if (caseResults.responses.length > 1) {
+      caseStatus = HttpStatus.OK; // at least one call must have passed
+    } else {
+      caseStatus =
+        caseResults.responses[0].status !== HttpStatus.NOT_FOUND
+          ? caseResults.responses[0].status
+          : HttpStatus.NO_CONTENT;
+    }
+
+    if (incidentResults.responses.length > 1) {
+      incidentStatus = HttpStatus.OK; // at least one call must have passed
+    } else {
+      incidentStatus =
+        incidentResults.responses[0].status !== HttpStatus.NOT_FOUND
+          ? incidentResults.responses[0].status
+          : HttpStatus.NO_CONTENT;
+    }
+
+    const response = {
+      cases: this.mapEntityErrorAndResult(caseResults.responses, caseStatus),
+      incidents: this.mapEntityErrorAndResult(
+        incidentResults.responses,
+        incidentStatus,
+      ),
+    };
+    return response;
+  }
+
+  caseloadFilterItems(response, since: string) {
+    const sinceDateTime = DateTime.fromISO(since);
+    for (const type of this.recordTypes) {
+      const items = response[`${type}s`][`items`];
+      const typeFieldName = `${type}SinceFieldName`;
+      if (items !== undefined) {
+        response[`${type}s`][`items`] = items.filter(
+          (entry) =>
+            this.utilitiesService.convertUpstreamDateFormatToDateTime(
+              entry[`${this[typeFieldName]}`],
+            ) >= sinceDateTime,
+        );
+      }
+    }
+    return response;
+  }
+
+  async getInitialEntityResponse(
+    idir: string,
+    type: RecordType,
+    pageSize: number,
+  ): Promise<[ParallelResponse, number, number | undefined]> {
+    const filterObject = {
+      [recordCountNeededParamName]: RecordCountNeededEnum.True,
+      [pageSizeParamName]: pageSize,
+    };
+    const initialFilter = plainToInstance(FilterQueryParams, filterObject, {
+      enableImplicitConversion: true,
+    });
+    const initialRequest = this.caseloadUpstreamRequestPreparer(
+      idir,
+      type,
+      initialFilter,
+    );
+    const initialResponse =
+      await this.requestPreparerService.parallelGetRequest([initialRequest]);
+
+    const entityStatus: number =
+      initialResponse.responses[0].status !== HttpStatus.NOT_FOUND
+        ? initialResponse.responses[0].status
+        : HttpStatus.NO_CONTENT;
+    const entityHasError: boolean =
+      entityStatus >= 300 || entityStatus == HttpStatus.NO_CONTENT;
+    if (entityHasError) {
+      return [initialResponse, entityStatus, undefined];
+    }
+    const recordCount =
+      initialResponse.responses[0].headers[recordCountHeaderName];
+    return [initialResponse, entityStatus, recordCount];
+  }
+
+  async getParallelEntityResponse(
+    idir: string,
+    type: RecordType,
+    pageSize: number,
+    recordCount: number,
+    maxParallelRequests: number,
+  ): Promise<ParallelResponse> {
+    //TODO: Handle case where pageSize, maxParallelRequests or recordCount is <= 0
+    const filterObject = {
+      [pageSizeParamName]: pageSize,
+    };
+    const requests: Array<GetRequestDetails> = [];
+    const numberOfBatches = Math.ceil(recordCount / pageSize);
+    for (let i = 0; i < numberOfBatches; i = i + 1) {
+      filterObject[startRowNumParamName] = pageSize + pageSize * i;
+      const upstreamFilter = plainToInstance(FilterQueryParams, filterObject, {
+        enableImplicitConversion: true,
+      });
+      requests.push(
+        this.caseloadUpstreamRequestPreparer(idir, type, upstreamFilter),
+      );
+    }
+    const finalResults = new ParallelResponse({
+      responses: [],
+      overallError: [],
+    });
+    const requestBlocks = Math.ceil(requests.length / maxParallelRequests);
+    for (let j = 0; j < requestBlocks; j = j + 1) {
+      const currentRequestBlock = requests.slice(
+        j * maxParallelRequests,
+        (j + 1) * maxParallelRequests,
+      );
+      const currentResult =
+        await this.requestPreparerService.parallelGetRequest(
+          currentRequestBlock,
+        );
+      if (currentResult.overallError !== undefined) {
+        finalResults.overallError.push(currentResult.overallError);
+      } else {
+        finalResults.responses = finalResults.responses.concat(
+          currentResult.responses,
+        );
+      }
+    }
+    return finalResults;
+  }
+
+  async getEntity(
+    idir: string,
+    pageSize: number,
+    type: RecordType,
+  ): Promise<[ParallelResponse, number | undefined]> {
+    const [initialResponse, caseStatus, recordCount] =
+      await this.getInitialEntityResponse(idir, type, pageSize);
+    if (
+      initialResponse.overallError !== undefined ||
+      recordCount === undefined ||
+      recordCount <= initialResponse.responses[0].data.items.length
+    ) {
+      return [initialResponse, caseStatus];
+    }
+    const additionalResponses = await this.getParallelEntityResponse(
+      idir,
+      type,
+      pageSize,
+      recordCount,
+      this.maxParallelRequests,
+    );
+    if (additionalResponses.overallError.length > 0) {
+      initialResponse.overallError = additionalResponses.overallError;
+    }
+    if (additionalResponses.responses.length > 0) {
+      initialResponse.responses = initialResponse.responses.concat(
+        additionalResponses.responses,
+      );
+    }
+    return [initialResponse, undefined];
+  }
+
+  async getCaseload(
+    idir: string,
+    filter?: SinceQueryParams,
+  ): Promise<CaseloadEntity> {
+    const results = await Promise.allSettled([
+      this.getEntity(idir, pageSizeMax, RecordType.Case),
+      this.getEntity(idir, pageSizeMax, RecordType.Incident),
+    ]);
+
+    const caseValueArray =
+      results[0].status === 'fulfilled' ? results[0].value : undefined;
+    const incidentValueArray =
+      results[1].status === 'fulfilled' ? results[1].value : undefined;
+
+    let response = this.caseloadMapResponse(
+      caseValueArray[0],
+      incidentValueArray[0],
+    );
+
+    if (filter?.since !== undefined) {
+      response = this.caseloadFilterItems(response, filter.since);
+    }
+    console.log(response.cases.messages);
+    return plainToInstance(CaseloadEntity, response, {
+      enableImplicitConversion: true,
+    });
+  }
+}
+
+*/

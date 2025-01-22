@@ -64,6 +64,7 @@ import {
   ContactsListResponseCaseExample,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -73,7 +74,10 @@ describe('CasesController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot({ load: [configuration] })],
+      imports: [
+        ConfigModule.forRoot({ load: [configuration] }),
+        JwtModule.register({ global: true }),
+      ],
       providers: [
         CasesService,
         AuthService,
@@ -83,6 +87,7 @@ describe('CasesController', () => {
         TokenRefresherService,
         InPersonVisitsService,
         RequestPreparerService,
+        JwtService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,

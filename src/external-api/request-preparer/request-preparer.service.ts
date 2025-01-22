@@ -12,7 +12,14 @@ import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  forkJoin,
+  lastValueFrom,
+  Observable,
+  of,
+} from 'rxjs';
 import { AxiosError } from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
@@ -23,6 +30,8 @@ import {
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
 import { RecordCountNeededEnum } from '../../common/constants/enumerations';
+import { GetRequestDetails } from '../../dto/get-request-details.dto';
+import { ParallelResponse } from '../../dto/parallel-response.dto';
 
 @Injectable()
 export class RequestPreparerService {
@@ -181,5 +190,49 @@ export class RequestPreparerService {
       );
     }
     return response;
+  }
+
+  async parallelGetRequest(
+    requestSpecs: Array<GetRequestDetails>,
+  ): Promise<ParallelResponse> {
+    let response: ParallelResponse;
+    try {
+      const authToken =
+        await this.tokenRefresherService.refreshUpstreamBearerToken();
+      if (authToken === undefined) {
+        throw new Error('Upstream auth failed');
+      }
+      for (const req of requestSpecs) {
+        req.headers['Authorization'] = authToken;
+      }
+    } catch (error) {
+      this.logger.error({ error, buildNumber: this.buildNumber });
+      response = new ParallelResponse({
+        overallError: new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error: error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        ),
+      });
+      return response;
+    }
+
+    const requestArray: Array<Observable<any>> = [];
+    for (const req of requestSpecs) {
+      requestArray.push(
+        this.httpService
+          .get(req.url, {
+            params: req.params,
+            headers: req.headers,
+          })
+          .pipe(catchError((err) => of(err))),
+      );
+    }
+    const parallelObservable = forkJoin(requestArray);
+    const outputArray = await lastValueFrom(parallelObservable);
+    return new ParallelResponse({ responses: outputArray });
   }
 }

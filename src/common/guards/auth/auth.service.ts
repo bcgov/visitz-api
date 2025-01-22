@@ -25,6 +25,7 @@ import {
 
 @Injectable()
 export class AuthService {
+  skipJWT: boolean;
   cacheTime: number;
   baseUrl: string;
   buildNumber: string;
@@ -42,35 +43,50 @@ export class AuthService {
       this.configService.get<string>('endpointUrls.baseUrl'),
     );
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
+    this.skipJWT = this.configService.get<boolean>('skipJWTCache');
   }
 
   async getRecordAndValidate(
     req: Request,
     controllerPath: string,
   ): Promise<boolean> {
-    let idir: string, id: string, recordType: RecordType;
+    let idir: string, jti: string, id: string, recordType: RecordType;
     try {
       idir = req.header(idirUsernameHeaderField).trim();
+      jti = this.utilitiesService.grabJTI(req);
       [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
       this.logger.error({ error });
       return false;
     }
-    const key = `${id}|${recordType}`;
-    let upstreamResult: string | null | undefined =
+    const key = this.utilitiesService.cacheKeyPreparer(
+      idir,
+      recordType,
+      id,
+      jti,
+    );
+    let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
 
     if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit, going upstream...`);
-      upstreamResult = await this.getAssignedIdirUpstream(id, recordType, idir);
-      if (upstreamResult !== null) {
-        await this.cacheManager.set(key, upstreamResult, this.cacheTime);
+      const upstreamIdir = await this.getAssignedIdirUpstream(
+        id,
+        recordType,
+        idir,
+      );
+      const authStatus = upstreamIdir === idir ? 200 : 403;
+      if (upstreamIdir !== null) {
+        await this.cacheManager.set(key, authStatus, this.cacheTime);
       }
-      this.logger.log(`Upstream result: '${upstreamResult}'`);
+      upstreamResult = authStatus;
+      this.logger.log(
+        `Upstream idir: '${upstreamIdir}' Result: ${upstreamResult}`,
+      );
     } else {
-      this.logger.log(`Cache hit! Result: '${upstreamResult}'`);
+      this.logger.log(`Cache hit! Key: ${key} Result: ${upstreamResult}`);
     }
-    if (upstreamResult !== idir) {
+    if (upstreamResult === 403) {
       return false;
     }
     return true;
