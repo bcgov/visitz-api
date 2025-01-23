@@ -216,4 +216,6 @@ spec:
                     key: INCIDENT_RESTRICTED_FIELD
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
+            - name: META_ENV
+              value: {{ .Values.vpiAppEnv }}
       restartPolicy: Always
