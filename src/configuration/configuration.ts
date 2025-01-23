@@ -53,11 +53,11 @@ export default () => ({
     incidents: process.env.INCIDENT_SINCE_FIELD ?? undefined,
   },
   skipAuthGuard:
-    process.env.META_ENV === 'prod'
+    process.env.VPI_APP_ENV === 'prod'
       ? false
       : process.env.SKIP_AUTH_GUARD === 'true',
   skipJWTCache:
-    process.env.META_ENV === 'prod'
+    process.env.VPI_APP_ENV === 'prod'
       ? false
       : process.env.SKIP_JWT_CACHE === 'true',
   endpointUrls: {
