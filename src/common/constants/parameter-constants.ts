@@ -1,4 +1,4 @@
-const VIEW_MODE = 'Catalog';
+const VIEW_MODE = 'Organization';
 const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
 const UNIFORM_RESPONSE = 'y';

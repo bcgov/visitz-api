@@ -18,6 +18,8 @@ tolerations: []
  
 affinity: {}
 
+vpiAppEnv: '<set by CI/CD>'
+
 aps:
   namespace: '<set by CI/CD>'
 
