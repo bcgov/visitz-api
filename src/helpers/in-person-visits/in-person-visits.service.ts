@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -17,15 +17,25 @@ import {
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { Response } from 'express';
-import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
+import {
+  caseChildServices,
+  childVisitEntityIdFieldName,
+  trustedIdirHeaderName,
+} from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class InPersonVisitsService {
   url: string;
   postUrl: string;
+  caseUrl: string;
   workspace: string | undefined;
   postWorkspace: string | undefined;
+  caseWorkspace: string | undefined;
   sinceFieldName: string | undefined;
+  typeFieldName: string | undefined;
+
+  private readonly logger = new Logger(InPersonVisitsService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -38,13 +48,19 @@ export class InPersonVisitsService {
       this.configService.get<string>('endpointUrls.baseUrl') +
         this.configService.get<string>('endpointUrls.postInPersonVisits'),
     );
+    this.caseUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.baseUrl') +
+        this.configService.get<string>('upstreamAuth.case.endpoint'),
+    );
     this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.postWorkspace = this.configService.get(
       'workspaces.postInPersonVisits',
     );
+    this.caseWorkspace = this.configService.get('upstreamAuth.case.workspace');
     this.sinceFieldName = this.configService.get(
       'sinceFieldName.inPersonVisits',
     );
+    this.typeFieldName = this.configService.get('upstreamAuth.case.typeField');
   }
 
   async getSingleInPersonVisitRecord(
@@ -53,7 +69,14 @@ export class InPersonVisitsService {
     res: Response,
     idir: string,
   ): Promise<InPersonVisitsEntity> {
-    const baseSearchSpec = `([Parent Id]="${id[idName]}" AND [Id]="${id[visitIdName]}"`;
+    const parentId = id[idName];
+    const isValidChildCase = await this.isChildCaseType(parentId, idir);
+    if (!isValidChildCase) {
+      throw new BadRequestException([
+        'Given case is not a Child Services case and cannot have Child/Youth visits.',
+      ]);
+    }
+    const baseSearchSpec = `([Parent Id]="${parentId}" AND [Id]="${id[visitIdName]}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -78,7 +101,14 @@ export class InPersonVisitsService {
     idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedInPersonVisitsEntity> {
-    const baseSearchSpec = `([Parent Id]="${id[idName]}"`;
+    const parentId = id[idName];
+    const isValidChildCase = await this.isChildCaseType(parentId, idir);
+    if (!isValidChildCase) {
+      throw new BadRequestException([
+        'Given case is not a Child Services case and cannot have Child/Youth visits.',
+      ]);
+    }
+    const baseSearchSpec = `([Parent Id]="${parentId}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -102,6 +132,13 @@ export class InPersonVisitsService {
     body: PostInPersonVisitDtoUpstream,
     idir: string,
   ): Promise<NestedInPersonVisitsEntity> {
+    const parentId = body[childVisitEntityIdFieldName];
+    const isValidChildCase = await this.isChildCaseType(parentId, idir);
+    if (!isValidChildCase) {
+      throw new BadRequestException([
+        'Given case is not a Child Services case and cannot have Child/Youth visits.',
+      ]);
+    }
     const headers = {
       Accept: CONTENT_TYPE,
       'Content-Type': CONTENT_TYPE,
@@ -121,5 +158,34 @@ export class InPersonVisitsService {
       params,
     );
     return new NestedInPersonVisitsEntity(response.data);
+  }
+
+  async isChildCaseType(parentId: string, idir: string): Promise<boolean> {
+    const baseSearchSpec = `([Id]="${parentId}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.caseWorkspace,
+        undefined,
+        true,
+        idir,
+      );
+    let response;
+    try {
+      response = await this.requestPreparerService.sendGetRequest(
+        this.caseUrl,
+        headers,
+        undefined,
+        params,
+      );
+    } catch {
+      return false;
+    }
+    const type = response.data['items'][0][`${this.typeFieldName}`];
+    if (type === undefined) {
+      this.logger.error(`${this.typeFieldName} field not found in request`);
+      return false;
+    }
+    return type === caseChildServices;
   }
 }
