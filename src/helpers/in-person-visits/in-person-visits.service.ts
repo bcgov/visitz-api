@@ -22,6 +22,7 @@ import {
   childVisitEntityIdFieldName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
+import { childServicesTypeError } from '../../common/constants/error-constants';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -72,9 +73,7 @@ export class InPersonVisitsService {
     const parentId = id[idName];
     const isValidChildCase = await this.isChildCaseType(parentId, idir);
     if (!isValidChildCase) {
-      throw new BadRequestException([
-        'Given case is not a Child Services case and cannot have Child/Youth visits.',
-      ]);
+      throw new BadRequestException([childServicesTypeError]);
     }
     const baseSearchSpec = `([Parent Id]="${parentId}" AND [Id]="${id[visitIdName]}"`;
     const [headers, params] =
@@ -104,9 +103,7 @@ export class InPersonVisitsService {
     const parentId = id[idName];
     const isValidChildCase = await this.isChildCaseType(parentId, idir);
     if (!isValidChildCase) {
-      throw new BadRequestException([
-        'Given case is not a Child Services case and cannot have Child/Youth visits.',
-      ]);
+      throw new BadRequestException([childServicesTypeError]);
     }
     const baseSearchSpec = `([Parent Id]="${parentId}"`;
     const [headers, params] =
@@ -135,9 +132,7 @@ export class InPersonVisitsService {
     const parentId = body[childVisitEntityIdFieldName];
     const isValidChildCase = await this.isChildCaseType(parentId, idir);
     if (!isValidChildCase) {
-      throw new BadRequestException([
-        'Given case is not a Child Services case and cannot have Child/Youth visits.',
-      ]);
+      throw new BadRequestException([childServicesTypeError]);
     }
     const headers = {
       Accept: CONTENT_TYPE,
