@@ -11,6 +11,7 @@ export default () => ({
       idirField: process.env.CASE_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.CASE_SEARCHSPEC_IDIR_FIELD ?? undefined,
       restrictedField: process.env.CASE_RESTRICTED_FIELD ?? undefined,
+      typeField: process.env.CASE_TYPE_FIELD ?? undefined,
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),

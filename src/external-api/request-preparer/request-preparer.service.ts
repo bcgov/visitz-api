@@ -102,7 +102,7 @@ export class RequestPreparerService {
     return [headers, params];
   }
 
-  async sendGetRequest(url: string, headers, res: Response, params?) {
+  async sendGetRequest(url: string, headers, res?: Response, params?) {
     let response;
     try {
       const token =
@@ -141,7 +141,10 @@ export class RequestPreparerService {
         { cause: error },
       );
     }
-    if (response.headers.hasOwnProperty(recordCountHeaderName)) {
+    if (
+      res !== undefined &&
+      response.headers.hasOwnProperty(recordCountHeaderName)
+    ) {
       res.setHeader(
         recordCountHeaderName,
         response.headers[recordCountHeaderName],
