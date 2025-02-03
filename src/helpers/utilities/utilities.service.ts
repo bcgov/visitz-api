@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
+import { dateFormatError } from '../../common/constants/error-constants';
 
 @Injectable()
 export class UtilitiesService {
@@ -89,7 +90,5 @@ export function isPastISO8601Date(date: string): string {
       return dateObject.toFormat(upstreamDateFormat);
     }
   }
-  throw new BadRequestException([
-    'Date / time must met the ISO-8601 standard, and cannot be in the future',
-  ]);
+  throw new BadRequestException([dateFormatError]);
 }
