@@ -33,12 +33,6 @@ export class UtilitiesService {
     return upstreamDate;
   }
 
-  getCurrentDateTimeUpstream(): string {
-    return DateTime.now()
-      .setZone('Canada/Pacific')
-      .toFormat(upstreamDateFormat);
-  }
-
   /**
    * Converts a MM/dd/yyyy HH:mm:ss formatted date to a DateTime object.
    * @param upstreamDate a MM/dd/yyyy HH:mm:ss formatted string. Assumes the date given is provided in UTC
