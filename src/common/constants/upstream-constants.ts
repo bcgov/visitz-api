@@ -5,6 +5,7 @@ const postInPersonVisitsEndpointEnvVarName = 'IN_PERSON_VISITS_POST_ENDPOINT';
 const attachmentsEndpointEnvVarName = 'ATTACHMENTS_ENDPOINT';
 const idirUsernameHeaderField = 'x-idir-username';
 const upstreamDateFormat = 'MM/dd/yyyy HH:mm:ss';
+const dummyCreatedDate = '01/01/1970 00:00:00';
 const caseChildServices = 'Child Services';
 const childVisitType = 'In Person Child Youth';
 const childVisitIdirFieldName = 'Login Name';
@@ -35,6 +36,7 @@ export {
   attachmentsEndpointEnvVarName,
   idirUsernameHeaderField,
   upstreamDateFormat,
+  dummyCreatedDate,
   caseChildServices,
   childVisitType,
   childVisitIdirFieldName,
