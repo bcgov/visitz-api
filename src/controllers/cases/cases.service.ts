@@ -44,6 +44,7 @@ import {
   ContactsEntity,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 
 @Injectable()
 export class CasesService {
@@ -52,6 +53,7 @@ export class CasesService {
     private readonly inPersonVisitsService: InPersonVisitsService,
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
+    private readonly utilitiesService: UtilitiesService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -119,6 +121,7 @@ export class CasesService {
       ...inPersonVisitsDto,
       [childVisitIdirFieldName]: idir,
       [childVisitEntityIdFieldName]: id[idName],
+      Created: this.utilitiesService.getCurrentDateTimeUpstream(),
     });
     return await this.inPersonVisitsService.postSingleInPersonVisitRecord(
       RecordType.Case,
