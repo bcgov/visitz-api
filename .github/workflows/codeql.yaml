@@ -1,4 +1,4 @@
-name: Unit Test
+name: Static Code Analysis
 
 on:
   push:
@@ -9,12 +9,24 @@ jobs:
   analyze:
     name: Analyze with CodeQL
     runs-on: ubuntu-latest
-    
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript-typescript']
+        language: [ 'javascript-typescript' ]
 
     steps:
-        - name: Perform CodeQL Analysis
-          uses: github/codeql-action/analyze@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
