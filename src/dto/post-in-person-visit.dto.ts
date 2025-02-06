@@ -66,6 +66,8 @@ export class PostInPersonVisitDtoUpstream {
 
   'Visit Details Value': string;
 
+  'Created': string;
+
   constructor(object) {
     Object.assign(this, object);
   }

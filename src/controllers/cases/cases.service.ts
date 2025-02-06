@@ -37,6 +37,7 @@ import {
 import {
   childVisitEntityIdFieldName,
   childVisitIdirFieldName,
+  dummyCreatedDate,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
@@ -119,6 +120,7 @@ export class CasesService {
       ...inPersonVisitsDto,
       [childVisitIdirFieldName]: idir,
       [childVisitEntityIdFieldName]: id[idName],
+      Created: dummyCreatedDate,
     });
     return await this.inPersonVisitsService.postSingleInPersonVisitRecord(
       RecordType.Case,
