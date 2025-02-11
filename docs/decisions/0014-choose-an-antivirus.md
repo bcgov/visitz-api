@@ -6,8 +6,8 @@
 * status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
 * date: 2025-02-10 <!-- YYYY-MM-DD when the decision was last updated -->
 * decision-makers: Todd Scharien, Hannah MacDonald <!-- list everyone involved in the decision -->
-* consulted: Leo Lou<!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
-* informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
+* consulted: Leo Lou <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
+* informed: Sagar Shah <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
 
 ## Context and Problem Statement
 
@@ -26,7 +26,8 @@ For context, most of the ClamAV alternatives were looked in to because it was st
 * Microsoft Defender for Endpoint
 * Microsoft Defender for APIs
 * Microsoft Defender External Attack Surface Management (EASM)
-
+* No API-level scanning
+* mTLS / Client certificate pinning
 
 ## Decision Outcome
 
@@ -57,8 +58,11 @@ https://www.microsoft.com/en-ca/security/business/endpoint-security/microsoft-de
 
 > Help secure endpoints with industry-leading, multiplatform detection and response.
 
+* Good, because we can scan for viruses directly on users' machines before reaching an API endpoint.
+* Good, because we can enforce via group policy that users run Defender on their devices.
+* Good, because Defender is supported on the mobile app's supported OS's.
 * Bad, because this is for "endpoint" protection as in end user devices, not APIs.
-* Bad, because this appears not to have file virus scanning abilities, just system ones for end user devices.
+* Bad, because this appears not to have file virus scanning abilities via API URL, just system ones for end user devices.
 
 ### Microsoft Defender for APIs
 
@@ -69,7 +73,6 @@ https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-apis-int
 * Bad, because this only applicable to APIs published in Azure API Management. In other words, our APIs would need to using Azure as a gateway to enable this service.
 * Bad, because this seems to be more aimed towards DDoS protection and blocking suspicious IPs, not actual virus scanning.
 
-
 ### Microsoft Defender External Attack Surface Management (EASM)
 
 https://learn.microsoft.com/en-ca/azure/external-attack-surface-management/
@@ -78,3 +81,14 @@ https://learn.microsoft.com/en-ca/azure/external-attack-surface-management/
 
 * Bad, because this is an attack surface monitoring service, not an antivirus file scanner.
 
+### No API-level scanning
+
+* Good, because we don't have to maintain any scanning mechanism—in code or otherwise.
+* Bad, because file scanning would need to take place at the device level—which may not always be enforceable.
+* Bad, because endpoints could be vulnerable if not accessed by expected devices.
+
+### mTLS / Client certificate pinning
+
+* Good, because we would have more assurance that communications are not being spoofed or intercepted.
+* Bad, because we could only implement this in apps we have control of.
+* Bad, because we would need to maintain and refresh additional certificates through the app's and API's lifecycle.
