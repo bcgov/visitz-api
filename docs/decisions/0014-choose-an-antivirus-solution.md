@@ -1,7 +1,7 @@
 [//]: # (bc-madr v0.1)
 <!-- modified MADR 4.0.0 -->
 
-# Choose an Antivirus Scanner
+# Choose an Antivirus Solution
 
 * status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
 * date: 2025-02-10 <!-- YYYY-MM-DD when the decision was last updated -->
