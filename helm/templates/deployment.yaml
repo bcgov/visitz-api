@@ -219,6 +219,21 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: CASE_TYPE_FIELD
+            - name: SAFETY_ASSESSMENTS_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SAFETY_ASSESSMENTS_WORKSPACE
+            - name: SAFETY_ASSESSMENTS_SINCE_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SAFETY_ASSESSMENTS_SINCE_FIELD
+            - name: SAFETY_ASSESSMENTS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SAFETY_ASSESSMENTS_ENDPOINT
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
             - name: VPI_APP_ENV

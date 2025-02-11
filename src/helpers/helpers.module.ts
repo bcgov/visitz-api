@@ -15,6 +15,8 @@ import { AttachmentsModule } from './attachments/attachments.module';
 import { AttachmentsService } from './attachments/attachments.service';
 import { ContactsModule } from './contacts/contacts.module';
 import { ContactsService } from './contacts/contacts.service';
+import { SafetyAssessmentModule } from './safety-assessment/safety-assessment.module';
+import { SafetyAssessmentService } from './safety-assessment/safety-assessment.service';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { ContactsService } from './contacts/contacts.service';
     RequestPreparerModule,
     AttachmentsModule,
     ContactsModule,
+    SafetyAssessmentModule,
   ],
   providers: [
     SupportNetworkService,
@@ -36,6 +39,7 @@ import { ContactsService } from './contacts/contacts.service';
     RequestPreparerService,
     AttachmentsService,
     ContactsService,
+    SafetyAssessmentService,
   ],
   exports: [
     SupportNetworkService,
@@ -43,6 +47,7 @@ import { ContactsService } from './contacts/contacts.service';
     InPersonVisitsService,
     AttachmentsService,
     ContactsService,
+    SafetyAssessmentService,
   ],
 })
 export class HelpersModule {}
