@@ -430,7 +430,7 @@ export class IncidentsController {
       },
     },
   })
-  async getListSafetyAssessmentContactRecord(
+  async getListIncidentSafetyAssessmentRecord(
     @Req() req: Request,
     @Param(
       new ValidationPipe({
