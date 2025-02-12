@@ -157,7 +157,7 @@ export class CaseloadService {
           (entry) =>
             this.utilitiesService.convertUpstreamDateFormatToDateTime(
               entry[`${this[typeFieldName]}`],
-            ) >= afterDateTime,
+            ) > afterDateTime,
         );
       }
     }
