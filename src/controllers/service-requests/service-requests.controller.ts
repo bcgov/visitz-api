@@ -47,7 +47,7 @@ import {
   CONTENT_TYPE,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
@@ -99,7 +99,7 @@ export class ServiceRequestsController {
   @ApiOperation({
     description: `Find all Support Network entries related to a given Service Request entity by Service Request id.`,
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -193,7 +193,7 @@ export class ServiceRequestsController {
     description:
       'Find all Attachments metadata entries related to a given Service Request entity by Service Request id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -248,7 +248,7 @@ export class ServiceRequestsController {
     description:
       'Download an Attachment or retreive metadata related to a given Service Request Id by its Attachment Id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -307,7 +307,7 @@ export class ServiceRequestsController {
     description:
       'Find all Contact entries related to a given Service Request entity by Service Request id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })

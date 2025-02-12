@@ -24,14 +24,14 @@ import {
 } from '@nestjs/swagger';
 import {
   CONTENT_TYPE,
-  sinceParamName,
+  afterParamName,
 } from '../../common/constants/parameter-constants';
 import {
   versionInfo,
   noContentResponseSwagger,
 } from '../../common/constants/swagger-constants';
 import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
-import { SinceQueryParams } from '../../dto/filter-query-params.dto';
+import { AfterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CaseloadCompleteResponseExample,
   CaseloadEmptyArrayResponseExample,
@@ -59,7 +59,7 @@ export class CaseloadController {
   @ApiOperation({
     description: `Displays the case and incident details related to the user's IDIR`,
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiExtraModels(CaseloadEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -89,7 +89,7 @@ export class CaseloadController {
         skipMissingProperties: true,
       }),
     )
-    filter?: SinceQueryParams,
+    filter?: AfterQueryParams,
   ): Promise<CaseloadEntity> {
     return await this.caseloadService.getCaseload(
       req.headers[idirUsernameHeaderField] as string,

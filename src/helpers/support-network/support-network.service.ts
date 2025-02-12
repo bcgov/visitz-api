@@ -24,7 +24,7 @@ import { Response } from 'express';
 export class SupportNetworkService {
   url: string;
   workspace: string | undefined;
-  sinceFieldName: string | undefined;
+  afterFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -34,8 +34,8 @@ export class SupportNetworkService {
         this.configService.get<string>('endpointUrls.supportNetwork'),
     );
     this.workspace = this.configService.get('workspaces.supportNetwork');
-    this.sinceFieldName = this.configService.get(
-      'sinceFieldName.supportNetwork',
+    this.afterFieldName = this.configService.get(
+      'afterFieldName.supportNetwork',
     );
   }
 
@@ -52,7 +52,7 @@ export class SupportNetworkService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         false,
         idir,
       );
@@ -77,7 +77,7 @@ export class SupportNetworkService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         true,
         idir,
         filter,

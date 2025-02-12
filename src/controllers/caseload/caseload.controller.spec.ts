@@ -13,10 +13,10 @@ import {
   CaseloadCompleteResponseExample,
   CaseloadEntity,
 } from '../../entities/caseload.entity';
-import { SinceQueryParams } from '../../dto/filter-query-params.dto';
+import { AfterQueryParams } from '../../dto/filter-query-params.dto';
 import { plainToInstance } from 'class-transformer';
 import { getMockReq } from '@jest-mock/express';
-import { sinceParamName } from '../../common/constants/parameter-constants';
+import { afterParamName } from '../../common/constants/parameter-constants';
 import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
 
 describe('CaseloadController', () => {
@@ -53,8 +53,8 @@ describe('CaseloadController', () => {
       [
         CaseloadCompleteResponseExample,
         {
-          [sinceParamName]: '1900-01-01',
-        } as SinceQueryParams,
+          [afterParamName]: '1900-01-01',
+        } as AfterQueryParams,
       ],
     ])(
       'should return nested values given good input',

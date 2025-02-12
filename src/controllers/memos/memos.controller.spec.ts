@@ -13,7 +13,7 @@ import {
   contactIdName,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
@@ -84,7 +84,7 @@ describe('MemosController', () => {
         AttachmentsListResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -123,7 +123,7 @@ describe('MemosController', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as AttachmentDetailsQueryParams,
       ],
@@ -134,7 +134,7 @@ describe('MemosController', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
@@ -171,7 +171,7 @@ describe('MemosController', () => {
         ContactsListResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],

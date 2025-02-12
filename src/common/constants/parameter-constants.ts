@@ -6,7 +6,7 @@ const INLINE_ATTACHMENT = 'true';
 const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
-const sinceParamName = 'since';
+const afterParamName = 'after';
 
 const idMaxLength = 100;
 const versionRegexString = 'v:version(\\d+)';
@@ -32,7 +32,7 @@ export {
   uniformResponseParamName,
   recordCountHeaderName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   idMaxLength,
   versionRegexString,
   idRegex,

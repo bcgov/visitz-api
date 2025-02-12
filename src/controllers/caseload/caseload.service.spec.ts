@@ -10,12 +10,12 @@ import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
 import {
   FilterQueryParams,
-  SinceQueryParams,
+  AfterQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
-  sinceParamName,
+  afterParamName,
   UNIFORM_RESPONSE,
   uniformResponseParamName,
   VIEW_MODE,
@@ -70,8 +70,8 @@ describe('CaseloadService', () => {
     );
 
     configService.set('skipJWTCache', true);
-    configService.set('sinceFieldName.cases', 'Last Updated Date');
-    configService.set('sinceFieldName.incidents', 'Last Updated');
+    configService.set('afterFieldName.cases', 'Last Updated Date');
+    configService.set('afterFieldName.incidents', 'Last Updated');
   });
 
   it('should be defined', () => {
@@ -224,12 +224,12 @@ describe('CaseloadService', () => {
         [],
       ],
     ])(
-      `filters out items past the given since date`,
-      (response, sinceString, expectedCase, expectedIncident) => {
+      `filters out items past the given after date`,
+      (response, afterString, expectedCase, expectedIncident) => {
         const deepCopyResponse = JSON.parse(JSON.stringify(response));
         const result = service.caseloadFilterItems(
           deepCopyResponse,
-          sinceString,
+          afterString,
         );
         expect(result.cases.items).toEqual(expectedCase);
         expect(result.incidents.items).toEqual(expectedIncident);
@@ -271,7 +271,7 @@ describe('CaseloadService', () => {
     it.each([
       [
         'idir',
-        { [sinceParamName]: '1900-01-01' } as SinceQueryParams,
+        { [afterParamName]: '1900-01-01' } as AfterQueryParams,
         { ...CaseloadCompleteResponseExample },
       ],
       ['idir', undefined, { ...CaseloadCompleteResponseExample }],

@@ -30,7 +30,7 @@ import {
   idName,
   incidentsAttachmentsFieldName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
@@ -101,7 +101,7 @@ describe('IncidentsService', () => {
         SupportNetworkListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -178,7 +178,7 @@ describe('IncidentsService', () => {
         AttachmentsListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
         incidentsAttachmentsFieldName,
@@ -219,7 +219,7 @@ describe('IncidentsService', () => {
           [idName]: 'test',
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
-        { [sinceParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
+        { [afterParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
         incidentsAttachmentsFieldName,
       ],
       [
@@ -229,7 +229,7 @@ describe('IncidentsService', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
         incidentsAttachmentsFieldName,
@@ -268,7 +268,7 @@ describe('IncidentsService', () => {
         ContactsListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
