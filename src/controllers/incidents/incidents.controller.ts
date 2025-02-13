@@ -48,7 +48,7 @@ import {
   CONTENT_TYPE,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
@@ -100,7 +100,7 @@ export class IncidentsController {
   @ApiOperation({
     description: `Find all Support Network entries related to a given Incident entity by Incident id.`,
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -194,7 +194,7 @@ export class IncidentsController {
     description:
       'Find all Attachments metadata entries related to a given Incident entity by Incident id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -249,7 +249,7 @@ export class IncidentsController {
     description:
       'Download an Attachment related to a given Incident Id by its Attachment Id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -308,7 +308,7 @@ export class IncidentsController {
     description:
       'Find all Contact entries related to a given Incident entity by Incident id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })

@@ -30,7 +30,7 @@ import {
   contactIdName,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
@@ -100,7 +100,7 @@ describe('IncidentsController', () => {
         SupportNetworkListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -175,7 +175,7 @@ describe('IncidentsController', () => {
         AttachmentsListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -214,7 +214,7 @@ describe('IncidentsController', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as AttachmentDetailsQueryParams,
       ],
@@ -225,7 +225,7 @@ describe('IncidentsController', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
@@ -263,7 +263,7 @@ describe('IncidentsController', () => {
         ContactsListResponseIncidentExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],

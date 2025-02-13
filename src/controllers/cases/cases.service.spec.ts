@@ -39,7 +39,7 @@ import {
   contactIdName,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
   visitIdName,
 } from '../../common/constants/parameter-constants';
@@ -115,7 +115,7 @@ describe('CasesService', () => {
       [
         SupportNetworkListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
+        { [afterParamName]: '2024-12-01' } as FilterQueryParams,
       ],
     ])(
       'should return nested values given good input',
@@ -189,7 +189,7 @@ describe('CasesService', () => {
         InPersonVisitsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -286,7 +286,7 @@ describe('CasesService', () => {
       [
         AttachmentsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2024-12-01' } as FilterQueryParams,
+        { [afterParamName]: '2024-12-01' } as FilterQueryParams,
         casesAttachmentsFieldName,
       ],
     ])(
@@ -325,7 +325,7 @@ describe('CasesService', () => {
           [idName]: 'test',
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
-        { [sinceParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
+        { [afterParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
         casesAttachmentsFieldName,
       ],
       [
@@ -335,7 +335,7 @@ describe('CasesService', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
         casesAttachmentsFieldName,
@@ -374,7 +374,7 @@ describe('CasesService', () => {
         ContactsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],

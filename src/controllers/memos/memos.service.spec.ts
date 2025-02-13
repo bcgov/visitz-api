@@ -21,7 +21,7 @@ import {
   idName,
   inlineAttachmentParamName,
   memoAttachmentsFieldName,
-  sinceParamName,
+  afterParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
@@ -88,7 +88,7 @@ describe('MemosService', () => {
         AttachmentsListResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
         memoAttachmentsFieldName,
@@ -129,7 +129,7 @@ describe('MemosService', () => {
           [idName]: 'test',
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
-        { [sinceParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
+        { [afterParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
         memoAttachmentsFieldName,
       ],
       [
@@ -139,7 +139,7 @@ describe('MemosService', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
         memoAttachmentsFieldName,
@@ -178,7 +178,7 @@ describe('MemosService', () => {
         ContactsListResponseMemoExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],

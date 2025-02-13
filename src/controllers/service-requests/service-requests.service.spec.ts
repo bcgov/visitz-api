@@ -29,7 +29,7 @@ import {
   contactIdName,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   srAttachmentsFieldName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
@@ -102,7 +102,7 @@ describe('ServiceRequestsService', () => {
         SupportNetworkListResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -177,7 +177,7 @@ describe('ServiceRequestsService', () => {
         AttachmentsListResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
         srAttachmentsFieldName,
@@ -218,7 +218,7 @@ describe('ServiceRequestsService', () => {
           [idName]: 'test',
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
-        { [sinceParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
+        { [afterParamName]: '2024-12-01' } as AttachmentDetailsQueryParams,
         srAttachmentsFieldName,
       ],
       [
@@ -228,7 +228,7 @@ describe('ServiceRequestsService', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
         srAttachmentsFieldName,
@@ -267,7 +267,7 @@ describe('ServiceRequestsService', () => {
         ContactsListResponseSRExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2024-12-01',
+          [afterParamName]: '2024-12-01',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],

@@ -19,7 +19,7 @@ import {
 } from '../../entities/in-person-visits.entity';
 import {
   idName,
-  sinceParamName,
+  afterParamName,
   visitIdName,
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
@@ -82,7 +82,7 @@ describe('InPersonVisitsService', () => {
         InPersonVisitsListResponseCaseExample,
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2020-12-24' } as FilterQueryParams,
+        { [afterParamName]: '2020-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return list values given good input',
@@ -118,7 +118,7 @@ describe('InPersonVisitsService', () => {
       [
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2020-12-24' } as FilterQueryParams,
+        { [afterParamName]: '2020-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return bad request exception on non-child services case',
