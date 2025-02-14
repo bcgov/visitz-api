@@ -1,5 +1,8 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { isPastISO8601Date } from '../helpers/utilities/utilities.service';
+import {
+  isNotEmoji,
+  isPastISO8601Date,
+} from '../helpers/utilities/utilities.service';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
 import { VisitDetails } from '../common/constants/enumerations';
@@ -29,6 +32,9 @@ export class PostInPersonVisitDto {
 
   @IsNotEmpty()
   @MaxLength(visitDescriptionMax)
+  @Transform(({ value }) => {
+    return isNotEmoji(value);
+  })
   @Expose()
   @ApiProperty({
     example: 'Comments here',
