@@ -164,6 +164,9 @@ describe('UtilitiesService', () => {
   describe('isNotEmoji tests', () => {
     it.each([
       [
+        `These Emoji_Component characters shouldn't count as emojis: *#0123456789`,
+      ],
+      [
         'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...',
       ],
       [
