@@ -5,9 +5,9 @@
 
 * status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
 * date: 2025-02-10 <!-- YYYY-MM-DD when the decision was last updated -->
-* decision-makers: Todd Scharien, Hannah MacDonald <!-- list everyone involved in the decision -->
+* decision-makers: Todd Scharien, Hannah MacDonald, Sagar Shah <!-- list everyone involved in the decision -->
 * consulted: Leo Lou <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
-* informed: Sagar Shah <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
+* informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
 
 ## Context and Problem Statement
 
