@@ -52,7 +52,7 @@ Demo implementation to ARB members for approval.
 
 ### Siebel authorization
 
-* Good, because Siebel has a built-in valid employee mechansim, which is already used for base access to the UI.
+* Good, because Siebel has a built-in authorized-employee mechanism, which is already used for base access to the UI.
     * This would require the API to make an additional "meta-request" to find this information before every main request.
 * Good, because Siebel has a built-in visibility mechanism, which is already used in the UI.
 * Good, because it is already used for access to the UI.
