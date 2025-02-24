@@ -51,7 +51,7 @@ import {
   CONTENT_TYPE,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
   visitIdName,
 } from '../../common/constants/parameter-constants';
@@ -111,7 +111,7 @@ export class CasesController {
   @ApiOperation({
     description: `Find all Support Network entries related to a given Case entity by Case id.`,
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -207,7 +207,7 @@ export class CasesController {
     description:
       'Find all In Person Child / Youth Visits related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -346,7 +346,7 @@ export class CasesController {
     description:
       'Find all Attachments metadata entries related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -402,7 +402,7 @@ export class CasesController {
     description:
       'Download an Attachment related to a given Case Id by its Attachment Id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -462,7 +462,7 @@ export class CasesController {
     description:
       'Find all Contact entries related to a given Case entity by Case id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })

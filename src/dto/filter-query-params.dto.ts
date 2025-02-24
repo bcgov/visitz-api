@@ -22,11 +22,11 @@ import {
 } from '../common/constants/upstream-constants';
 import {
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
 } from '../common/constants/parameter-constants';
 
 @Exclude()
-export class SinceQueryParams {
+export class AfterQueryParams {
   @IsOptional()
   @IsISO8601({ strict: true })
   @Expose()
@@ -37,11 +37,11 @@ export class SinceQueryParams {
       'The ISO8601 formatted date to narrow down searches with, expected to be provided in UTC.' +
       ' Only results after the selected datetime will appear.',
   })
-  [sinceParamName]?: string;
+  [afterParamName]?: string;
 }
 
 @Exclude()
-export class FilterQueryParams extends SinceQueryParams {
+export class FilterQueryParams extends AfterQueryParams {
   @IsOptional()
   @IsEnum(RecordCountNeededEnum)
   @Expose()

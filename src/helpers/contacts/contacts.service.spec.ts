@@ -12,7 +12,7 @@ import { AxiosResponse } from 'axios';
 import {
   contactIdName,
   idName,
-  sinceParamName,
+  afterParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
@@ -78,7 +78,7 @@ describe('ContactsService', () => {
         ContactsListResponseCaseExample,
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2020-12-24' } as FilterQueryParams,
+        { [afterParamName]: '2020-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return list values given good input',

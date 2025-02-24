@@ -6,7 +6,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
-import { dateFormatError } from '../../common/constants/error-constants';
+import {
+  dateFormatError,
+  emojiError,
+} from '../../common/constants/error-constants';
+import { emojiRegex } from '../../common/constants/parameter-constants';
 
 @Injectable()
 export class UtilitiesService {
@@ -78,7 +82,7 @@ export class UtilitiesService {
   }
 }
 
-// NOTE: This is outside of an injectable class because it is meant to be used in a DTO
+// NOTE: These functions are outside of an injectable class because they are meant to be used in a DTO
 // context as a validator function
 export function isPastISO8601Date(date: string): string {
   if (isISO8601(date, { strict: true })) {
@@ -91,4 +95,12 @@ export function isPastISO8601Date(date: string): string {
     }
   }
   throw new BadRequestException([dateFormatError]);
+}
+
+export function isNotEmoji(input: string): string {
+  const hasEmoji = emojiRegex.test(input);
+  if (hasEmoji) {
+    throw new BadRequestException([emojiError]);
+  }
+  return input;
 }

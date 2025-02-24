@@ -45,13 +45,13 @@ export default () => ({
       process.env.IN_PERSON_VISITS_POST_WORKSPACE ?? undefined,
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
   },
-  sinceFieldName: {
+  afterFieldName: {
     supportNetwork: updatedDateFieldName,
     inPersonVisits: 'Updated',
     attachments: 'Last Updated Date',
     contacts: updatedDateFieldName,
-    cases: process.env.CASE_SINCE_FIELD ?? undefined,
-    incidents: process.env.INCIDENT_SINCE_FIELD ?? undefined,
+    cases: process.env.CASE_AFTER_FIELD ?? undefined,
+    incidents: process.env.INCIDENT_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'

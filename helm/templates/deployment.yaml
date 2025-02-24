@@ -184,11 +184,11 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: MEMO_IDIR_FIELD
-            - name: CASE_SINCE_FIELD
+            - name: CASE_AFTER_FIELD
               valueFrom:
                 secretKeyRef:
                     name: visitz-api
-                    key: CASE_SINCE_FIELD
+                    key: CASE_AFTER_FIELD
             - name: CASE_SEARCHSPEC_IDIR_FIELD
               valueFrom:
                 secretKeyRef:
@@ -199,11 +199,11 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: CASE_RESTRICTED_FIELD
-            - name: INCIDENT_SINCE_FIELD
+            - name: INCIDENT_AFTER_FIELD
               valueFrom:
                 secretKeyRef:
                     name: visitz-api
-                    key: INCIDENT_SINCE_FIELD
+                    key: INCIDENT_AFTER_FIELD
             - name: INCIDENT_SEARCHSPEC_IDIR_FIELD
               valueFrom:
                 secretKeyRef:

@@ -39,7 +39,7 @@ import {
   contactIdName,
   idName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
   visitIdName,
 } from '../../common/constants/parameter-constants';
@@ -111,7 +111,7 @@ describe('CasesController', () => {
         SupportNetworkListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -176,7 +176,7 @@ describe('CasesController', () => {
         InPersonVisitsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -268,7 +268,7 @@ describe('CasesController', () => {
         AttachmentsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],
@@ -307,7 +307,7 @@ describe('CasesController', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as AttachmentDetailsQueryParams,
       ],
@@ -318,7 +318,7 @@ describe('CasesController', () => {
           [attachmentIdName]: 'attachmenttest',
         } as AttachmentIdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
           [inlineAttachmentParamName]: 'false',
         } as AttachmentDetailsQueryParams,
@@ -355,7 +355,7 @@ describe('CasesController', () => {
         ContactsListResponseCaseExample,
         { [idName]: 'test' } as IdPathParams,
         {
-          [sinceParamName]: '2020-02-02',
+          [afterParamName]: '2020-02-02',
           [startRowNumParamName]: 0,
         } as FilterQueryParams,
       ],

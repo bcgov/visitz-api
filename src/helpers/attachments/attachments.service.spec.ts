@@ -11,7 +11,7 @@ import {
   attachmentIdName,
   idName,
   incidentsAttachmentsFieldName,
-  sinceParamName,
+  afterParamName,
 } from '../../common/constants/parameter-constants';
 import { AxiosResponse } from 'axios';
 import {
@@ -67,7 +67,7 @@ describe('AttachmentsService', () => {
         RecordType.Incident,
         { [idName]: 'id' },
         incidentsAttachmentsFieldName,
-        { [sinceParamName]: '2023-11-13' },
+        { [afterParamName]: '2023-11-13' },
         AttachmentsListResponseIncidentExample,
       ],
     ])(
@@ -101,7 +101,7 @@ describe('AttachmentsService', () => {
         RecordType.Incident,
         { [idName]: 'id', [attachmentIdName]: 'attachmentId' },
         incidentsAttachmentsFieldName,
-        { [sinceParamName]: '2023-11-13' },
+        { [afterParamName]: '2023-11-13' },
         AttachmentDetailsIncidentExample,
       ],
     ])(

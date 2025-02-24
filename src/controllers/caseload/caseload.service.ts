@@ -9,7 +9,7 @@ import {
 } from '../../common/constants/enumerations';
 import {
   FilterQueryParams,
-  SinceQueryParams,
+  AfterQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { DateTime } from 'luxon';
@@ -29,8 +29,8 @@ export class CaseloadService {
 
   caseIdirFieldName: string;
   incidentIdirFieldName: string;
-  caseSinceFieldName: string;
-  incidentSinceFieldName: string;
+  caseAfterFieldName: string;
+  incidentAfterFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
   caseWorkspace: string;
@@ -52,10 +52,10 @@ export class CaseloadService {
     this.incidentIdirFieldName = this.configService.get<string>(
       `upstreamAuth.incident.searchspecIdirField`,
     );
-    this.caseSinceFieldName =
-      this.configService.get<string>(`sinceFieldName.cases`);
-    this.incidentSinceFieldName = this.configService.get<string>(
-      `sinceFieldName.incidents`,
+    this.caseAfterFieldName =
+      this.configService.get<string>(`afterFieldName.cases`);
+    this.incidentAfterFieldName = this.configService.get<string>(
+      `afterFieldName.incidents`,
     );
     this.caseRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.case.restrictedField`,
@@ -94,7 +94,7 @@ export class CaseloadService {
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
-          undefined, // we filter for since ourselves
+          undefined, // we filter for after ourselves
           true,
           idir,
           filter,
@@ -147,17 +147,17 @@ export class CaseloadService {
     return response;
   }
 
-  caseloadFilterItems(response, since: string) {
-    const sinceDateTime = DateTime.fromISO(since, { zone: 'utc' });
+  caseloadFilterItems(response, after: string) {
+    const afterDateTime = DateTime.fromISO(after, { zone: 'utc' });
     for (const type of this.recordTypes) {
       const items = response[`${type}s`][`items`];
-      const typeFieldName = `${type}SinceFieldName`;
+      const typeFieldName = `${type}AfterFieldName`;
       if (items !== undefined) {
         response[`${type}s`][`items`] = items.filter(
           (entry) =>
             this.utilitiesService.convertUpstreamDateFormatToDateTime(
               entry[`${this[typeFieldName]}`],
-            ) >= sinceDateTime,
+            ) > afterDateTime,
         );
       }
     }
@@ -186,7 +186,7 @@ export class CaseloadService {
   async getCaseload(
     idir: string,
     req: Request,
-    filter?: SinceQueryParams,
+    filter?: AfterQueryParams,
   ): Promise<CaseloadEntity> {
     const filterObject = {
       [pageSizeParamName]: pageSizeMax,
@@ -206,8 +206,8 @@ export class CaseloadService {
     }
 
     let response = this.caseloadMapResponse(results);
-    if (filter?.since !== undefined) {
-      response = this.caseloadFilterItems(response, filter.since);
+    if (filter?.after !== undefined) {
+      response = this.caseloadFilterItems(response, filter.after);
     }
 
     await this.caseloadUnsetCacheItems(response, idir, req);

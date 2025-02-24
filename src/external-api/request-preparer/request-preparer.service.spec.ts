@@ -5,7 +5,7 @@ import {
   CHILD_LINKS,
   CONTENT_TYPE,
   recordCountHeaderName,
-  sinceParamName,
+  afterParamName,
   UNIFORM_RESPONSE,
   uniformResponseParamName,
   VIEW_MODE,
@@ -154,7 +154,7 @@ describe('RequestPreparerService', () => {
       [
         'spec',
         {
-          [sinceParamName]: '2024-02-20',
+          [afterParamName]: '2024-02-20',
           [startRowNumParamName]: 2,
           [pageSizeParamName]: 15,
           [recordCountNeededParamName]: RecordCountNeededEnum.True,

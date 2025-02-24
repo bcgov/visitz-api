@@ -27,7 +27,7 @@ import {
 import {
   idName,
   CONTENT_TYPE,
-  sinceParamName,
+  afterParamName,
   attachmentIdName,
   contactIdName,
   inlineAttachmentParamName,
@@ -89,7 +89,7 @@ export class MemosController {
     description:
       'Find all Attachments metadata entries related to a given Memo entity by Memo id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -144,7 +144,7 @@ export class MemosController {
     description:
       'Download an Attachment related to a given Memo Id by its Attachment Id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
@@ -203,7 +203,7 @@ export class MemosController {
     description:
       'Find all Contact entries related to a given Memo entity by Memo id.',
   })
-  @ApiQuery({ name: sinceParamName, required: false })
+  @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })

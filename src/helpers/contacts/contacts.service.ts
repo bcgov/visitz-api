@@ -19,7 +19,7 @@ export class ContactsService {
   baseUrl: string;
   endpointUrls: object;
   workspace: string | undefined;
-  sinceFieldName: string | undefined;
+  afterFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -42,7 +42,7 @@ export class ContactsService {
       ),
     };
     this.workspace = this.configService.get('workspaces.contacts');
-    this.sinceFieldName = this.configService.get('sinceFieldName.contacts');
+    this.afterFieldName = this.configService.get('afterFieldName.contacts');
   }
 
   async getSingleContactRecord(
@@ -57,7 +57,7 @@ export class ContactsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         false,
         idir,
       );
@@ -83,7 +83,7 @@ export class ContactsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         true,
         idir,
         filter,

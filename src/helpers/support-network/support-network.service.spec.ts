@@ -22,7 +22,7 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   idName,
-  sinceParamName,
+  afterParamName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { getMockRes } from '@jest-mock/express';
@@ -78,7 +78,7 @@ describe('SupportNetworkService', () => {
         SupportNetworkListResponseSRExample,
         RecordType.SR,
         { [idName]: 'test' } as IdPathParams,
-        { [sinceParamName]: '2024-12-24' } as FilterQueryParams,
+        { [afterParamName]: '2024-12-24' } as FilterQueryParams,
       ],
     ])(
       'should return list values given good input',

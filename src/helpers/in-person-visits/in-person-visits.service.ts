@@ -32,7 +32,7 @@ export class InPersonVisitsService {
   workspace: string | undefined;
   postWorkspace: string | undefined;
   caseWorkspace: string | undefined;
-  sinceFieldName: string | undefined;
+  afterFieldName: string | undefined;
   typeFieldName: string | undefined;
 
   private readonly logger = new Logger(InPersonVisitsService.name);
@@ -58,8 +58,8 @@ export class InPersonVisitsService {
       'workspaces.postInPersonVisits',
     );
     this.caseWorkspace = this.configService.get('upstreamAuth.case.workspace');
-    this.sinceFieldName = this.configService.get(
-      'sinceFieldName.inPersonVisits',
+    this.afterFieldName = this.configService.get(
+      'afterFieldName.inPersonVisits',
     );
     this.typeFieldName = this.configService.get('upstreamAuth.case.typeField');
   }
@@ -80,7 +80,7 @@ export class InPersonVisitsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         false,
         idir,
       );
@@ -110,7 +110,7 @@ export class InPersonVisitsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         true,
         idir,
         filter,

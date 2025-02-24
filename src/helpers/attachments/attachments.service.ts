@@ -28,7 +28,7 @@ import { Response } from 'express';
 export class AttachmentsService {
   url: string;
   workspace: string | undefined;
-  sinceFieldName: string | undefined;
+  afterFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -38,7 +38,7 @@ export class AttachmentsService {
         this.configService.get<string>('endpointUrls.attachments'),
     );
     this.workspace = this.configService.get('workspaces.attachments');
-    this.sinceFieldName = this.configService.get('sinceFieldName.attachments');
+    this.afterFieldName = this.configService.get('afterFieldName.attachments');
   }
 
   async getSingleAttachmentRecord(
@@ -54,7 +54,7 @@ export class AttachmentsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         true,
         idir,
         filter,
@@ -81,7 +81,7 @@ export class AttachmentsService {
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
-        this.sinceFieldName,
+        this.afterFieldName,
         true,
         idir,
         filter,

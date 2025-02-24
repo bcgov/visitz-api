@@ -6,11 +6,13 @@ const INLINE_ATTACHMENT = 'true';
 const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
-const sinceParamName = 'since';
+const afterParamName = 'after';
 
 const idMaxLength = 100;
 const versionRegexString = 'v:version(\\d+)';
 const idRegex = /^[0-9\-A-Za-z]{1,100}$/;
+const emojiRegex =
+  /(?![\u0023\u002A\u0030-\u0039])[\p{Extended_Pictographic}\p{Emoji_Component}]/u;
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
@@ -32,10 +34,11 @@ export {
   uniformResponseParamName,
   recordCountHeaderName,
   inlineAttachmentParamName,
-  sinceParamName,
+  afterParamName,
   idMaxLength,
   versionRegexString,
   idRegex,
+  emojiRegex,
   idName,
   attachmentIdName,
   contactIdName,

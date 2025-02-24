@@ -5,7 +5,7 @@ import {
   CONTENT_TYPE,
   recordCountHeaderName,
   UNIFORM_RESPONSE,
-  sinceParamName,
+  afterParamName,
   uniformResponseParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
@@ -49,7 +49,7 @@ export class RequestPreparerService {
   prepareHeadersAndParams(
     baseSearchSpec: string,
     workspace: string | undefined,
-    sinceFieldName: string | undefined,
+    afterFieldName: string | undefined,
     uniformResponse: boolean,
     idir: string,
     filter?: FilterQueryParams,
@@ -57,17 +57,17 @@ export class RequestPreparerService {
     let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
     if (
-      sinceFieldName === undefined ||
+      afterFieldName === undefined ||
       filter === undefined ||
-      typeof filter[sinceParamName] !== 'string' ||
+      typeof filter[afterParamName] !== 'string' ||
       (formattedDate = this.utilitiesService.convertISODateToUpstreamFormat(
-        filter[sinceParamName],
+        filter[afterParamName],
       )) === undefined
     ) {
       searchSpec = searchSpec + `)`;
     } else {
       searchSpec =
-        searchSpec + ` AND [${sinceFieldName}] > "${formattedDate}")`;
+        searchSpec + ` AND [${afterFieldName}] > "${formattedDate}")`;
     }
     if (baseSearchSpec === '') {
       searchSpec = searchSpec.replace(')', '').replace(' AND ', '');
