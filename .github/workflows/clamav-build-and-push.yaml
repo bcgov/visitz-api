@@ -58,7 +58,7 @@ jobs:
 
   deploy:
     needs: build_and_push
-    environment: ${{ inputs:environment }}
+    environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-22.04
 
     steps:
@@ -70,7 +70,7 @@ jobs:
         with:
           valueFile: 'clamav/values.yaml'
           propertyPath: 'clamav.tag'
-          value: ${{ inputs:environment }}
+          value: ${{ github.event.inputs.environment }}
           commitChange: false
 
       - name: 'YAML poke: Set image location'
