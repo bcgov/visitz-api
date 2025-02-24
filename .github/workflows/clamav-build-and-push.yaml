@@ -14,7 +14,7 @@ on:
 env:
   HELM_RELEASE_NAME: clamav-deployment
   REGISTRY: ghcr.io
-  IMAGE_NAME: "clamav:${{ github.repository }}"
+  IMAGE_NAME: "${{ github.repository }}:clamav"
   HUSKY: 0
 
 jobs:
