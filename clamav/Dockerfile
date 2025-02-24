@@ -14,15 +14,15 @@ RUN yum -y install https://www.clamav.net/downloads/production/clamav-${VERSION}
 RUN yum -y install nc wget
 
 # copy our configs to where clamav expects
-COPY config/clamd.conf /usr/local/etc/clamd.conf
-COPY config/freshclam.conf /usr/local/etc/freshclam.conf
+COPY clamav/config/clamd.conf /usr/local/etc/clamd.conf
+COPY clamav/config/freshclam.conf /usr/local/etc/freshclam.conf
 
 RUN mkdir -p /opt/app-root/src
 RUN chown -R 1001:0 /opt/app-root/src
 RUN chmod -R ug+rwx /opt/app-root/src
 
 # copy health check script to app-root 
-COPY clamdcheck.sh /opt/app-root
+COPY clamav/clamdcheck.sh /opt/app-root
 RUN chmod ug+rwx /opt/app-root/clamdcheck.sh
 
 # # To fix check permissions error for clamAV
