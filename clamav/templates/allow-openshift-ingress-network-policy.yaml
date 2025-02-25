@@ -1,0 +1,14 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: clamav-allow-visitz-traffic
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: clamav
+  ingress:
+  - from:
+    - namespaceSelector: {}
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: vpi-app
