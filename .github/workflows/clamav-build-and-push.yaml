@@ -98,6 +98,6 @@ jobs:
 
       - name: Restart Pod after image update
         run: |
-          oc rollout restart deployment \
+          oc rollout restart statefulset \
             --namespace ${{ secrets.TOOLS_OPENSHIFT_NAMESPACE }} \
             --selector=app.kubernetes.io/name=clamav
