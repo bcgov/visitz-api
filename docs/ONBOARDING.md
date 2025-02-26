@@ -27,6 +27,7 @@ $ npm run start:dev
 $ npm run start:debug
 
 # production mode
+$ npm run build
 $ npm run start:prod
 ```
 
