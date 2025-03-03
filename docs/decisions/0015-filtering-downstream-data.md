@@ -15,12 +15,12 @@ We want to encapsulate upstream responses (to an extent) so downstream clients a
 
 ## Considered Options
 
-* Filter `link`
+* Filter `Link` field
 * No other options were considered.
 
 ## Decision Outcome
 
-Chosen option: "Filter `link`", because it is the only option considered.
+Chosen option: "Filter `Link` field", because it is the only option considered.
 
 ### Consequences
 
