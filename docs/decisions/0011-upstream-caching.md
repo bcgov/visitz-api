@@ -4,20 +4,20 @@
 # Upstream Caching
 
 * status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
-* date: <!-- YYYY-MM-DD when the decision was last updated -->
+* date: 2025-03-03 <!-- YYYY-MM-DD when the decision was last updated -->
 * decision-makers: Hannah MacDonald, Todd Scharien <!-- list everyone involved in the decision -->
-* consulted: Karim Gillani <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
+* consulted: Karim Gillani, Sagar Shah <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
 * informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
 
 ## Context and Problem Statement
 
-To improve general performance, we want to cache repetitive upstream requests that we expect will often return the same value.
+To improve general performance, we want to cache repetitive upstream requests that we expect will return the same value often.
 
 ## Decision Drivers
 
-* Faster response times
+* Faster downstream response times
 * Less burden on upstream during bursts of requests
-* Cache life short enough to react to changes but long enough to handle bursts
+* Cache life short enough to react to upstream changes but long enough to handle bursts
 
 ## Considered Options
 
@@ -26,44 +26,12 @@ To improve general performance, we want to cache repetitive upstream requests th
 
 ## Decision Outcome
 
-Chosen option: "{title of option 1}", because {justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force {force} | ... | comes out best (see below)}.
+Chosen option: "Cache repetitive responses with detailed keys", because we satisfy most of the decision drivers.
 
 ### Consequences
 
-* Good, because {positive consequence, e.g., improvement of one or more desired qualities, ...} <!-- OPTIONAL -->
-* Bad, because {negative consequence, e.g., compromising one or more desired qualities, ...} <!-- OPTIONAL -->
-* ... <!-- numbers of consequences can vary -->
+* Good, because using detailed/complex cache keys gives us flexibility to keep caches localized (for better real-time object access across a system) or targeted reusability across different objects.
 
-* Positive consequences were not explored. <!-- REQUIRED if no positive consequences listed, or -->
-* Negative consequences were not explored. <!-- REQUIRED if no negative consequences listed, or -->
-* Positive and negative consequences were not explored. <!-- REQUIRED instead if no positive or negative consequences listed -->
+* Bad, because caching for any amount of time means we won't be able to react to upstream data changes in real-time.
 
-### Confirmation <!-- OPTIONAL -->
-
-{Describe how the implementation of/compliance with the ADR can/will be confirmed. Are the design that was decided for and its implementation in line with the decision made? E.g., a design/code review or a test with a library such as ArchUnit can help validate this. Not that although we classify this element as optional, it is included in many ADRs.}
-
-## Pros and Cons of the Options <!-- OPTIONAL -->
-
-### {title of option 1}
-
-{example | description | pointer to more information | ...} <!-- OPTIONAL -->
-
-* Good, because {argument a}
-* Good, because {argument b}
-* Neutral, because {argument c} <!-- use "neutral" if the given argument weights neither for good nor bad -->
-* Bad, because {argument d}
-* ... <!-- numbers of pros and cons can vary -->
-
-### {title of other option}
-
-{example | description | pointer to more information | ...} <!-- OPTIONAL -->
-
-* Good, because {argument a}
-* Good, because {argument b}
-* Neutral, because {argument c}
-* Bad, because {argument d}
-* ...
-
-## More Information <!-- OPTIONAL -->
-
-{You might want to provide additional evidence/confidence for the decision outcome here and/or document the team agreement on the decision and/or define when/how this decision the decision should be realized and if/when it should be re-visited. Links to other decisions and resources might appear here as well.}
+    * We can use a short-lived cache time to mitigate this, but it will always affect requests in some form.
