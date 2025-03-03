@@ -20,49 +20,21 @@ Using [available metadata](0007-row-metadata.md), we want a mechanism to filter 
 
 ## Considered Options
 
-* "After" timestamp
-* "Since" timestamp
+* `After` timestamp
+* No other options were considered.
 
 ## Decision Outcome
 
-Chosen option: "{title of option 1}", because {justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force {force} | ... | comes out best (see below)}.
+Chosen option: "`After` timestamp", because it satisfies decision drivers.
 
 ### Consequences
 
-* Good, because {positive consequence, e.g., improvement of one or more desired qualities, ...} <!-- OPTIONAL -->
-* Bad, because {negative consequence, e.g., compromising one or more desired qualities, ...} <!-- OPTIONAL -->
-* ... <!-- numbers of consequences can vary -->
+* Good, because downstream clients will have the option to reduce response payload sizes based on how recently they have used an endpoint previously.
 
-* Positive consequences were not explored. <!-- REQUIRED if no positive consequences listed, or -->
-* Negative consequences were not explored. <!-- REQUIRED if no negative consequences listed, or -->
-* Positive and negative consequences were not explored. <!-- REQUIRED instead if no positive or negative consequences listed -->
+* Bad, because this kind of filtering does not play nice with pagination and "implied" states based on visibility.
 
-### Confirmation <!-- OPTIONAL -->
+    * This can be worked around—but does require extra work in every instance.
 
-{Describe how the implementation of/compliance with the ADR can/will be confirmed. Are the design that was decided for and its implementation in line with the decision made? E.g., a design/code review or a test with a library such as ArchUnit can help validate this. Not that although we classify this element as optional, it is included in many ADRs.}
+## More Information
 
-## Pros and Cons of the Options <!-- OPTIONAL -->
-
-### {title of option 1}
-
-{example | description | pointer to more information | ...} <!-- OPTIONAL -->
-
-* Good, because {argument a}
-* Good, because {argument b}
-* Neutral, because {argument c} <!-- use "neutral" if the given argument weights neither for good nor bad -->
-* Bad, because {argument d}
-* ... <!-- numbers of pros and cons can vary -->
-
-### {title of other option}
-
-{example | description | pointer to more information | ...} <!-- OPTIONAL -->
-
-* Good, because {argument a}
-* Good, because {argument b}
-* Neutral, because {argument c}
-* Bad, because {argument d}
-* ...
-
-## More Information <!-- OPTIONAL -->
-
-{You might want to provide additional evidence/confidence for the decision outcome here and/or document the team agreement on the decision and/or define when/how this decision the decision should be realized and if/when it should be re-visited. Links to other decisions and resources might appear here as well.}
+Since we want information newer than the last time we use an endpoint, we chose the word "after" instead of "since" to more accurately describe its greater-than `>=` comparison to last-updated timestamp metadata.
