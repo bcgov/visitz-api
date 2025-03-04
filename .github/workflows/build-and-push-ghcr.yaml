@@ -8,14 +8,15 @@ on:
       - dev
 
 env:
-  DEPLOYMENT_NAME: visitz-api-deployment
+  HELM_RELEASE_NAME: visitz-api-deployment
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  HUSKY: 0
 
 jobs:
 
   build_and_push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
@@ -54,11 +55,51 @@ jobs:
   deploy:
     needs: build_and_push
     environment: ${{ github.ref_name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
+
+      - name: 'YAML poke: Set image tag'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'image.tag'
+          value: ${{ github.ref_name }}
+          commitChange: false
+
+      - name: 'YAML poke: Set APS namespace'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'aps.namespace'
+          value: ${{ secrets.APS_NAMESPACE }}
+          commitChange: false
+
+      - name: 'YAML poke: Set App Environment'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'vpiAppEnv'
+          value: ${{ vars.VPI_APP_ENV }}
+          commitChange: false
+
+      - name: 'YAML poke: Set build number'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'vpiAppBuildLabel.version'
+          value: "${{ github.ref_name }}-${{ github.run_number }}"
+          commitChange: false
+
+      - name: 'YAML poke: Set upstream url'
+        uses: fjogeleit/yaml-update-action@v0.15.0
+        with:
+          valueFile: 'helm/values.yaml'
+          propertyPath: 'upstream.baseUrl'
+          value: "${{ secrets.SIEBEL_API_URL }}"
+          commitChange: false
 
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@v1
@@ -70,7 +111,13 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          helm upgrade --install ${{ env.DEPLOYMENT_NAME }} ./helm \
+          helm upgrade --install ${{ env.HELM_RELEASE_NAME }} ./helm \
             --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ needs.build_and_push.outputs.image_tag }}
+
+      - name: Restart Pod after image update
+        run: |
+          oc rollout restart deployment \
+            --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
+            --selector=app.kubernetes.io/name=vpi-app
