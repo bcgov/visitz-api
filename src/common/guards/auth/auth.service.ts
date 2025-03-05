@@ -213,7 +213,7 @@ export class AuthService {
 
   async getEmployeeActiveUpstream(idir: string): Promise<boolean> {
     const params = {
-      ViewMode: VIEW_MODE,
+      ViewMode: 'Catalog',
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
       fields: 'Login Name,Employment Status',
