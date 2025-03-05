@@ -31,6 +31,10 @@ export default () => ({
       workspace: process.env.MEMO_WORKSPACE ?? undefined,
       idirField: process.env.MEMO_IDIR_FIELD ?? undefined,
     },
+    employee: {
+      endpoint: encodeURI((process.env.EMPLOYEE_ENDPOINT ?? ' ').trim()),
+      workspace: process.env.EMPLOYEE_WORKSPACE ?? undefined,
+    },
   },
   oauth: {
     accessTokenUrl: process.env.ACCESS_TOKEN_URL ?? ' ',
