@@ -78,15 +78,113 @@ describe('AuthService', () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce('')
+        .mockResolvedValueOnce('');
+      const spy = jest
+        .spyOn(httpService, 'get')
+        .mockReturnValueOnce(
+          of({
+            data: {
+              items: [
+                {
+                  [configService.get(
+                    `upstreamAuth.${validRecordType}.idirField`,
+                  )]: testIdir,
+                },
+              ],
+            },
+            headers: {},
+            config: {
+              url: 'exampleurl',
+              headers: {} as RawAxiosRequestHeaders,
+            },
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>),
+        )
+        .mockReturnValueOnce(
+          of({
+            data: {
+              items: [
+                {
+                  'Login Name': testIdir,
+                  'Employment Status': 'Active',
+                },
+              ],
+            },
+            headers: {},
+            config: {
+              url: 'exampleurl',
+              headers: {} as RawAxiosRequestHeaders,
+            },
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>),
+        );
+      const mockRequest = getMockReq({
+        header: jest.fn((key: string): string => {
+          const headerVal: { [key: string]: string } = {
+            [idirUsernameHeaderField]: testIdir,
+          };
+          return headerVal[key];
+        }),
+        params: { [idName]: 'id' },
+      });
+      const isAuthed = await service.getRecordAndValidate(
+        mockRequest,
+        validRecordType,
+      );
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(cacheSpy).toHaveBeenCalledTimes(4);
+      expect(isAuthed).toBe(true);
+    });
+
+    it.each([
+      [{}, undefined, undefined, 0],
+      [{ [idirUsernameHeaderField]: testIdir }, 403, true, 2],
+      [{ [idirUsernameHeaderField]: testIdir }, 200, false, 2],
+      [{ [idirUsernameHeaderField]: testIdir }, 403, false, 2],
+    ])(
+      'should return false with invalid record in cache',
+      async (
+        headers,
+        cacheReturnRecord,
+        cacheReturnEmpStatus,
+        cacheSpyCallTimes,
+      ) => {
+        const cacheSpy = jest
+          .spyOn(cache, 'get')
+          .mockResolvedValueOnce(cacheReturnRecord)
+          .mockResolvedValueOnce(cacheReturnEmpStatus);
+        const mockRequest = getMockReq({
+          header: jest.fn((key: string): string => {
+            const headerVal: { [key: string]: string } = headers;
+            return headerVal[key];
+          }),
+          params: { [idName]: 'id' },
+        });
+        const isAuthed = await service.getRecordAndValidate(
+          mockRequest,
+          validRecordType,
+        );
+        expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
+        expect(isAuthed).toBe(false);
+      },
+    );
+
+    it('should return false with upstream invalid record for record type', async () => {
+      const cacheSpy = jest
+        .spyOn(cache, 'get')
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(true)
         .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
           data: {
             items: [
               {
-                [configService.get(
-                  `upstreamAuth.${validRecordType}.idirField`,
-                )]: testIdir,
+                fieldNotAvailable: true,
               },
             ],
           },
@@ -113,34 +211,47 @@ describe('AuthService', () => {
         validRecordType,
       );
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(cacheSpy).toHaveBeenCalledTimes(2);
-      expect(isAuthed).toBe(true);
+      expect(cacheSpy).toHaveBeenCalledTimes(3);
+      expect(isAuthed).toBe(false);
     });
 
-    it.each([
-      [{}, undefined, 0],
-      [{ [idirUsernameHeaderField]: testIdir }, 403, 1],
-    ])(
-      'should return false with invalid record',
-      async (headers, cacheReturn, cacheSpyCallTimes) => {
-        const cacheSpy = jest
-          .spyOn(cache, 'get')
-          .mockResolvedValueOnce(cacheReturn);
-        const mockRequest = getMockReq({
-          header: jest.fn((key: string): string => {
-            const headerVal: { [key: string]: string } = headers;
-            return headerVal[key];
-          }),
-          params: { [idName]: 'id' },
-        });
-        const isAuthed = await service.getRecordAndValidate(
-          mockRequest,
-          validRecordType,
-        );
-        expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
-        expect(isAuthed).toBe(false);
-      },
-    );
+    it('should return false with upstream invalid record for employee', async () => {
+      const cacheSpy = jest
+        .spyOn(cache, 'get')
+        .mockResolvedValueOnce(200)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce('');
+      const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
+        of({
+          data: {
+            ERROR: 'There is no data for the requested resource.',
+          },
+          headers: {},
+          config: {
+            url: 'exampleurl',
+            headers: {} as RawAxiosRequestHeaders,
+          },
+          status: 404,
+          statusText: 'Not Found',
+        } as AxiosResponse<any, any>),
+      );
+      const mockRequest = getMockReq({
+        header: jest.fn((key: string): string => {
+          const headerVal: { [key: string]: string } = {
+            [idirUsernameHeaderField]: testIdir,
+          };
+          return headerVal[key];
+        }),
+        params: { [idName]: 'id' },
+      });
+      const isAuthed = await service.getRecordAndValidate(
+        mockRequest,
+        validRecordType,
+      );
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(cacheSpy).toHaveBeenCalledTimes(3);
+      expect(isAuthed).toBe(false);
+    });
   });
 
   describe('grabRecordInfo tests', () => {
@@ -171,6 +282,36 @@ describe('AuthService', () => {
         service.grabRecordInfo(mockRequest, validRecordType);
       }).toThrow(Error);
     });
+  });
+
+  describe('evaluateUpstreamResult tests', () => {
+    it('should return 200 if given idir and upstream idir are equal', async () => {
+      const cacheSpy = jest.spyOn(cache, 'set');
+      const upstreamResult = await service.evaluateUpstreamResult(
+        testIdir,
+        testIdir,
+        'cachetest1',
+      );
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(upstreamResult).toBe(200);
+    });
+
+    it.each([
+      [testIdir + 'abcd', 1],
+      [null, 0],
+    ])(
+      'should return 403 if given idir and upstream idir are not equal',
+      async (upstreamIdir, cacheSpyCallTimes) => {
+        const cacheSpy = jest.spyOn(cache, 'set');
+        const upstreamResult = await service.evaluateUpstreamResult(
+          upstreamIdir,
+          testIdir,
+          'cachetest2' + cacheSpyCallTimes,
+        );
+        expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
+        expect(upstreamResult).toBe(403);
+      },
+    );
   });
 
   describe('getAssignedIdirUpstream tests', () => {
@@ -276,6 +417,96 @@ describe('AuthService', () => {
       );
       expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(null);
+    });
+  });
+
+  describe('getEmployeeActiveUpstream test', () => {
+    it.each([[testIdir], [testIdir + 'randomstring']])(
+      'should return idir string given good input',
+      async (idir) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
+          of({
+            data: {
+              items: [
+                {
+                  'Login Name': idir,
+                  'Employment Status': 'Active',
+                },
+              ],
+            },
+            headers: {},
+            config: {
+              url: 'exampleurl',
+              headers: {} as RawAxiosRequestHeaders,
+            },
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>),
+        );
+        const result = await service.getEmployeeActiveUpstream(testIdir);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(true);
+      },
+    );
+
+    it.each([[{}], [{ items: [{}] }]])(
+      'should return false when employee status not in response',
+      async (data) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
+          of({
+            data,
+            headers: {},
+            config: {
+              url: 'exampleurl',
+              headers: {} as RawAxiosRequestHeaders,
+            },
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>),
+        );
+        const result = await service.getEmployeeActiveUpstream(testIdir);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(false);
+      },
+    );
+
+    it.each([[404], [500]])(
+      `Should return false on axios error`,
+      async (status) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+        const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+          throw new AxiosError(
+            'Axios Error',
+            status.toString(),
+            {} as InternalAxiosRequestConfig,
+            {},
+            {
+              data: {},
+              status: status,
+              statusText: '',
+              headers: {} as RawAxiosRequestHeaders,
+              config: {} as InternalAxiosRequestConfig,
+            },
+          );
+        });
+        const isActive = await service.getEmployeeActiveUpstream(testIdir);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
+        expect(isActive).toBe(false);
+      },
+    );
+
+    it('should return false on token refresh error', async () => {
+      const cacheSpy = jest
+        .spyOn(cache, 'get')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.getEmployeeActiveUpstream(testIdir);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(false);
     });
   });
 });

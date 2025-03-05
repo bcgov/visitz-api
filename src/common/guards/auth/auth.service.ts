@@ -258,11 +258,11 @@ export class AuthService {
           cause: error.cause,
           buildNumber: this.buildNumber,
         });
+        await this.cacheManager.set(idir, false, this.cacheTime);
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
       }
     }
-    await this.cacheManager.set(idir, false, this.cacheTime);
     return false;
   }
 }
