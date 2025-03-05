@@ -3,57 +3,9 @@ import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { IsOptional } from 'class-validator';
 
-// TODO: Add actual examples
 /*
  * Examples
  */
-export const IncidentExample = {
-  Id: 'Id Here',
-  'Activity UID': 'Id Here',
-  'After Hours Flag': 'N',
-  'Contact First Name': 'First Name',
-  'Contact Middle Name': '',
-  'Contact Last Name': 'Last Name',
-  Description: '',
-  Display: 'Calendar and Activities',
-  'ICM Service Region': 'Region',
-  'ICM Service Region Code': 'Region',
-  'Incident City': '',
-  'Incident Location': '',
-  'Incident Postal Code': '',
-  'Incident Sub Type': '',
-  'Incident Type': 'Child Protection',
-  'Integration Error Description': '',
-  'Integration State': '',
-  Location: '',
-  Name: '',
-  Organization: 'MCFD',
-  'Owned By': 'Idir Here',
-  'Primary Suspect Id': '',
-  Priority: '3 - Standard',
-  Resolution: '',
-  'Response Time': '5 Days',
-  'Restricted Flag': 'N',
-  'Row Status Old': 'Y',
-  'Service Office': 'Office',
-  'Source Id': '',
-  'Suppress Calendar': 'N',
-  'System Asgn Flag': 'N',
-  'Template Flag': 'N',
-  Status: 'Open',
-  'Sub Status': '',
-  'Sub Sub Type': '',
-  'Created By Login': 'Idir Here',
-  'Date Created': '01/01/1970 00:00:00',
-  'Date Occurred': '01/01/1970 00:00:00',
-  'Date Reported': '01/01/1970 00:00:00',
-  Planned: '01/01/1970 00:00:00',
-  'Date Closed': '',
-  'Days Open': '600',
-  'Last Updated': '01/01/1970 00:00:00',
-  'Last Updated Login': 'Id Here',
-};
-
 export const CaseExample = {
   Id: 'Id Here',
   'Row Id': 'Id Here',
@@ -87,6 +39,138 @@ export const CaseExample = {
   'Updated By Id': 'Id Here',
   'Last Updated Date': '01/01/1970 00:00:00',
   'Updated Date': '01/01/1970 00:00:00',
+};
+
+export const IncidentExample = {
+  'Acceptance Date': '01/01/1970 00:00:00',
+  'Additional Information': 'Additional Details',
+  Address: 'Address Here',
+  'Address Comments': 'Address Comments Here',
+  'Are Any Of The Family Members Indigenous': 'N',
+  'Assigned To': 'Assignee IDIR Here',
+  'Assigned To Id': 'Assignee IDIR Row Id Here',
+  'Call Information': 'Call Info Here',
+  Caseload: '',
+  'Cell Phone': '123-456-7890',
+  'Closed Date': '01/01/1970 00:00:00',
+  'Created By Id': 'Creator Row Id Here',
+  'Created By Office': 'Creation Office Here',
+  'Created By': 'Creator IDIR Here',
+  'Created Date': '01/01/1970 00:00:00',
+  'Date Reported': '01/01/1970 00:00:00',
+  'Given Names': 'First Names',
+  'Home Phone': '123-456-7890',
+  Id: 'Id Here',
+  'Incident Number': 'Incident Number Here',
+  'Indigenous Authority': '',
+  'Last Name': 'Last Name',
+  'Pcc Summary': 'Summary Here',
+  'Protection Response': '',
+  'Referral Date': '01/01/1970 00:00:00',
+  Resolution: '',
+  'Response Priority': ' ',
+  'Row Id': 'Id Here',
+  'Service Office': 'Office Here',
+  Status: 'Open',
+  Type: 'Type Of Incident',
+  'Updated By Id': 'Updater Row Id Here',
+  'Updated By': 'Updater IDIR Here',
+  'Updated Date': '01/01/1970 00:00:00',
+};
+
+export const SRExample = {
+  'Acceptance Date': '01/01/1970 00:00:00',
+  'Additional Information': '',
+  Address: 'Address Here',
+  'Address Comments': 'Address Comments Here',
+  'Are Any Of The Family Members Indigenous': 'N',
+  'Assigned To': 'Assignee IDIR Here',
+  'Assigned To Id': 'Assignee IDIR Row Id Here',
+  'Call Date': '01/01/1970 00:00:00',
+  'Call Information': 'Call Info Here',
+  'Caller Address': 'Caller Address Here',
+  'Caller Email': 'Caller Email Here',
+  'Caller Name': 'Caller Name Here',
+  'Caller Phone': 'Caller Info Here',
+  'Cell Phone': '123-456-7890',
+  'Closed Date': '01/01/1970 00:00:00',
+  'Created By': '',
+  'Created By Id': '',
+  'Created By Office': '',
+  'Created Date': '01/01/1970 00:00:00',
+  'Given Names': '',
+  'Home Phone': '123-456-7890',
+  Id: 'Id Here',
+  'Indigenous Authority': '',
+  'Integration Id': '',
+  Kkcfs: '',
+  'Last Name': '',
+  Method: '',
+  'Nature Of Call': '',
+  'Pcc Summary': '',
+  'Preferred Contact Method': '',
+  Priority: '',
+  'Referral Date': '01/01/1970 00:00:00',
+  Resolution: '',
+  'Restricted Flag': 'N',
+  'Row Id': 'Id Here',
+  'Service Office': '',
+  'Service Request Number': '',
+  Status: 'Open',
+  Type: '',
+  'Type Of Caller': '',
+  'Updated By': '01/01/1970 00:00:00',
+  'Updated By Id': '01/01/1970 00:00:00',
+  'Updated Date': '01/01/1970 00:00:00',
+};
+
+export const MemoExample = {
+  'Additional Information': '',
+  Address: '',
+  'Address Comments': '',
+  'Are Any Of The Family Members Indigenous': '',
+  'Assigned To': '',
+  'Assigned To Id': '',
+  'Call Date': '01/01/1970 00:00:00',
+  'Call Information': '',
+  'Call Time': '',
+  'Caller Address': '',
+  'Caller Email': '',
+  'Caller Name': '',
+  'Caller Phone': '123-456-7890',
+  'Cell Phone': '123-456-7890',
+  'Closed Date': '01/01/1970 00:00:00',
+  'Created By': '',
+  'Created By Id': '',
+  'Created By Office': '',
+  'Created Date': '01/01/1970 00:00:00',
+  'Given Names': '',
+  'Home Phone': '123-456-7890',
+  Id: '',
+  'Last Name': '',
+  'Medical Exam Required': '',
+  'Memo Number': '',
+  'Memo Type': '',
+  Method: '',
+  'Narrative Locked By': '',
+  'Nature Of Call': '',
+  'Pcc Summary': '',
+  'Police Force': '',
+  'Police Investigation': '',
+  'Police Notified Date': '01/01/1970 00:00:00',
+  'Police Report': '',
+  'Preferred Contact Method': '',
+  'Recorded By': '',
+  Resolution: '',
+  'Restricted Flag': 'N',
+  'Row Id': 'Id Here',
+  'Service Office': 'Office Here',
+  Status: '',
+  'Type Of Caller': '',
+  'Updated By': '01/01/1970 00:00:00',
+  'Updated By Id': '01/01/1970 00:00:00',
+  'Updated Date': '01/01/1970 00:00:00',
+  'Urgent ': 'N',
 };
 
 export const CaseloadCompleteResponseExample = {
@@ -339,58 +423,88 @@ class CaseEntity {
 @ApiSchema({ name: 'Incident' })
 class IncidentEntity {
   @ApiProperty({
-    example: IncidentExample['Activity UID'],
+    example: IncidentExample['Acceptance Date'],
   })
   @Expose()
-  'Activity UID': string;
+  'Acceptance Date': string;
 
   @ApiProperty({
-    example: IncidentExample['After Hours Flag'],
+    example: IncidentExample['Additional Information'],
   })
   @Expose()
-  'After Hours Flag': string;
+  'Additional Information': string;
 
   @ApiProperty({
-    example: IncidentExample['Contact First Name'],
+    example: IncidentExample['Address Comments'],
   })
   @Expose()
-  'Contact First Name': string;
+  'Address Comments': string;
 
   @ApiProperty({
-    example: IncidentExample['Contact Last Name'],
+    example: IncidentExample['Address'],
   })
   @Expose()
-  'Contact Last Name': string;
+  Address: string;
 
   @ApiProperty({
-    example: IncidentExample['Contact Middle Name'],
+    example: IncidentExample['Are Any Of The Family Members Indigenous'],
   })
   @Expose()
-  'Contact Middle Name': string;
+  'Are Any Of The Family Members Indigenous': string;
 
   @ApiProperty({
-    example: IncidentExample['Created By Login'],
+    example: IncidentExample['Assigned To'],
   })
   @Expose()
-  'Created By Login': string;
+  'Assigned To': string;
 
   @ApiProperty({
-    example: IncidentExample['Date Closed'],
+    example: IncidentExample['Call Information'],
   })
   @Expose()
-  'Date Closed': string;
+  'Call Information': string;
 
   @ApiProperty({
-    example: IncidentExample['Date Created'],
+    example: IncidentExample['Caseload'],
   })
   @Expose()
-  'Date Created': string;
+  Caseload: string;
 
   @ApiProperty({
-    example: IncidentExample['Date Occurred'],
+    example: IncidentExample['Cell Phone'],
   })
   @Expose()
-  'Date Occurred': string;
+  'Cell Phone': string;
+
+  @ApiProperty({
+    example: IncidentExample['Closed Date'],
+  })
+  @Expose()
+  'Closed Date': string;
+
+  @ApiProperty({
+    example: IncidentExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: IncidentExample['Created By Office'],
+  })
+  @Expose()
+  'Created By Office': string;
+
+  @ApiProperty({
+    example: IncidentExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: IncidentExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
 
   @ApiProperty({
     example: IncidentExample['Date Reported'],
@@ -399,160 +513,76 @@ class IncidentEntity {
   'Date Reported': string;
 
   @ApiProperty({
-    example: IncidentExample['Days Open'],
+    example: IncidentExample['Given Names'],
   })
   @Expose()
-  'Days Open': string;
+  'Given Names': string;
 
   @ApiProperty({
-    example: IncidentExample['Description'],
+    example: IncidentExample['Home Phone'],
   })
   @Expose()
-  'Description': string;
-
-  @ApiProperty({
-    example: IncidentExample['Display'],
-  })
-  @Expose()
-  'Display': string;
-
-  @ApiProperty({
-    example: IncidentExample['ICM Service Region'],
-  })
-  @Expose()
-  'ICM Service Region': string;
-
-  @ApiProperty({
-    example: IncidentExample['ICM Service Region Code'],
-  })
-  @Expose()
-  'ICM Service Region Code': string;
+  'Home Phone': string;
 
   @ApiProperty({
     example: IncidentExample['Id'],
   })
   @Expose()
-  'Id': string;
+  Id: string;
 
   @ApiProperty({
-    example: IncidentExample['Incident City'],
+    example: IncidentExample['Incident Number'],
   })
   @Expose()
-  'Incident City': string;
+  'Incident Number': string;
 
   @ApiProperty({
-    example: IncidentExample['Incident Location'],
+    example: IncidentExample['Indigenous Authority'],
   })
   @Expose()
-  'Incident Location': string;
+  'Indigenous Authority': string;
 
   @ApiProperty({
-    example: IncidentExample['Incident Postal Code'],
+    example: IncidentExample['Last Name'],
   })
   @Expose()
-  'Incident Postal Code': string;
+  'Last Name': string;
 
   @ApiProperty({
-    example: IncidentExample['Incident Sub Type'],
+    example: IncidentExample['Pcc Summary'],
   })
   @Expose()
-  'Incident Sub Type': string;
+  'Pcc Summary': string;
 
   @ApiProperty({
-    example: IncidentExample['Incident Type'],
+    example: IncidentExample['Protection Response'],
   })
   @Expose()
-  'Incident Type': string;
+  'Protection Response': string;
 
   @ApiProperty({
-    example: IncidentExample['Integration Error Description'],
+    example: IncidentExample['Referral Date'],
   })
   @Expose()
-  'Integration Error Description': string;
-
-  @ApiProperty({
-    example: IncidentExample['Integration State'],
-  })
-  @Expose()
-  'Integration State': string;
-
-  @ApiProperty({
-    example: IncidentExample['Last Updated'],
-  })
-  @Expose()
-  'Last Updated': string;
-
-  @ApiProperty({
-    example: IncidentExample['Last Updated Login'],
-  })
-  @Expose()
-  'Last Updated Login': string;
-
-  @ApiProperty({
-    example: IncidentExample['Location'],
-  })
-  @Expose()
-  'Location': string;
-
-  @ApiProperty({
-    example: IncidentExample['Name'],
-  })
-  @Expose()
-  'Name': string;
-
-  @ApiProperty({
-    example: IncidentExample['Organization'],
-  })
-  @Expose()
-  'Organization': string;
-
-  @ApiProperty({
-    example: IncidentExample['Owned By'],
-  })
-  @Expose()
-  'Owned By': string;
-
-  @ApiProperty({
-    example: IncidentExample['Planned'],
-  })
-  @Expose()
-  'Planned': string;
-
-  @ApiProperty({
-    example: IncidentExample['Primary Suspect Id'],
-  })
-  @Expose()
-  'Primary Suspect Id': string;
-
-  @ApiProperty({
-    example: IncidentExample['Priority'],
-  })
-  @Expose()
-  'Priority': string;
+  'Referral Date': string;
 
   @ApiProperty({
     example: IncidentExample['Resolution'],
   })
   @Expose()
-  'Resolution': string;
+  Resolution: string;
 
   @ApiProperty({
-    example: IncidentExample['Response Time'],
+    example: IncidentExample['Response Priority'],
   })
   @Expose()
-  'Response Time': string;
+  'Response Priority': string;
 
   @ApiProperty({
-    example: IncidentExample['Restricted Flag'],
+    example: IncidentExample['Row Id'],
   })
   @Expose()
-  'Restricted Flag': string;
-
-  @ApiProperty({
-    example: IncidentExample['Row Status Old'],
-  })
-  @Expose()
-  'Row Status Old': string;
+  'Row Id': string;
 
   @ApiProperty({
     example: IncidentExample['Service Office'],
@@ -561,46 +591,584 @@ class IncidentEntity {
   'Service Office': string;
 
   @ApiProperty({
-    example: IncidentExample['Source Id'],
-  })
-  @Expose()
-  'Source Id': string;
-
-  @ApiProperty({
     example: IncidentExample['Status'],
   })
   @Expose()
-  'Status': string;
+  Status: string;
 
   @ApiProperty({
-    example: IncidentExample['Sub Status'],
+    example: IncidentExample['Type'],
   })
   @Expose()
-  'Sub Status': string;
+  Type: string;
 
   @ApiProperty({
-    example: IncidentExample['Sub Sub Type'],
+    example: IncidentExample['Updated By Id'],
   })
   @Expose()
-  'Sub Sub Type': string;
+  'Updated By Id': string;
 
   @ApiProperty({
-    example: IncidentExample['Suppress Calendar'],
+    example: IncidentExample['Updated By'],
   })
   @Expose()
-  'Suppress Calendar': string;
+  'Updated By': string;
 
   @ApiProperty({
-    example: IncidentExample['System Asgn Flag'],
+    example: IncidentExample['Updated Date'],
   })
   @Expose()
-  'System Asgn Flag': string;
+  'Updated Date': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'SR' })
+class SREntity {
+  @ApiProperty({
+    example: SRExample['Acceptance Date'],
+  })
+  @Expose()
+  'Acceptance Date': string;
 
   @ApiProperty({
-    example: IncidentExample['Template Flag'],
+    example: SRExample['Additional Information'],
   })
   @Expose()
-  'Template Flag': string;
+  'Additional Information': string;
+
+  @ApiProperty({
+    example: SRExample['  Address'],
+  })
+  @Expose()
+  Address: string;
+
+  @ApiProperty({
+    example: SRExample['Address Comments'],
+  })
+  @Expose()
+  'Address Comments': string;
+
+  @ApiProperty({
+    example: SRExample['Are Any Of The Family Members Indigenous'],
+  })
+  @Expose()
+  'Are Any Of The Family Members Indigenous': string;
+
+  @ApiProperty({
+    example: SRExample['Assigned To'],
+  })
+  @Expose()
+  'Assigned To': string;
+
+  @ApiProperty({
+    example: SRExample['Assigned To Id'],
+  })
+  @Expose()
+  'Assigned To Id': string;
+
+  @ApiProperty({
+    example: SRExample['Call Date'],
+  })
+  @Expose()
+  'Call Date': string;
+
+  @ApiProperty({
+    example: SRExample['Call Information'],
+  })
+  @Expose()
+  'Call Information': string;
+
+  @ApiProperty({
+    example: SRExample['Caller Address'],
+  })
+  @Expose()
+  'Caller Address': string;
+
+  @ApiProperty({
+    example: SRExample['Caller Email'],
+  })
+  @Expose()
+  'Caller Email': string;
+
+  @ApiProperty({
+    example: SRExample['Caller Name'],
+  })
+  @Expose()
+  'Caller Name': string;
+
+  @ApiProperty({
+    example: SRExample['Caller Phone'],
+  })
+  @Expose()
+  'Caller Phone': string;
+
+  @ApiProperty({
+    example: SRExample['Cell Phone'],
+  })
+  @Expose()
+  'Cell Phone': string;
+
+  @ApiProperty({
+    example: SRExample['Closed Date'],
+  })
+  @Expose()
+  'Closed Date': string;
+
+  @ApiProperty({
+    example: SRExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: SRExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: SRExample['Created By Office'],
+  })
+  @Expose()
+  'Created By Office': string;
+
+  @ApiProperty({
+    example: SRExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
+
+  @ApiProperty({
+    example: SRExample['Given Names'],
+  })
+  @Expose()
+  'Given Names': string;
+
+  @ApiProperty({
+    example: SRExample['Home Phone'],
+  })
+  @Expose()
+  'Home Phone': string;
+
+  @ApiProperty({
+    example: SRExample['  Id'],
+  })
+  @Expose()
+  Id: string;
+
+  @ApiProperty({
+    example: SRExample['Indigenous Authority'],
+  })
+  @Expose()
+  'Indigenous Authority': string;
+
+  @ApiProperty({
+    example: SRExample['Integration Id'],
+  })
+  @Expose()
+  'Integration Id': string;
+
+  @ApiProperty({
+    example: SRExample['  Kkcfs'],
+  })
+  @Expose()
+  Kkcfs: string;
+
+  @ApiProperty({
+    example: SRExample['Last Name'],
+  })
+  @Expose()
+  'Last Name': string;
+
+  @ApiProperty({
+    example: SRExample['  Method'],
+  })
+  @Expose()
+  Method: string;
+
+  @ApiProperty({
+    example: SRExample['Nature Of Call'],
+  })
+  @Expose()
+  'Nature Of Call': string;
+
+  @ApiProperty({
+    example: SRExample['Pcc Summary'],
+  })
+  @Expose()
+  'Pcc Summary': string;
+
+  @ApiProperty({
+    example: SRExample['Preferred Contact Method'],
+  })
+  @Expose()
+  'Preferred Contact Method': string;
+
+  @ApiProperty({
+    example: SRExample['  Priority'],
+  })
+  @Expose()
+  Priority: string;
+
+  @ApiProperty({
+    example: SRExample['Referral Date'],
+  })
+  @Expose()
+  'Referral Date': string;
+
+  @ApiProperty({
+    example: SRExample['  Resolution'],
+  })
+  @Expose()
+  Resolution: string;
+
+  @ApiProperty({
+    example: SRExample['Restricted Flag'],
+  })
+  @Expose()
+  'Restricted Flag': string;
+
+  @ApiProperty({
+    example: SRExample['Row Id'],
+  })
+  @Expose()
+  'Row Id': string;
+
+  @ApiProperty({
+    example: SRExample['Service Office'],
+  })
+  @Expose()
+  'Service Office': string;
+
+  @ApiProperty({
+    example: SRExample['Service Request Number'],
+  })
+  @Expose()
+  'Service Request Number': string;
+
+  @ApiProperty({
+    example: SRExample['  Status'],
+  })
+  @Expose()
+  Status: string;
+
+  @ApiProperty({
+    example: SRExample['  Type'],
+  })
+  @Expose()
+  Type: string;
+
+  @ApiProperty({
+    example: SRExample['Type Of Caller'],
+  })
+  @Expose()
+  'Type Of Caller': string;
+
+  @ApiProperty({
+    example: SRExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
+
+  @ApiProperty({
+    example: SRExample['Updated By Id'],
+  })
+  @Expose()
+  'Updated By Id': string;
+
+  @ApiProperty({
+    example: SRExample['Updated Date'],
+  })
+  @Expose()
+  'Updated Date': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'Memo' })
+class MemoEntity {
+  @ApiProperty({
+    example: MemoExample['Additional Information'],
+  })
+  @Expose()
+  'Additional Information': string;
+
+  @ApiProperty({
+    example: MemoExample['  Address'],
+  })
+  @Expose()
+  Address: string;
+
+  @ApiProperty({
+    example: MemoExample['Address Comments'],
+  })
+  @Expose()
+  'Address Comments': string;
+
+  @ApiProperty({
+    example: MemoExample['Are Any Of The Family Members Indigenous'],
+  })
+  @Expose()
+  'Are Any Of The Family Members Indigenous': string;
+
+  @ApiProperty({
+    example: MemoExample['Assigned To'],
+  })
+  @Expose()
+  'Assigned To': string;
+
+  @ApiProperty({
+    example: MemoExample['Assigned To Id'],
+  })
+  @Expose()
+  'Assigned To Id': string;
+
+  @ApiProperty({
+    example: MemoExample['Call Date'],
+  })
+  @Expose()
+  'Call Date': string;
+
+  @ApiProperty({
+    example: MemoExample['Call Information'],
+  })
+  @Expose()
+  'Call Information': string;
+
+  @ApiProperty({
+    example: MemoExample['Call Time'],
+  })
+  @Expose()
+  'Call Time': string;
+
+  @ApiProperty({
+    example: MemoExample['Caller Address'],
+  })
+  @Expose()
+  'Caller Address': string;
+
+  @ApiProperty({
+    example: MemoExample['Caller Email'],
+  })
+  @Expose()
+  'Caller Email': string;
+
+  @ApiProperty({
+    example: MemoExample['Caller Name'],
+  })
+  @Expose()
+  'Caller Name': string;
+
+  @ApiProperty({
+    example: MemoExample['Caller Phone'],
+  })
+  @Expose()
+  'Caller Phone': string;
+
+  @ApiProperty({
+    example: MemoExample['Cell Phone'],
+  })
+  @Expose()
+  'Cell Phone': string;
+
+  @ApiProperty({
+    example: MemoExample['Closed Date'],
+  })
+  @Expose()
+  'Closed Date': string;
+
+  @ApiProperty({
+    example: MemoExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: MemoExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: MemoExample['Created By Office'],
+  })
+  @Expose()
+  'Created By Office': string;
+
+  @ApiProperty({
+    example: MemoExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
+
+  @ApiProperty({
+    example: MemoExample['Given Names'],
+  })
+  @Expose()
+  'Given Names': string;
+
+  @ApiProperty({
+    example: MemoExample['Home Phone'],
+  })
+  @Expose()
+  'Home Phone': string;
+
+  @ApiProperty({
+    example: MemoExample['  Id'],
+  })
+  @Expose()
+  Id: string;
+
+  @ApiProperty({
+    example: MemoExample['Last Name'],
+  })
+  @Expose()
+  'Last Name': string;
+
+  @ApiProperty({
+    example: MemoExample['Medical Exam Required'],
+  })
+  @Expose()
+  'Medical Exam Required': string;
+
+  @ApiProperty({
+    example: MemoExample['Memo Number'],
+  })
+  @Expose()
+  'Memo Number': string;
+
+  @ApiProperty({
+    example: MemoExample['Memo Type'],
+  })
+  @Expose()
+  'Memo Type': string;
+
+  @ApiProperty({
+    example: MemoExample['  Method'],
+  })
+  @Expose()
+  Method: string;
+
+  @ApiProperty({
+    example: MemoExample['Narrative Locked By'],
+  })
+  @Expose()
+  'Narrative Locked By': string;
+
+  @ApiProperty({
+    example: MemoExample['Nature Of Call'],
+  })
+  @Expose()
+  'Nature Of Call': string;
+
+  @ApiProperty({
+    example: MemoExample['Pcc Summary'],
+  })
+  @Expose()
+  'Pcc Summary': string;
+
+  @ApiProperty({
+    example: MemoExample['Police Force'],
+  })
+  @Expose()
+  'Police Force': string;
+
+  @ApiProperty({
+    example: MemoExample['Police Investigation'],
+  })
+  @Expose()
+  'Police Investigation': string;
+
+  @ApiProperty({
+    example: MemoExample['Police Notified Date'],
+  })
+  @Expose()
+  'Police Notified Date': string;
+
+  @ApiProperty({
+    example: MemoExample['Police Report'],
+  })
+  @Expose()
+  'Police Report': string;
+
+  @ApiProperty({
+    example: MemoExample['Preferred Contact Method'],
+  })
+  @Expose()
+  'Preferred Contact Method': string;
+
+  @ApiProperty({
+    example: MemoExample['Recorded By'],
+  })
+  @Expose()
+  'Recorded By': string;
+
+  @ApiProperty({
+    example: MemoExample['  Resolution'],
+  })
+  @Expose()
+  Resolution: string;
+
+  @ApiProperty({
+    example: MemoExample['Restricted Flag'],
+  })
+  @Expose()
+  'Restricted Flag': string;
+
+  @ApiProperty({
+    example: MemoExample['Row Id'],
+  })
+  @Expose()
+  'Row Id': string;
+
+  @ApiProperty({
+    example: MemoExample['Service Office'],
+  })
+  @Expose()
+  'Service Office': string;
+
+  @ApiProperty({
+    example: MemoExample['  Status'],
+  })
+  @Expose()
+  Status: string;
+
+  @ApiProperty({
+    example: MemoExample['Type Of Caller'],
+  })
+  @Expose()
+  'Type Of Caller': string;
+
+  @ApiProperty({
+    example: MemoExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
+
+  @ApiProperty({
+    example: MemoExample['Updated By Id'],
+  })
+  @Expose()
+  'Updated By Id': string;
+
+  @ApiProperty({
+    example: MemoExample['Updated Date'],
+  })
+  @Expose()
+  'Updated Date': string;
+
+  @ApiProperty({
+    example: MemoExample['Urgent '],
+  })
+  @Expose()
+  'Urgent ': string;
 
   constructor(object) {
     Object.assign(this, object);
@@ -655,13 +1223,43 @@ class CasesOrganizerEntity extends GenericRecordEntity {
 }
 
 @Exclude()
-@ApiSchema({ name: 'CasesOrganizer' })
+@ApiSchema({ name: 'IncidentsOrganizer' })
 class IncidentsOrganizerEntity extends GenericRecordEntity {
   @Expose()
   @IsOptional()
   @ApiProperty({ isArray: true, type: IncidentEntity, required: false })
   @Type(() => IncidentEntity)
   items?: Array<IncidentEntity>;
+
+  constructor(object) {
+    super(object);
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'SRsOrganizer' })
+class SROrganizerEntity extends GenericRecordEntity {
+  @Expose()
+  @IsOptional()
+  @ApiProperty({ isArray: true, type: SREntity, required: false })
+  @Type(() => SREntity)
+  items?: Array<SREntity>;
+
+  constructor(object) {
+    super(object);
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'MemoOrganizer' })
+class MemoOrganizerEntity extends GenericRecordEntity {
+  @Expose()
+  @IsOptional()
+  @ApiProperty({ isArray: true, type: MemoEntity, required: false })
+  @Type(() => MemoEntity)
+  items?: Array<MemoEntity>;
 
   constructor(object) {
     super(object);
@@ -677,6 +1275,12 @@ export class CaseloadEntity {
 
   @Expose()
   incidents: IncidentsOrganizerEntity;
+
+  @Expose()
+  srs: SROrganizerEntity;
+
+  @Expose()
+  memos: MemoOrganizerEntity;
 
   constructor(object) {
     Object.assign(this, object);
