@@ -219,6 +219,16 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: CASE_TYPE_FIELD
+            - name: EMPLOYEE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: EMPLOYEE_ENDPOINT
+            - name: EMPLOYEE_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: EMPLOYEE_WORKSPACE
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
             - name: VPI_APP_ENV
