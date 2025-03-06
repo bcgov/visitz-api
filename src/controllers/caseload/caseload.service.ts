@@ -29,14 +29,24 @@ export class CaseloadService {
 
   caseIdirFieldName: string;
   incidentIdirFieldName: string;
+  srIdirFieldName: string;
+  memoIdirFieldName: string;
   caseAfterFieldName: string;
   incidentAfterFieldName: string;
+  srAfterFieldName: string;
+  memoAfterFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
+  srRestrictedFieldName: string;
+  memoRestrictedFieldName: string;
   caseWorkspace: string;
   incidentWorkspace: string;
+  srWorkspace: string;
+  memoWorkspace: string;
   caseEndpoint: string;
   incidentEndpoint: string;
+  srEndpoint: string;
+  memoEndpoint: string;
   baseUrl: string;
 
   constructor(
@@ -45,23 +55,44 @@ export class CaseloadService {
     private readonly utilitiesService: UtilitiesService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
-    this.recordTypes = [RecordType.Case, RecordType.Incident];
+    this.recordTypes = [
+      RecordType.Case,
+      RecordType.Incident,
+      RecordType.SR,
+      RecordType.Memo,
+    ];
     this.caseIdirFieldName = this.configService.get<string>(
       `upstreamAuth.case.searchspecIdirField`,
     );
     this.incidentIdirFieldName = this.configService.get<string>(
       `upstreamAuth.incident.searchspecIdirField`,
     );
+    this.srIdirFieldName = this.configService.get<string>(
+      `upstreamAuth.sr.searchspecIdirField`,
+    );
+    this.memoIdirFieldName = this.configService.get<string>(
+      `upstreamAuth.memo.searchspecIdirField`,
+    );
     this.caseAfterFieldName =
       this.configService.get<string>(`afterFieldName.cases`);
     this.incidentAfterFieldName = this.configService.get<string>(
       `afterFieldName.incidents`,
     );
+    this.srAfterFieldName =
+      this.configService.get<string>(`afterFieldName.srs`);
+    this.memoAfterFieldName =
+      this.configService.get<string>(`afterFieldName.memos`);
     this.caseRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.case.restrictedField`,
     );
     this.incidentRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.incident.restrictedField`,
+    );
+    this.srRestrictedFieldName = this.configService.get<string>(
+      `upstreamAuth.sr.restrictedField`,
+    );
+    this.memoRestrictedFieldName = this.configService.get<string>(
+      `upstreamAuth.memo.restrictedField`,
     );
     this.caseWorkspace = this.configService.get<string>(
       `upstreamAuth.case.workspace`,
@@ -69,11 +100,23 @@ export class CaseloadService {
     this.incidentWorkspace = this.configService.get<string>(
       `upstreamAuth.incident.workspace`,
     );
+    this.srWorkspace = this.configService.get<string>(
+      `upstreamAuth.sr.workspace`,
+    );
+    this.memoWorkspace = this.configService.get<string>(
+      `upstreamAuth.memo.workspace`,
+    );
     this.caseEndpoint = this.configService.get<string>(
       `upstreamAuth.case.endpoint`,
     );
     this.incidentEndpoint = this.configService.get<string>(
       `upstreamAuth.incident.endpoint`,
+    );
+    this.srEndpoint = this.configService.get<string>(
+      `upstreamAuth.sr.endpoint`,
+    );
+    this.memoEndpoint = this.configService.get<string>(
+      `upstreamAuth.memo.endpoint`,
     );
 
     this.baseUrl = this.configService.get<string>(`endpointUrls.baseUrl`);
@@ -107,6 +150,7 @@ export class CaseloadService {
         }),
       );
     }
+    console.log(getRequestSpecs);
     return getRequestSpecs;
   }
 
@@ -118,6 +162,12 @@ export class CaseloadService {
       results.responses[1].status !== 404 ? results.responses[1].status : 204;
     const incidentIsError: boolean =
       incidentStatus >= 300 || incidentStatus == 204;
+    const srStatus: number =
+      results.responses[2].status !== 404 ? results.responses[2].status : 204;
+    const srIsError: boolean = srStatus >= 300 || srStatus == 204;
+    const memoStatus: number =
+      results.responses[3].status !== 404 ? results.responses[3].status : 204;
+    const memoIsError: boolean = memoStatus >= 300 || memoStatus == 204;
 
     const caseResponseBody = caseIsError
       ? results.responses[0].response.data
@@ -125,6 +175,12 @@ export class CaseloadService {
     const incidentResponseBody = incidentIsError
       ? results.responses[1].response.data
       : results.responses[1].data.items;
+    const srResponseBody = srIsError
+      ? results.responses[2].response.data
+      : results.responses[2].data.items;
+    const memoResponseBody = memoIsError
+      ? results.responses[3].response.data
+      : results.responses[3].data.items;
 
     const response = {
       cases: {
@@ -142,6 +198,22 @@ export class CaseloadService {
         status: incidentStatus,
         message: incidentIsError ? incidentResponseBody : undefined,
         items: incidentIsError ? undefined : incidentResponseBody,
+      },
+      srs: {
+        assignedIds: srIsError
+          ? []
+          : srResponseBody.map((entry) => entry['Id']),
+        status: srStatus,
+        message: srIsError ? srResponseBody : undefined,
+        items: srIsError ? undefined : srResponseBody,
+      },
+      memos: {
+        assignedIds: memoIsError
+          ? []
+          : memoResponseBody.map((entry) => entry['Id']),
+        status: memoStatus,
+        message: memoIsError ? memoResponseBody : undefined,
+        items: memoIsError ? undefined : memoResponseBody,
       },
     };
     return response;

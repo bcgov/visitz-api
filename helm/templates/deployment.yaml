@@ -214,6 +214,36 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: INCIDENT_RESTRICTED_FIELD
+            - name: SR_AFTER_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_AFTER_FIELD
+            - name: SR_SEARCHSPEC_IDIR_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_SEARCHSPEC_IDIR_FIELD
+            - name: SR_RESTRICTED_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_RESTRICTED_FIELD
+            - name: MEMO_AFTER_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MEMO_AFTER_FIELD
+            - name: MEMO_SEARCHSPEC_IDIR_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MEMO_SEARCHSPEC_IDIR_FIELD
+            - name: MEMO_RESTRICTED_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MEMO_RESTRICTED_FIELD
             - name: CASE_TYPE_FIELD
               valueFrom:
                 secretKeyRef:

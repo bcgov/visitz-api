@@ -53,9 +53,9 @@ export const IncidentExample = {
   Caseload: '',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
+  'Created By': 'Creator IDIR Here',
   'Created By Id': 'Creator Row Id Here',
   'Created By Office': 'Creation Office Here',
-  'Created By': 'Creator IDIR Here',
   'Created Date': '01/01/1970 00:00:00',
   'Date Reported': '01/01/1970 00:00:00',
   'Given Names': 'First Names',
@@ -94,30 +94,30 @@ export const SRExample = {
   'Caller Phone': 'Caller Info Here',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
-  'Created By': '',
-  'Created By Id': '',
-  'Created By Office': '',
+  'Created By': 'Creator IDIR Here',
+  'Created By Id': 'Creator Row Id Here',
+  'Created By Office': 'Creation Office Here',
   'Created Date': '01/01/1970 00:00:00',
-  'Given Names': '',
+  'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
   Id: 'Id Here',
-  'Indigenous Authority': '',
-  'Integration Id': '',
-  Kkcfs: '',
-  'Last Name': '',
+  'Indigenous Authority': 'Authority Here',
+  'Integration Id': 'Id Here',
+  Kkcfs: 'N',
+  'Last Name': 'Last Name',
   Method: '',
   'Nature Of Call': '',
-  'Pcc Summary': '',
-  'Preferred Contact Method': '',
-  Priority: '',
+  'Pcc Summary': 'Summary Here',
+  'Preferred Contact Method': 'Phone',
+  Priority: 'Priority Here',
   'Referral Date': '01/01/1970 00:00:00',
   Resolution: '',
   'Restricted Flag': 'N',
   'Row Id': 'Id Here',
-  'Service Office': '',
-  'Service Request Number': '',
+  'Service Office': 'Service Office Here',
+  'Service Request Number': 'SR Number Here',
   Status: 'Open',
-  Type: '',
+  Type: 'Type Here',
   'Type Of Caller': '',
   'Updated By': '01/01/1970 00:00:00',
   'Updated By Id': '01/01/1970 00:00:00',
@@ -126,46 +126,46 @@ export const SRExample = {
 
 export const MemoExample = {
   'Additional Information': '',
-  Address: '',
-  'Address Comments': '',
-  'Are Any Of The Family Members Indigenous': '',
-  'Assigned To': '',
-  'Assigned To Id': '',
+  Address: 'Address Here',
+  'Address Comments': 'Address Comments Here',
+  'Are Any Of The Family Members Indigenous': 'N',
+  'Assigned To': 'Assignee IDIR Here',
+  'Assigned To Id': 'Assignee IDIR Row Id Here',
   'Call Date': '01/01/1970 00:00:00',
   'Call Information': '',
-  'Call Time': '',
-  'Caller Address': '',
-  'Caller Email': '',
-  'Caller Name': '',
+  'Call Time': '00:00:00',
+  'Caller Address': 'Caller Address Here',
+  'Caller Email': 'sample@example.com',
+  'Caller Name': 'Caller Name Here',
   'Caller Phone': '123-456-7890',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
-  'Created By': '',
-  'Created By Id': '',
-  'Created By Office': '',
+  'Created By': 'Creator IDIR Here',
+  'Created By Id': 'Creator Row Id Here',
+  'Created By Office': 'Creation Office Here',
   'Created Date': '01/01/1970 00:00:00',
-  'Given Names': '',
+  'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
-  Id: '',
-  'Last Name': '',
-  'Medical Exam Required': '',
-  'Memo Number': '',
+  Id: 'Row Id Here',
+  'Last Name': 'Last Names',
+  'Medical Exam Required': 'N',
+  'Memo Number': 'Memo Number Here',
   'Memo Type': '',
   Method: '',
   'Narrative Locked By': '',
   'Nature Of Call': '',
-  'Pcc Summary': '',
+  'Pcc Summary': 'Summary Here',
   'Police Force': '',
   'Police Investigation': '',
   'Police Notified Date': '01/01/1970 00:00:00',
   'Police Report': '',
-  'Preferred Contact Method': '',
+  'Preferred Contact Method': 'Phone',
   'Recorded By': '',
   Resolution: '',
   'Restricted Flag': 'N',
   'Row Id': 'Id Here',
   'Service Office': 'Office Here',
-  Status: '',
+  Status: 'Open',
   'Type Of Caller': '',
   'Updated By': '01/01/1970 00:00:00',
   'Updated By Id': '01/01/1970 00:00:00',
@@ -184,6 +184,16 @@ export const CaseloadCompleteResponseExample = {
     status: 200,
     items: [IncidentExample],
   },
+  srs: {
+    assignedIds: [SRExample['Id']],
+    status: 200,
+    items: [SRExample],
+  },
+  memos: {
+    assignedIds: [MemoExample['Id']],
+    status: 200,
+    items: [MemoExample],
+  },
 };
 
 export const CaseloadLaterDateResponseExample = {
@@ -197,6 +207,16 @@ export const CaseloadLaterDateResponseExample = {
     status: 200,
     items: [IncidentExample],
   },
+  srs: {
+    assignedIds: [SRExample['Id']],
+    status: 200,
+    items: [SRExample],
+  },
+  memos: {
+    assignedIds: [MemoExample['Id']],
+    status: 200,
+    items: [MemoExample],
+  },
 };
 
 export const CaseloadEmptyArrayResponseExample = {
@@ -208,6 +228,20 @@ export const CaseloadEmptyArrayResponseExample = {
     },
   },
   incidents: {
+    assignedIds: [],
+    status: 204,
+    message: {
+      ERROR: 'There is no data for the requested resource',
+    },
+  },
+  srs: {
+    assignedIds: [],
+    status: 204,
+    message: {
+      ERROR: 'There is no data for the requested resource',
+    },
+  },
+  memos: {
     assignedIds: [],
     status: 204,
     message: {
@@ -459,6 +493,12 @@ class IncidentEntity {
   'Assigned To': string;
 
   @ApiProperty({
+    example: IncidentExample['Assigned To Id'],
+  })
+  @Expose()
+  'Assigned To Id': string;
+
+  @ApiProperty({
     example: IncidentExample['Call Information'],
   })
   @Expose()
@@ -483,6 +523,12 @@ class IncidentEntity {
   'Closed Date': string;
 
   @ApiProperty({
+    example: IncidentExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
     example: IncidentExample['Created By Id'],
   })
   @Expose()
@@ -493,12 +539,6 @@ class IncidentEntity {
   })
   @Expose()
   'Created By Office': string;
-
-  @ApiProperty({
-    example: IncidentExample['Created By'],
-  })
-  @Expose()
-  'Created By': string;
 
   @ApiProperty({
     example: IncidentExample['Created Date'],
