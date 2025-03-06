@@ -14,25 +14,22 @@ import {
  * Examples
  */
 export const SupportNetworkSingleResponseCaseExample = {
-  'Cell Phone Number': '12345678910',
+  Cell: '12345678910',
   'Entity Name': EntityType.Case,
-  Name: 'Name',
-  Comments: 'test',
-  'ICM SNC SR Con Flag': 'N',
-  'Emergency Contact': 'N',
-  'Entity Id': 'Entity-Id-Here',
-  'Agency Name': 'Test',
-  'Phone Number': '12345678910',
-  Relationship: 'test',
-  Id: 'Id-Here',
-  Address: 'Test Address',
+  Name: 'Name Here',
+  Comments: 'Comments Here',
+  'Entity Id': 'Entity Id Here',
+  Agency: 'Agency Here',
+  Phone: '12345678910',
+  Relationship: 'Relationship Here',
+  Id: 'Id Here',
+  Address: 'Address Here',
   Active: 'Yes',
-  'ICM SNC Case Con Flag': 'N',
-  [createdByFieldName]: 'Creator-Idir-Here',
-  [createdByIdFieldName]: 'Creator-Id-Here',
+  [createdByFieldName]: 'Creator IDIR Here',
+  [createdByIdFieldName]: 'Creator Row Id Here',
   [createdDateFieldName]: '01/01/1970 00:00:00',
-  [updatedByFieldName]: 'Updater-Idir-Here',
-  [updatedByIdFieldName]: 'Updater-Id-Here',
+  [updatedByFieldName]: 'Updater IDIR Here',
+  [updatedByIdFieldName]: 'Updater Row Id Here',
   [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
@@ -83,10 +80,10 @@ export const SupportNetworkListResponseIncidentExample = {
 @ApiSchema({ name: 'SupportNetwork' })
 export class SupportNetworkEntity {
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Cell Phone Number'],
+    example: SupportNetworkSingleResponseCaseExample['Cell'],
   })
   @Expose()
-  'Cell Phone Number': string;
+  'Cell': string;
 
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['Entity Name'],
@@ -104,32 +101,20 @@ export class SupportNetworkEntity {
   Comments: string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['ICM SNC SR Con Flag'],
-  })
-  @Expose()
-  'ICM SNC SR Con Flag': string;
-
-  @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Emergency Contact'],
-  })
-  @Expose()
-  'Emergency Contact': string;
-
-  @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['Entity Id'],
   })
   @Expose()
   'Entity Id': string;
 
   @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['Agency Name'],
+    example: SupportNetworkSingleResponseCaseExample['Agency'],
   })
   @Expose()
-  'Agency Name': string;
+  'Agency': string;
 
-  @ApiProperty({ example: '16041234567' })
+  @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Phone'] })
   @Expose()
-  'Phone Number': string;
+  'Phone': string;
 
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample['Relationship'],
@@ -148,12 +133,6 @@ export class SupportNetworkEntity {
   @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Active'] })
   @Expose()
   Active: string;
-
-  @ApiProperty({
-    example: SupportNetworkSingleResponseCaseExample['ICM SNC Case Con Flag'],
-  })
-  @Expose()
-  'ICM SNC Case Con Flag': string;
 
   @ApiProperty({
     example: SupportNetworkSingleResponseCaseExample[createdByFieldName],
