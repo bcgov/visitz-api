@@ -1,48 +1,88 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import {
-  createdByFieldName,
-  createdByIdFieldName,
-  createdDateFieldName,
-  updatedByFieldName,
-  updatedByIdFieldName,
-  updatedDateFieldName,
-} from '../common/constants/upstream-constants';
 
-// TODO: Add more string examples once we can query the endpoint
 /*
  * Examples
  */
 export const ContactsSingleResponseCaseExample = {
-  Id: 'Row-Id-Here',
-  'Dependent Sequence Number': '0',
-  'SSA Primary Field': 'Y',
-  'Given Name': 'First-Name-Here',
-  'Last Name': 'Last-Name-Here',
-  'M/F': 'Woman/Girl',
-  'Date of Birth': '01/01/1970',
-  Age: '25',
+  '92_1 AGT': '',
+  'Active Addresses': '',
+  Age: '',
+  'AKA First Name': '',
+  'AKA Last Name': '',
+  Alerts: '',
+  'Autism Funding Paused': '',
+  'BCeID User Name': '',
+  'Canadian Citizen': '',
+  'Cell Phone': '',
+  Citizen: '',
+  Citizenship: '',
+  City: '',
+  'Collaborate ID': '',
+  Comments: '',
+  'Concerns Outcome': '',
+  'Coordination AGT CA': '',
+  Country: '',
+  'Country of Birth': '',
+  'Created By': '',
+  'Created By Id': '',
+  'Created Date': '01/01/1970 00:00:00',
+  'Current Start Date': '01/01/1970 00:00:00',
+  CYSN: '',
+  'Date of Birth': '',
+  'Date Updated_Citizen Updated Date': '01/01/1970 00:00:00',
+  'Date Updated_Citizenship Updated Date': '01/01/1970 00:00:00',
+  Deceased: '',
+  'Deceased Date': '01/01/1970 00:00:00',
+  'End Date': '01/01/1970 00:00:00',
+  'First Name': '',
+  Gender: '',
+  'Given Names': '',
+  'Home Phone': '',
+  Id: '',
+  'Immigration Status': '',
+  'Immigration Status Updated': '',
+  Indigenous: '',
+  'Integration State': '',
+  'Investigation Outcome Summary': '',
+  'Last Name': '',
+  'Legacy Dependent Sequence': '',
   'Legal Status': '',
-  'Aboriginal Calc': 'Yes',
-  'Is 921 Band Found Calc': 'N',
-  'CYSN Calc': '',
-  'CYSN PST Score': '',
-  'Coordination AGT (CA)': 'N',
-  'Case Rel Type Code': 'Key player',
-  'Case Subject': 'Y',
-  'Case Con Parent/Caregiver': 'N',
-  'Case Con Subject Child': 'N',
-  'Involved Family Alerts': '',
-  'Case Con Reported On': 'N',
-  'Case Con Original Start Dt': '',
-  'Case Con Start Dt': '01/01/1970 00:00:00',
-  'Case Con End Dt': '',
-  [createdByFieldName]: 'Creator-Idir-Here',
-  [createdByIdFieldName]: 'Creator-Id-Here',
-  [createdDateFieldName]: '01/01/1970 00:00:00',
-  [updatedByFieldName]: 'Updater-Idir-Here',
-  [updatedByIdFieldName]: 'Updater-Id-Here',
-  [updatedDateFieldName]: '01/01/1970 00:00:00',
+  'Message Phone': '',
+  'Middle Names': '',
+  'Original Start Date': '01/01/1970 00:00:00',
+  Parent_Caregiver: '',
+  'Person ID ICM': '',
+  'Person ID MIS': '',
+  'Person Responsible for Alleged Maltreatment': '',
+  PHN: '',
+  'PHN Verified': '',
+  'Postal Code': '',
+  'Potential Duplicate': '',
+  'Potential Duplicate Comments': '',
+  'Preferred Language': '',
+  Primary: '',
+  'Primary Address': '',
+  'Primary Email': '',
+  'Project Code': '',
+  Prov: '',
+  'PST Score': '',
+  Relationship: '',
+  Role: '',
+  'Row Id': '',
+  'SAET Paused': '',
+  SIN: '',
+  'Start Date': '01/01/1970 00:00:00',
+  'Street Address': '',
+  'Street Address 2': '',
+  Subject: '',
+  'Subject Child': '',
+  Title: '',
+  'Unit Number': '',
+  'Updated By': '',
+  'Updated By Id': '',
+  'Updated Date': '01/01/1970 00:00:00',
+  'Work Phone': '',
 };
 
 export const { ...ContactsSingleResponseIncidentExample } =
@@ -60,7 +100,7 @@ export const ContactsListResponseCaseExample = {
     ContactsSingleResponseCaseExample,
     {
       ...ContactsSingleResponseCaseExample,
-      Id: 'Another-Row-Id-Here',
+      Id: 'Another Row Id Here',
     },
   ],
 };
@@ -70,7 +110,7 @@ export const ContactsListResponseIncidentExample = {
     ContactsSingleResponseIncidentExample,
     {
       ...ContactsSingleResponseIncidentExample,
-      Id: 'Another-Row-Id-Here',
+      Id: 'Another Row Id Here',
     },
   ],
 };
@@ -80,7 +120,7 @@ export const ContactsListResponseMemoExample = {
     ContactsSingleResponseMemoExample,
     {
       ...ContactsSingleResponseMemoExample,
-      Id: 'Another-Row-Id-Here',
+      Id: 'Another Row Id Here',
     },
   ],
 };
@@ -90,7 +130,7 @@ export const ContactsListResponseSRExample = {
     ContactsSingleResponseSRExample,
     {
       ...ContactsSingleResponseSRExample,
-      Id: 'Another-Row-Id-Here',
+      Id: 'Another Row Id Here',
     },
   ],
 };
@@ -102,40 +142,148 @@ export const ContactsListResponseSRExample = {
 @ApiSchema({ name: 'Contact' })
 export class ContactsEntity {
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Id'],
+    example: ContactsSingleResponseCaseExample['92_1 AGT'],
   })
   @Expose()
-  Id: string;
+  '92_1 AGT': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Dependent Sequence Number'],
+    example: ContactsSingleResponseCaseExample['Active Addresses'],
   })
   @Expose()
-  'Dependent Sequence Number': string;
+  'Active Addresses': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['SSA Primary Field'],
+    example: ContactsSingleResponseCaseExample['Age'],
   })
   @Expose()
-  'SSA Primary Field': string;
+  'Age': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Given Name'],
+    example: ContactsSingleResponseCaseExample['AKA First Name'],
   })
   @Expose()
-  'Given Name': string;
+  'AKA First Name': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Last Name'],
+    example: ContactsSingleResponseCaseExample['AKA Last Name'],
   })
   @Expose()
-  'Last Name': string;
+  'AKA Last Name': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['M/F'],
+    example: ContactsSingleResponseCaseExample['Alerts'],
   })
   @Expose()
-  'M/F': string;
+  'Alerts': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Autism Funding Paused'],
+  })
+  @Expose()
+  'Autism Funding Paused': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['BCeID User Name'],
+  })
+  @Expose()
+  'BCeID User Name': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Canadian Citizen'],
+  })
+  @Expose()
+  'Canadian Citizen': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Cell Phone'],
+  })
+  @Expose()
+  'Cell Phone': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Citizen'],
+  })
+  @Expose()
+  'Citizen': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Citizenship'],
+  })
+  @Expose()
+  'Citizenship': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['City'],
+  })
+  @Expose()
+  'City': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Collaborate ID'],
+  })
+  @Expose()
+  'Collaborate ID': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Comments'],
+  })
+  @Expose()
+  'Comments': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Concerns Outcome'],
+  })
+  @Expose()
+  'Concerns Outcome': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Coordination AGT CA'],
+  })
+  @Expose()
+  'Coordination AGT CA': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Country'],
+  })
+  @Expose()
+  'Country': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Country of Birth'],
+  })
+  @Expose()
+  'Country of Birth': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Created By Id'],
+  })
+  @Expose()
+  'Created By Id': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Created Date'],
+  })
+  @Expose()
+  'Created Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Current Start Date'],
+  })
+  @Expose()
+  'Current Start Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['CYSN'],
+  })
+  @Expose()
+  'CYSN': string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Date of Birth'],
@@ -144,10 +292,110 @@ export class ContactsEntity {
   'Date of Birth': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Age'],
+    example:
+      ContactsSingleResponseCaseExample['Date Updated_Citizen Updated Date'],
   })
   @Expose()
-  Age: string;
+  'Date Updated_Citizen Updated Date': string;
+
+  @ApiProperty({
+    example:
+      ContactsSingleResponseCaseExample[
+        'Date Updated_Citizenship Updated Date'
+      ],
+  })
+  @Expose()
+  'Date Updated_Citizenship Updated Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Deceased'],
+  })
+  @Expose()
+  'Deceased': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Deceased Date'],
+  })
+  @Expose()
+  'Deceased Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['End Date'],
+  })
+  @Expose()
+  'End Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['First Name'],
+  })
+  @Expose()
+  'First Name': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Gender'],
+  })
+  @Expose()
+  'Gender': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Given Names'],
+  })
+  @Expose()
+  'Given Names': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Home Phone'],
+  })
+  @Expose()
+  'Home Phone': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Id'],
+  })
+  @Expose()
+  'Id': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Immigration Status'],
+  })
+  @Expose()
+  'Immigration Status': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Immigration Status Updated'],
+  })
+  @Expose()
+  'Immigration Status Updated': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Indigenous'],
+  })
+  @Expose()
+  'Indigenous': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Integration State'],
+  })
+  @Expose()
+  'Integration State': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Investigation Outcome Summary'],
+  })
+  @Expose()
+  'Investigation Outcome Summary': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Last Name'],
+  })
+  @Expose()
+  'Last Name': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Legacy Dependent Sequence'],
+  })
+  @Expose()
+  'Legacy Dependent Sequence': string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Legal Status'],
@@ -156,128 +404,217 @@ export class ContactsEntity {
   'Legal Status': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Aboriginal Calc'],
+    example: ContactsSingleResponseCaseExample['Message Phone'],
   })
   @Expose()
-  'Aboriginal Calc': string;
+  'Message Phone': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Is 921 Band Found Calc'],
+    example: ContactsSingleResponseCaseExample['Middle Names'],
   })
   @Expose()
-  'Is 921 Band Found Calc': string;
+  'Middle Names': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['CYSN Calc'],
+    example: ContactsSingleResponseCaseExample['Original Start Date'],
   })
   @Expose()
-  'CYSN Calc': string;
+  'Original Start Date': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['CYSN PST Score'],
+    example: ContactsSingleResponseCaseExample['Parent_Caregiver'],
   })
   @Expose()
-  'CYSN PST Score': string;
+  'Parent_Caregiver': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Coordination AGT (CA)'],
+    example: ContactsSingleResponseCaseExample['Person ID ICM'],
   })
   @Expose()
-  'Coordination AGT (CA)': string;
+  'Person ID ICM': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Rel Type Code'],
+    example: ContactsSingleResponseCaseExample['Person ID MIS'],
   })
   @Expose()
-  'Case Rel Type Code': string;
+  'Person ID MIS': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Subject'],
+    example:
+      ContactsSingleResponseCaseExample[
+        'Person Responsible for Alleged Maltreatment'
+      ],
   })
   @Expose()
-  'Case Subject': string;
+  'Person Responsible for Alleged Maltreatment': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Con Parent/Caregiver'],
+    example: ContactsSingleResponseCaseExample['PHN'],
   })
   @Expose()
-  'Case Con Parent/Caregiver': string;
+  'PHN': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Con Subject Child'],
+    example: ContactsSingleResponseCaseExample['PHN Verified'],
   })
   @Expose()
-  'Case Con Subject Child': string;
+  'PHN Verified': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Involved Family Alerts'],
+    example: ContactsSingleResponseCaseExample['Postal Code'],
   })
   @Expose()
-  'Involved Family Alerts': string;
+  'Postal Code': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Con Reported On'],
+    example: ContactsSingleResponseCaseExample['Potential Duplicate'],
   })
   @Expose()
-  'Case Con Reported On': string;
+  'Potential Duplicate': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Con Original Start Dt'],
+    example: ContactsSingleResponseCaseExample['Potential Duplicate Comments'],
   })
   @Expose()
-  'Case Con Original Start Dt': string;
+  'Potential Duplicate Comments': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Con Start Dt'],
+    example: ContactsSingleResponseCaseExample['Preferred Language'],
   })
   @Expose()
-  'Case Con Start Dt': string;
+  'Preferred Language': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample['Case Con End Dt'],
+    example: ContactsSingleResponseCaseExample['Primary'],
   })
   @Expose()
-  'Case Con End Dt': string;
+  'Primary': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample[createdByFieldName],
+    example: ContactsSingleResponseCaseExample['Primary Address'],
   })
   @Expose()
-  [createdByFieldName]: string;
+  'Primary Address': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample[createdByIdFieldName],
+    example: ContactsSingleResponseCaseExample['Primary Email'],
   })
   @Expose()
-  [createdByIdFieldName]: string;
+  'Primary Email': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample[createdDateFieldName],
+    example: ContactsSingleResponseCaseExample['Project Code'],
   })
   @Expose()
-  [createdDateFieldName]: string;
+  'Project Code': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample[updatedByFieldName],
+    example: ContactsSingleResponseCaseExample['Prov'],
   })
   @Expose()
-  [updatedByFieldName]: string;
+  'Prov': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample[updatedByIdFieldName],
+    example: ContactsSingleResponseCaseExample['PST Score'],
   })
   @Expose()
-  [updatedByIdFieldName]: string;
+  'PST Score': string;
 
   @ApiProperty({
-    example: ContactsSingleResponseCaseExample[updatedDateFieldName],
+    example: ContactsSingleResponseCaseExample['Relationship'],
   })
   @Expose()
-  [updatedDateFieldName]: string;
+  'Relationship': string;
 
-  constructor(object) {
-    Object.assign(this, object);
-  }
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Role'],
+  })
+  @Expose()
+  'Role': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Row Id'],
+  })
+  @Expose()
+  'Row Id': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['SAET Paused'],
+  })
+  @Expose()
+  'SAET Paused': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['SIN'],
+  })
+  @Expose()
+  'SIN': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Start Date'],
+  })
+  @Expose()
+  'Start Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Street Address'],
+  })
+  @Expose()
+  'Street Address': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Street Address 2'],
+  })
+  @Expose()
+  'Street Address 2': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Subject'],
+  })
+  @Expose()
+  'Subject': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Subject Child'],
+  })
+  @Expose()
+  'Subject Child': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Title'],
+  })
+  @Expose()
+  'Title': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Unit Number'],
+  })
+  @Expose()
+  'Unit Number': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Updated By Id'],
+  })
+  @Expose()
+  'Updated By Id': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Updated Date'],
+  })
+  @Expose()
+  'Updated Date': string;
+
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample['Work Phone'],
+  })
+  @Expose()
+  'Work Phone': string;
 }
 
 @Exclude()
