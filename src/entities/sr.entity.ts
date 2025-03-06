@@ -1,5 +1,13 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 export const SRExample = {
   'Acceptance Date': '01/01/1970 00:00:00',
@@ -17,10 +25,10 @@ export const SRExample = {
   'Caller Phone': 'Caller Info Here',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
-  'Created By': 'Creator IDIR Here',
-  'Created By Id': 'Creator Row Id Here',
+  [createdByFieldName]: 'Creator IDIR Here',
+  [createdByIdFieldName]: 'Creator Row Id Here',
   'Created By Office': 'Creation Office Here',
-  'Created Date': '01/01/1970 00:00:00',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
   'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
   Id: 'Id Here',
@@ -42,9 +50,9 @@ export const SRExample = {
   Status: 'Open',
   Type: 'Type Here',
   'Type Of Caller': '',
-  'Updated By': '01/01/1970 00:00:00',
-  'Updated By Id': '01/01/1970 00:00:00',
-  'Updated Date': '01/01/1970 00:00:00',
+  [updatedByFieldName]: '01/01/1970 00:00:00',
+  [updatedByIdFieldName]: '01/01/1970 00:00:00',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 @Exclude()
@@ -144,13 +152,13 @@ export class SREntity {
     example: SRExample['Created By'],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
     example: SRExample['Created By Id'],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
     example: SRExample['Created By Office'],
@@ -162,7 +170,7 @@ export class SREntity {
     example: SRExample['Created Date'],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
     example: SRExample['Given Names'],
@@ -294,19 +302,19 @@ export class SREntity {
     example: SRExample['Updated By'],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
     example: SRExample['Updated By Id'],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
     example: SRExample['Updated Date'],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   constructor(object) {
     Object.assign(this, object);

@@ -1,5 +1,13 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 export const IncidentExample = {
   'Acceptance Date': '01/01/1970 00:00:00',
@@ -13,10 +21,10 @@ export const IncidentExample = {
   Caseload: '',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
-  'Created By': 'Creator IDIR Here',
-  'Created By Id': 'Creator Row Id Here',
+  [createdByFieldName]: 'Creator IDIR Here',
+  [createdByIdFieldName]: 'Creator Row Id Here',
   'Created By Office': 'Creation Office Here',
-  'Created Date': '01/01/1970 00:00:00',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
   'Date Reported': '01/01/1970 00:00:00',
   'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
@@ -33,9 +41,9 @@ export const IncidentExample = {
   'Service Office': 'Office Here',
   Status: 'Open',
   Type: 'Type Of Incident',
-  'Updated By Id': 'Updater Row Id Here',
-  'Updated By': 'Updater IDIR Here',
-  'Updated Date': '01/01/1970 00:00:00',
+  [updatedByIdFieldName]: 'Updater Row Id Here',
+  [updatedByFieldName]: 'Updater IDIR Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 @Exclude()
@@ -111,13 +119,13 @@ export class IncidentEntity {
     example: IncidentExample['Created By'],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
     example: IncidentExample['Created By Id'],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
     example: IncidentExample['Created By Office'],
@@ -129,7 +137,7 @@ export class IncidentEntity {
     example: IncidentExample['Created Date'],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
     example: IncidentExample['Date Reported'],
@@ -231,19 +239,19 @@ export class IncidentEntity {
     example: IncidentExample['Updated By Id'],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
     example: IncidentExample['Updated By'],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
     example: IncidentExample['Updated Date'],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   constructor(object) {
     Object.assign(this, object);
