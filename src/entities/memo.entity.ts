@@ -1,5 +1,13 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 export const MemoExample = {
   'Additional Information': '',
@@ -17,10 +25,10 @@ export const MemoExample = {
   'Caller Phone': '123-456-7890',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
-  'Created By': 'Creator IDIR Here',
-  'Created By Id': 'Creator Row Id Here',
+  [createdByFieldName]: 'Creator IDIR Here',
+  [createdByIdFieldName]: 'Creator Row Id Here',
   'Created By Office': 'Creation Office Here',
-  'Created Date': '01/01/1970 00:00:00',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
   'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
   Id: 'Row Id Here',
@@ -44,9 +52,9 @@ export const MemoExample = {
   'Service Office': 'Office Here',
   Status: 'Open',
   'Type Of Caller': '',
-  'Updated By': '01/01/1970 00:00:00',
-  'Updated By Id': '01/01/1970 00:00:00',
-  'Updated Date': '01/01/1970 00:00:00',
+  [updatedByFieldName]: '01/01/1970 00:00:00',
+  [updatedByIdFieldName]: '01/01/1970 00:00:00',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
   'Urgent ': 'N',
 };
 
@@ -147,13 +155,13 @@ export class MemoEntity {
     example: MemoExample['Created By'],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
     example: MemoExample['Created By Id'],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
     example: MemoExample['Created By Office'],
@@ -165,7 +173,7 @@ export class MemoEntity {
     example: MemoExample['Created Date'],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
     example: MemoExample['Given Names'],
@@ -309,19 +317,19 @@ export class MemoEntity {
     example: MemoExample['Updated By'],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
     example: MemoExample['Updated By Id'],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
     example: MemoExample['Updated Date'],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   @ApiProperty({
     example: MemoExample['Urgent '],

@@ -1,5 +1,13 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 export const CaseExample = {
   Id: 'Id Here',
@@ -27,13 +35,13 @@ export const CaseExample = {
   'Close Reason': '',
   'Closed Date': '',
   'Reopened Date': '',
-  'Created By': 'Idir Here',
-  'Created By Id': 'Id Here',
-  'Created Date': '01/01/1970 00:00:00',
-  'Updated By': 'Idir Here',
-  'Updated By Id': 'Id Here',
+  [createdByFieldName]: 'Idir Here',
+  [createdByIdFieldName]: 'Id Here',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
+  [updatedByFieldName]: 'Idir Here',
+  [updatedByIdFieldName]: 'Id Here',
   'Last Updated Date': '01/01/1970 00:00:00',
-  'Updated Date': '01/01/1970 00:00:00',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
 @Exclude()
@@ -193,31 +201,31 @@ export class CaseEntity {
     example: CaseExample['Created By'],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
     example: CaseExample['Created By Id'],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
     example: CaseExample['Created Date'],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
     example: CaseExample['Updated By'],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
     example: CaseExample['Updated By Id'],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
     example: CaseExample['Last Updated Date'],
@@ -229,7 +237,7 @@ export class CaseEntity {
     example: CaseExample['Updated Date'],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   constructor(object) {
     Object.assign(this, object);

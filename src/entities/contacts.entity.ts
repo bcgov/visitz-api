@@ -1,88 +1,96 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
+import {
+  createdByFieldName,
+  createdByIdFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedByIdFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 
 /*
  * Examples
  */
 export const ContactsSingleResponseCaseExample = {
-  '92_1 AGT': '',
-  'Active Addresses': '',
-  Age: '',
-  'AKA First Name': '',
-  'AKA Last Name': '',
+  '92_1 AGT': 'N',
+  'Active Addresses': '0',
+  Age: '0',
+  'AKA First Name': 'Name Here',
+  'AKA Last Name': 'Name Here',
   Alerts: '',
   'Autism Funding Paused': '',
-  'BCeID User Name': '',
-  'Canadian Citizen': '',
+  'BCeID User Name': 'UserName Here',
+  'Canadian Citizen': 'Y',
   'Cell Phone': '',
   Citizen: '',
   Citizenship: '',
-  City: '',
+  City: 'City Here',
   'Collaborate ID': '',
-  Comments: '',
+  Comments: 'Comments Here',
   'Concerns Outcome': '',
-  'Coordination AGT CA': '',
-  Country: '',
-  'Country of Birth': '',
-  'Created By': '',
-  'Created By Id': '',
-  'Created Date': '01/01/1970 00:00:00',
+  'Coordination AGT CA': 'N',
+  Country: 'Country Here',
+  'Country of Birth': 'Country of Birth Here',
+  [createdByFieldName]: 'Creator IDIR Here',
+  [createdByIdFieldName]: 'Creator Row Id Here',
+  [createdDateFieldName]: '01/01/1970 00:00:00',
   'Current Start Date': '01/01/1970 00:00:00',
   CYSN: '',
-  'Date of Birth': '',
+  'Date of Birth': '01/01/1970',
   'Date Updated_Citizen Updated Date': '01/01/1970 00:00:00',
   'Date Updated_Citizenship Updated Date': '01/01/1970 00:00:00',
-  Deceased: '',
-  'Deceased Date': '01/01/1970 00:00:00',
+  Deceased: 'Y',
+  'Deceased Date': '01/01/1970',
   'End Date': '01/01/1970 00:00:00',
-  'First Name': '',
-  Gender: '',
-  'Given Names': '',
-  'Home Phone': '',
-  Id: '',
+  'First Name': 'First Name Here',
+  Gender: 'Gender Here',
+  'Given Names': 'Given Names Here',
+  'Home Phone': '123-456-7890',
+  Id: 'Id Here',
   'Immigration Status': '',
   'Immigration Status Updated': '',
-  Indigenous: '',
-  'Integration State': '',
+  Indigenous: 'No',
+  'Integration State': 'Synced',
   'Investigation Outcome Summary': '',
-  'Last Name': '',
+  'Last Name': 'Last Name Here',
   'Legacy Dependent Sequence': '',
   'Legal Status': '',
-  'Message Phone': '',
-  'Middle Names': '',
+  'Message Phone': '123-456-7890',
+  'Middle Names': 'Middle Names Here',
   'Original Start Date': '01/01/1970 00:00:00',
-  Parent_Caregiver: '',
-  'Person ID ICM': '',
-  'Person ID MIS': '',
-  'Person Responsible for Alleged Maltreatment': '',
-  PHN: '',
-  'PHN Verified': '',
-  'Postal Code': '',
-  'Potential Duplicate': '',
-  'Potential Duplicate Comments': '',
+  Parent_Caregiver: 'N',
+  'Person ID ICM': 'ICM Id Here',
+  'Person ID MIS': 'MIS Id Here',
+  'Person Responsible for Alleged Maltreatment': 'N',
+  PHN: 'PHN Here',
+  'PHN Verified': 'N',
+  'Postal Code': 'Postal Code Here',
+  'Potential Duplicate': 'N',
+  'Potential Duplicate Comments': 'Potential Duplicate Comments Here',
   'Preferred Language': '',
-  Primary: '',
-  'Primary Address': '',
-  'Primary Email': '',
+  Primary: 'N',
+  'Primary Address': 'Address Here',
+  'Primary Email': 'sample@example.com',
   'Project Code': '',
-  Prov: '',
+  Prov: 'BC',
   'PST Score': '',
-  Relationship: '',
+  Relationship: 'Relationship Here',
   Role: '',
-  'Row Id': '',
+  'Row Id': 'Id Here',
   'SAET Paused': '',
-  SIN: '',
-  'Start Date': '01/01/1970 00:00:00',
-  'Street Address': '',
-  'Street Address 2': '',
+  SIN: 'SIN Here',
+  'Start Date': '01/01/1970',
+  'Street Address': 'Street Address 1 Here',
+  'Street Address 2': 'Street Address 2 Here',
   Subject: '',
-  'Subject Child': '',
+  'Subject Child': 'N',
   Title: '',
-  'Unit Number': '',
-  'Updated By': '',
-  'Updated By Id': '',
-  'Updated Date': '01/01/1970 00:00:00',
-  'Work Phone': '',
+  'Unit Number': 'Unit Number Here',
+  [updatedByFieldName]: 'Updater IDIR Here',
+  [updatedByIdFieldName]: 'Updater Row Id Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
+  'Work Phone': '123-456-7890',
 };
 
 export const { ...ContactsSingleResponseIncidentExample } =
@@ -259,19 +267,19 @@ export class ContactsEntity {
     example: ContactsSingleResponseCaseExample['Created By'],
   })
   @Expose()
-  'Created By': string;
+  [createdByFieldName]: string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Created By Id'],
   })
   @Expose()
-  'Created By Id': string;
+  [createdByIdFieldName]: string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Created Date'],
   })
   @Expose()
-  'Created Date': string;
+  [createdDateFieldName]: string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Current Start Date'],
@@ -596,25 +604,29 @@ export class ContactsEntity {
     example: ContactsSingleResponseCaseExample['Updated By'],
   })
   @Expose()
-  'Updated By': string;
+  [updatedByFieldName]: string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Updated By Id'],
   })
   @Expose()
-  'Updated By Id': string;
+  [updatedByIdFieldName]: string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Updated Date'],
   })
   @Expose()
-  'Updated Date': string;
+  [updatedDateFieldName]: string;
 
   @ApiProperty({
     example: ContactsSingleResponseCaseExample['Work Phone'],
   })
   @Expose()
   'Work Phone': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
 }
 
 @Exclude()
