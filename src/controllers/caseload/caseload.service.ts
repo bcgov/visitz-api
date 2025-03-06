@@ -150,7 +150,6 @@ export class CaseloadService {
         }),
       );
     }
-    console.log(getRequestSpecs);
     return getRequestSpecs;
   }
 

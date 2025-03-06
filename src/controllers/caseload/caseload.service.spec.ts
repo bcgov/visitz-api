@@ -22,13 +22,9 @@ import {
 } from '../../common/constants/parameter-constants';
 import { getMockReq } from '@jest-mock/express';
 import {
-  CaseExample,
   CaseloadCompleteResponseExample,
   CaseloadEntity,
   CaseloadLaterDateResponseExample,
-  IncidentExample,
-  MemoExample,
-  SRExample,
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
 import {
@@ -41,6 +37,10 @@ import {
   pageSizeMax,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
+import { CaseExample } from '../../entities/case.entity';
+import { IncidentExample } from '../../entities/incident.entity';
+import { MemoExample } from '../../entities/memo.entity';
+import { SRExample } from '../../entities/sr.entity';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
