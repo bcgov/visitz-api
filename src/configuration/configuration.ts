@@ -25,11 +25,15 @@ export default () => ({
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
       workspace: process.env.SR_WORKSPACE ?? undefined,
       idirField: process.env.SR_IDIR_FIELD ?? undefined,
+      searchspecIdirField: process.env.SR_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      restrictedField: process.env.SR_RESTRICTED_FIELD ?? undefined,
     },
     memo: {
       endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
       workspace: process.env.MEMO_WORKSPACE ?? undefined,
       idirField: process.env.MEMO_IDIR_FIELD ?? undefined,
+      searchspecIdirField: process.env.MEMO_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      restrictedField: process.env.MEMO_RESTRICTED_FIELD ?? undefined,
     },
     employee: {
       endpoint: encodeURI((process.env.EMPLOYEE_ENDPOINT ?? ' ').trim()),
@@ -56,6 +60,8 @@ export default () => ({
     contacts: updatedDateFieldName,
     cases: process.env.CASE_AFTER_FIELD ?? undefined,
     incidents: process.env.INCIDENT_AFTER_FIELD ?? undefined,
+    srs: process.env.SR_AFTER_FIELD ?? undefined,
+    memos: process.env.MEMO_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
