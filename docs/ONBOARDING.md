@@ -21,7 +21,7 @@ For local development, make a copy of ".env.example" with the name ".env". Enter
 
 For Deployments to OpenShift, GitHub Actions variables/secrets will be interpolated automatically.
 
-Extra runtime logic may be applied to environment variables via /src/configuration/configuration.js.
+Extra runtime logic may be applied to environment variables via [configuration.ts](../src/configuration/configuration.ts).
 
 ## Compile and run the project
 
