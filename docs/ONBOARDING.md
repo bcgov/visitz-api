@@ -1,16 +1,23 @@
 ## Project setup
 
-Prerequistes:
+### Prerequisites
+
 - Node.js
 - npm
 - git (for git pre-commit hooks with husky)
 
-To install the project, use
+### Dev-only prerequisites
+
+- pino-pretty
+- EditorConfig ([VSCode Extension link](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig))
+
+### Installing the project
 
 ```bash
 $ npm install
 $ npm install -g pino-pretty
 ```
+
 This will install all dependencies, as well as pre-commit hooks for formatting, linting and running tests.
 
 Note the global install of pino-pretty is for prettifying logs when using watch, debug or development mode. This is so this dependency doesn't need to be installed in production.
