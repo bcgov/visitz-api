@@ -32,6 +32,7 @@ export const MemoExample = {
   'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
   Id: 'Row Id Here',
+  Kkcfs: 'KKCFS flag',
   'Last Name': 'Last Names',
   'Medical Exam Required': 'N',
   'Memo Number': 'Memo Number Here',
@@ -43,6 +44,7 @@ export const MemoExample = {
   'Police Force': '',
   'Police Investigation': '',
   'Police Notified Date': '01/01/1970 00:00:00',
+  'Police Report Number': 'Report Number Here',
   'Police Report': '',
   'Preferred Contact Method': 'Phone',
   'Recorded By': '',
@@ -55,7 +57,7 @@ export const MemoExample = {
   [updatedByFieldName]: '01/01/1970 00:00:00',
   [updatedByIdFieldName]: '01/01/1970 00:00:00',
   [updatedDateFieldName]: '01/01/1970 00:00:00',
-  'Urgent ': 'N',
+  Urgent: 'N',
 };
 
 @Exclude()
@@ -194,6 +196,12 @@ export class MemoEntity {
   Id: string;
 
   @ApiProperty({
+    example: MemoExample['Kkcfs'],
+  })
+  @Expose()
+  Kkcfs: string;
+
+  @ApiProperty({
     example: MemoExample['Last Name'],
   })
   @Expose()
@@ -258,6 +266,12 @@ export class MemoEntity {
   })
   @Expose()
   'Police Notified Date': string;
+
+  @ApiProperty({
+    example: MemoExample['Police Report Number'],
+  })
+  @Expose()
+  'Police Report Number': string;
 
   @ApiProperty({
     example: MemoExample['Police Report'],
@@ -332,10 +346,10 @@ export class MemoEntity {
   [updatedDateFieldName]: string;
 
   @ApiProperty({
-    example: MemoExample['Urgent '],
+    example: MemoExample['Urgent'],
   })
   @Expose()
-  'Urgent ': string;
+  'Urgent': string;
 
   constructor(object) {
     Object.assign(this, object);
