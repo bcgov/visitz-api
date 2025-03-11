@@ -17,6 +17,10 @@ export const IncidentExample = {
   'Are Any Of The Family Members Indigenous': 'N',
   'Assigned To': 'Assignee IDIR Here',
   'Assigned To Id': 'Assignee IDIR Row Id Here',
+  'Caller Address': 'Caller Address Here',
+  'Caller Email': 'Caller Email Here',
+  'Caller Name': 'Caller Name Here',
+  'Caller Phone': 'Caller Phone Here',
   'Call Information': 'Call Info Here',
   Caseload: '',
   'Cell Phone': '123-456-7890',
@@ -30,17 +34,28 @@ export const IncidentExample = {
   'Home Phone': '123-456-7890',
   Id: 'Id Here',
   'Incident Number': 'Incident Number Here',
+  Kkcfs: 'KKCFS Flag',
   'Indigenous Authority': '',
   'Last Name': 'Last Name',
+  'Medical Exam Required': 'Medical Exam Required Here',
+  Method: 'Method Here',
+  'Nature Of Call': 'Nature Of Call Here',
   'Pcc Summary': 'Summary Here',
+  'Police Force': 'Police Force Here',
+  'Police Investigation': 'Police Investigation Here',
+  'Police Notified Date': 'Police Notified Date Here',
+  'Police Report Number': 'Police Report Number Here',
+  'Preferred Contact Method': 'Preferred Contact Method Here',
   'Protection Response': '',
   'Referral Date': '01/01/1970 00:00:00',
   Resolution: '',
   'Response Priority': ' ',
+  'Restricted Flag': 'Y/N',
   'Row Id': 'Id Here',
   'Service Office': 'Office Here',
   Status: 'Open',
   Type: 'Type Of Incident',
+  'Type Of Caller': 'Type Of Caller Here',
   [updatedByIdFieldName]: 'Updater Row Id Here',
   [updatedByFieldName]: 'Updater IDIR Here',
   [updatedDateFieldName]: '01/01/1970 00:00:00',
@@ -90,6 +105,30 @@ export class IncidentEntity {
   })
   @Expose()
   'Assigned To Id': string;
+
+  @ApiProperty({
+    example: IncidentExample['Caller Address'],
+  })
+  @Expose()
+  'Caller Address': string;
+
+  @ApiProperty({
+    example: IncidentExample['Caller Email'],
+  })
+  @Expose()
+  'Caller Email': string;
+
+  @ApiProperty({
+    example: IncidentExample['Caller Name'],
+  })
+  @Expose()
+  'Caller Name': string;
+
+  @ApiProperty({
+    example: IncidentExample['Caller Phone'],
+  })
+  @Expose()
+  'Caller Phone': string;
 
   @ApiProperty({
     example: IncidentExample['Call Information'],
@@ -170,6 +209,12 @@ export class IncidentEntity {
   'Incident Number': string;
 
   @ApiProperty({
+    example: IncidentExample['Kkcfs'],
+  })
+  @Expose()
+  Kkcfs: string;
+
+  @ApiProperty({
     example: IncidentExample['Indigenous Authority'],
   })
   @Expose()
@@ -182,10 +227,58 @@ export class IncidentEntity {
   'Last Name': string;
 
   @ApiProperty({
+    example: IncidentExample['Medical Exam Required'],
+  })
+  @Expose()
+  'Medical Exam Required': string;
+
+  @ApiProperty({
+    example: IncidentExample['Method'],
+  })
+  @Expose()
+  'Method': string;
+
+  @ApiProperty({
+    example: IncidentExample['Nature Of Call'],
+  })
+  @Expose()
+  'Nature Of Call': string;
+
+  @ApiProperty({
     example: IncidentExample['Pcc Summary'],
   })
   @Expose()
   'Pcc Summary': string;
+
+  @ApiProperty({
+    example: IncidentExample['Police Force'],
+  })
+  @Expose()
+  'Police Force': string;
+
+  @ApiProperty({
+    example: IncidentExample['Police Investigation'],
+  })
+  @Expose()
+  'Police Investigation': string;
+
+  @ApiProperty({
+    example: IncidentExample['Police Notified Date'],
+  })
+  @Expose()
+  'Police Notified Date': string;
+
+  @ApiProperty({
+    example: IncidentExample['Police Report Number'],
+  })
+  @Expose()
+  'Police Report Number': string;
+
+  @ApiProperty({
+    example: IncidentExample['Preferred Contact Method'],
+  })
+  @Expose()
+  'Preferred Contact Method': string;
 
   @ApiProperty({
     example: IncidentExample['Protection Response'],
@@ -212,6 +305,12 @@ export class IncidentEntity {
   'Response Priority': string;
 
   @ApiProperty({
+    example: IncidentExample['Restricted Flag'],
+  })
+  @Expose()
+  'Restricted Flag': string;
+
+  @ApiProperty({
     example: IncidentExample['Row Id'],
   })
   @Expose()
@@ -234,6 +333,12 @@ export class IncidentEntity {
   })
   @Expose()
   Type: string;
+
+  @ApiProperty({
+    example: IncidentExample['Type Of Caller'],
+  })
+  @Expose()
+  'Type Of Caller': string;
 
   @ApiProperty({
     example: IncidentExample['Updated By Id'],
