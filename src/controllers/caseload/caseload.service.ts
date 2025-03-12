@@ -218,7 +218,7 @@ export class CaseloadService {
     return response;
   }
 
-  caseloadFilterItems(response, after: string) {
+  caseloadFilterItemsAfter(response, after: string) {
     const afterDateTime = DateTime.fromISO(after, { zone: 'utc' });
     for (const type of this.recordTypes) {
       const items = response[`${type}s`][`items`];
@@ -278,7 +278,7 @@ export class CaseloadService {
 
     let response = this.caseloadMapResponse(results);
     if (filter?.after !== undefined) {
-      response = this.caseloadFilterItems(response, filter.after);
+      response = this.caseloadFilterItemsAfter(response, filter.after);
     }
 
     await this.caseloadUnsetCacheItems(response, idir, req);
