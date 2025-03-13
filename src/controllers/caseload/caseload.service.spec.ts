@@ -296,6 +296,8 @@ describe('CaseloadService', () => {
     );
   });
 
+  // TODO: Test for filtering by Restricted Flag
+
   describe('caseloadUnsetCacheItems tests', () => {
     it(`should unset items if they exist in the cache`, async () => {
       const idir = 'idir';
