@@ -55,6 +55,7 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { SafetyAssessmentService } from '../../helpers/safety-assessment/safety-assessment.service';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -73,6 +74,7 @@ describe('IncidentsController', () => {
         SupportNetworkService,
         ContactsService,
         AttachmentsService,
+        SafetyAssessmentService,
         AuthService,
         TokenRefresherService,
         RequestPreparerService,

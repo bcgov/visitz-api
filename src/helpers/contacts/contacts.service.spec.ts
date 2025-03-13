@@ -38,7 +38,6 @@ describe('ContactsService', () => {
       imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         ContactsService,
-        ContactsService,
         UtilitiesService,
         ConfigService,
         JwtService,

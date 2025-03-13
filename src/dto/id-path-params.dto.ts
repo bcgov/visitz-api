@@ -6,6 +6,7 @@ import {
   idMaxLength,
   idName,
   idRegex,
+  safetyAssessmentIdName,
   supportNetworkIdName,
   visitIdName,
 } from '../common/constants/parameter-constants';
@@ -63,4 +64,15 @@ export class VisitIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [visitIdName]: string;
+}
+
+export class SafetyAssessmentIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Safety-Assessment-Id-Here',
+    description: 'The Id of the safety assessment you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [safetyAssessmentIdName]: string;
 }

@@ -3,6 +3,7 @@ const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
 const UNIFORM_RESPONSE = 'y';
 const INLINE_ATTACHMENT = 'true';
+const GET_CHILDREN = 'all';
 const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
@@ -18,6 +19,7 @@ const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
+const safetyAssessmentIdName = 'safetyAssessmentId';
 
 const casesAttachmentsFieldName = 'Case Id';
 const incidentsAttachmentsFieldName = 'Incident Id';
@@ -31,6 +33,7 @@ export {
   CONTENT_TYPE,
   UNIFORM_RESPONSE,
   INLINE_ATTACHMENT,
+  GET_CHILDREN,
   uniformResponseParamName,
   recordCountHeaderName,
   inlineAttachmentParamName,
@@ -44,6 +47,7 @@ export {
   contactIdName,
   supportNetworkIdName,
   visitIdName,
+  safetyAssessmentIdName,
   casesAttachmentsFieldName,
   incidentsAttachmentsFieldName,
   srAttachmentsFieldName,
