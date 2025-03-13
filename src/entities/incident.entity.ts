@@ -50,7 +50,7 @@ export const IncidentExample = {
   'Referral Date': '01/01/1970 00:00:00',
   Resolution: '',
   'Response Priority': ' ',
-  'Restricted Flag': 'Y/N',
+  'Restricted Flag': 'N',
   'Row Id': 'Id Here',
   'Service Office': 'Office Here',
   Status: 'Open',

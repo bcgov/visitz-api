@@ -27,10 +27,7 @@ import {
   CaseloadLaterDateResponseExample,
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
-import {
-  RecordType,
-  RestrictedRecordEnum,
-} from '../../common/constants/enumerations';
+import { RecordType } from '../../common/constants/enumerations';
 import { plainToInstance } from 'class-transformer';
 import {
   pageSizeParamName,
@@ -119,18 +116,6 @@ describe('CaseloadService', () => {
       const memoIdirFieldName = configService.get<string>(
         `upstreamAuth.memo.searchspecIdirField`,
       );
-      const caseRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.case.restrictedField`,
-      );
-      const incidentRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.incident.restrictedField`,
-      );
-      const srRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.sr.restrictedField`,
-      );
-      const memoRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.memo.restrictedField`,
-      );
       const headers = {
         Accept: CONTENT_TYPE,
         'Accept-Encoding': '*',
@@ -144,27 +129,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec:
-          `([${caseIdirFieldName}]="${idir}" AND ` +
-          `[${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `([${caseIdirFieldName}]="${idir}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec:
-          `([${incidentIdirFieldName}]="${idir}" AND ` +
-          `[${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `([${incidentIdirFieldName}]="${idir}")`,
       };
       const srParams = {
         ...params,
-        searchspec:
-          `([${srIdirFieldName}]="${idir}" AND ` +
-          `[${srRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `([${srIdirFieldName}]="${idir}")`,
       };
       const memoParams = {
         ...params,
-        searchspec:
-          `([${memoIdirFieldName}]="${idir}" AND ` +
-          `[${memoRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `([${memoIdirFieldName}]="${idir}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
@@ -296,7 +273,7 @@ describe('CaseloadService', () => {
     );
   });
 
-  describe('caseloadFilterItems tests', () => {
+  describe('caseloadFilterItemsAfter tests', () => {
     it.each([
       [{ ...CaseloadCompleteResponseExample }, '2011-10-05T14:48:00', [], []],
       [
@@ -309,7 +286,7 @@ describe('CaseloadService', () => {
       `filters out items past the given after date`,
       (response, afterString, expectedCase, expectedIncident) => {
         const deepCopyResponse = JSON.parse(JSON.stringify(response));
-        const result = service.caseloadFilterItems(
+        const result = service.caseloadFilterItemsAfter(
           deepCopyResponse,
           afterString,
         );
@@ -318,6 +295,8 @@ describe('CaseloadService', () => {
       },
     );
   });
+
+  // TODO: Test for filtering by Restricted Flag
 
   describe('caseloadUnsetCacheItems tests', () => {
     it(`should unset items if they exist in the cache`, async () => {

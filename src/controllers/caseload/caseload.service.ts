@@ -129,10 +129,7 @@ export class CaseloadService {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of this.recordTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
-      const restrictedFieldVarName = `${type}RestrictedFieldName`;
-      const baseSearchSpec =
-        `([${this[idirFieldVarName]}]="${idir}"` +
-        ` AND [${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
+      const baseSearchSpec = `([${this[idirFieldVarName]}]="${idir}"`;
       const [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
@@ -218,7 +215,7 @@ export class CaseloadService {
     return response;
   }
 
-  caseloadFilterItems(response, after: string) {
+  caseloadFilterItemsAfter(response, after: string) {
     const afterDateTime = DateTime.fromISO(after, { zone: 'utc' });
     for (const type of this.recordTypes) {
       const items = response[`${type}s`][`items`];
@@ -229,6 +226,21 @@ export class CaseloadService {
             this.utilitiesService.convertUpstreamDateFormatToDateTime(
               entry[`${this[typeFieldName]}`],
             ) > afterDateTime,
+        );
+      }
+    }
+    return response;
+  }
+
+  caseloadFilterRestrictedItems(response) {
+    for (const type of this.recordTypes) {
+      const items = response[`${type}s`][`items`];
+      const restrictedFieldVarName = `${type}RestrictedFieldName`;
+      if (items !== undefined) {
+        response[`${type}s`][`items`] = items.filter(
+          (entry) =>
+            entry[`${this[restrictedFieldVarName]}`] ===
+            RestrictedRecordEnum.False,
         );
       }
     }
@@ -277,8 +289,10 @@ export class CaseloadService {
     }
 
     let response = this.caseloadMapResponse(results);
+    response = this.caseloadFilterRestrictedItems(response);
+
     if (filter?.after !== undefined) {
-      response = this.caseloadFilterItems(response, filter.after);
+      response = this.caseloadFilterItemsAfter(response, filter.after);
     }
 
     await this.caseloadUnsetCacheItems(response, idir, req);
