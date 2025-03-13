@@ -19,6 +19,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { RecordType } from '../../common/constants/enumerations';
@@ -31,6 +32,7 @@ import {
   incidentsAttachmentsFieldName,
   inlineAttachmentParamName,
   afterParamName,
+  safetyAssessmentIdName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
@@ -53,12 +55,19 @@ import {
 } from '../../entities/contacts.entity';
 import { JwtService } from '@nestjs/jwt';
 import { SafetyAssessmentService } from '../../helpers/safety-assessment/safety-assessment.service';
+import {
+  NestedSafetyAssessmentEntity,
+  SafetyAssessmentEntity,
+  SafetyAssessmentListResponseIncidentExample,
+  SafetyAssessmentSingleResponseIncidentExample,
+} from '../../entities/safety-assessment.entity';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
   let supportNetworkService: SupportNetworkService;
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
+  let safetyAssessmentsService: SafetyAssessmentService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -90,6 +99,9 @@ describe('IncidentsService', () => {
     );
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
     contactsService = module.get<ContactsService>(ContactsService);
+    safetyAssessmentsService = module.get<SafetyAssessmentService>(
+      SafetyAssessmentService,
+    );
     mockClear();
   });
 
@@ -324,6 +336,77 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentSafetyAssessmentRecord tests', () => {
+    it.each([
+      [
+        SafetyAssessmentListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const safetyAssessmentSpy = jest
+          .spyOn(safetyAssessmentsService, 'getListSafetyAssessmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSafetyAssessmentEntity(data)),
+          );
+
+        const result = await service.getListIncidentSafetyAssessmentRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(safetyAssessmentSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedSafetyAssessmentEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentSafetyAssessmentRecord tests', () => {
+    it.each([
+      [
+        SafetyAssessmentSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [safetyAssessmentIdName]: 'false',
+        } as SafetyAssessmentIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const safetyAssessmentSpy = jest
+          .spyOn(safetyAssessmentsService, 'getSingleSafetyAssessmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new SafetyAssessmentEntity(data)),
+          );
+
+        const result = await service.getSingleIncidentSafetyAssessmentRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(safetyAssessmentSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new SafetyAssessmentEntity(data));
       },
     );
   });

@@ -18,6 +18,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
@@ -31,6 +32,7 @@ import {
   idName,
   inlineAttachmentParamName,
   afterParamName,
+  safetyAssessmentIdName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
@@ -56,6 +58,12 @@ import {
 } from '../../entities/contacts.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { SafetyAssessmentService } from '../../helpers/safety-assessment/safety-assessment.service';
+import {
+  NestedSafetyAssessmentEntity,
+  SafetyAssessmentEntity,
+  SafetyAssessmentListResponseIncidentExample,
+  SafetyAssessmentSingleResponseIncidentExample,
+} from '../../entities/safety-assessment.entity';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -317,6 +325,75 @@ describe('IncidentsController', () => {
           'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentSafetyAssessmentRecord tests', () => {
+    it.each([
+      [
+        SafetyAssessmentListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const incidentServiceSpy = jest
+          .spyOn(incidentsService, 'getListIncidentSafetyAssessmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSafetyAssessmentEntity(data)),
+          );
+
+        const result = await controller.getListIncidentSafetyAssessmentRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(incidentServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedSafetyAssessmentEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentSafetyAssessmentRecord tests', () => {
+    it.each([
+      [
+        SafetyAssessmentSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [safetyAssessmentIdName]: 'test2',
+        } as SafetyAssessmentIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentServiceSpy = jest
+          .spyOn(incidentsService, 'getSingleIncidentSafetyAssessmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new SafetyAssessmentEntity(data)),
+          );
+
+        const result = await controller.getSingleIncidentSafetyAssessmentRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(incidentServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new SafetyAssessmentEntity(data));
       },
     );
   });
