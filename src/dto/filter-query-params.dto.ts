@@ -82,7 +82,7 @@ export class FilterQueryParams extends AfterQueryParams {
     minimum: startRowNumMin,
     format: 'integer',
     description:
-      `The row from which to start displaying results, defaults to ${startRowNumDefault}. Records are returned in batches based` +
+      `The row from which to start displaying results, defaults to ${startRowNumDefault}. Records are returned in batches based ` +
       `on the PageSize, or less if that quantity of further records are unavailable from the provided start point.` +
       ` If no records are available at the given start point, returns 204. Use in combination with the total-record-count` +
       ` response header and PageSize parameter to enable pagination.`,

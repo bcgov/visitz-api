@@ -1,6 +1,11 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { createdDateFieldName } from '../common/constants/upstream-constants';
+import {
+  createdByFieldName,
+  createdDateFieldName,
+  updatedByFieldName,
+  updatedDateFieldName,
+} from '../common/constants/upstream-constants';
 import { IsOptional } from 'class-validator';
 
 /*
@@ -17,15 +22,15 @@ export const AttachmentsSingleResponseCaseExample = {
   'Incident Id': '',
   'Incident No': '',
   Internal: 'N',
-  'No Intervention': 'Numeric-Case-Id-Here',
+  'No Intervention': 'Numeric Case Id Here',
   'Portal Visible': 'No',
   'Show on Contact': 'N',
   Status: 'Complete',
   'Sub-Category': 'Identification',
   Template: 'CF0659',
   'Template Type': 'Form',
-  'Case Id': 'Case-Id-Here',
-  Comments: 'comments here',
+  'Case Id': 'Case Id Here',
+  Comments: 'Comments here',
   FileAutoUpdFlg: 'Y',
   FileDate: '01/01/1970 00:00:00',
   FileDeferFlg: 'P',
@@ -39,10 +44,14 @@ export const AttachmentsSingleResponseCaseExample = {
   'Memo Id': '',
   MemoNumber: '',
   'SR Id': '',
-  Id: 'Attachment-Id-Here',
-  CreatedByName: 'Creator-Idir-Here',
+  Id: 'Id Here',
+  'Row Id': 'Id Here',
+  [createdByFieldName]: 'Creator IDIR Here',
+  'Created By ID': 'Creator Row Id Here',
   [createdDateFieldName]: '01/01/1970 00:00:00',
-  UpdatedByName: 'Updater-Idir-Here',
+  [updatedByFieldName]: 'Updater IDIR Here',
+  'Updated By ID': 'Updater Row Id Here',
+  [updatedDateFieldName]: '01/01/1970 00:00:00',
   'Last Updated Date': '01/01/1970 00:00:00',
 };
 
@@ -55,8 +64,8 @@ export const AttachmentsSingleResponseIncidentExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
-  'Incident Id': 'Incident-Id-Here',
-  'Incident No': 'Numeric-Incident-Id-Here',
+  'Incident Id': 'Incident Id Here',
+  'Incident No': 'Numeric Incident Id Here',
 };
 
 export const AttachmentDetailsIncidentExample = {
@@ -68,8 +77,8 @@ export const AttachmentsSingleResponseSRExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
-  'Application No': 'Numeric-SR-Id-Here',
-  'SR Id': 'SR-Id-Here',
+  'Application No': 'Numeric SR Id Here',
+  'SR Id': 'SR Id Here',
 };
 
 export const AttachmentDetailsSRExample = {
@@ -81,8 +90,8 @@ export const AttachmentsSingleResponseMemoExample = {
   ...AttachmentsSingleResponseCaseExample,
   'No Intervention': '',
   'Case Id': '',
-  MemoNumber: 'Numeric-Memo-Id-Here',
-  'Memo Id': 'Memo-Id-Here',
+  MemoNumber: 'Numeric-Memo Id Here',
+  'Memo Id': 'Memo Id Here',
 };
 
 export const AttachmentDetailsMemoExample = {
@@ -95,8 +104,8 @@ export const AttachmentsListResponseCaseExample = {
     AttachmentsSingleResponseCaseExample,
     {
       ...AttachmentsSingleResponseCaseExample,
-      'No Intervention': 'Another-Numeric-Case-Id-Here',
-      'Case Id': 'Another-Case-Id-Here',
+      'No Intervention': 'Another Numeric Case Id Here',
+      'Case Id': 'Another Case Id Here',
     },
   ],
 };
@@ -106,8 +115,8 @@ export const AttachmentsListResponseIncidentExample = {
     AttachmentsSingleResponseIncidentExample,
     {
       ...AttachmentsSingleResponseIncidentExample,
-      'Incident No': 'Another-Numeric-Incident-Id-Here',
-      'Incident Id': 'Another-Incident-Id-Here',
+      'Incident No': 'Another Numeric Incident Id Here',
+      'Incident Id': 'Another Incident Id Here',
     },
   ],
 };
@@ -117,8 +126,8 @@ export const AttachmentsListResponseSRExample = {
     AttachmentsSingleResponseSRExample,
     {
       ...AttachmentsSingleResponseSRExample,
-      'Application No': 'Another-Numeric-SR-Id-Here',
-      'SR Id': 'Another-SR-Id-Here',
+      'Application No': 'Another Numeric SR Id Here',
+      'SR Id': 'Another SR Id Here',
     },
   ],
 };
@@ -128,8 +137,8 @@ export const AttachmentsListResponseMemoExample = {
     AttachmentsSingleResponseMemoExample,
     {
       ...AttachmentsSingleResponseMemoExample,
-      MemoNumber: 'Another-Numeric-Memo-Id-Here',
-      'Memo Id': 'Another-Memo-Id-Here',
+      MemoNumber: 'Another Numeric Memo Id Here',
+      'Memo Id': 'Another Memo Id Here',
     },
   ],
 };
@@ -351,10 +360,22 @@ export class AttachmentsEntity {
   Id: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['CreatedByName'],
+    example: AttachmentsSingleResponseCaseExample['Row Id'],
   })
   @Expose()
-  'CreatedByName': string;
+  'Row Id': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample[createdByFieldName],
+  })
+  @Expose()
+  [createdByFieldName]: string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Created By ID'],
+  })
+  @Expose()
+  'Created By ID': string;
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample[createdDateFieldName],
@@ -363,10 +384,22 @@ export class AttachmentsEntity {
   [createdDateFieldName]: string;
 
   @ApiProperty({
-    example: AttachmentsSingleResponseCaseExample['UpdatedByName'],
+    example: AttachmentsSingleResponseCaseExample[updatedByFieldName],
   })
   @Expose()
-  'UpdatedByName': string;
+  [updatedByFieldName]: string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['Updated By ID'],
+  })
+  @Expose()
+  'Updated By ID': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample[updatedDateFieldName],
+  })
+  @Expose()
+  [updatedDateFieldName]: string;
 
   @ApiProperty({
     example: AttachmentsSingleResponseCaseExample['Last Updated Date'],

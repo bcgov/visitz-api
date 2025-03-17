@@ -15,13 +15,13 @@ import {
   uniformResponseParamName,
   VIEW_MODE,
 } from '../../../common/constants/parameter-constants';
-import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import {
   idirUsernameHeaderField,
   trustedIdirHeaderName,
 } from '../../../common/constants/upstream-constants';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +29,8 @@ export class AuthService {
   cacheTime: number;
   baseUrl: string;
   buildNumber: string;
+  employeeWorkspace: string;
+  employeeEndpoint: string;
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
@@ -44,6 +46,12 @@ export class AuthService {
     );
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
     this.skipJWT = this.configService.get<boolean>('skipJWTCache');
+    this.employeeWorkspace = this.configService.get<string>(
+      'upstreamAuth.employee.workspace',
+    );
+    this.employeeEndpoint = this.configService.get<string>(
+      'upstreamAuth.employee.endpoint',
+    );
   }
 
   async getRecordAndValidate(
@@ -67,26 +75,46 @@ export class AuthService {
     );
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
+    let employeeActive: boolean | undefined = await this.cacheManager.get(idir);
 
-    if (upstreamResult === undefined) {
-      this.logger.log(`Cache not hit, going upstream...`);
+    if (upstreamResult === undefined && employeeActive === undefined) {
+      this.logger.log(
+        `Cache not hit for record type and active status, going upstream...`,
+      );
+      let upstreamIdir: string | null;
+      [upstreamIdir, employeeActive] = await Promise.all([
+        this.getAssignedIdirUpstream(id, recordType, idir),
+        this.getEmployeeActiveUpstream(idir),
+      ]);
+      upstreamResult = await this.evaluateUpstreamResult(
+        upstreamIdir,
+        idir,
+        key,
+      );
+    } else if (upstreamResult === undefined) {
+      this.logger.log(`Cache not hit for record type, going upstream...`);
       const upstreamIdir = await this.getAssignedIdirUpstream(
         id,
         recordType,
         idir,
       );
-      const authStatus = upstreamIdir === idir ? 200 : 403;
-      if (upstreamIdir !== null) {
-        await this.cacheManager.set(key, authStatus, this.cacheTime);
-      }
-      upstreamResult = authStatus;
-      this.logger.log(
-        `Upstream idir: '${upstreamIdir}' Result: ${upstreamResult}`,
+      upstreamResult = await this.evaluateUpstreamResult(
+        upstreamIdir,
+        idir,
+        key,
       );
+    } else if (employeeActive === undefined) {
+      this.logger.log(`Cache not hit for active status, going upstream...`);
+      employeeActive = await this.getEmployeeActiveUpstream(idir);
     } else {
-      this.logger.log(`Cache hit! Key: ${key} Result: ${upstreamResult}`);
+      this.logger.log(
+        `Cache hit for record type! Key: ${key} Result: ${upstreamResult}`,
+      );
+      this.logger.log(
+        `Cache hit for employee status! Key: ${idir} Result: ${employeeActive}`,
+      );
     }
-    if (upstreamResult === 403) {
+    if (upstreamResult === 403 || employeeActive == false) {
       return false;
     }
     return true;
@@ -101,6 +129,22 @@ export class AuthService {
       throw new Error(`Id not found in path`);
     }
     return [rowId, controllerPath as RecordType];
+  }
+
+  async evaluateUpstreamResult(
+    upstreamIdir: string | null,
+    idir: string,
+    key: string,
+  ) {
+    const authStatus = upstreamIdir === idir ? 200 : 403;
+    if (upstreamIdir !== null) {
+      await this.cacheManager.set(key, authStatus, this.cacheTime);
+    }
+    const upstreamResult = authStatus;
+    this.logger.log(
+      `Upstream idir: '${upstreamIdir}' Result: ${upstreamResult}`,
+    );
+    return upstreamResult;
   }
 
   async getAssignedIdirUpstream(
@@ -165,5 +209,60 @@ export class AuthService {
       }
     }
     return null;
+  }
+
+  async getEmployeeActiveUpstream(idir: string): Promise<boolean> {
+    const params = {
+      ViewMode: 'Catalog',
+      ChildLinks: CHILD_LINKS,
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+      fields: 'Login Name,Employment Status',
+      excludeEmptyFieldsInResponse: 'true',
+      searchspec: `([Login Name]="${idir}" AND [Employment Status]="Active")`,
+    };
+    if (this.employeeWorkspace !== undefined) {
+      params['workspace'] = this.employeeWorkspace;
+    }
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const url = this.baseUrl + this.employeeEndpoint;
+
+    let response;
+    try {
+      const token =
+        await this.tokenRefresherService.refreshUpstreamBearerToken();
+      if (token === undefined) {
+        throw new Error('Upstream auth failed');
+      }
+      headers['Authorization'] = token;
+      response = await firstValueFrom(
+        this.httpService.get(url, { params, headers }),
+      );
+      const employmentStatus = response.data['items'][0]['Employment Status'];
+      if (employmentStatus === undefined) {
+        this.logger.error(`${idir} is not an active user`);
+        await this.cacheManager.set(idir, false, this.cacheTime);
+        return false;
+      }
+      await this.cacheManager.set(idir, true, this.cacheTime);
+      return true;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        this.logger.error({
+          msg: error.message,
+          errorDetails: error.response?.data,
+          stack: error.stack,
+          cause: error.cause,
+          buildNumber: this.buildNumber,
+        });
+        await this.cacheManager.set(idir, false, this.cacheTime);
+      } else {
+        this.logger.error({ error, buildNumber: this.buildNumber });
+      }
+    }
+    return false;
   }
 }
