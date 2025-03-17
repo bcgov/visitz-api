@@ -104,7 +104,7 @@ describe('SafetyAssessmentService', () => {
     );
   });
 
-  describe('getSingleContactRecord tests', () => {
+  describe('getSingleSafetyAssessmentRecord tests', () => {
     it.each([
       [
         SafetyAssessmentSingleResponseIncidentExample,
