@@ -36,6 +36,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -49,6 +50,7 @@ import {
   idName,
   inlineAttachmentParamName,
   afterParamName,
+  safetyAssessmentIdName,
   supportNetworkIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
@@ -82,6 +84,12 @@ import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-erro
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
+import {
+  NestedSafetyAssessmentEntity,
+  SafetyAssessmentEntity,
+  SafetyAssessmentListResponseIncidentExample,
+  SafetyAssessmentSingleResponseIncidentExample,
+} from '../../entities/safety-assessment.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -390,6 +398,100 @@ export class IncidentsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
     return await this.incidentsService.getSingleIncidentContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/safety-assessments`)
+  @ApiOperation({
+    description:
+      'Find all SafetyAssessment entries related to a given Incident entity by Incident id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedSafetyAssessmentEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedSafetyAssessmentEntity),
+        },
+        examples: {
+          SafetyAssessmentListResponse: {
+            value: SafetyAssessmentListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentSafetyAssessmentRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedSafetyAssessmentEntity> {
+    return await this.incidentsService.getListIncidentSafetyAssessmentRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/safety-assessments/:${safetyAssessmentIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${safetyAssessmentIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(SafetyAssessmentEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(SafetyAssessmentEntity),
+        },
+        examples: {
+          SafetyAssessmentSingleResponse: {
+            value: SafetyAssessmentSingleResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentSafetyAssessmentRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: SafetyAssessmentIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<SafetyAssessmentEntity> {
+    return await this.incidentsService.getSingleIncidentSafetyAssessmentRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

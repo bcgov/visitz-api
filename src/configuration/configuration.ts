@@ -52,6 +52,7 @@ export default () => ({
     postInPersonVisits:
       process.env.IN_PERSON_VISITS_POST_WORKSPACE ?? undefined,
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
+    safetyAssessments: process.env.SAFETY_ASSESSMENTS_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -62,6 +63,7 @@ export default () => ({
     incidents: process.env.INCIDENT_AFTER_FIELD ?? undefined,
     srs: process.env.SR_AFTER_FIELD ?? undefined,
     memos: process.env.MEMO_AFTER_FIELD ?? undefined,
+    safetyAssessments: process.env.SAFETY_ASSESSMENTS_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -81,6 +83,7 @@ export default () => ({
     incidentContacts: process.env.INCIDENT_CONTACTS_ENDPOINT ?? ' ',
     srContacts: process.env.SR_CONTACTS_ENDPOINT ?? ' ',
     memoContacts: process.env.MEMO_CONTACTS_ENDPOINT ?? ' ',
+    safetyAssessments: process.env.SAFETY_ASSESSMENTS_ENDPOINT ?? ' ',
   },
   buildInfo: {
     buildNumber: process.env.VPI_APP_LABEL ?? 'localBuild',
