@@ -1,35 +1,35 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ContactsService } from './contacts.service';
-import { HttpService } from '@nestjs/axios';
+import { SafetyAssessmentService } from './safety-assessment.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuration from '../../configuration/configuration';
-import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
-import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
+import { HttpService } from '@nestjs/axios';
 import { UtilitiesService } from '../utilities/utilities.service';
-import { RecordType } from '../../common/constants/enumerations';
-import { AxiosResponse } from 'axios';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import configuration from '../../configuration/configuration';
 import {
-  contactIdName,
+  NestedSafetyAssessmentEntity,
+  SafetyAssessmentEntity,
+  SafetyAssessmentListResponseIncidentExample,
+  SafetyAssessmentSingleResponseIncidentExample,
+} from '../../entities/safety-assessment.entity';
+import { RecordType } from '../../common/constants/enumerations';
+import {
   idName,
+  safetyAssessmentIdName,
   afterParamName,
 } from '../../common/constants/parameter-constants';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  ContactIdPathParams,
   IdPathParams,
+  SafetyAssessmentIdPathParams,
 } from '../../dto/id-path-params.dto';
-import {
-  ContactsEntity,
-  ContactsListResponseCaseExample,
-  ContactsSingleResponseCaseExample,
-  NestedContactsEntity,
-} from '../../entities/contacts.entity';
+import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import { AxiosResponse } from 'axios';
 import { getMockRes } from '@jest-mock/express';
-import { JwtService } from '@nestjs/jwt';
 
-describe('ContactsService', () => {
-  let service: ContactsService;
+describe('SafetyAssessmentService', () => {
+  let service: SafetyAssessmentService;
   let requestPreparerService: RequestPreparerService;
   const { res, mockClear } = getMockRes();
 
@@ -37,7 +37,7 @@ describe('ContactsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
-        ContactsService,
+        SafetyAssessmentService,
         UtilitiesService,
         ConfigService,
         JwtService,
@@ -54,7 +54,7 @@ describe('ContactsService', () => {
       ],
     }).compile();
 
-    service = module.get<ContactsService>(ContactsService);
+    service = module.get<SafetyAssessmentService>(SafetyAssessmentService);
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
@@ -65,17 +65,17 @@ describe('ContactsService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getListContactRecord tests', () => {
+  describe('getListSafetyAssessmentRecord tests', () => {
     it.each([
       [
-        ContactsListResponseCaseExample,
-        RecordType.Case,
+        SafetyAssessmentListResponseIncidentExample,
+        RecordType.Incident,
         { [idName]: 'test' } as IdPathParams,
         undefined,
       ],
       [
-        ContactsListResponseCaseExample,
-        RecordType.Case,
+        SafetyAssessmentListResponseIncidentExample,
+        RecordType.Incident,
         { [idName]: 'test' } as IdPathParams,
         { [afterParamName]: '2020-12-24' } as FilterQueryParams,
       ],
@@ -91,7 +91,7 @@ describe('ContactsService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getListContactRecord(
+        const result = await service.getListSafetyAssessmentRecord(
           recordType,
           idPathParams,
           res,
@@ -99,17 +99,20 @@ describe('ContactsService', () => {
           filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new NestedContactsEntity(data));
+        expect(result).toEqual(new NestedSafetyAssessmentEntity(data));
       },
     );
   });
 
-  describe('getSingleContactRecord tests', () => {
+  describe('getSingleSafetyAssessmentRecord tests', () => {
     it.each([
       [
-        ContactsSingleResponseCaseExample,
-        RecordType.Case,
-        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        SafetyAssessmentSingleResponseIncidentExample,
+        RecordType.Incident,
+        {
+          [idName]: 'test',
+          [safetyAssessmentIdName]: 'test2',
+        } as SafetyAssessmentIdPathParams,
       ],
     ])(
       'should return single values given good input',
@@ -123,14 +126,14 @@ describe('ContactsService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
 
-        const result = await service.getSingleContactRecord(
+        const result = await service.getSingleSafetyAssessmentRecord(
           recordType,
           idPathParams,
           res,
           'idir',
         );
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new ContactsEntity(data));
+        expect(result).toEqual(new SafetyAssessmentEntity(data));
       },
     );
   });
