@@ -32,7 +32,6 @@ export const MemoExample = {
   'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
   Id: 'Row Id Here',
-  Kkcfs: 'KKCFS flag',
   'Last Name': 'Last Names',
   'Medical Exam Required': 'N',
   'Memo Number': 'Memo Number Here',
@@ -194,12 +193,6 @@ export class MemoEntity {
   })
   @Expose()
   Id: string;
-
-  @ApiProperty({
-    example: MemoExample['Kkcfs'],
-  })
-  @Expose()
-  Kkcfs: string;
 
   @ApiProperty({
     example: MemoExample['Last Name'],

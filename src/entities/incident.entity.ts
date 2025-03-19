@@ -34,7 +34,6 @@ export const IncidentExample = {
   'Home Phone': '123-456-7890',
   Id: 'Id Here',
   'Incident Number': 'Incident Number Here',
-  Kkcfs: 'KKCFS Flag',
   'Indigenous Authority': '',
   'Last Name': 'Last Name',
   'Medical Exam Required': 'Medical Exam Required Here',
@@ -207,12 +206,6 @@ export class IncidentEntity {
   })
   @Expose()
   'Incident Number': string;
-
-  @ApiProperty({
-    example: IncidentExample['Kkcfs'],
-  })
-  @Expose()
-  Kkcfs: string;
 
   @ApiProperty({
     example: IncidentExample['Indigenous Authority'],

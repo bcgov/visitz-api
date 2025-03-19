@@ -34,7 +34,6 @@ export const SRExample = {
   Id: 'Id Here',
   'Indigenous Authority': 'Authority Here',
   'Integration Id': 'Id Here',
-  Kkcfs: 'N',
   'Last Name': 'Last Name',
   Method: '',
   'Nature Of Call': '',
@@ -201,12 +200,6 @@ export class SREntity {
   })
   @Expose()
   'Integration Id': string;
-
-  @ApiProperty({
-    example: SRExample['Kkcfs'],
-  })
-  @Expose()
-  Kkcfs: string;
 
   @ApiProperty({
     example: SRExample['Last Name'],
