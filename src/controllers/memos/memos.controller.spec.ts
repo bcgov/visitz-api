@@ -4,6 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
+import { AuthService } from '../../common/guards/auth/auth.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -56,6 +57,7 @@ describe('MemosController', () => {
       imports: [ConfigModule.forRoot({ load: [configuration] })],
       providers: [
         MemosService,
+        AuthService,
         ContactsService,
         AttachmentsService,
         TokenRefresherService,
