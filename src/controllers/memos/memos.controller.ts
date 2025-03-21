@@ -6,6 +6,7 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -49,6 +50,7 @@ import {
   AttachmentsSingleResponseMemoExample,
 } from '../../entities/attachments.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
+import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { Request, Response } from 'express';
 import {
   noContentResponseSwagger,
@@ -73,6 +75,7 @@ import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.e
 import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
 
 @Controller('memo')
+@UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
 @ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
 @ApiUnauthorizedResponse({ type: ApiUnauthorizedErrorEntity })
