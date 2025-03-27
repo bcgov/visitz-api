@@ -23,6 +23,7 @@ import {
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
+import { VirusScanService } from '../virus-scan/virus-scan.service';
 
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
@@ -39,6 +40,7 @@ describe('AttachmentsService', () => {
         JwtService,
         TokenRefresherService,
         RequestPreparerService,
+        VirusScanService,
         { provide: HttpService, useValue: { get: jest.fn() } },
         {
           provide: CACHE_MANAGER,

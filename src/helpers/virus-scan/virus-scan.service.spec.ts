@@ -1,12 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VirusScanService } from './virus-scan.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from '../../configuration/configuration';
 
 describe('VirusScanService', () => {
   let service: VirusScanService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [VirusScanService],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
+      providers: [VirusScanService, ConfigService],
     }).compile();
 
     service = module.get<VirusScanService>(VirusScanService);

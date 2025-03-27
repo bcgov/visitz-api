@@ -43,6 +43,7 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtService } from '@nestjs/jwt';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -57,6 +58,7 @@ describe('MemosService', () => {
         MemosService,
         ContactsService,
         AttachmentsService,
+        VirusScanService,
         UtilitiesService,
         JwtService,
         TokenRefresherService,

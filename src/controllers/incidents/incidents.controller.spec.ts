@@ -64,6 +64,7 @@ import {
   SafetyAssessmentListResponseIncidentExample,
   SafetyAssessmentSingleResponseIncidentExample,
 } from '../../entities/safety-assessment.entity';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -82,6 +83,7 @@ describe('IncidentsController', () => {
         SupportNetworkService,
         ContactsService,
         AttachmentsService,
+        VirusScanService,
         SafetyAssessmentService,
         AuthService,
         TokenRefresherService,

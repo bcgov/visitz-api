@@ -55,6 +55,7 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -74,6 +75,7 @@ describe('ServiceRequestsController', () => {
         ContactsService,
         SupportNetworkService,
         AttachmentsService,
+        VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },

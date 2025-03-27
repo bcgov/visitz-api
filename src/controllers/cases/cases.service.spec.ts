@@ -62,6 +62,7 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtService } from '@nestjs/jwt';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -79,6 +80,7 @@ describe('CasesService', () => {
         ContactsService,
         SupportNetworkService,
         AttachmentsService,
+        VirusScanService,
         UtilitiesService,
         JwtService,
         TokenRefresherService,
