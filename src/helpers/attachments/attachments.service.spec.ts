@@ -23,9 +23,18 @@ import {
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
+import { VirusScanService } from '../virus-scan/virus-scan.service';
+import {
+  PostAttachmentDtoUpstream,
+  PostAttachmentsCaseReturnExample,
+  PostAttachmentsMemoReturnExample,
+} from '../../dto/post-attachment.dto';
+import { IdPathParams } from '../../dto/id-path-params.dto';
+import { Readable } from 'stream';
 
 describe('AttachmentsService', () => {
   let service: AttachmentsService;
+  let virusScanService: VirusScanService;
   let requestPreparerService: RequestPreparerService;
   const { res, mockClear } = getMockRes();
 
@@ -39,6 +48,7 @@ describe('AttachmentsService', () => {
         JwtService,
         TokenRefresherService,
         RequestPreparerService,
+        VirusScanService,
         { provide: HttpService, useValue: { get: jest.fn() } },
         {
           provide: CACHE_MANAGER,
@@ -54,6 +64,7 @@ describe('AttachmentsService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    virusScanService = module.get<VirusScanService>(VirusScanService);
     mockClear();
   });
 
@@ -125,6 +136,80 @@ describe('AttachmentsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new AttachmentDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleAttachmentRecord tests', () => {
+    it.each([
+      [
+        PostAttachmentsCaseReturnExample,
+        RecordType.Case,
+        new PostAttachmentDtoUpstream({
+          ...PostAttachmentsCaseReturnExample,
+          [attachmentIdName]: 'ESIzRFVm',
+        }),
+        { [idName]: 'test' } as IdPathParams,
+        {
+          fieldname: '',
+          originalname: 'filename.png',
+          encoding: '',
+          mimetype: 'image/png',
+          size: 6,
+          stream: Readable.from(Buffer.from([11, 22, 33, 44, 55, 66])),
+          destination: '',
+          filename: '',
+          path: '',
+          buffer: Buffer.from([11, 22, 33, 44, 55, 66]),
+        } as Express.Multer.File,
+      ],
+      [
+        PostAttachmentsMemoReturnExample,
+        RecordType.Memo,
+        new PostAttachmentDtoUpstream({
+          ...PostAttachmentsMemoReturnExample,
+          [attachmentIdName]: 'ESIzRFVm',
+        }),
+        { [idName]: 'test' } as IdPathParams,
+        {
+          fieldname: '',
+          originalname: 'filename',
+          encoding: '',
+          mimetype: 'image/png',
+          size: 6,
+          stream: Readable.from(Buffer.from([11, 22, 33, 44, 55, 66])),
+          destination: '',
+          filename: '',
+          path: '',
+          buffer: Buffer.from([11, 22, 33, 44, 55, 66]),
+        } as Express.Multer.File,
+      ],
+    ])(
+      'should return post values given good input',
+      async (data, recordType, body, id, file) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendPostRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const virusScanSpy = jest
+          .spyOn(virusScanService, 'scanFile')
+          .mockResolvedValueOnce();
+
+        const result = await service.postSingleAttachmentRecord(
+          recordType,
+          body,
+          'idir',
+          id,
+          file,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(virusScanSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

@@ -1,3 +1,10 @@
+import {
+  casesAttachmentsFieldName,
+  incidentsAttachmentsFieldName,
+  memoAttachmentsFieldName,
+  srAttachmentsFieldName,
+} from './parameter-constants';
+
 enum RecordType {
   Case = 'case',
   Incident = 'incident',
@@ -40,6 +47,27 @@ enum RestrictedRecordEnum {
   False = 'N',
 }
 
+const AttachmentParentIdFieldMap = {
+  [RecordType.Case]: casesAttachmentsFieldName,
+  [RecordType.Incident]: incidentsAttachmentsFieldName,
+  [RecordType.SR]: srAttachmentsFieldName,
+  [RecordType.Memo]: memoAttachmentsFieldName,
+} as const;
+
+enum AttachmentStatusEnum {
+  Profiled = 'Profiled',
+  UnProfiled = 'Un-Profiled',
+  Recycled = 'Recycled',
+  Void = 'Void',
+  Archived = 'Archived',
+  Open = 'Open',
+  InProgress = 'In Progress',
+  Complete = 'Complete',
+  Cancelled = 'Cancelled',
+  // There is an additional value of 'System Only', but we shouldn't allow
+  // the user to set this.
+}
+
 export {
   RecordType,
   EntityType,
@@ -47,4 +75,6 @@ export {
   VisitDetails,
   RecordCountNeededEnum,
   RestrictedRecordEnum,
+  AttachmentParentIdFieldMap,
+  AttachmentStatusEnum,
 };

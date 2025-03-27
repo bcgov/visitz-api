@@ -14,6 +14,9 @@ const versionRegexString = 'v:version(\\d+)';
 const idRegex = /^[0-9\-A-Za-z]{1,100}$/;
 const emojiRegex =
   /(?![\u0023\u002A\u0030-\u0039])[\p{Extended_Pictographic}\p{Emoji_Component}]/u;
+const mimeTypeRegex = /.(jpg|jpeg|png|pdf)/;
+const fileExtensionRegex =
+  /(\.[pP][nN][gG]|\.[jJ][pP][eE]?[gG]|\.[pP][dD][fF])$/;
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
@@ -42,6 +45,8 @@ export {
   versionRegexString,
   idRegex,
   emojiRegex,
+  mimeTypeRegex,
+  fileExtensionRegex,
   idName,
   attachmentIdName,
   contactIdName,

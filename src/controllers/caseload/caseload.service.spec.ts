@@ -73,6 +73,13 @@ describe('CaseloadService', () => {
     configService.set('afterFieldName.incidents', 'Updated Date');
     configService.set('afterFieldName.srs', 'Updated Date');
     configService.set('afterFieldName.memos', 'Updated Date');
+    configService.set('upstreamAuth.case.restrictedField', 'Restricted Flag');
+    configService.set(
+      'upstreamAuth.incident.restrictedField',
+      'Restricted Flag',
+    );
+    configService.set('upstreamAuth.sr.restrictedField', 'Restricted Flag');
+    configService.set('upstreamAuth.memo.restrictedField', 'Restricted Flag');
   });
 
   it('should be defined', () => {

@@ -45,6 +45,7 @@ import {
   ContactsEntity,
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
+import { PostAttachmentDto } from '../../dto/post-attachment.dto';
 
 @Injectable()
 export class CasesService {
@@ -158,6 +159,21 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleCaseAttachmentRecord(
+    attachmentsDto: PostAttachmentDto,
+    idir: string,
+    id: IdPathParams,
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.attachmentsService.postSingleAttachmentRecord(
+      RecordType.Case,
+      attachmentsDto,
+      idir,
+      id,
+      file,
     );
   }
 

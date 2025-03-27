@@ -49,6 +49,7 @@ export default () => ({
     supportNetwork: process.env.SUPPORT_NETWORK_WORKSPACE ?? undefined,
     inPersonVisits: process.env.IN_PERSON_VISITS_WORKSPACE ?? undefined,
     attachments: process.env.ATTACHMENTS_WORKSPACE ?? undefined,
+    postAttachments: process.env.ATTACHMENTS_POST_WORKSPACE ?? undefined,
     postInPersonVisits:
       process.env.IN_PERSON_VISITS_POST_WORKSPACE ?? undefined,
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
@@ -79,11 +80,41 @@ export default () => ({
     inPersonVisits: process.env.IN_PERSON_VISITS_ENDPOINT ?? ' ',
     postInPersonVisits: process.env.IN_PERSON_VISITS_POST_ENDPOINT ?? ' ',
     attachments: process.env.ATTACHMENTS_ENDPOINT ?? ' ',
+    postAttachments: process.env.ATTACHMENTS_POST_ENDPOINT ?? ' ',
     caseContacts: process.env.CASE_CONTACTS_ENDPOINT ?? ' ',
     incidentContacts: process.env.INCIDENT_CONTACTS_ENDPOINT ?? ' ',
     srContacts: process.env.SR_CONTACTS_ENDPOINT ?? ' ',
     memoContacts: process.env.MEMO_CONTACTS_ENDPOINT ?? ' ',
     safetyAssessments: process.env.SAFETY_ASSESSMENTS_ENDPOINT ?? ' ',
+  },
+  fileUpload: {
+    maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,
+  },
+  clamav: {
+    debugMode:
+      process.env.CLAM_DEBUG_MODE != undefined
+        ? process.env.CLAM_DEBUG_MODE === 'true'
+        : false,
+    clamdscan: {
+      host: process.env.CLAMD_HOST,
+      port: parseInt(process.env.CLAMD_PORT),
+      timeout: process.env.CLAMD_TIMEOUT
+        ? parseInt(process.env.CLAMD_TIMEOUT)
+        : 120000,
+      configFile:
+        process.env.CLAMD_CONFIG_FILE && process.env.CLAMD_CONFIG_FILE != 'null'
+          ? process.env.CLAMD_CONFIG_FILE
+          : null,
+      // Whether or not to use multiple cores when scanning
+      multiscan:
+        process.env.CLAMD_MULTI_SCAN != undefined
+          ? process.env.CLAMD_MULTI_SCAN === 'true'
+          : false,
+      bypassTest:
+        process.env.CLAMD_BYPASS_TEST != undefined
+          ? process.env.CLAMD_BYPASS_TEST === 'true'
+          : false,
+    },
   },
   buildInfo: {
     buildNumber: process.env.VPI_APP_LABEL ?? 'localBuild',

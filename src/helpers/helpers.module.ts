@@ -17,6 +17,7 @@ import { ContactsModule } from './contacts/contacts.module';
 import { ContactsService } from './contacts/contacts.service';
 import { SafetyAssessmentModule } from './safety-assessment/safety-assessment.module';
 import { SafetyAssessmentService } from './safety-assessment/safety-assessment.service';
+import { VirusScanModule } from './virus-scan/virus-scan.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SafetyAssessmentService } from './safety-assessment/safety-assessment.s
     AttachmentsModule,
     ContactsModule,
     SafetyAssessmentModule,
+    VirusScanModule,
   ],
   providers: [
     SupportNetworkService,
