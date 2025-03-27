@@ -1,11 +1,14 @@
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
+  Post,
   Query,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
@@ -24,6 +27,10 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiParam,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import {
   idName,
@@ -32,6 +39,7 @@ import {
   attachmentIdName,
   contactIdName,
   inlineAttachmentParamName,
+  attachmentIdFieldName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
@@ -73,6 +81,13 @@ import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.enti
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
 import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  PostAttachmentDto,
+  PostAttachmentsMemoReturnExample,
+} from '../../dto/post-attachment.dto';
+import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
+import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators.service';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
@@ -197,6 +212,58 @@ export class MemosController {
       res,
       req.headers[idirUsernameHeaderField] as string,
       filter,
+    );
+  }
+
+  @UseInterceptors(FileInterceptor(attachmentIdFieldName))
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiConsumes('multipart/form-data')
+  @Post(`:${idName}/attachments`)
+  @ApiOperation({
+    description: 'Upload an attachment related to the given memo id.',
+  })
+  @ApiBody({
+    description: `File and file information. File should be provided in the '${attachmentIdFieldName}' field.`,
+    type: PostAttachmentDto,
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          AttachmentCreatedResponse: {
+            value: PostAttachmentsMemoReturnExample,
+          },
+        },
+      },
+    },
+  })
+  @ApiUnprocessableEntityResponse({ type: ApiUnprocessableEntityErrorEntity })
+  async postSingleMemoAttachmentRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    attachmentDto: PostAttachmentDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @UploadedFile(FileTypeMagicNumberValidator())
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.memosService.postSingleMemoAttachmentRecord(
+      attachmentDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+      file,
     );
   }
 

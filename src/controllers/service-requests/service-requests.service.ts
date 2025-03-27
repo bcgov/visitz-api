@@ -27,6 +27,7 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
+import { PostAttachmentDto } from '../../dto/post-attachment.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -93,6 +94,21 @@ export class ServiceRequestsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleSRAttachmentRecord(
+    attachmentsDto: PostAttachmentDto,
+    idir: string,
+    id: IdPathParams,
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.attachmentsService.postSingleAttachmentRecord(
+      RecordType.SR,
+      attachmentsDto,
+      idir,
+      id,
+      file,
     );
   }
 

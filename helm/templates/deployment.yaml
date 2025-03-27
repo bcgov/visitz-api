@@ -274,6 +274,56 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: SAFETY_ASSESSMENTS_ENDPOINT
+            - name: ATTACHMENTS_POST_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: ATTACHMENTS_POST_ENDPOINT
+            - name: ATTACHMENTS_POST_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: ATTACHMENTS_POST_WORKSPACE
+            - name: MAX_FILE_SIZE_BYTES
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: MAX_FILE_SIZE_BYTES
+            - name: CLAM_DEBUG_MODE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAM_DEBUG_MODE
+            - name: CLAMD_HOST
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAMD_HOST
+            - name: CLAMD_PORT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAMD_PORT
+            - name: CLAMD_TIMEOUT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAMD_TIMEOUT
+            - name: CLAMD_CONFIG_FILE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAMD_CONFIG_FILE
+            - name: CLAMD_MULTI_SCAN
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAMD_MULTI_SCAN
+            - name: CLAMD_BYPASS_TEST
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CLAMD_BYPASS_TEST
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
             - name: VPI_APP_ENV

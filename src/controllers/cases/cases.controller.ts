@@ -8,12 +8,15 @@ import {
   Query,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiExtraModels,
   ApiForbiddenResponse,
@@ -25,6 +28,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 import { CasesService } from './cases.service';
@@ -54,6 +58,7 @@ import {
   afterParamName,
   supportNetworkIdName,
   visitIdName,
+  attachmentIdFieldName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -78,7 +83,7 @@ import {
   recordCountNeededParamName,
   startRowNumParamName,
 } from '../../common/constants/upstream-constants';
-import { Request, Response } from 'express';
+import { Request, Response, Express } from 'express';
 import {
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
@@ -94,6 +99,13 @@ import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.enti
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
 import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
+import {
+  PostAttachmentDto,
+  PostAttachmentsCaseReturnExample,
+} from '../../dto/post-attachment.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators.service';
+import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -453,6 +465,58 @@ export class CasesController {
       res,
       req.headers[idirUsernameHeaderField] as string,
       filter,
+    );
+  }
+
+  @UseInterceptors(FileInterceptor(attachmentIdFieldName))
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiConsumes('multipart/form-data')
+  @Post(`:${idName}/attachments`)
+  @ApiOperation({
+    description: 'Upload an attachment related to the given case id.',
+  })
+  @ApiBody({
+    description: `File and file information. File should be provided in the '${attachmentIdFieldName}' field.`,
+    type: PostAttachmentDto,
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          AttachmentCreatedResponse: {
+            value: PostAttachmentsCaseReturnExample,
+          },
+        },
+      },
+    },
+  })
+  @ApiUnprocessableEntityResponse({ type: ApiUnprocessableEntityErrorEntity })
+  async postSingleCaseAttachmentRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    attachmentDto: PostAttachmentDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @UploadedFile(FileTypeMagicNumberValidator())
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.casesService.postSingleCaseAttachmentRecord(
+      attachmentDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+      file,
     );
   }
 

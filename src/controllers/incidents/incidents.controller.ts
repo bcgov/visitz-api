@@ -1,17 +1,23 @@
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
+  Post,
   Query,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
   ApiExtraModels,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
@@ -22,6 +28,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 
@@ -52,6 +59,7 @@ import {
   afterParamName,
   safetyAssessmentIdName,
   supportNetworkIdName,
+  attachmentIdFieldName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -90,6 +98,13 @@ import {
   SafetyAssessmentListResponseIncidentExample,
   SafetyAssessmentSingleResponseIncidentExample,
 } from '../../entities/safety-assessment.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  PostAttachmentDto,
+  PostAttachmentsIncidentReturnExample,
+} from '../../dto/post-attachment.dto';
+import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
+import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators.service';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -307,6 +322,58 @@ export class IncidentsController {
       res,
       req.headers[idirUsernameHeaderField] as string,
       filter,
+    );
+  }
+
+  @UseInterceptors(FileInterceptor(attachmentIdFieldName))
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiConsumes('multipart/form-data')
+  @Post(`:${idName}/attachments`)
+  @ApiOperation({
+    description: 'Upload an attachment related to the given incident id.',
+  })
+  @ApiBody({
+    description: `File and file information. File should be provided in the '${attachmentIdFieldName}' field.`,
+    type: PostAttachmentDto,
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          AttachmentCreatedResponse: {
+            value: PostAttachmentsIncidentReturnExample,
+          },
+        },
+      },
+    },
+  })
+  @ApiUnprocessableEntityResponse({ type: ApiUnprocessableEntityErrorEntity })
+  async postSingleIncidentAttachmentRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    attachmentDto: PostAttachmentDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @UploadedFile(FileTypeMagicNumberValidator())
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.incidentsService.postSingleIncidentAttachmentRecord(
+      attachmentDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+      file,
     );
   }
 

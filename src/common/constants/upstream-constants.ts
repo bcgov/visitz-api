@@ -3,6 +3,7 @@ const supportNetworkEndpointEnvVarName = 'SUPPORT_NETWORK_ENDPOINT';
 const inPersonVisitsEndpointEnvVarName = 'IN_PERSON_VISITS_ENDPOINT';
 const postInPersonVisitsEndpointEnvVarName = 'IN_PERSON_VISITS_POST_ENDPOINT';
 const attachmentsEndpointEnvVarName = 'ATTACHMENTS_ENDPOINT';
+const upstreamAttachmentConstraintNull = 'NULL';
 const idirUsernameHeaderField = 'x-idir-username';
 const upstreamDateFormat = 'MM/dd/yyyy HH:mm:ss';
 const dummyCreatedDate = '01/01/1970 00:00:00';
@@ -28,6 +29,10 @@ const startRowNumMin = 0;
 const startRowNumDefault = 0;
 const visitDetailsMax = 100;
 const visitDescriptionMax = 4000;
+const attachmentFormDescriptionMax = 250;
+const attachmentCategoryMax = 30;
+const attachmentTemplateMax = 1000;
+const attachmentStatusMax = 30;
 
 export {
   baseUrlEnvVarName,
@@ -35,6 +40,7 @@ export {
   inPersonVisitsEndpointEnvVarName,
   postInPersonVisitsEndpointEnvVarName,
   attachmentsEndpointEnvVarName,
+  upstreamAttachmentConstraintNull,
   idirUsernameHeaderField,
   upstreamDateFormat,
   dummyCreatedDate,
@@ -60,4 +66,8 @@ export {
   startRowNumDefault,
   visitDetailsMax,
   visitDescriptionMax,
+  attachmentFormDescriptionMax,
+  attachmentCategoryMax,
+  attachmentTemplateMax,
+  attachmentStatusMax,
 };

@@ -33,6 +33,7 @@ import {
   SafetyAssessmentEntity,
 } from '../../entities/safety-assessment.entity';
 import { SafetyAssessmentService } from '../../helpers/safety-assessment/safety-assessment.service';
+import { PostAttachmentDto } from '../../dto/post-attachment.dto';
 
 @Injectable()
 export class IncidentsService {
@@ -100,6 +101,21 @@ export class IncidentsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleIncidentAttachmentRecord(
+    attachmentsDto: PostAttachmentDto,
+    idir: string,
+    id: IdPathParams,
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.attachmentsService.postSingleAttachmentRecord(
+      RecordType.Incident,
+      attachmentsDto,
+      idir,
+      id,
+      file,
     );
   }
 

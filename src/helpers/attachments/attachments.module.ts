@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../utilities/utilities.service';
+import { VirusScanService } from '../virus-scan/virus-scan.service';
 
 @Module({
   imports: [HttpModule],
@@ -14,6 +15,7 @@ import { UtilitiesService } from '../utilities/utilities.service';
     RequestPreparerService,
     UtilitiesService,
     TokenRefresherService,
+    VirusScanService,
   ],
   exports: [AttachmentsService],
 })
