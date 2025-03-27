@@ -63,6 +63,8 @@ export class VirusScanService {
       this.logger.error({
         msg: `File is infected!`,
         fileSize: `${file.size} bytes`,
+        fileName: file.originalname,
+        viruses: result.viruses,
         buildNumber: this.buildNumber,
       });
       throw new BadRequestException([virusInfectedError]);
@@ -70,6 +72,7 @@ export class VirusScanService {
       this.logger.error({
         msg: `File could not be scanned.`,
         fileSize: `${file.size} bytes`,
+        fileName: file.originalname,
         buildNumber: this.buildNumber,
       });
       throw new UnprocessableEntityException([virusScanFailedError]);
@@ -77,6 +80,7 @@ export class VirusScanService {
     this.logger.log({
       msg: `File is clean!`,
       fileSize: `${file.size} bytes`,
+      fileName: file.originalname,
       buildNumber: this.buildNumber,
     });
   }
