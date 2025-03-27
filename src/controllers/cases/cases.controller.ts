@@ -104,7 +104,7 @@ import {
   PostAttachmentsCaseReturnExample,
 } from '../../dto/post-attachment.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators.service';
+import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators';
 import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
 
 @Controller('case')

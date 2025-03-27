@@ -87,7 +87,7 @@ import {
   PostAttachmentsMemoReturnExample,
 } from '../../dto/post-attachment.dto';
 import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
-import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators.service';
+import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
