@@ -44,6 +44,7 @@ describe('CaseloadService', () => {
   let configService: ConfigService;
   let cacheManager: Cache;
   let requestPreparerService: RequestPreparerService;
+  let utilitiesService: UtilitiesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,8 +68,10 @@ describe('CaseloadService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    utilitiesService = module.get<UtilitiesService>(UtilitiesService);
 
     configService.set('skipJWTCache', true);
+    utilitiesService.skipJWT = true;
     configService.set('afterFieldName.cases', 'Last Updated Date');
     configService.set('afterFieldName.incidents', 'Updated Date');
     configService.set('afterFieldName.srs', 'Updated Date');
