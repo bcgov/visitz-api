@@ -84,6 +84,7 @@ export class TokenRefresherService {
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
+          function: this.authenticateUpstream.name,
         });
       }
       return [null, undefined];

@@ -203,6 +203,7 @@ export class AuthService {
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
+          function: this.getAssignedIdirUpstream.name,
         });
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
@@ -257,6 +258,7 @@ export class AuthService {
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
+          function: this.getEmployeeActiveUpstream.name,
         });
         await this.cacheManager.set(idir, false, this.cacheTime);
       } else {
