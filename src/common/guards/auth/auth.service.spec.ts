@@ -77,8 +77,8 @@ describe('AuthService', () => {
     it('should return true with valid record', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
-        .mockResolvedValueOnce(undefined)
-        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce('')
         .mockResolvedValueOnce('');
       const spy = jest
@@ -176,7 +176,7 @@ describe('AuthService', () => {
     it('should return false with upstream invalid record for record type', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
-        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
@@ -219,7 +219,7 @@ describe('AuthService', () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(200)
-        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
@@ -298,7 +298,7 @@ describe('AuthService', () => {
 
     it.each([
       [testIdir + 'abcd', 1],
-      [null, 0],
+      [undefined, 0],
     ])(
       'should return 403 if given idir and upstream idir are not equal',
       async (upstreamIdir, cacheSpyCallTimes) => {
@@ -350,7 +350,7 @@ describe('AuthService', () => {
     });
 
     it.each([[{}], [undefined]])(
-      'should return null when idir not in response',
+      'should return undefined when idir not in response',
       async (data) => {
         const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
@@ -372,12 +372,12 @@ describe('AuthService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(null);
+        expect(result).toEqual(undefined);
       },
     );
 
     it.each([[404], [500]])(
-      `Should return null on axios error`,
+      `Should return undefined on axios error`,
       async (status) => {
         const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
@@ -402,21 +402,19 @@ describe('AuthService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(idir).toBe(null);
+        expect(idir).toBe(undefined);
       },
     );
 
-    it('should return null on token refresh error', async () => {
-      const cacheSpy = jest
-        .spyOn(cache, 'get')
-        .mockResolvedValueOnce(undefined);
+    it('should return undefined on token refresh error', async () => {
+      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
       const result = await service.getAssignedIdirUpstream(
         validId,
         validRecordType,
         'idir',
       );
       expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(null);
+      expect(result).toEqual(undefined);
     });
   });
 
