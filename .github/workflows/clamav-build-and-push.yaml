@@ -1,4 +1,8 @@
 name: ClamAV Build and Deploy
+permissions:
+  contents: read
+  deployments: write
+  packages: write
 
 on:
   workflow_dispatch:
