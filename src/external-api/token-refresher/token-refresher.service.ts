@@ -31,7 +31,7 @@ export class TokenRefresherService {
   }
 
   async refreshUpstreamBearerToken(): Promise<string | undefined> {
-    let token: string | undefined, ttlMs: number | undefined;
+    let token: string | null, ttlMs: number | undefined;
     const key = 'visitzOauthToken';
     token = await this.cacheManager.get(key);
     if (typeof token === 'string') {
@@ -39,16 +39,14 @@ export class TokenRefresherService {
     }
     // eslint-disable-next-line prefer-const
     [token, ttlMs] = await this.authenticateUpstream();
-    if (token === undefined || ttlMs === undefined) {
+    if (token === null || ttlMs === undefined) {
       return undefined; // do not store bad result in cache
     }
     await this.cacheManager.set(key, token, ttlMs - fiveSecondsMs); // subtract time so it can be used upstream
     return token;
   }
 
-  async authenticateUpstream(): Promise<
-    [string, number] | [undefined, undefined]
-  > {
+  async authenticateUpstream(): Promise<[string, number] | [null, undefined]> {
     let response;
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -88,7 +86,7 @@ export class TokenRefresherService {
           buildNumber: this.buildNumber,
         });
       }
-      return [undefined, undefined];
+      return [null, undefined];
     }
   }
 }

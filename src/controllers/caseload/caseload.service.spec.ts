@@ -44,6 +44,7 @@ describe('CaseloadService', () => {
   let configService: ConfigService;
   let cacheManager: Cache;
   let requestPreparerService: RequestPreparerService;
+  let utilitiesService: UtilitiesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,8 +68,10 @@ describe('CaseloadService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    utilitiesService = module.get<UtilitiesService>(UtilitiesService);
 
     configService.set('skipJWTCache', true);
+    utilitiesService.skipJWT = true;
     configService.set('afterFieldName.cases', 'Last Updated Date');
     configService.set('afterFieldName.incidents', 'Updated Date');
     configService.set('afterFieldName.srs', 'Updated Date');
@@ -338,10 +341,10 @@ describe('CaseloadService', () => {
       await service.caseloadUnsetCacheItems(response, idir, req);
       expect(cacheSpy).toHaveBeenCalledTimes(5);
 
-      await expect(cacheManager.get(caseKey)).resolves.toBe(undefined);
-      await expect(cacheManager.get(incidentKey)).resolves.toBe(undefined);
-      await expect(cacheManager.get(srKey)).resolves.toBe(undefined);
-      await expect(cacheManager.get(memoKey)).resolves.toBe(undefined);
+      await expect(cacheManager.get(caseKey)).resolves.toBe(null);
+      await expect(cacheManager.get(incidentKey)).resolves.toBe(null);
+      await expect(cacheManager.get(srKey)).resolves.toBe(null);
+      await expect(cacheManager.get(memoKey)).resolves.toBe(null);
     });
   });
 
