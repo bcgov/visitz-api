@@ -64,6 +64,10 @@ import {
   SafetyAssessmentListResponseIncidentExample,
   SafetyAssessmentSingleResponseIncidentExample,
 } from '../../entities/safety-assessment.entity';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
+import { Readable } from 'stream';
+import { AttachmentStatusEnum } from '../../common/constants/enumerations';
+import { PostAttachmentsIncidentReturnExample } from '../../dto/post-attachment.dto';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -82,6 +86,7 @@ describe('IncidentsController', () => {
         SupportNetworkService,
         ContactsService,
         AttachmentsService,
+        VirusScanService,
         SafetyAssessmentService,
         AuthService,
         TokenRefresherService,
@@ -263,6 +268,57 @@ describe('IncidentsController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentAttachmentRecord tests', () => {
+    it.each([
+      [
+        {
+          Category: 'Documentation',
+          'Form Description': 'KKCFS Document',
+          Status: AttachmentStatusEnum.Profiled,
+          Template: 'TEMPLATENAMEHERE',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostAttachmentsIncidentReturnExample,
+        {
+          fieldname: '',
+          originalname: 'filename.png',
+          encoding: '',
+          mimetype: 'image/png',
+          size: 6,
+          stream: Readable.from(Buffer.from([11, 22, 33, 44, 55, 66])),
+          destination: '',
+          filename: '',
+          path: '',
+          buffer: Buffer.from([11, 22, 33, 44, 55, 66]),
+        } as Express.Multer.File,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data, file) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'postSingleIncidentAttachmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
+
+        const result = await controller.postSingleIncidentAttachmentRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+          file,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+          file,
+        );
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

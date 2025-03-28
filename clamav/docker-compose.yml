@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  clamav:
+    container_name: clamav
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    stdin_open: true
+    ports:
+    - 3310:3310
+    # See https://github.com/Cisco-Talos/clamav/blob/main/README.Docker.md#controlling-the-container
+    environment:
+      CLAMAV_NO_CLAMD: 'false'
+      CLAMAV_NO_FRESHCLAMD: 'false'
+      CLAMAV_NO_MILTERD: 'true'
+      CLAMD_STARTUP_TIMEOUT: 1800
+      FRESHCLAM_CHECKS: 1
+    # volumes:
+    # - type: bind
+    #   source: ./mnt/clamav
+    #   target: /var/lib/clamav
+    healthcheck:
+      test: [CMD-SHELL, /usr/local/bin/clamdcheck.sh]
+      interval: 5s
+      timeout: 5s
+      retries: 5

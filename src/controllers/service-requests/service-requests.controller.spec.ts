@@ -55,6 +55,10 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
+import { Readable } from 'stream';
+import { AttachmentStatusEnum } from '../../common/constants/enumerations';
+import { PostAttachmentsSRReturnExample } from '../../dto/post-attachment.dto';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -74,6 +78,7 @@ describe('ServiceRequestsController', () => {
         ContactsService,
         SupportNetworkService,
         AttachmentsService,
+        VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
         { provide: CACHE_MANAGER, useValue: {} },
@@ -251,6 +256,57 @@ describe('ServiceRequestsController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRAttachmentRecord tests', () => {
+    it.each([
+      [
+        {
+          Category: 'Documentation',
+          'Form Description': 'KKCFS Document',
+          Status: AttachmentStatusEnum.Profiled,
+          Template: 'TEMPLATENAMEHERE',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostAttachmentsSRReturnExample,
+        {
+          fieldname: '',
+          originalname: 'filename.png',
+          encoding: '',
+          mimetype: 'image/png',
+          size: 6,
+          stream: Readable.from(Buffer.from([11, 22, 33, 44, 55, 66])),
+          destination: '',
+          filename: '',
+          path: '',
+          buffer: Buffer.from([11, 22, 33, 44, 55, 66]),
+        } as Express.Multer.File,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data, file) => {
+        const srsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRAttachmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
+
+        const result = await controller.postSingleSRAttachmentRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+          file,
+        );
+        expect(srsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+          file,
+        );
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

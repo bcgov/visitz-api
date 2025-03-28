@@ -45,6 +45,10 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtService } from '@nestjs/jwt';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
+import { Readable } from 'stream';
+import { AttachmentStatusEnum } from '../../common/constants/enumerations';
+import { PostAttachmentsMemoReturnExample } from '../../dto/post-attachment.dto';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -60,6 +64,7 @@ describe('MemosController', () => {
         AuthService,
         ContactsService,
         AttachmentsService,
+        VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
         JwtService,
@@ -163,6 +168,57 @@ describe('MemosController', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleMemoAttachmentRecord tests', () => {
+    it.each([
+      [
+        {
+          Category: 'Documentation',
+          'Form Description': 'KKCFS Document',
+          Status: AttachmentStatusEnum.Profiled,
+          Template: 'TEMPLATENAMEHERE',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostAttachmentsMemoReturnExample,
+        {
+          fieldname: '',
+          originalname: 'filename.png',
+          encoding: '',
+          mimetype: 'image/png',
+          size: 6,
+          stream: Readable.from(Buffer.from([11, 22, 33, 44, 55, 66])),
+          destination: '',
+          filename: '',
+          path: '',
+          buffer: Buffer.from([11, 22, 33, 44, 55, 66]),
+        } as Express.Multer.File,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data, file) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'postSingleMemoAttachmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
+
+        const result = await controller.postSingleMemoAttachmentRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+          file,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+          file,
+        );
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });

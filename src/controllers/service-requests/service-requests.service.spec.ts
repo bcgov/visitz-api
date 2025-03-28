@@ -11,7 +11,10 @@ import {
   SupportNetworkListResponseSRExample,
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
-import { RecordType } from '../../common/constants/enumerations';
+import {
+  AttachmentStatusEnum,
+  RecordType,
+} from '../../common/constants/enumerations';
 import {
   AttachmentIdPathParams,
   ContactIdPathParams,
@@ -52,6 +55,9 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { JwtService } from '@nestjs/jwt';
+import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
+import { Readable } from 'stream';
+import { PostAttachmentsSRReturnExample } from '../../dto/post-attachment.dto';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -68,6 +74,7 @@ describe('ServiceRequestsService', () => {
         SupportNetworkService,
         ContactsService,
         AttachmentsService,
+        VirusScanService,
         UtilitiesService,
         JwtService,
         TokenRefresherService,
@@ -257,6 +264,52 @@ describe('ServiceRequestsService', () => {
           filterQueryParams,
         );
         expect(result).toEqual(new AttachmentDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRAttachmentRecord tests', () => {
+    it.each([
+      [
+        {
+          Category: 'Documentation',
+          'Form Description': 'KKCFS Document',
+          Status: AttachmentStatusEnum.Profiled,
+          Template: 'TEMPLATENAMEHERE',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostAttachmentsSRReturnExample,
+        {
+          fieldname: '',
+          originalname: 'filename.png',
+          encoding: '',
+          mimetype: 'image/png',
+          size: 6,
+          stream: Readable.from(Buffer.from([11, 22, 33, 44, 55, 66])),
+          destination: '',
+          filename: '',
+          path: '',
+          buffer: Buffer.from([11, 22, 33, 44, 55, 66]),
+        } as Express.Multer.File,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data, file) => {
+        const attachmentsSpy = jest
+          .spyOn(attachmentsService, 'postSingleAttachmentRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAttachmentsEntity(data)),
+          );
+
+        const result = await service.postSingleSRAttachmentRecord(
+          body,
+          idir,
+          idPathParams,
+          file,
+        );
+        expect(attachmentsSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );
   });
