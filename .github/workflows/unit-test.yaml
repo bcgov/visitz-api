@@ -1,7 +1,6 @@
 name: Unit Test
 permissions:
   contents: read
-  pull-requests: write
   checks: write
 
 on:

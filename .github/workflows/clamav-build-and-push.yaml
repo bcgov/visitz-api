@@ -1,7 +1,6 @@
 name: ClamAV Build and Deploy
 permissions:
   contents: read
-  pull-requests: write
   deployments: write
   packages: write
 
