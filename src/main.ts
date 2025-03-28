@@ -3,8 +3,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
-import { Logger as NestJSLogger } from '@nestjs/common';
-import { versionRegexString } from './common/constants/parameter-constants';
+import { Logger as NestJSLogger, VersioningType } from '@nestjs/common';
+import { versionNumber } from './common/constants/parameter-constants';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -12,7 +12,10 @@ async function bootstrap() {
   });
   app.useLogger(app.get(Logger));
 
-  app.setGlobalPrefix(versionRegexString);
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: versionNumber,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Visitz API')
@@ -21,8 +24,8 @@ async function bootstrap() {
     .addTag('visitz')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(`${versionRegexString}/api-spec`, app, documentFactory, {
-    jsonDocumentUrl: `${versionRegexString}/api-spec/json`,
+  SwaggerModule.setup(`v${versionNumber}/api-spec`, app, documentFactory, {
+    jsonDocumentUrl: `v${versionNumber}/api-spec/json`,
   });
 
   const port = process.env.PORT ?? 3000;

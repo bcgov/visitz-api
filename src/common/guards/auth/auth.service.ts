@@ -75,13 +75,13 @@ export class AuthService {
     );
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
-    let employeeActive: boolean | undefined = await this.cacheManager.get(idir);
+    let employeeActive: boolean | null = await this.cacheManager.get(idir);
 
-    if (upstreamResult === undefined && employeeActive === undefined) {
+    if (upstreamResult === null && employeeActive === null) {
       this.logger.log(
         `Cache not hit for record type and active status, going upstream...`,
       );
-      let upstreamIdir: string | null;
+      let upstreamIdir: string | undefined;
       [upstreamIdir, employeeActive] = await Promise.all([
         this.getAssignedIdirUpstream(id, recordType, idir),
         this.getEmployeeActiveUpstream(idir),
@@ -91,7 +91,7 @@ export class AuthService {
         idir,
         key,
       );
-    } else if (upstreamResult === undefined) {
+    } else if (upstreamResult === null) {
       this.logger.log(`Cache not hit for record type, going upstream...`);
       const upstreamIdir = await this.getAssignedIdirUpstream(
         id,
@@ -103,7 +103,7 @@ export class AuthService {
         idir,
         key,
       );
-    } else if (employeeActive === undefined) {
+    } else if (employeeActive === null) {
       this.logger.log(`Cache not hit for active status, going upstream...`);
       employeeActive = await this.getEmployeeActiveUpstream(idir);
     } else {
@@ -114,7 +114,7 @@ export class AuthService {
         `Cache hit for employee status! Key: ${idir} Result: ${employeeActive}`,
       );
     }
-    if (upstreamResult === 403 || employeeActive == false) {
+    if (upstreamResult === 403 || employeeActive === false) {
       return false;
     }
     return true;
@@ -132,12 +132,12 @@ export class AuthService {
   }
 
   async evaluateUpstreamResult(
-    upstreamIdir: string | null,
+    upstreamIdir: string | undefined,
     idir: string,
     key: string,
   ) {
     const authStatus = upstreamIdir === idir ? 200 : 403;
-    if (upstreamIdir !== null) {
+    if (upstreamIdir !== undefined) {
       await this.cacheManager.set(key, authStatus, this.cacheTime);
     }
     const upstreamResult = authStatus;
@@ -151,7 +151,7 @@ export class AuthService {
     id: string,
     recordType: RecordType,
     idir: string,
-  ): Promise<string | null> {
+  ): Promise<string | undefined> {
     let workspace;
     const params = {
       ViewMode: VIEW_MODE,
@@ -192,7 +192,7 @@ export class AuthService {
       const idir = response.data['items'][0][`${fieldName}`];
       if (idir === undefined) {
         this.logger.error(`${fieldName} field not found in request`);
-        return null;
+        return undefined;
       }
       return idir;
     } catch (error) {
@@ -208,7 +208,7 @@ export class AuthService {
         this.logger.error({ error, buildNumber: this.buildNumber });
       }
     }
-    return null;
+    return undefined;
   }
 
   async getEmployeeActiveUpstream(idir: string): Promise<boolean> {
