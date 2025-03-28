@@ -77,6 +77,10 @@ export class UtilitiesService {
     return `${idir}|${recordType}|${id}|${jti}`;
   }
 
+  convertFileBufferToBase64(buffer: Buffer): string {
+    return buffer.toString('base64');
+  }
+
   enumTypeGuard<T>(object: T, possibleValue: any): possibleValue is T[keyof T] {
     return Object.values(object).includes(possibleValue);
   }

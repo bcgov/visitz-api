@@ -9,6 +9,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -27,6 +28,12 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
+import {
+  NestedSafetyAssessmentEntity,
+  SafetyAssessmentEntity,
+} from '../../entities/safety-assessment.entity';
+import { SafetyAssessmentService } from '../../helpers/safety-assessment/safety-assessment.service';
+import { PostAttachmentDto } from '../../dto/post-attachment.dto';
 
 @Injectable()
 export class IncidentsService {
@@ -34,6 +41,7 @@ export class IncidentsService {
     private readonly supportNetworkService: SupportNetworkService,
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
+    private readonly safetyAssessmentsService: SafetyAssessmentService,
   ) {}
 
   async getSingleIncidentSupportNetworkInformationRecord(
@@ -96,6 +104,21 @@ export class IncidentsService {
     );
   }
 
+  async postSingleIncidentAttachmentRecord(
+    attachmentsDto: PostAttachmentDto,
+    idir: string,
+    id: IdPathParams,
+    file: Express.Multer.File,
+  ): Promise<NestedAttachmentsEntity> {
+    return await this.attachmentsService.postSingleAttachmentRecord(
+      RecordType.Incident,
+      attachmentsDto,
+      idir,
+      id,
+      file,
+    );
+  }
+
   async getSingleIncidentContactRecord(
     id: ContactIdPathParams,
     res: Response,
@@ -116,6 +139,34 @@ export class IncidentsService {
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleIncidentSafetyAssessmentRecord(
+    id: SafetyAssessmentIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<SafetyAssessmentEntity> {
+    return await this.safetyAssessmentsService.getSingleSafetyAssessmentRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListIncidentSafetyAssessmentRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: FilterQueryParams,
+  ): Promise<NestedSafetyAssessmentEntity> {
+    return await this.safetyAssessmentsService.getListSafetyAssessmentRecord(
       RecordType.Incident,
       id,
       res,

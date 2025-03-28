@@ -22,29 +22,29 @@ import {
 } from '../../common/constants/parameter-constants';
 import { getMockReq } from '@jest-mock/express';
 import {
-  CaseExample,
   CaseloadCompleteResponseExample,
   CaseloadEntity,
   CaseloadLaterDateResponseExample,
-  IncidentExample,
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
-import {
-  RecordType,
-  RestrictedRecordEnum,
-} from '../../common/constants/enumerations';
+import { RecordType } from '../../common/constants/enumerations';
 import { plainToInstance } from 'class-transformer';
 import {
   pageSizeParamName,
   pageSizeMax,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
+import { CaseExample } from '../../entities/case.entity';
+import { IncidentExample } from '../../entities/incident.entity';
+import { MemoExample } from '../../entities/memo.entity';
+import { SRExample } from '../../entities/sr.entity';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
   let configService: ConfigService;
   let cacheManager: Cache;
   let requestPreparerService: RequestPreparerService;
+  let utilitiesService: UtilitiesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,10 +68,21 @@ describe('CaseloadService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    utilitiesService = module.get<UtilitiesService>(UtilitiesService);
 
     configService.set('skipJWTCache', true);
+    utilitiesService.skipJWT = true;
     configService.set('afterFieldName.cases', 'Last Updated Date');
-    configService.set('afterFieldName.incidents', 'Last Updated');
+    configService.set('afterFieldName.incidents', 'Updated Date');
+    configService.set('afterFieldName.srs', 'Updated Date');
+    configService.set('afterFieldName.memos', 'Updated Date');
+    configService.set('upstreamAuth.case.restrictedField', 'Restricted Flag');
+    configService.set(
+      'upstreamAuth.incident.restrictedField',
+      'Restricted Flag',
+    );
+    configService.set('upstreamAuth.sr.restrictedField', 'Restricted Flag');
+    configService.set('upstreamAuth.memo.restrictedField', 'Restricted Flag');
   });
 
   it('should be defined', () => {
@@ -99,17 +110,21 @@ describe('CaseloadService', () => {
       const incidentEndpoint = configService.get<string>(
         `upstreamAuth.incident.endpoint`,
       );
+      const srEndpoint = configService.get<string>(`upstreamAuth.sr.endpoint`);
+      const memoEndpoint = configService.get<string>(
+        `upstreamAuth.memo.endpoint`,
+      );
       const caseIdirFieldName = configService.get<string>(
         `upstreamAuth.case.searchspecIdirField`,
       );
       const incidentIdirFieldName = configService.get<string>(
         `upstreamAuth.incident.searchspecIdirField`,
       );
-      const caseRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.case.restrictedField`,
+      const srIdirFieldName = configService.get<string>(
+        `upstreamAuth.sr.searchspecIdirField`,
       );
-      const incidentRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.incident.restrictedField`,
+      const memoIdirFieldName = configService.get<string>(
+        `upstreamAuth.memo.searchspecIdirField`,
       );
       const headers = {
         Accept: CONTENT_TYPE,
@@ -124,24 +139,34 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec:
-          `([${caseIdirFieldName}]="${idir}" AND ` +
-          `[${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `([${caseIdirFieldName}]="${idir}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec:
-          `([${incidentIdirFieldName}]="${idir}" AND ` +
-          `[${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `([${incidentIdirFieldName}]="${idir}")`,
+      };
+      const srParams = {
+        ...params,
+        searchspec: `([${srIdirFieldName}]="${idir}")`,
+      };
+      const memoParams = {
+        ...params,
+        searchspec: `([${memoIdirFieldName}]="${idir}")`,
       };
 
-      expect(getRequestSpecs.length).toBe(2);
+      expect(getRequestSpecs.length).toBe(4);
       expect(getRequestSpecs[0].url).toBe(baseUrl + caseEndpoint);
       expect(getRequestSpecs[0].headers).toMatchObject(headers);
       expect(getRequestSpecs[0].params).toMatchObject(caseParams);
       expect(getRequestSpecs[1].url).toBe(baseUrl + incidentEndpoint);
       expect(getRequestSpecs[1].headers).toMatchObject(headers);
       expect(getRequestSpecs[1].params).toMatchObject(incidentParams);
+      expect(getRequestSpecs[2].url).toBe(baseUrl + srEndpoint);
+      expect(getRequestSpecs[2].headers).toMatchObject(headers);
+      expect(getRequestSpecs[2].params).toMatchObject(srParams);
+      expect(getRequestSpecs[3].url).toBe(baseUrl + memoEndpoint);
+      expect(getRequestSpecs[3].headers).toMatchObject(headers);
+      expect(getRequestSpecs[3].params).toMatchObject(memoParams);
     });
   });
 
@@ -150,6 +175,22 @@ describe('CaseloadService', () => {
       [
         {
           responses: [
+            {
+              status: 404,
+              response: {
+                data: {
+                  message: 'There is no data for the requested resource',
+                },
+              },
+            },
+            {
+              status: 404,
+              response: {
+                data: {
+                  message: 'There is no data for the requested resource',
+                },
+              },
+            },
             {
               status: 404,
               response: {
@@ -185,6 +226,22 @@ describe('CaseloadService', () => {
             },
             items: undefined,
           },
+          srs: {
+            assignedIds: [],
+            status: 204,
+            message: {
+              message: 'There is no data for the requested resource',
+            },
+            items: undefined,
+          },
+          memos: {
+            assignedIds: [],
+            status: 204,
+            message: {
+              message: 'There is no data for the requested resource',
+            },
+            items: undefined,
+          },
         },
       ],
       [
@@ -202,6 +259,18 @@ describe('CaseloadService', () => {
                 items: [{ ...IncidentExample }],
               },
             },
+            {
+              status: 200,
+              data: {
+                items: [{ ...SRExample }],
+              },
+            },
+            {
+              status: 200,
+              data: {
+                items: [{ ...MemoExample }],
+              },
+            },
           ],
         },
         { ...CaseloadCompleteResponseExample },
@@ -214,7 +283,7 @@ describe('CaseloadService', () => {
     );
   });
 
-  describe('caseloadFilterItems tests', () => {
+  describe('caseloadFilterItemsAfter tests', () => {
     it.each([
       [{ ...CaseloadCompleteResponseExample }, '2011-10-05T14:48:00', [], []],
       [
@@ -227,7 +296,7 @@ describe('CaseloadService', () => {
       `filters out items past the given after date`,
       (response, afterString, expectedCase, expectedIncident) => {
         const deepCopyResponse = JSON.parse(JSON.stringify(response));
-        const result = service.caseloadFilterItems(
+        const result = service.caseloadFilterItemsAfter(
           deepCopyResponse,
           afterString,
         );
@@ -237,6 +306,8 @@ describe('CaseloadService', () => {
     );
   });
 
+  // TODO: Test for filtering by Restricted Flag
+
   describe('caseloadUnsetCacheItems tests', () => {
     it(`should unset items if they exist in the cache`, async () => {
       const idir = 'idir';
@@ -244,14 +315,22 @@ describe('CaseloadService', () => {
       const response = {
         cases: { assignedIds: ['c', 'a'] },
         incidents: { assignedIds: ['b'] },
+        srs: { assignedIds: ['d'] },
+        memos: { assignedIds: ['e'] },
       };
       const req = getMockReq();
       const caseKey = `${idir}|${RecordType.Case}|a|${jti}`;
       const incidentKey = `${idir}|${RecordType.Incident}|b|${jti}`;
+      const srKey = `${idir}|${RecordType.SR}|d|${jti}`;
+      const memoKey = `${idir}|${RecordType.Memo}|e|${jti}`;
       await cacheManager.set(caseKey, 500);
       await cacheManager.set(incidentKey, 200);
+      await cacheManager.set(srKey, 200);
+      await cacheManager.set(memoKey, 200);
       await expect(cacheManager.get(caseKey)).resolves.toBe(500);
       await expect(cacheManager.get(incidentKey)).resolves.toBe(200);
+      await expect(cacheManager.get(srKey)).resolves.toBe(200);
+      await expect(cacheManager.get(memoKey)).resolves.toBe(200);
 
       const cacheSpy = jest
         .spyOn(cacheManager, 'del')
@@ -260,10 +339,12 @@ describe('CaseloadService', () => {
         });
 
       await service.caseloadUnsetCacheItems(response, idir, req);
-      expect(cacheSpy).toHaveBeenCalledTimes(3);
+      expect(cacheSpy).toHaveBeenCalledTimes(5);
 
-      await expect(cacheManager.get(caseKey)).resolves.toBe(undefined);
-      await expect(cacheManager.get(incidentKey)).resolves.toBe(undefined);
+      await expect(cacheManager.get(caseKey)).resolves.toBe(null);
+      await expect(cacheManager.get(incidentKey)).resolves.toBe(null);
+      await expect(cacheManager.get(srKey)).resolves.toBe(null);
+      await expect(cacheManager.get(memoKey)).resolves.toBe(null);
     });
   });
 
@@ -292,6 +373,18 @@ describe('CaseloadService', () => {
                 status: 200,
                 data: {
                   items: [IncidentExample],
+                },
+              },
+              {
+                status: 200,
+                data: {
+                  items: [SRExample],
+                },
+              },
+              {
+                status: 200,
+                data: {
+                  items: [MemoExample],
                 },
               },
             ],
