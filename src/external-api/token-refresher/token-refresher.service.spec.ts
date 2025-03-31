@@ -57,7 +57,7 @@ describe('TokenRefresherService', () => {
         of({
           data: {
             token_type: 'Bearer',
-            access_token: 'token',
+            id_token: 'token',
             expires_in: 100,
           },
           headers: {},
@@ -104,7 +104,7 @@ describe('TokenRefresherService', () => {
         of({
           data: {
             token_type: 'Bearer',
-            access_token: 'token',
+            id_token: 'token',
             expires_in: 100,
           },
           headers: {},
