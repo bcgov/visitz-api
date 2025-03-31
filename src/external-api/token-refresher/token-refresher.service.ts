@@ -63,7 +63,7 @@ export class TokenRefresherService {
       response = await firstValueFrom(
         this.httpService.post(this.accessTokenUrl, data, { headers }),
       );
-      const access_token = response.data['access_token'];
+      const access_token = response.data['id_token'];
       const token_type = response.data['token_type'];
       const expirySeconds = response.data['expires_in'];
       if (
