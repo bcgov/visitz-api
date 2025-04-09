@@ -53,6 +53,7 @@ export class RequestPreparerService {
     uniformResponse: boolean,
     idir: string,
     filter?: FilterQueryParams,
+    existsQuery?: boolean,
   ) {
     let searchSpec = baseSearchSpec;
     let formattedDate: string | undefined;
@@ -65,6 +66,9 @@ export class RequestPreparerService {
       )) === undefined
     ) {
       searchSpec = searchSpec + `)`;
+    } else if (existsQuery === true) {
+      searchSpec =
+        searchSpec + `) AND ([${afterFieldName}] > "${formattedDate}")`;
     } else {
       searchSpec =
         searchSpec + ` AND [${afterFieldName}] > "${formattedDate}")`;
