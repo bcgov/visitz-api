@@ -129,7 +129,7 @@ export class CaseloadService {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of this.recordTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
-      const baseSearchSpec = `([${this[idirFieldVarName]}]="${idir}"`;
+      const baseSearchSpec = `EXISTS ([${this[idirFieldVarName]}]="${idir}"`;
       const [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
@@ -138,6 +138,7 @@ export class CaseloadService {
           true,
           idir,
           filter,
+          true,
         );
       getRequestSpecs.push(
         new GetRequestDetails({
