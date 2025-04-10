@@ -156,11 +156,16 @@ export class AuthService {
     const fieldName = this.configService.get<string>(
       `upstreamAuth.${recordType}.searchspecIdirField`,
     );
+    let searchspec = ``;
+    if (recordType === RecordType.Case || recordType == RecordType.Incident) {
+      searchspec = `EXISTS `;
+    }
+    searchspec = searchspec + `([${fieldName}]='${idir}')`;
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
-      searchspec: `EXISTS ([${fieldName}]='${idir}')`,
+      searchspec,
     };
     if (
       (workspace = this.configService.get(
