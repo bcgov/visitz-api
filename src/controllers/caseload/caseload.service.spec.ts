@@ -139,19 +139,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `([${caseIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `([${incidentIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `([${srIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${srIdirFieldName}]="${idir}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${memoIdirFieldName}]="${idir}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);

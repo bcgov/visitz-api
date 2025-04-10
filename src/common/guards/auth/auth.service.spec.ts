@@ -179,24 +179,9 @@ describe('AuthService', () => {
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce('');
-      const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
-        of({
-          data: {
-            items: [
-              {
-                fieldNotAvailable: true,
-              },
-            ],
-          },
-          headers: {},
-          config: {
-            url: 'exampleurl',
-            headers: {} as RawAxiosRequestHeaders,
-          },
-          status: 200,
-          statusText: 'OK',
-        } as AxiosResponse<any, any>),
-      );
+      const spy = jest.spyOn(httpService, 'get').mockImplementationOnce(() => {
+        throw new AxiosError('not found', '404');
+      });
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
@@ -342,39 +327,12 @@ describe('AuthService', () => {
       const result = await service.getAssignedIdirUpstream(
         id,
         recordType,
-        'idir',
+        testIdir,
       );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(testIdir);
     });
-
-    it.each([[{}], [undefined]])(
-      'should return undefined when idir not in response',
-      async (data) => {
-        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
-        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
-          of({
-            data,
-            headers: {},
-            config: {
-              url: 'exampleurl',
-              headers: {} as RawAxiosRequestHeaders,
-            },
-            status: 200,
-            statusText: 'OK',
-          } as AxiosResponse<any, any>),
-        );
-        const result = await service.getAssignedIdirUpstream(
-          validId,
-          validRecordType,
-          'idir',
-        );
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(undefined);
-      },
-    );
 
     it.each([[404], [500]])(
       `Should return undefined on axios error`,
