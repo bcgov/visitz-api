@@ -58,7 +58,7 @@ export default () => ({
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
     inPersonVisits: 'Updated',
-    attachments: updatedDateFieldName,
+    attachments: process.env.ATTACHMENTS_AFTER_FIELD ?? updatedDateFieldName,
     contacts: updatedDateFieldName,
     cases: process.env.CASE_AFTER_FIELD ?? undefined,
     incidents: process.env.INCIDENT_AFTER_FIELD ?? undefined,
