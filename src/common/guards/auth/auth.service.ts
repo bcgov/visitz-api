@@ -153,10 +153,19 @@ export class AuthService {
     idir: string,
   ): Promise<string | undefined> {
     let workspace;
+    const fieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.searchspecIdirField`,
+    );
+    let searchspec = ``;
+    if (recordType === RecordType.Case || recordType == RecordType.Incident) {
+      searchspec = `EXISTS `;
+    }
+    searchspec = searchspec + `([${fieldName}]='${idir}')`;
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
+      searchspec,
     };
     if (
       (workspace = this.configService.get(
@@ -183,17 +192,10 @@ export class AuthService {
         throw new Error('Upstream auth failed');
       }
       headers['Authorization'] = token;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      const fieldName = this.configService.get<string>(
-        `upstreamAuth.${recordType}.idirField`,
-      );
-      const idir = response.data['items'][0][`${fieldName}`];
-      if (idir === undefined) {
-        this.logger.error(`${fieldName} field not found in request`);
-        return undefined;
-      }
       return idir;
     } catch (error) {
       if (error instanceof AxiosError) {

@@ -139,11 +139,11 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `([${caseIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `([${incidentIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}")`,
       };
       const srParams = {
         ...params,

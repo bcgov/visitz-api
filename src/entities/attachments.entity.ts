@@ -53,6 +53,8 @@ export const AttachmentsSingleResponseCaseExample = {
   'Updated By ID': 'Updater Row Id Here',
   [updatedDateFieldName]: '01/01/1970 00:00:00',
   'Last Updated Date': '01/01/1970 00:00:00',
+  CreatedByName: 'Creator Name Here',
+  UpdatedByName: 'Updater Name Here',
 };
 
 export const AttachmentDetailsCaseExample = {
@@ -406,6 +408,18 @@ export class AttachmentsEntity {
   })
   @Expose()
   'Last Updated Date': string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['CreatedByName'],
+  })
+  @Expose()
+  CreatedByName: string;
+
+  @ApiProperty({
+    example: AttachmentsSingleResponseCaseExample['UpdatedByName'],
+  })
+  @Expose()
+  UpdatedByName: string;
 
   constructor(partial: Partial<AttachmentsEntity>) {
     Object.assign(this, partial);

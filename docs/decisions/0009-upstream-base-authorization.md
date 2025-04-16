@@ -28,7 +28,7 @@ There may be additional authorization checks defined in other decisions for more
 
 ## Decision Outcome
 
-Chosen options: "Common Keycloak service" and "Siebel authorization", because they cover each other's negatives to fully satisfy our decision drivers (and other negatives can be worked around).
+Chosen options: "Common Keycloak service" for authentication and "Siebel authorization", because they cover each other's negatives to fully satisfy our decision drivers (and other negatives can be worked around).
 
 ### Consequences
 
