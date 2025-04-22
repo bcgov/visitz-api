@@ -12,3 +12,8 @@ spec:
     podSelector:
       matchLabels:
         app.kubernetes.io/name: vpi-app
+  - from:
+    - namespaceSelector: {}
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: wm-passthru-app
