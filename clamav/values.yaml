@@ -22,8 +22,8 @@ service:
 # Ensure to have the minimum resources to run clamd
 resources:
   requests:
-    cpu: 500m
-    memory: 2Gi
+    cpu: 1000m
+    memory: 3Gi
 
 nodeSelector: {}
 
@@ -82,7 +82,7 @@ persistentVolume:
   annotations: {}
   accessModes:
   - ReadWriteOnce
-  size: 900Mi
+  size: 4Gi
   storageClass: netapp-block-standard
 
 configVersion: "1.0"
