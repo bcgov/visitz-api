@@ -11,7 +11,7 @@
 For every deployment into dev, test or prod OpenShift environments:
 1. Confirm that the latest helm chart has been sucessfully deployed via both GitHub Actions, and the OpenShift CLI / UI.
 2. Confirm that a new pod has been created in the deployment and that it is running with no log errors.
-3. If deploying to prod, wait for some traffic to come through to verify wotking status of APIs.
+3. If deploying to prod, wait for some traffic to come through to verify working status of APIs.
 4. If deploying to dev or test, run a limited set of API calls to verify that API is connecting to upstream and working as expected.
 5. If deploying to test, coordinate with project team to perform UAT.
 
