@@ -1,5 +1,7 @@
 # ClamAV
 
+Steps for deploying ClamAV on OpenShift are available in [docs/RELEASES.md](../docs/RELEASES.md)
+
 ## Test the image locally
 
 ```sh
@@ -13,3 +15,12 @@ docker run -it --rm \
     -p 3310:3310 \
     ghcr.io/bcgov/clamav-unprivileged:main
 ```
+
+## Check version (in deployed image)
+1. Find running pod in OpenShift
+2. Open the terminal
+3. Run
+	```sh
+	clamd --version
+	```
+	to find the version
