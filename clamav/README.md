@@ -1,6 +1,6 @@
 # ClamAV
 
-Steps for deploying ClamAV on OpenShift are available in docs/RELEASES.md
+Steps for deploying ClamAV on OpenShift are available in [docs/RELEASES.md](../docs/RELEASES.md)
 
 ## Test the image locally
 
