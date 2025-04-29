@@ -34,3 +34,16 @@ For every deployment into dev, test or prod OpenShift environments:
 	> ex: v1.0
 11. After merge to main, create a GitHub release with an auto-generated changelog. Do not create artifacts for it.
 12. Inform project team that deployment is complete.
+
+## ClamAV releases
+As with regular releases, all Operational and DevOps tasks apply. However, the technical tasks differ.
+
+1. Create a branch off of dev, titled 'release/clamav/v\<version number\>'. Increment the version number in clamav/Chart.yaml accordingly. Use [semantic versioning](https://semver.org/).
+2. Review helm description, ensuring that it is up to date.
+3. Open a PR to dev first, titled with the version number of the release, ensuring all automated tests pass before merging. Cancel the deployment workflow, as this is for Visitz only.
+4. Open a PR from dev to test, titled with the version number of the release, also waiting for automated tests to pass before merging. Cancel the deployment workflow, as this is for Visitz only.
+5. Open a PR from dev to main, titled with the version number of the release. Note that this PR deployment will require approval to merge. Cancel the deployment workflow, as this is for Visitz only.
+6. If any changes are being made to the StatefulSet other than the number of replicas or updateStrategy (such as memory or CPU increases), you will need to delete the StatefulSet in OpenShift before running the ClamAV workflow or the helm chart will not update. This is a property of the StatefulSet itself, and will not delete the PVC that contains the virus definition database, but it may take a few minutes for the StatefulSet to start up again once redeployed. Note that technically you can update a few other fields as well without a deletion, but none of these are ones you would typically update. These include 'ordinals', 'template', 'persistentVolumeClaimRetentionPolicy' and 'minReadySeconds'.
+7. Go into GitHub and manually run the 'ClamAV Build and Deploy' action. Proceed to follow the steps in 'DevOps tasks' for a prod deployment, noting that this instance will be found in tools but shared across environments.
+
+
