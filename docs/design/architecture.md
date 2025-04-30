@@ -3,10 +3,10 @@
 title: Visitz API architecture
 ---
 flowchart TD
-    User[User agent] --> |Authenticate with PKCE| Keycloak
-    User --> |Request with access token| Kong
+    User[User agent] --> |Authenticate with PKCE| Keycloak[OCIO-SSO]
+    User --> |Request with access token| Kong[OCIO-APS]
     Kong <--> |Introspect access token| Keycloak
-    Kong --> |Forward request| Vpi[Visitz API]
+    Kong --> |Forward request| Vpi[Visitz API<br/>OpenShift Silver]
     Vpi <--> ClamAV
     Vpi <--> |Authenticate with client credentials| Icm[ICM REST framework]
     Vpi --> |Request with ID token, append username header| Icm
