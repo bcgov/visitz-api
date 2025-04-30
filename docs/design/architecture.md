@@ -7,6 +7,7 @@ flowchart TD
     User --> |Request with access token| Kong
     Kong <--> |Introspect access token| Keycloak
     Kong --> |Forward request| Vpi[Visitz API]
+    Vpi <--> ClamAV
     Vpi <--> |Authenticate with client credentials| Icm[ICM REST framework]
     Vpi --> |Request with ID token, append username header| Icm
 ```
