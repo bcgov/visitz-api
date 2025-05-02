@@ -16,7 +16,7 @@ flowchart TD
   RevProxy <--> |Introspect access token| IdBroker
   RevProxy --> |Forward request| Container
 
-  subgraph Container["Managed Container Services"]
+  subgraph Container["MCS-Silver"]
     direction TB
     Vpi <--> Av
   end
@@ -27,5 +27,5 @@ flowchart TD
 
 Additional information:
 
-- Managed Container Services: Private Cloud Silver Tier (MCS-Silver)
+- **MCS-Silver**: Managed Container Services - Private Cloud Silver Tier
 - [ICM REST framework](https://dev.azure.com/bc-icm/SiebelCRM%20Lab/_wiki/wikis/SiebelCRM-Lab.wiki/575/Siebel-Application-Client-ID-(Service-Account)-Operation-for-DATA-API)
