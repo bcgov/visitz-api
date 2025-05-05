@@ -58,6 +58,7 @@ import { JwtService } from '@nestjs/jwt';
 import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { PostAttachmentsSRReturnExample } from '../../dto/post-attachment.dto';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -75,6 +76,7 @@ describe('ServiceRequestsService', () => {
         ContactsService,
         AttachmentsService,
         VirusScanService,
+        ResponseNarrativeService,
         UtilitiesService,
         JwtService,
         TokenRefresherService,

@@ -11,6 +11,7 @@ import {
   emojiError,
 } from '../../common/constants/error-constants';
 import { emojiRegex } from '../../common/constants/parameter-constants';
+import { IdPathParams } from '../../dto/id-path-params.dto';
 
 @Injectable()
 export class UtilitiesService {
@@ -83,6 +84,15 @@ export class UtilitiesService {
 
   enumTypeGuard<T>(object: T, possibleValue: any): possibleValue is T[keyof T] {
     return Object.values(object).includes(possibleValue);
+  }
+
+  constructUpstreamUrl(
+    type: RecordType,
+    id: IdPathParams,
+    baseUrl: string,
+    endpointUrls: object,
+  ): string {
+    return baseUrl + endpointUrls[type].replace('rowId', id.rowId);
   }
 }
 

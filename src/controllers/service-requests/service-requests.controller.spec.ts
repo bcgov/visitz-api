@@ -59,6 +59,7 @@ import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { AttachmentStatusEnum } from '../../common/constants/enumerations';
 import { PostAttachmentsSRReturnExample } from '../../dto/post-attachment.dto';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -78,6 +79,7 @@ describe('ServiceRequestsController', () => {
         ContactsService,
         SupportNetworkService,
         AttachmentsService,
+        ResponseNarrativeService,
         VirusScanService,
         TokenRefresherService,
         RequestPreparerService,

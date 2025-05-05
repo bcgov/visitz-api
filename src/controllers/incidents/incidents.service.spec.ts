@@ -67,6 +67,7 @@ import {
 import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { PostAttachmentsIncidentReturnExample } from '../../dto/post-attachment.dto';
 import { Readable } from 'stream';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -86,6 +87,7 @@ describe('IncidentsService', () => {
         AttachmentsService,
         VirusScanService,
         SafetyAssessmentService,
+        ResponseNarrativeService,
         UtilitiesService,
         TokenRefresherService,
         JwtService,
