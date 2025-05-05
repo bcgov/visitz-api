@@ -4,14 +4,14 @@
 # Choose an Antivirus Solution
 
 * status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
-* date: 2025-02-10 <!-- YYYY-MM-DD when the decision was last updated -->
+* date: 2025-04-29 <!-- YYYY-MM-DD when the decision was last updated -->
 * decision-makers: Todd Scharien, Hannah MacDonald, Sagar Shah <!-- list everyone involved in the decision -->
 * consulted: Leo Lou <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
 * informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
 
 ## Context and Problem Statement
 
-When receiving file uploads through our API, we want to ensure that they are free of malware. As such, we need an antivirus file scanning solution. 
+When receiving file uploads through our API, we want to ensure that they are free of malware. As such, we need an antivirus file scanning solution.
 
 For context, most of the ClamAV alternatives were looked in to because it was stated that Microsoft might have the Antivirus scanning capability we were looking for. These largely did not meet our most basic requirement, which is the ability to scan individual files for viruses.
 
@@ -31,11 +31,12 @@ For context, most of the ClamAV alternatives were looked in to because it was st
 
 ## Decision Outcome
 
-TBD
+Chosen option: "ClamAV", because it best satisfies the decision drivers—despite potential deployment issues into OpenShift.
 
 ### Consequences
 
-TBD
+* Good, because we can easily scan individual files through code.
+* Bad, because ClamAV is not easily scalable.
 
 ## Pros and Cons of the Options
 
