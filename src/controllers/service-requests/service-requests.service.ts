@@ -9,6 +9,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -28,6 +29,11 @@ import {
 } from '../../entities/contacts.entity';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
 import { PostAttachmentDto } from '../../dto/post-attachment.dto';
+import {
+  ResponseNarrativeEntity,
+  NestedResponseNarrativeEntity,
+} from '../../entities/response-narrative.entity';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -35,6 +41,7 @@ export class ServiceRequestsService {
     private readonly supportNetworkService: SupportNetworkService,
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
+    private readonly responseNarrativesService: ResponseNarrativeService,
   ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
@@ -132,6 +139,34 @@ export class ServiceRequestsService {
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleSRResponseNarrativeRecord(
+    id: ResponseNarrativeIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ResponseNarrativeEntity> {
+    return await this.responseNarrativesService.getSingleResponseNarrativeRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRResponseNarrativeRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: FilterQueryParams,
+  ): Promise<NestedResponseNarrativeEntity> {
+    return await this.responseNarrativesService.getListResponseNarrativeRecord(
       RecordType.SR,
       id,
       res,

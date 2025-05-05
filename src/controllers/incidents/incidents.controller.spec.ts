@@ -18,6 +18,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -34,6 +35,7 @@ import {
   afterParamName,
   safetyAssessmentIdName,
   supportNetworkIdName,
+  responseNarrativeIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -68,6 +70,13 @@ import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { AttachmentStatusEnum } from '../../common/constants/enumerations';
 import { PostAttachmentsIncidentReturnExample } from '../../dto/post-attachment.dto';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
+import {
+  ResponseNarrativeListResponseIncidentExample,
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeSingleResponseIncidentExample,
+  ResponseNarrativeEntity,
+} from '../../entities/response-narrative.entity';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -88,6 +97,7 @@ describe('IncidentsController', () => {
         AttachmentsService,
         VirusScanService,
         SafetyAssessmentService,
+        ResponseNarrativeService,
         AuthService,
         TokenRefresherService,
         RequestPreparerService,
@@ -450,6 +460,80 @@ describe('IncidentsController', () => {
           'idir',
         );
         expect(result).toEqual(new SafetyAssessmentEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getListIncidentResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedResponseNarrativeEntity(data)),
+          );
+
+        const result = await controller.getListIncidentResponseNarrativeRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [responseNarrativeIdName]: 'test2',
+        } as ResponseNarrativeIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getSingleIncidentResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ResponseNarrativeEntity(data)),
+          );
+
+        const result =
+          await controller.getSingleIncidentResponseNarrativeRecord(
+            req,
+            idPathParams,
+            res,
+          );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ResponseNarrativeEntity(data));
       },
     );
   });

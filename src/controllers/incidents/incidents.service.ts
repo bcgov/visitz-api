@@ -9,6 +9,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -34,6 +35,11 @@ import {
 } from '../../entities/safety-assessment.entity';
 import { SafetyAssessmentService } from '../../helpers/safety-assessment/safety-assessment.service';
 import { PostAttachmentDto } from '../../dto/post-attachment.dto';
+import {
+  ResponseNarrativeEntity,
+  NestedResponseNarrativeEntity,
+} from '../../entities/response-narrative.entity';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
 
 @Injectable()
 export class IncidentsService {
@@ -42,6 +48,7 @@ export class IncidentsService {
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
     private readonly safetyAssessmentsService: SafetyAssessmentService,
+    private readonly responseNarrativesService: ResponseNarrativeService,
   ) {}
 
   async getSingleIncidentSupportNetworkInformationRecord(
@@ -167,6 +174,34 @@ export class IncidentsService {
     filter?: FilterQueryParams,
   ): Promise<NestedSafetyAssessmentEntity> {
     return await this.safetyAssessmentsService.getListSafetyAssessmentRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleIncidentResponseNarrativeRecord(
+    id: ResponseNarrativeIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ResponseNarrativeEntity> {
+    return await this.responseNarrativesService.getSingleResponseNarrativeRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListIncidentResponseNarrativeRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: FilterQueryParams,
+  ): Promise<NestedResponseNarrativeEntity> {
+    return await this.responseNarrativesService.getListResponseNarrativeRecord(
       RecordType.Incident,
       id,
       res,

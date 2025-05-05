@@ -329,6 +329,26 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: ATTACHMENTS_AFTER_FIELD
+            - name: RESPONSE_NARRATIVES_AFTER_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: RESPONSE_NARRATIVES_AFTER_FIELD
+            - name: INCIDENT_RESPONSE_NARRATIVES_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_RESPONSE_NARRATIVES_ENDPOINT
+            - name: SR_RESPONSE_NARRATIVES_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_RESPONSE_NARRATIVES_ENDPOINT
+            - name: RESPONSE_NARRATIVES_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: RESPONSE_NARRATIVES_WORKSPACE
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
             - name: VPI_APP_ENV

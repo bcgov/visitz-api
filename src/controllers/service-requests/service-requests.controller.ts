@@ -42,6 +42,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -57,6 +58,7 @@ import {
   afterParamName,
   supportNetworkIdName,
   attachmentIdFieldName,
+  responseNarrativeIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -96,6 +98,12 @@ import {
 } from '../../dto/post-attachment.dto';
 import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
 import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators';
+import {
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeEntity,
+  ResponseNarrativeListResponseSRExample,
+  ResponseNarrativeSingleResponseSRExample,
+} from '../../entities/response-narrative.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -456,6 +464,99 @@ export class ServiceRequestsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
     return await this.serviceRequestService.getSingleSRContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/response-narratives`)
+  @ApiOperation({
+    description: `Find all Response Narrative entries related to a given Service Request entity by Service Request id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedResponseNarrativeEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedResponseNarrativeEntity),
+        },
+        examples: {
+          ResponseNarrativeListResponse: {
+            value: ResponseNarrativeListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRResponseNarrativeRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedResponseNarrativeEntity> {
+    return await this.serviceRequestService.getListSRResponseNarrativeRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/response-narratives/:${responseNarrativeIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${responseNarrativeIdName} result if it is related to the given Service Request id.`,
+  })
+  @ApiExtraModels(ResponseNarrativeEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ResponseNarrativeEntity),
+        },
+        examples: {
+          ResponseNarrativeSingleResponse: {
+            value: ResponseNarrativeSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRResponseNarrativeRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ResponseNarrativeIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ResponseNarrativeEntity> {
+    return await this.serviceRequestService.getSingleSRResponseNarrativeRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

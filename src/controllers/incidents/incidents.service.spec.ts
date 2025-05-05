@@ -19,6 +19,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -37,6 +38,7 @@ import {
   afterParamName,
   safetyAssessmentIdName,
   supportNetworkIdName,
+  responseNarrativeIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -67,6 +69,13 @@ import {
 import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { PostAttachmentsIncidentReturnExample } from '../../dto/post-attachment.dto';
 import { Readable } from 'stream';
+import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
+import {
+  ResponseNarrativeListResponseIncidentExample,
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeSingleResponseIncidentExample,
+  ResponseNarrativeEntity,
+} from '../../entities/response-narrative.entity';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -74,6 +83,7 @@ describe('IncidentsService', () => {
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
   let safetyAssessmentsService: SafetyAssessmentService;
+  let responseNarrativeService: ResponseNarrativeService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -86,6 +96,7 @@ describe('IncidentsService', () => {
         AttachmentsService,
         VirusScanService,
         SafetyAssessmentService,
+        ResponseNarrativeService,
         UtilitiesService,
         TokenRefresherService,
         JwtService,
@@ -108,6 +119,9 @@ describe('IncidentsService', () => {
     contactsService = module.get<ContactsService>(ContactsService);
     safetyAssessmentsService = module.get<SafetyAssessmentService>(
       SafetyAssessmentService,
+    );
+    responseNarrativeService = module.get<ResponseNarrativeService>(
+      ResponseNarrativeService,
     );
     mockClear();
   });
@@ -460,6 +474,77 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new SafetyAssessmentEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const responseNarrativeSpy = jest
+          .spyOn(responseNarrativeService, 'getListResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedResponseNarrativeEntity(data)),
+          );
+
+        const result = await service.getListIncidentResponseNarrativeRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(responseNarrativeSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [responseNarrativeIdName]: 'test2',
+        } as ResponseNarrativeIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const responseNarrativeSpy = jest
+          .spyOn(responseNarrativeService, 'getSingleResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ResponseNarrativeEntity(data)),
+          );
+
+        const result = await service.getSingleIncidentResponseNarrativeRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(responseNarrativeSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ResponseNarrativeEntity(data));
       },
     );
   });
