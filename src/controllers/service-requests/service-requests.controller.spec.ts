@@ -14,6 +14,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -31,6 +32,7 @@ import {
   inlineAttachmentParamName,
   afterParamName,
   supportNetworkIdName,
+  responseNarrativeIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -60,6 +62,12 @@ import { Readable } from 'stream';
 import { AttachmentStatusEnum } from '../../common/constants/enumerations';
 import { PostAttachmentsSRReturnExample } from '../../dto/post-attachment.dto';
 import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
+import {
+  ResponseNarrativeListResponseSRExample,
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeSingleResponseSRExample,
+  ResponseNarrativeEntity,
+} from '../../entities/response-narrative.entity';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -371,6 +379,75 @@ describe('ServiceRequestsController', () => {
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedResponseNarrativeEntity(data)),
+          );
+
+        const result = await controller.getListSRResponseNarrativeRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [responseNarrativeIdName]: 'test2',
+        } as ResponseNarrativeIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ResponseNarrativeEntity(data)),
+          );
+
+        const result = await controller.getSingleSRResponseNarrativeRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ResponseNarrativeEntity(data));
       },
     );
   });

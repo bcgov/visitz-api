@@ -19,6 +19,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -35,6 +36,7 @@ import {
   afterParamName,
   srAttachmentsFieldName,
   supportNetworkIdName,
+  responseNarrativeIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -59,12 +61,19 @@ import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { PostAttachmentsSRReturnExample } from '../../dto/post-attachment.dto';
 import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
+import {
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeEntity,
+  ResponseNarrativeListResponseSRExample,
+  ResponseNarrativeSingleResponseSRExample,
+} from '../../entities/response-narrative.entity';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
   let supportNetworkService: SupportNetworkService;
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
+  let responseNarrativeService: ResponseNarrativeService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -98,6 +107,9 @@ describe('ServiceRequestsService', () => {
     );
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
     contactsService = module.get<ContactsService>(ContactsService);
+    responseNarrativeService = module.get<ResponseNarrativeService>(
+      ResponseNarrativeService,
+    );
     mockClear();
   });
 
@@ -376,6 +388,77 @@ describe('ServiceRequestsService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const responseNarrativeSpy = jest
+          .spyOn(responseNarrativeService, 'getListResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedResponseNarrativeEntity(data)),
+          );
+
+        const result = await service.getListSRResponseNarrativeRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(responseNarrativeSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRResponseNarrativeRecord tests', () => {
+    it.each([
+      [
+        ResponseNarrativeSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [responseNarrativeIdName]: 'test2',
+        } as ResponseNarrativeIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const responseNarrativeSpy = jest
+          .spyOn(responseNarrativeService, 'getSingleResponseNarrativeRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ResponseNarrativeEntity(data)),
+          );
+
+        const result = await service.getSingleSRResponseNarrativeRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(responseNarrativeSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ResponseNarrativeEntity(data));
       },
     );
   });
