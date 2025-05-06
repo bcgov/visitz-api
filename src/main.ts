@@ -9,6 +9,13 @@ import { versionNumber } from './common/constants/parameter-constants';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
+    httpsOptions: {
+      key: process.env.SERVER_KEY.trim(),
+      cert: [process.env.SERVER_CERT.trim()],
+      ca: process.env.CA_CERT.trim(),
+      requestCert: true,
+      rejectUnauthorized: true,
+    },
   });
   app.useLogger(app.get(Logger));
 
