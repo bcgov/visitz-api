@@ -1,6 +1,12 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import {
   attachmentIdFieldName,
   casesAttachmentsFieldName,
@@ -98,6 +104,7 @@ export class PostAttachmentDto {
   })
   Category: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MaxLength(attachmentFormDescriptionMax)
@@ -109,8 +116,9 @@ export class PostAttachmentDto {
     example: 'KKCFS Document',
     description: 'Description of the file uploaded.',
     maxLength: attachmentFormDescriptionMax,
+    required: false,
   })
-  'Form Description': string;
+  'Form Description'?: string;
 
   @IsEnum(AttachmentStatusEnum)
   @MaxLength(attachmentStatusMax)
@@ -123,6 +131,7 @@ export class PostAttachmentDto {
   })
   Status: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MaxLength(attachmentTemplateMax)
@@ -134,8 +143,9 @@ export class PostAttachmentDto {
     example: 'TEMPLATENAMEHERE',
     description: 'Template name.',
     maxLength: attachmentTemplateMax,
+    required: false,
   })
-  Template: string;
+  Template?: string;
 }
 
 // For use upstream only. Validation not done on parameters here
@@ -144,9 +154,9 @@ export class PostAttachmentDtoUpstream {
   Id: string | undefined;
   FileExt: string;
   FileName: string;
-  Template: string;
+  Template?: string;
   Category: string;
-  'Form Description': string;
+  'Form Description'?: string;
   Status: string;
   [attachmentIdFieldName]: string;
   [casesAttachmentsFieldName]: string | undefined;
