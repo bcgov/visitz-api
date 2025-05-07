@@ -1,11 +1,11 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import {
+  IsByteLength,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  MaxLength,
 } from 'class-validator';
 import {
   attachmentIdFieldName,
@@ -92,7 +92,7 @@ export class PostAttachmentDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(attachmentCategoryMax)
+  @IsByteLength(1, attachmentCategoryMax)
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })
@@ -107,7 +107,7 @@ export class PostAttachmentDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(attachmentFormDescriptionMax)
+  @IsByteLength(1, attachmentFormDescriptionMax)
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })
@@ -121,7 +121,7 @@ export class PostAttachmentDto {
   'Form Description'?: string;
 
   @IsEnum(AttachmentStatusEnum)
-  @MaxLength(attachmentStatusMax)
+  @IsByteLength(1, attachmentStatusMax)
   @Expose()
   @ApiProperty({
     example: AttachmentStatusEnum.Profiled,
@@ -134,7 +134,7 @@ export class PostAttachmentDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(attachmentTemplateMax)
+  @IsByteLength(1, attachmentTemplateMax)
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })

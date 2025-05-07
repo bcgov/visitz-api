@@ -4,7 +4,7 @@ import {
   isPastISO8601Date,
 } from '../helpers/utilities/utilities.service';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsByteLength, IsEnum, IsNotEmpty } from 'class-validator';
 import { VisitDetails } from '../common/constants/enumerations';
 import {
   childVisitEntityIdFieldName,
@@ -31,7 +31,7 @@ export class PostInPersonVisitDto {
   'Date of visit': string;
 
   @IsNotEmpty()
-  @MaxLength(visitDescriptionMax)
+  @IsByteLength(1, visitDescriptionMax)
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })
@@ -44,7 +44,7 @@ export class PostInPersonVisitDto {
   'Visit Description': string;
 
   @IsEnum(VisitDetails)
-  @MaxLength(visitDetailsMax)
+  @IsByteLength(1, visitDetailsMax)
   @Expose()
   @ApiProperty({
     example: VisitDetails.PrivateVisitInHome,
