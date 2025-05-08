@@ -7,7 +7,7 @@ image:
  
 service:
   type: ClusterIP
-  port: 80
+  port: 443
   containerPort: 3000
  
 resources: {}
