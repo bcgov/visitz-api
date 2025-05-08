@@ -18,6 +18,8 @@ import { ContactsService } from './contacts/contacts.service';
 import { SafetyAssessmentModule } from './safety-assessment/safety-assessment.module';
 import { SafetyAssessmentService } from './safety-assessment/safety-assessment.service';
 import { VirusScanModule } from './virus-scan/virus-scan.module';
+import { ResponseNarrativeModule } from './response-narrative/response-narrative.module';
+import { ResponseNarrativeService } from './response-narrative/response-narrative.service';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { VirusScanModule } from './virus-scan/virus-scan.module';
     ContactsModule,
     SafetyAssessmentModule,
     VirusScanModule,
+    ResponseNarrativeModule,
   ],
   providers: [
     SupportNetworkService,
@@ -42,6 +45,7 @@ import { VirusScanModule } from './virus-scan/virus-scan.module';
     AttachmentsService,
     ContactsService,
     SafetyAssessmentService,
+    ResponseNarrativeService,
   ],
   exports: [
     SupportNetworkService,
@@ -50,6 +54,7 @@ import { VirusScanModule } from './virus-scan/virus-scan.module';
     AttachmentsService,
     ContactsService,
     SafetyAssessmentService,
+    ResponseNarrativeService,
   ],
 })
 export class HelpersModule {}

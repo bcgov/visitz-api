@@ -23,6 +23,7 @@ const contactIdName = 'contactId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
+const responseNarrativeIdName = 'responseNarrativeId';
 
 const casesAttachmentsFieldName = 'Case Id';
 const incidentsAttachmentsFieldName = 'Incident Id';
@@ -53,6 +54,7 @@ export {
   supportNetworkIdName,
   visitIdName,
   safetyAssessmentIdName,
+  responseNarrativeIdName,
   casesAttachmentsFieldName,
   incidentsAttachmentsFieldName,
   srAttachmentsFieldName,

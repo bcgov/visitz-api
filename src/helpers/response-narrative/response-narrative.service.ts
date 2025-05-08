@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { UtilitiesService } from '../utilities/utilities.service';
 import { Response } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
+import { ConfigService } from '@nestjs/config';
+import { responseNarrativeIdName } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  ContactIdPathParams,
+  ResponseNarrativeIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  ContactsEntity,
-  NestedContactsEntity,
-} from '../../entities/contacts.entity';
-import { contactIdName } from '../../common/constants/parameter-constants';
-import { UtilitiesService } from '../utilities/utilities.service';
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeEntity,
+} from '../../entities/response-narrative.entity';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 @Injectable()
-export class ContactsService {
+export class ResponseNarrativeService {
   baseUrl: string;
   endpointUrls: object;
   workspace: string | undefined;
@@ -30,30 +30,28 @@ export class ContactsService {
       this.configService.get<string>('endpointUrls.baseUrl'),
     );
     this.endpointUrls = {
-      [RecordType.Case]: encodeURI(
-        this.configService.get<string>('endpointUrls.caseContacts'),
-      ),
       [RecordType.Incident]: encodeURI(
-        this.configService.get<string>('endpointUrls.incidentContacts'),
+        this.configService.get<string>(
+          'endpointUrls.incidentResponseNarratives',
+        ),
       ),
       [RecordType.SR]: encodeURI(
-        this.configService.get<string>('endpointUrls.srContacts'),
-      ),
-      [RecordType.Memo]: encodeURI(
-        this.configService.get<string>('endpointUrls.memoContacts'),
+        this.configService.get<string>('endpointUrls.srResponseNarratives'),
       ),
     };
-    this.workspace = this.configService.get('workspaces.contacts');
-    this.afterFieldName = this.configService.get('afterFieldName.contacts');
+    this.workspace = this.configService.get('workspaces.responseNarratives');
+    this.afterFieldName = this.configService.get(
+      'afterFieldName.responseNarratives',
+    );
   }
 
-  async getSingleContactRecord(
+  async getSingleResponseNarrativeRecord(
     type: RecordType,
-    id: ContactIdPathParams,
+    id: ResponseNarrativeIdPathParams,
     res: Response,
     idir: string,
-  ): Promise<ContactsEntity> {
-    const baseSearchSpec = `([Id]="${id[contactIdName]}"`;
+  ): Promise<ResponseNarrativeEntity> {
+    const baseSearchSpec = `([Id]="${id[responseNarrativeIdName]}"`;
     const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
       type,
       id,
@@ -74,16 +72,16 @@ export class ContactsService {
       res,
       params,
     );
-    return new ContactsEntity(response.data);
+    return new ResponseNarrativeEntity(response.data);
   }
 
-  async getListContactRecord(
+  async getListResponseNarrativeRecord(
     type: RecordType,
     id: IdPathParams,
     res: Response,
     idir: string,
     filter?: FilterQueryParams,
-  ): Promise<NestedContactsEntity> {
+  ): Promise<NestedResponseNarrativeEntity> {
     const baseSearchSpec = ``;
     const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
       type,
@@ -106,6 +104,6 @@ export class ContactsService {
       res,
       params,
     );
-    return new NestedContactsEntity(response.data);
+    return new NestedResponseNarrativeEntity(response.data);
   }
 }
