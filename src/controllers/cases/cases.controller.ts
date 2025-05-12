@@ -40,6 +40,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  CaseNotesIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -59,6 +60,7 @@ import {
   supportNetworkIdName,
   visitIdName,
   attachmentIdFieldName,
+  caseNotesIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -106,6 +108,12 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators';
 import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
+import {
+  NestedCaseNotesEntity,
+  CaseNotesEntity,
+  CaseNotesSingleExample,
+  CaseNotesListResponseExample,
+} from '../../entities/case-notes.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -610,6 +618,102 @@ export class CasesController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
     return await this.casesService.getSingleCaseContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/notes`)
+  @ApiOperation({
+    description:
+      'Find all Case Note entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedCaseNotesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedCaseNotesEntity),
+        },
+        examples: {
+          CaseNotesListResponse: {
+            value: CaseNotesListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseNotesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedCaseNotesEntity> {
+    return await this.casesService.getListCaseNotesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/notes/:${caseNotesIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${caseNotesIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(CaseNotesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(CaseNotesEntity),
+        },
+        examples: {
+          CaseNotesSingleResponse: {
+            value: CaseNotesSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseNotesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: CaseNotesIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<CaseNotesEntity> {
+    return await this.casesService.getSingleCaseNotesRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
