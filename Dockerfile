@@ -1,5 +1,5 @@
 # Use the official Node.js image from the Docker Hub
-FROM node:22-alpine
+FROM node:24-alpine
 
 # Create and set the working directory inside the container
 WORKDIR /app
