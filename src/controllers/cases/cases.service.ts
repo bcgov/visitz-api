@@ -7,6 +7,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  CaseNotesIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -46,6 +47,11 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { PostAttachmentDto } from '../../dto/post-attachment.dto';
+import { CaseNotesService } from '../../helpers/case-notes/case-notes.service';
+import {
+  CaseNotesEntity,
+  NestedCaseNotesEntity,
+} from 'src/entities/case-notes.entity';
 
 @Injectable()
 export class CasesService {
@@ -54,6 +60,7 @@ export class CasesService {
     private readonly inPersonVisitsService: InPersonVisitsService,
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
+    private readonly caseNotesService: CaseNotesService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -197,6 +204,34 @@ export class CasesService {
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleCaseNotesRecord(
+    id: CaseNotesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<CaseNotesEntity> {
+    return await this.caseNotesService.getSingleCaseNotesRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseNotesRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: FilterQueryParams,
+  ): Promise<NestedCaseNotesEntity> {
+    return await this.caseNotesService.getListCaseNotesRecord(
       RecordType.Case,
       id,
       res,

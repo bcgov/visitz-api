@@ -13,6 +13,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  CaseNotesIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -46,6 +47,7 @@ import {
   afterParamName,
   supportNetworkIdName,
   visitIdName,
+  caseNotesIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -69,6 +71,13 @@ import { JwtService } from '@nestjs/jwt';
 import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { PostAttachmentsCaseReturnExample } from '../../dto/post-attachment.dto';
+import { CaseNotesService } from '../../helpers/case-notes/case-notes.service';
+import {
+  CaseNotesEntity,
+  CaseNotesListResponseExample,
+  CaseNotesSingleExample,
+  NestedCaseNotesEntity,
+} from '../../entities/case-notes.entity';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -76,6 +85,7 @@ describe('CasesService', () => {
   let inPersonVisitsService: InPersonVisitsService;
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
+  let caseNotesService: CaseNotesService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -85,6 +95,7 @@ describe('CasesService', () => {
         CasesService,
         ContactsService,
         SupportNetworkService,
+        CaseNotesService,
         AttachmentsService,
         VirusScanService,
         UtilitiesService,
@@ -111,6 +122,7 @@ describe('CasesService', () => {
     );
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
     contactsService = module.get<ContactsService>(ContactsService);
+    caseNotesService = module.get<CaseNotesService>(CaseNotesService);
     mockClear();
   });
 
@@ -482,6 +494,75 @@ describe('CasesService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseNotesRecord tests', () => {
+    it.each([
+      [
+        CaseNotesListResponseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const caseNotesSpy = jest
+          .spyOn(caseNotesService, 'getListCaseNotesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCaseNotesEntity(data)),
+          );
+
+        const result = await service.getListCaseNotesRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(caseNotesSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCaseNotesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseNotesRecord tests', () => {
+    it.each([
+      [
+        CaseNotesSingleExample,
+        {
+          [idName]: 'test',
+          [caseNotesIdName]: 'test2',
+        } as CaseNotesIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const caseNotesSpy = jest
+          .spyOn(caseNotesService, 'getSingleCaseNotesRecord')
+          .mockReturnValueOnce(Promise.resolve(new CaseNotesEntity(data)));
+
+        const result = await service.getSingleCaseNotesRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(caseNotesSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new CaseNotesEntity(data));
       },
     );
   });
