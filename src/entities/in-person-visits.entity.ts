@@ -1,8 +1,10 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import {
+  createdByFieldName,
   createdByIdFieldName,
   createdDateFieldName,
+  updatedByFieldName,
   updatedByIdFieldName,
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
@@ -30,11 +32,15 @@ export const InPersonVisitsSingleResponseCaseExample = {
   ],
   'Parent Id': 'Entity-Id-here',
   'Created By Name': 'Creator-IDIR-Here',
+  [createdByFieldName]: 'Creator-IDIR-Here',
   [createdByIdFieldName]: 'Creator-Id-Here',
   [createdDateFieldName]: '01/01/1970 00:00:00',
+  Created: '01/01/1970 00:00:00',
   'Updated By Name': 'Updater-IDIR-Here',
+  [updatedByFieldName]: 'Updater-IDIR-Here',
   [updatedByIdFieldName]: 'Updater-Id-Here',
   [updatedDateFieldName]: '01/01/1970 00:00:00',
+  Updated: '01/01/1970 00:00:00',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,6 +158,12 @@ class InPersonVisitsEntity {
   'Created By Name': string;
 
   @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample[createdByFieldName],
+  })
+  @Expose()
+  [createdByFieldName]: string;
+
+  @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample[createdByIdFieldName],
   })
   @Expose()
@@ -164,10 +176,22 @@ class InPersonVisitsEntity {
   [createdDateFieldName]: string;
 
   @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Created'],
+  })
+  @Expose()
+  'Created': string;
+
+  @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample['Updated By Name'],
   })
   @Expose()
   'Updated By Name': string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample[updatedByFieldName],
+  })
+  @Expose()
+  [updatedByFieldName]: string;
 
   @ApiProperty({
     example: InPersonVisitsSingleResponseCaseExample[updatedByIdFieldName],
@@ -180,6 +204,12 @@ class InPersonVisitsEntity {
   })
   @Expose()
   [updatedDateFieldName]: string;
+
+  @ApiProperty({
+    example: InPersonVisitsSingleResponseCaseExample['Updated'],
+  })
+  @Expose()
+  Updated: string;
 
   constructor(object) {
     Object.assign(this, object);

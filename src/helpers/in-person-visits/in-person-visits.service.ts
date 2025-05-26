@@ -26,9 +26,13 @@ import { Response } from 'express';
 import {
   caseChildServices,
   childVisitEntityIdFieldName,
+  createdByFieldName,
+  createdDateFieldName,
   getChildrenParamName,
   queryHierarchyParamName,
   trustedIdirHeaderName,
+  updatedByFieldName,
+  updatedDateFieldName,
 } from '../../common/constants/upstream-constants';
 import { childServicesTypeError } from '../../common/constants/error-constants';
 import { UtilitiesService } from '../utilities/utilities.service';
@@ -89,7 +93,7 @@ export class InPersonVisitsService {
     if (!isValidChildCase) {
       throw new BadRequestException([childServicesTypeError]);
     }
-    const baseSearchSpec = `([Id]="${id[visitIdName]}"`;
+    const baseSearchSpec = `([Parent Id]="${parentId}" AND [Id]="${id[visitIdName]}"`;
     const [headers, baseParams] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -110,7 +114,13 @@ export class InPersonVisitsService {
             classExample: InPersonVisitsSingleResponseCaseExample,
             name: queryHierarchyVisitParentClassName,
             searchspec: searchspec,
-            exclude: [queryHierarchyVisitChildClassName],
+            exclude: [
+              queryHierarchyVisitChildClassName,
+              updatedByFieldName,
+              createdByFieldName,
+              'Created',
+              'Updated',
+            ],
             childComponents: [
               new QueryHierarchyComponent({
                 classExample:
@@ -127,10 +137,12 @@ export class InPersonVisitsService {
         params,
       );
     }
+    const returnItems = this.duplicateResponseFields(response.data.items);
+
     if (filter && filter.multivalue === 'true') {
-      return new InPersonVisitsEntityMultiValue(response.data.items);
+      return new InPersonVisitsEntityMultiValue(returnItems);
     }
-    return new InPersonVisitsEntityNoMultiValue(response.data.items);
+    return new InPersonVisitsEntityNoMultiValue(returnItems);
   }
 
   async getListInPersonVisitRecord(
@@ -170,7 +182,13 @@ export class InPersonVisitsService {
             classExample: InPersonVisitsSingleResponseCaseExample,
             name: queryHierarchyVisitParentClassName,
             searchspec: searchspec,
-            exclude: [queryHierarchyVisitChildClassName],
+            exclude: [
+              queryHierarchyVisitChildClassName,
+              updatedByFieldName,
+              createdByFieldName,
+              'Created',
+              'Updated',
+            ],
             childComponents: [
               new QueryHierarchyComponent({
                 classExample:
@@ -187,10 +205,15 @@ export class InPersonVisitsService {
         params,
       );
     }
-    if (filter && filter.multivalue === 'true') {
-      return new NestedInPersonVisitsMultiValueEntity(response.data);
+    const itemsArray = response.data.items;
+    const responseArray = [];
+    for (const item of itemsArray) {
+      responseArray.push(this.duplicateResponseFields(item));
     }
-    return new NestedInPersonVisitsNoMultiValueEntity(response.data);
+    if (filter && filter.multivalue === 'true') {
+      return new NestedInPersonVisitsMultiValueEntity({ items: responseArray });
+    }
+    return new NestedInPersonVisitsNoMultiValueEntity({ items: responseArray });
   }
 
   async postSingleInPersonVisitRecord(
@@ -251,5 +274,14 @@ export class InPersonVisitsService {
       return false;
     }
     return type === caseChildServices;
+  }
+
+  duplicateResponseFields(item) {
+    const returnItems = item;
+    returnItems[createdByFieldName] = returnItems['Created By Name'];
+    returnItems['Created'] = returnItems[createdDateFieldName];
+    returnItems[updatedByFieldName] = returnItems['Updated By Name'];
+    returnItems['Updated'] = returnItems[updatedDateFieldName];
+    return returnItems;
   }
 }

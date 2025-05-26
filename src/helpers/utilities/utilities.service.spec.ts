@@ -15,6 +15,10 @@ import {
   queryHierarchyVisitChildClassName,
   queryHierarchyVisitParentClassName,
 } from '../../common/constants/parameter-constants';
+import {
+  createdByFieldName,
+  updatedByFieldName,
+} from '../../common/constants/upstream-constants';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -226,7 +230,13 @@ describe('UtilitiesService', () => {
           classExample: InPersonVisitsSingleResponseCaseExample,
           name: queryHierarchyVisitParentClassName,
           searchspec: "([Parent Id]='Id')",
-          exclude: [queryHierarchyVisitChildClassName],
+          exclude: [
+            queryHierarchyVisitChildClassName,
+            createdByFieldName,
+            'Created',
+            updatedByFieldName,
+            'Updated',
+          ],
           childComponents: [
             new QueryHierarchyComponent({
               classExample:
