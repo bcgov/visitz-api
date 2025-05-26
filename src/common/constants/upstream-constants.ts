@@ -4,6 +4,7 @@ const inPersonVisitsEndpointEnvVarName = 'IN_PERSON_VISITS_ENDPOINT';
 const postInPersonVisitsEndpointEnvVarName = 'IN_PERSON_VISITS_POST_ENDPOINT';
 const attachmentsEndpointEnvVarName = 'ATTACHMENTS_ENDPOINT';
 const upstreamAttachmentConstraintNull = 'NULL';
+const upstreamVisitConstraintNull = 'NULL';
 const idirUsernameHeaderField = 'x-idir-username';
 const upstreamDateFormat = 'MM/dd/yyyy HH:mm:ss';
 const dummyCreatedDate = '01/01/1970 00:00:00';
@@ -15,6 +16,8 @@ const startRowNumParamName = 'StartRowNum';
 const recordCountNeededParamName = 'recordcountneeded';
 const pageSizeParamName = 'PageSize';
 const getChildrenParamName = 'getChildren';
+const queryHierarchyParamName = 'QueryHierarchy';
+const multivalueParamName = 'multivalue';
 const createdByFieldName = 'Created By';
 const createdByIdFieldName = 'Created By Id';
 const createdDateFieldName = 'Created Date';
@@ -41,6 +44,7 @@ export {
   postInPersonVisitsEndpointEnvVarName,
   attachmentsEndpointEnvVarName,
   upstreamAttachmentConstraintNull,
+  upstreamVisitConstraintNull,
   idirUsernameHeaderField,
   upstreamDateFormat,
   dummyCreatedDate,
@@ -52,6 +56,8 @@ export {
   recordCountNeededParamName,
   pageSizeParamName,
   getChildrenParamName,
+  queryHierarchyParamName,
+  multivalueParamName,
   createdByFieldName,
   createdByIdFieldName,
   createdDateFieldName,

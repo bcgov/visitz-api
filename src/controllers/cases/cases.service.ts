@@ -16,11 +16,14 @@ import {
 import {
   AttachmentDetailsQueryParams,
   FilterQueryParams,
+  VisitDetailsQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import {
-  InPersonVisitsEntity,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsEntityMultiValue,
+  InPersonVisitsEntityNoMultiValue,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
 } from '../../entities/in-person-visits.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -34,11 +37,12 @@ import {
 import {
   PostInPersonVisitDto,
   PostInPersonVisitDtoUpstream,
+  VisitDetail,
 } from '../../dto/post-in-person-visit.dto';
 import {
   childVisitEntityIdFieldName,
-  childVisitIdirFieldName,
-  dummyCreatedDate,
+  childVisitType,
+  upstreamVisitConstraintNull,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
@@ -51,7 +55,7 @@ import { CaseNotesService } from '../../helpers/case-notes/case-notes.service';
 import {
   CaseNotesEntity,
   NestedCaseNotesEntity,
-} from 'src/entities/case-notes.entity';
+} from '../../entities/case-notes.entity';
 
 @Injectable()
 export class CasesService {
@@ -95,12 +99,16 @@ export class CasesService {
     id: VisitIdPathParams,
     res: Response,
     idir: string,
-  ): Promise<InPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    InPersonVisitsEntityMultiValue | InPersonVisitsEntityNoMultiValue
+  > {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
       idir,
+      filter,
     );
   }
 
@@ -108,8 +116,11 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
-  ): Promise<NestedInPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    | NestedInPersonVisitsMultiValueEntity
+    | NestedInPersonVisitsNoMultiValueEntity
+  > {
     return await this.inPersonVisitsService.getListInPersonVisitRecord(
       RecordType.Case,
       id,
@@ -123,13 +134,30 @@ export class CasesService {
     inPersonVisitsDto: PostInPersonVisitDto,
     idir: string,
     id: IdPathParams,
-  ): Promise<NestedInPersonVisitsEntity> {
-    const body = new PostInPersonVisitDtoUpstream({
+  ): Promise<NestedInPersonVisitsMultiValueEntity> {
+    const { ['Visit Details Value']: visitDetailValue, ...baseObject } = {
       ...inPersonVisitsDto,
-      [childVisitIdirFieldName]: idir,
       [childVisitEntityIdFieldName]: id[idName],
-      Created: dummyCreatedDate,
-    });
+      Id: upstreamVisitConstraintNull,
+      Type: childVisitType,
+      VisitDetails: new Array<VisitDetail>(),
+    };
+    if (typeof inPersonVisitsDto.VisitDetails !== 'undefined') {
+      for (const detail of inPersonVisitsDto.VisitDetails) {
+        baseObject.VisitDetails.push(
+          new VisitDetail({
+            'Visit Detail Value': detail['Visit Detail Value'],
+          }),
+        );
+      }
+    } else {
+      baseObject.VisitDetails.push(
+        new VisitDetail({
+          'Visit Detail Value': visitDetailValue,
+        }),
+      );
+    }
+    const body = new PostInPersonVisitDtoUpstream(baseObject);
     return await this.inPersonVisitsService.postSingleInPersonVisitRecord(
       RecordType.Case,
       body,

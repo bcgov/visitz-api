@@ -1,16 +1,22 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import { VisitDetailsQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  InPersonVisitsEntity,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsEntityMultiValue,
+  InPersonVisitsEntityNoMultiValue,
+  InPersonVisitsSingleResponseCaseExample,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
 } from '../../entities/in-person-visits.entity';
 import {
   CONTENT_TYPE,
+  GET_CHILDREN,
   idName,
+  queryHierarchyVisitChildClassName,
+  queryHierarchyVisitParentClassName,
   UNIFORM_RESPONSE,
   uniformResponseParamName,
   visitIdName,
@@ -20,9 +26,13 @@ import { Response } from 'express';
 import {
   caseChildServices,
   childVisitEntityIdFieldName,
+  getChildrenParamName,
+  queryHierarchyParamName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
 import { childServicesTypeError } from '../../common/constants/error-constants';
+import { UtilitiesService } from '../utilities/utilities.service';
+import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
 @Injectable()
 export class InPersonVisitsService {
@@ -40,6 +50,7 @@ export class InPersonVisitsService {
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
+    private readonly utilitiesService: UtilitiesService,
   ) {
     this.url = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
@@ -69,14 +80,17 @@ export class InPersonVisitsService {
     id: VisitIdPathParams,
     res: Response,
     idir: string,
-  ): Promise<InPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    InPersonVisitsEntityMultiValue | InPersonVisitsEntityNoMultiValue
+  > {
     const parentId = id[idName];
     const isValidChildCase = await this.isChildCaseType(parentId, idir);
     if (!isValidChildCase) {
       throw new BadRequestException([childServicesTypeError]);
     }
-    const baseSearchSpec = `([Parent Id]="${parentId}" AND [Id]="${id[visitIdName]}"`;
-    const [headers, params] =
+    const baseSearchSpec = `([Id]="${id[visitIdName]}"`;
+    const [headers, baseParams] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
@@ -84,13 +98,39 @@ export class InPersonVisitsService {
         false,
         idir,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
-      this.url,
-      headers,
-      res,
-      params,
-    );
-    return new InPersonVisitsEntity(response.data);
+    let response;
+    // This conditional is always true, this is here for TypeScript to ignore the other
+    // union type from the prepareHeadersAndParams function return
+    if ('searchspec' in baseParams) {
+      const { searchspec, ...params } = baseParams;
+      params[getChildrenParamName] = GET_CHILDREN;
+      params[queryHierarchyParamName] =
+        this.utilitiesService.constructQueryHierarchy(
+          new QueryHierarchyComponent({
+            classExample: InPersonVisitsSingleResponseCaseExample,
+            name: queryHierarchyVisitParentClassName,
+            searchspec: searchspec,
+            exclude: [queryHierarchyVisitChildClassName],
+            childComponents: [
+              new QueryHierarchyComponent({
+                classExample:
+                  InPersonVisitsSingleResponseCaseExample.VisitDetails[0],
+                name: queryHierarchyVisitChildClassName,
+              }),
+            ],
+          }),
+        );
+      response = await this.requestPreparerService.sendGetRequest(
+        this.url,
+        headers,
+        res,
+        params,
+      );
+    }
+    if (filter && filter.multivalue === 'true') {
+      return new InPersonVisitsEntityMultiValue(response.data.items);
+    }
+    return new InPersonVisitsEntityNoMultiValue(response.data.items);
   }
 
   async getListInPersonVisitRecord(
@@ -98,15 +138,18 @@ export class InPersonVisitsService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
-  ): Promise<NestedInPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    | NestedInPersonVisitsMultiValueEntity
+    | NestedInPersonVisitsNoMultiValueEntity
+  > {
     const parentId = id[idName];
     const isValidChildCase = await this.isChildCaseType(parentId, idir);
     if (!isValidChildCase) {
       throw new BadRequestException([childServicesTypeError]);
     }
     const baseSearchSpec = `([Parent Id]="${parentId}"`;
-    const [headers, params] =
+    const [headers, baseParams] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
         this.workspace,
@@ -115,20 +158,46 @@ export class InPersonVisitsService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
-      this.url,
-      headers,
-      res,
-      params,
-    );
-    return new NestedInPersonVisitsEntity(response.data);
+    let response;
+    // This conditional is always true, this is here for TypeScript to ignore the other
+    // union type from the prepareHeadersAndParams function return
+    if ('searchspec' in baseParams) {
+      const { searchspec, ...params } = baseParams;
+      params[getChildrenParamName] = GET_CHILDREN;
+      params[queryHierarchyParamName] =
+        this.utilitiesService.constructQueryHierarchy(
+          new QueryHierarchyComponent({
+            classExample: InPersonVisitsSingleResponseCaseExample,
+            name: queryHierarchyVisitParentClassName,
+            searchspec: searchspec,
+            exclude: [queryHierarchyVisitChildClassName],
+            childComponents: [
+              new QueryHierarchyComponent({
+                classExample:
+                  InPersonVisitsSingleResponseCaseExample.VisitDetails[0],
+                name: queryHierarchyVisitChildClassName,
+              }),
+            ],
+          }),
+        );
+      response = await this.requestPreparerService.sendGetRequest(
+        this.url,
+        headers,
+        res,
+        params,
+      );
+    }
+    if (filter && filter.multivalue === 'true') {
+      return new NestedInPersonVisitsMultiValueEntity(response.data);
+    }
+    return new NestedInPersonVisitsNoMultiValueEntity(response.data);
   }
 
   async postSingleInPersonVisitRecord(
     _type: RecordType,
     body: PostInPersonVisitDtoUpstream,
     idir: string,
-  ): Promise<NestedInPersonVisitsEntity> {
+  ): Promise<NestedInPersonVisitsMultiValueEntity> {
     const parentId = body[childVisitEntityIdFieldName];
     const isValidChildCase = await this.isChildCaseType(parentId, idir);
     if (!isValidChildCase) {
@@ -146,13 +215,13 @@ export class InPersonVisitsService {
     if (this.postWorkspace !== undefined) {
       params['workspace'] = this.postWorkspace;
     }
-    const response = await this.requestPreparerService.sendPostRequest(
+    const response = await this.requestPreparerService.sendPutRequest(
       this.postUrl,
       body,
       headers,
       params,
     );
-    return new NestedInPersonVisitsEntity(response.data);
+    return new NestedInPersonVisitsMultiValueEntity(response.data);
   }
 
   async isChildCaseType(parentId: string, idir: string): Promise<boolean> {

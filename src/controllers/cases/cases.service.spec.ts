@@ -32,10 +32,11 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  InPersonVisitsEntity,
+  InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
-  InPersonVisitsSingleResponseCaseExample,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
@@ -219,7 +220,7 @@ describe('CasesService', () => {
         const InPersonVisitsSpy = jest
           .spyOn(inPersonVisitsService, 'getListInPersonVisitRecord')
           .mockReturnValueOnce(
-            Promise.resolve(new NestedInPersonVisitsEntity(data)),
+            Promise.resolve(new NestedInPersonVisitsNoMultiValueEntity(data)),
           );
 
         const result = await service.getListCaseInPersonVisitRecord(
@@ -235,7 +236,9 @@ describe('CasesService', () => {
           'idir',
           filterQueryParams,
         );
-        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+        expect(result).toEqual(
+          new NestedInPersonVisitsNoMultiValueEntity(data),
+        );
       },
     );
   });
@@ -243,7 +246,7 @@ describe('CasesService', () => {
   describe('getSingleCaseInPersonVisitRecord tests', () => {
     it.each([
       [
-        InPersonVisitsSingleResponseCaseExample,
+        InPersonVisitsSingleResponseCaseExampleNoMultiValue,
         { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
       ],
     ])(
@@ -251,7 +254,9 @@ describe('CasesService', () => {
       async (data, idPathParams) => {
         const InPersonVisitsSpy = jest
           .spyOn(inPersonVisitsService, 'getSingleInPersonVisitRecord')
-          .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new InPersonVisitsEntityNoMultiValue(data)),
+          );
 
         const result = await service.getSingleCaseInPersonVisitRecord(
           idPathParams,
@@ -263,8 +268,9 @@ describe('CasesService', () => {
           idPathParams,
           res,
           'idir',
+          undefined,
         );
-        expect(result).toEqual(new InPersonVisitsEntity(data));
+        expect(result).toEqual(new InPersonVisitsEntityNoMultiValue(data));
       },
     );
   });
@@ -287,7 +293,7 @@ describe('CasesService', () => {
         const InPersonVisitsSpy = jest
           .spyOn(inPersonVisitsService, 'postSingleInPersonVisitRecord')
           .mockReturnValueOnce(
-            Promise.resolve(new NestedInPersonVisitsEntity(data)),
+            Promise.resolve(new NestedInPersonVisitsMultiValueEntity(data)),
           );
 
         const result = await service.postSingleCaseInPersonVisitRecord(
@@ -296,7 +302,7 @@ describe('CasesService', () => {
           idPathParams,
         );
         expect(InPersonVisitsSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+        expect(result).toEqual(new NestedInPersonVisitsMultiValueEntity(data));
       },
     );
   });

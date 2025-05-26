@@ -9,12 +9,18 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
 import { RecordType, VisitDetails } from '../../common/constants/enumerations';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  InPersonVisitsEntity,
+  FilterQueryParams,
+  VisitDetailsQueryParams,
+} from '../../dto/filter-query-params.dto';
+import {
+  InPersonVisitsEntityMultiValue,
+  InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsSingleResponseCaseExample,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
@@ -82,7 +88,10 @@ describe('InPersonVisitsService', () => {
         InPersonVisitsListResponseCaseExample,
         RecordType.Case,
         { [idName]: 'test' } as IdPathParams,
-        { [afterParamName]: '2020-12-24' } as FilterQueryParams,
+        {
+          [afterParamName]: '2020-12-24',
+          multivalue: 'true',
+        } as VisitDetailsQueryParams,
       ],
     ])(
       'should return list values given good input',
@@ -110,7 +119,15 @@ describe('InPersonVisitsService', () => {
           filterQueryParams,
         );
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+        if (filterQueryParams && filterQueryParams.multivalue === 'true') {
+          expect(result).toEqual(
+            new NestedInPersonVisitsMultiValueEntity(data),
+          );
+        } else {
+          expect(result).toEqual(
+            new NestedInPersonVisitsNoMultiValueEntity(data),
+          );
+        }
       },
     );
 
@@ -149,13 +166,22 @@ describe('InPersonVisitsService', () => {
   describe('getSingleInPersonVisitRecord tests', () => {
     it.each([
       [
+        InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+        RecordType.Case,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+        undefined,
+      ],
+      [
         InPersonVisitsSingleResponseCaseExample,
         RecordType.Case,
         { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+        {
+          multivalue: 'true',
+        } as VisitDetailsQueryParams,
       ],
     ])(
       'should return single values given good input',
-      async (data, recordType, idPathParams) => {
+      async (data, recordType, idPathParams, filterQueryParams) => {
         const spy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
@@ -165,7 +191,7 @@ describe('InPersonVisitsService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>)
           .mockResolvedValueOnce({
-            data: data,
+            data: { items: { ...data } },
             headers: {},
             status: 200,
             statusText: 'OK',
@@ -178,7 +204,11 @@ describe('InPersonVisitsService', () => {
           'idir',
         );
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(result).toEqual(new InPersonVisitsEntity(data));
+        if (filterQueryParams && filterQueryParams.multivalue === 'true') {
+          expect(result).toEqual(new InPersonVisitsEntityMultiValue(data));
+        } else {
+          expect(result).toEqual(new InPersonVisitsEntityNoMultiValue(data));
+        }
       },
     );
 
@@ -227,7 +257,7 @@ describe('InPersonVisitsService', () => {
       'should return post values given good input',
       async (data, recordType, body) => {
         const spy = jest
-          .spyOn(requestPreparerService, 'sendPostRequest')
+          .spyOn(requestPreparerService, 'sendPutRequest')
           .mockResolvedValueOnce({
             data: data,
             headers: {},
@@ -250,7 +280,7 @@ describe('InPersonVisitsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(caseTypeSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+        expect(result).toEqual(new NestedInPersonVisitsMultiValueEntity(data));
       },
     );
 

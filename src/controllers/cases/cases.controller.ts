@@ -49,6 +49,7 @@ import {
 import {
   AttachmentDetailsQueryParams,
   FilterQueryParams,
+  VisitDetailsQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
@@ -65,10 +66,14 @@ import {
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import {
-  InPersonVisitsEntity,
+  InPersonVisitsEntityMultiValue,
+  InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
+  InPersonVisitsListResponseCaseExampleNoMultiValue,
   InPersonVisitsSingleResponseCaseExample,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
@@ -81,6 +86,7 @@ import {
 import { PostInPersonVisitDto } from '../../dto/post-in-person-visit.dto';
 import {
   idirUsernameHeaderField,
+  multivalueParamName,
   pageSizeParamName,
   recordCountNeededParamName,
   startRowNumParamName,
@@ -231,18 +237,32 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
-  @ApiExtraModels(NestedInPersonVisitsEntity)
+  @ApiQuery({ name: multivalueParamName, required: false })
+  @ApiExtraModels(
+    NestedInPersonVisitsMultiValueEntity,
+    NestedInPersonVisitsNoMultiValueEntity,
+  )
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          $ref: getSchemaPath(NestedInPersonVisitsEntity),
+          oneOf: [
+            {
+              $ref: getSchemaPath(NestedInPersonVisitsMultiValueEntity),
+            },
+            {
+              $ref: getSchemaPath(NestedInPersonVisitsNoMultiValueEntity),
+            },
+          ],
         },
         examples: {
-          InPersonVisitsListResponse: {
+          InPersonVisitsListResponseMultiValue: {
             value: InPersonVisitsListResponseCaseExample,
+          },
+          InPersonVisitsListResponseNoMultiValue: {
+            value: InPersonVisitsListResponseCaseExampleNoMultiValue,
           },
         },
       },
@@ -267,8 +287,11 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
-  ): Promise<NestedInPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    | NestedInPersonVisitsMultiValueEntity
+    | NestedInPersonVisitsNoMultiValueEntity
+  > {
     return await this.casesService.getListCaseInPersonVisitRecord(
       id,
       res,
@@ -282,17 +305,31 @@ export class CasesController {
   @ApiOperation({
     description: `Displays the single ${visitIdName} result if it is related to the given Case id.`,
   })
-  @ApiExtraModels(InPersonVisitsEntity)
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: multivalueParamName, required: false })
+  @ApiExtraModels(
+    InPersonVisitsEntityMultiValue,
+    InPersonVisitsEntityNoMultiValue,
+  )
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          $ref: getSchemaPath(InPersonVisitsEntity),
+          oneOf: [
+            { $ref: getSchemaPath(InPersonVisitsEntityMultiValue) },
+            { $ref: getSchemaPath(InPersonVisitsEntityNoMultiValue) },
+          ],
         },
         examples: {
-          InPersonVisitsSingleResponse: {
+          InPersonVisitsSingleResponseMultiValue: {
             value: InPersonVisitsSingleResponseCaseExample,
+          },
+          InPersonVisitsSingleResponseNoMultiValue: {
+            value: InPersonVisitsSingleResponseCaseExampleNoMultiValue,
           },
         },
       },
@@ -309,11 +346,23 @@ export class CasesController {
     )
     id: VisitIdPathParams,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<InPersonVisitsEntity> {
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    InPersonVisitsEntityMultiValue | InPersonVisitsEntityNoMultiValue
+  > {
     return await this.casesService.getSingleCaseInPersonVisitRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+      filter,
     );
   }
 
@@ -352,7 +401,7 @@ export class CasesController {
       }),
     )
     id: IdPathParams,
-  ): Promise<NestedInPersonVisitsEntity> {
+  ): Promise<NestedInPersonVisitsMultiValueEntity> {
     return await this.casesService.postSingleCaseInPersonVisitRecord(
       inPersonVisitDto,
       req.headers[idirUsernameHeaderField] as string,

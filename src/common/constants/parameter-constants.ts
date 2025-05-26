@@ -8,6 +8,8 @@ const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
 const afterParamName = 'after';
+const queryHierarchyVisitParentClassName = 'ChildVisit';
+const queryHierarchyVisitChildClassName = 'VisitDetails';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -43,6 +45,8 @@ export {
   recordCountHeaderName,
   inlineAttachmentParamName,
   afterParamName,
+  queryHierarchyVisitParentClassName,
+  queryHierarchyVisitChildClassName,
   idMaxLength,
   versionNumber,
   idRegex,
