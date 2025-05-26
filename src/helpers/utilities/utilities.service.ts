@@ -12,6 +12,7 @@ import {
 } from '../../common/constants/error-constants';
 import { emojiRegex } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
+import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
 @Injectable()
 export class UtilitiesService {
@@ -93,6 +94,33 @@ export class UtilitiesService {
     endpointUrls: object,
   ): string {
     return baseUrl + endpointUrls[type].replace('rowId', id.rowId);
+  }
+
+  constructQueryHierarchy(parentComponent: QueryHierarchyComponent): string {
+    const queryHierarchy = {};
+    const innerObject = this.constructFieldAndSearchSpec(parentComponent);
+    queryHierarchy[parentComponent.name] = innerObject;
+    return JSON.stringify(queryHierarchy);
+  }
+
+  constructFieldAndSearchSpec(component: QueryHierarchyComponent) {
+    let fields = ``;
+    for (const field of Object.keys(component.classExample)) {
+      if (!component.exclude || !component.exclude.includes(field)) {
+        fields = fields + field + ',';
+      }
+    }
+    fields = fields.substring(0, fields.length - 1); // remove trailing comma
+    const innerObject = { fields };
+    if (component.searchspec) {
+      innerObject[`searchspec`] = component.searchspec;
+    }
+    if (component.childComponents) {
+      for (const child of component.childComponents) {
+        innerObject[child.name] = this.constructFieldAndSearchSpec(child);
+      }
+    }
+    return innerObject;
   }
 }
 

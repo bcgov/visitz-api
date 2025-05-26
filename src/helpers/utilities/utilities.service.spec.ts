@@ -9,6 +9,16 @@ import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { getMockReq } from '@jest-mock/express';
+import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
+import { InPersonVisitsSingleResponseCaseExample } from '../../entities/in-person-visits.entity';
+import {
+  queryHierarchyVisitChildClassName,
+  queryHierarchyVisitParentClassName,
+} from '../../common/constants/parameter-constants';
+import {
+  createdByFieldName,
+  updatedByFieldName,
+} from '../../common/constants/upstream-constants';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -209,6 +219,49 @@ describe('UtilitiesService', () => {
         expect(() => {
           isNotEmoji(input);
         }).toThrow(BadRequestException);
+      },
+    );
+  });
+
+  describe('constructQueryHierarchy tests', () => {
+    it.each([
+      [
+        new QueryHierarchyComponent({
+          classExample: InPersonVisitsSingleResponseCaseExample,
+          name: queryHierarchyVisitParentClassName,
+          searchspec: "([Parent Id]='Id')",
+          exclude: [
+            queryHierarchyVisitChildClassName,
+            createdByFieldName,
+            'Created',
+            updatedByFieldName,
+            'Updated',
+          ],
+          childComponents: [
+            new QueryHierarchyComponent({
+              classExample:
+                InPersonVisitsSingleResponseCaseExample.VisitDetails[0],
+              name: queryHierarchyVisitChildClassName,
+            }),
+          ],
+        }),
+        {
+          ChildVisit: {
+            fields:
+              'Name,Visit Description,Id,Row Id,Type,Date of visit,Parent Id,Created By Name,Created By Id,Created Date,Updated By Name,Updated By Id,Updated Date',
+            searchspec: "([Parent Id]='Id')",
+            VisitDetails: {
+              fields: 'Id,Visit Detail Value',
+            },
+          },
+        },
+      ],
+    ])(
+      'should create a valid JSON string out of valid components',
+      (input, expected) => {
+        const output = service.constructQueryHierarchy(input);
+        const outputObject = JSON.parse(output);
+        expect(outputObject).toEqual(expected);
       },
     );
   });
