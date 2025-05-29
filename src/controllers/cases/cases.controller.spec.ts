@@ -16,6 +16,7 @@ import {
 } from '../../dto/filter-query-params.dto';
 import {
   AttachmentIdPathParams,
+  CaseNotesIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -28,10 +29,11 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  InPersonVisitsEntity,
-  InPersonVisitsListResponseCaseExample,
-  InPersonVisitsSingleResponseCaseExample,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsEntityNoMultiValue,
+  InPersonVisitsListResponseCaseExampleNoMultiValue,
+  InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
 } from '../../entities/in-person-visits.entity';
 import {
@@ -42,6 +44,7 @@ import {
   afterParamName,
   supportNetworkIdName,
   visitIdName,
+  caseNotesIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -71,6 +74,13 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { PostAttachmentsCaseReturnExample } from '../../dto/post-attachment.dto';
+import { CaseNotesService } from '../../helpers/case-notes/case-notes.service';
+import {
+  CaseNotesEntity,
+  CaseNotesListResponseExample,
+  CaseNotesSingleExample,
+  NestedCaseNotesEntity,
+} from '../../entities/case-notes.entity';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -93,6 +103,7 @@ describe('CasesController', () => {
         VirusScanService,
         TokenRefresherService,
         InPersonVisitsService,
+        CaseNotesService,
         RequestPreparerService,
         JwtService,
         { provide: CACHE_MANAGER, useValue: {} },
@@ -180,7 +191,7 @@ describe('CasesController', () => {
   describe('getListCaseInPersonVisitRecord tests', () => {
     it.each([
       [
-        InPersonVisitsListResponseCaseExample,
+        InPersonVisitsListResponseCaseExampleNoMultiValue,
         { [idName]: 'test' } as IdPathParams,
         {
           [afterParamName]: '2020-02-02',
@@ -193,7 +204,7 @@ describe('CasesController', () => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'getListCaseInPersonVisitRecord')
           .mockReturnValueOnce(
-            Promise.resolve(new NestedInPersonVisitsEntity(data)),
+            Promise.resolve(new NestedInPersonVisitsNoMultiValueEntity(data)),
           );
 
         const result = await controller.getListCaseInPersonVisitRecord(
@@ -208,7 +219,9 @@ describe('CasesController', () => {
           'idir',
           filterQueryParams,
         );
-        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+        expect(result).toEqual(
+          new NestedInPersonVisitsNoMultiValueEntity(data),
+        );
       },
     );
   });
@@ -216,7 +229,7 @@ describe('CasesController', () => {
   describe('getSingleCaseInPersonVisitRecord tests', () => {
     it.each([
       [
-        InPersonVisitsSingleResponseCaseExample,
+        InPersonVisitsSingleResponseCaseExampleNoMultiValue,
         { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
       ],
     ])(
@@ -224,15 +237,22 @@ describe('CasesController', () => {
       async (data, idPathParams) => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'getSingleCaseInPersonVisitRecord')
-          .mockReturnValueOnce(Promise.resolve(new InPersonVisitsEntity(data)));
+          .mockReturnValueOnce(
+            Promise.resolve(new InPersonVisitsEntityNoMultiValue(data)),
+          );
 
         const result = await controller.getSingleCaseInPersonVisitRecord(
           req,
           idPathParams,
           res,
         );
-        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
-        expect(result).toEqual(new InPersonVisitsEntity(data));
+        expect(casesServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          undefined,
+        );
+        expect(result).toEqual(new InPersonVisitsEntityNoMultiValue(data));
       },
     );
   });
@@ -255,7 +275,7 @@ describe('CasesController', () => {
         const casesServiceSpy = jest
           .spyOn(casesService, 'postSingleCaseInPersonVisitRecord')
           .mockReturnValueOnce(
-            Promise.resolve(new NestedInPersonVisitsEntity(data)),
+            Promise.resolve(new NestedInPersonVisitsMultiValueEntity(data)),
           );
 
         const result = await controller.postSingleCaseInPersonVisitRecord(
@@ -264,7 +284,7 @@ describe('CasesController', () => {
           idPathParams,
         );
         expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
-        expect(result).toEqual(new NestedInPersonVisitsEntity(data));
+        expect(result).toEqual(new NestedInPersonVisitsMultiValueEntity(data));
       },
     );
   });
@@ -461,6 +481,69 @@ describe('CasesController', () => {
         );
         expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseNotesRecord tests', () => {
+    it.each([
+      [
+        CaseNotesListResponseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const caseServiceSpy = jest
+          .spyOn(casesService, 'getListCaseNotesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCaseNotesEntity(data)),
+          );
+
+        const result = await controller.getListCaseNotesRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(caseServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCaseNotesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseNotesRecord tests', () => {
+    it.each([
+      [
+        CaseNotesSingleExample,
+        {
+          [idName]: 'test',
+          [caseNotesIdName]: 'test2',
+        } as CaseNotesIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const caseServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseNotesRecord')
+          .mockReturnValueOnce(Promise.resolve(new CaseNotesEntity(data)));
+
+        const result = await controller.getSingleCaseNotesRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new CaseNotesEntity(data));
       },
     );
   });

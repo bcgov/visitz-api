@@ -3,6 +3,7 @@ import { Matches } from 'class-validator';
 import {
   attachmentIdName,
   contactIdName,
+  caseNotesIdName,
   idMaxLength,
   idName,
   idRegex,
@@ -87,4 +88,15 @@ export class ResponseNarrativeIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [responseNarrativeIdName]: string;
+}
+
+export class CaseNotesIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Case-Note-Id-Here',
+    description: 'The Id of the case note you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [caseNotesIdName]: string;
 }
