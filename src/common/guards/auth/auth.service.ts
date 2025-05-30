@@ -61,6 +61,11 @@ export class AuthService {
     let idir: string, jti: string, id: string, recordType: RecordType;
     try {
       idir = req.header(idirUsernameHeaderField).trim();
+    } catch {
+      this.logger.error(`Idir username not found`);
+      return false;
+    }
+    try {
       jti = this.utilitiesService.grabJTI(req);
       [id, recordType] = this.grabRecordInfo(req, controllerPath);
     } catch (error: any) {
@@ -126,7 +131,9 @@ export class AuthService {
     }
     const rowId = req.params[idName];
     if (rowId === undefined) {
-      throw new Error(`Id not found in path`);
+      const error = `Id not found in path`;
+      this.logger.error(error);
+      throw new Error(error);
     }
     return [rowId, controllerPath as RecordType];
   }

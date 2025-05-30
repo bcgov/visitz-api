@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { isISO8601 } from 'class-validator';
 import { DateTime } from 'luxon';
 import { upstreamDateFormat } from '../../common/constants/upstream-constants';
@@ -16,6 +16,7 @@ import { IdPathParams } from '../../dto/id-path-params.dto';
 @Injectable()
 export class UtilitiesService {
   skipJWT: boolean;
+  private readonly logger = new Logger(UtilitiesService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -60,12 +61,14 @@ export class UtilitiesService {
       return 'local'; // we won't have a JWT locally
     }
     const authToken = req.header('authorization').split(/\s+/)[1];
-    const decoded = this.jwtService.decode(authToken);
     try {
+      const decoded = this.jwtService.decode(authToken);
       const jti = decoded['jti'];
       return jti;
     } catch {
-      throw new Error(`Invalid JWT`);
+      const error = `Invalid JWT`;
+      this.logger.error(error);
+      throw new Error(error);
     }
   }
 
