@@ -40,6 +40,7 @@ export class TokenRefresherService {
     // eslint-disable-next-line prefer-const
     [token, ttlMs] = await this.authenticateUpstream();
     if (token === null || ttlMs === undefined) {
+      this.logger.error(`Bearer token refresh failed!`);
       return undefined; // do not store bad result in cache
     }
     await this.cacheManager.set(key, token, ttlMs - fiveSecondsMs); // subtract time so it can be used upstream
@@ -71,7 +72,9 @@ export class TokenRefresherService {
         typeof token_type != 'string' ||
         typeof expirySeconds != 'number'
       ) {
-        throw new Error('Response data is invalid');
+        const error = `Bearer token response data is invalid`;
+        this.logger.error(error);
+        throw new Error(error);
       }
       const bearer_token = token_type + ' ' + access_token;
       const expiryMs = expirySeconds * secondsToMsConversionFactor;
