@@ -43,6 +43,7 @@ import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server
 import { ApiNotFoundErrorEntity } from '../../entities/api-not-found-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
 import { Request } from 'express';
+import { ExternalAuthService } from '../external-auth/external-auth.service';
 
 @Controller('')
 @ApiParam(versionInfo)
@@ -52,7 +53,10 @@ import { Request } from 'express';
 @ApiNotFoundResponse({ type: ApiNotFoundErrorEntity })
 @ApiInternalServerErrorResponse({ type: ApiInternalServerErrorEntity })
 export class CaseloadController {
-  constructor(private readonly caseloadService: CaseloadService) {}
+  constructor(
+    private readonly caseloadService: CaseloadService,
+    private readonly externalAuthService: ExternalAuthService,
+  ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('caseload')
@@ -91,6 +95,9 @@ export class CaseloadController {
     )
     filter?: AfterQueryParams,
   ): Promise<CaseloadEntity> {
+    await this.externalAuthService.checkEmployeeStatusUpstream(
+      req.headers[idirUsernameHeaderField] as string,
+    ); // auth check
     return await this.caseloadService.getCaseload(
       req.headers[idirUsernameHeaderField] as string,
       req,

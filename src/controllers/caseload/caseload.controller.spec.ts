@@ -18,10 +18,13 @@ import { plainToInstance } from 'class-transformer';
 import { getMockReq } from '@jest-mock/express';
 import { afterParamName } from '../../common/constants/parameter-constants';
 import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
+import { AuthService } from '../../common/guards/auth/auth.service';
+import { ExternalAuthService } from '../external-auth/external-auth.service';
 
 describe('CaseloadController', () => {
   let controller: CaseloadController;
   let caseloadService: CaseloadService;
+  let externalAuthService: ExternalAuthService;
   const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
 
   beforeEach(async () => {
@@ -32,6 +35,8 @@ describe('CaseloadController', () => {
         CaseloadService,
         TokenRefresherService,
         RequestPreparerService,
+        AuthService,
+        ExternalAuthService,
         { provide: CACHE_MANAGER, useValue: {} },
         ConfigService,
         UtilitiesService,
@@ -42,6 +47,7 @@ describe('CaseloadController', () => {
 
     controller = module.get<CaseloadController>(CaseloadController);
     caseloadService = module.get<CaseloadService>(CaseloadService);
+    externalAuthService = module.get<ExternalAuthService>(ExternalAuthService);
   });
 
   it('should be defined', () => {
@@ -59,6 +65,11 @@ describe('CaseloadController', () => {
     ])(
       'should return nested values given good input',
       async (data, filterQueryParams) => {
+        const externalAuthServiceSpy = jest
+          .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+          .mockImplementationOnce(() => {
+            return Promise.resolve();
+          });
         const caseloadServiceSpy = jest
           .spyOn(caseloadService, 'getCaseload')
           .mockReturnValueOnce(
@@ -70,6 +81,7 @@ describe('CaseloadController', () => {
           );
 
         const result = await controller.getCaseload(req, filterQueryParams);
+        expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
         expect(caseloadServiceSpy).toHaveBeenCalledWith(
           'idir',
           req,

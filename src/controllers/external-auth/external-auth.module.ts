@@ -18,6 +18,7 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
     TokenRefresherService,
   ],
   imports: [HelpersModule, AuthModule, HttpModule],
+  exports: [ExternalAuthService],
   controllers: [ExternalAuthController],
 })
 export class ExternalAuthModule {}
