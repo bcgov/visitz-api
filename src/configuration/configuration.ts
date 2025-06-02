@@ -54,6 +54,8 @@ export default () => ({
       process.env.IN_PERSON_VISITS_POST_WORKSPACE ?? undefined,
     contacts: process.env.CONTACTS_WORKSPACE ?? undefined,
     safetyAssessments: process.env.SAFETY_ASSESSMENTS_WORKSPACE ?? undefined,
+    responseNarratives: process.env.RESPONSE_NARRATIVES_WORKSPACE ?? undefined,
+    caseNotes: process.env.CASE_NOTES_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -65,6 +67,9 @@ export default () => ({
     srs: process.env.SR_AFTER_FIELD ?? undefined,
     memos: process.env.MEMO_AFTER_FIELD ?? undefined,
     safetyAssessments: process.env.SAFETY_ASSESSMENTS_AFTER_FIELD ?? undefined,
+    responseNarratives:
+      process.env.RESPONSE_NARRATIVES_AFTER_FIELD ?? undefined,
+    caseNotes: process.env.CASE_NOTES_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -86,6 +91,10 @@ export default () => ({
     srContacts: process.env.SR_CONTACTS_ENDPOINT ?? ' ',
     memoContacts: process.env.MEMO_CONTACTS_ENDPOINT ?? ' ',
     safetyAssessments: process.env.SAFETY_ASSESSMENTS_ENDPOINT ?? ' ',
+    incidentResponseNarratives:
+      process.env.INCIDENT_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',
+    srResponseNarratives: process.env.SR_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',
+    caseNotes: process.env.CASE_NOTES_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

@@ -329,6 +329,56 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: ATTACHMENTS_AFTER_FIELD
+            - name: RESPONSE_NARRATIVES_AFTER_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: RESPONSE_NARRATIVES_AFTER_FIELD
+            - name: INCIDENT_RESPONSE_NARRATIVES_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: INCIDENT_RESPONSE_NARRATIVES_ENDPOINT
+            - name: SR_RESPONSE_NARRATIVES_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: SR_RESPONSE_NARRATIVES_ENDPOINT
+            - name: RESPONSE_NARRATIVES_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: RESPONSE_NARRATIVES_WORKSPACE
+            - name: CA_CERT
+              valueFrom:
+                secretKeyRef:
+                    name: mutual-authentication-mtls
+                    key: CA_CERT
+            - name: SERVER_CERT
+              valueFrom:
+                secretKeyRef:
+                    name: mutual-authentication-mtls
+                    key: SERVER_CERT
+            - name: SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                    name: mutual-authentication-mtls
+                    key: SERVER_KEY
+            - name: CASE_NOTES_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_NOTES_ENDPOINT
+            - name: CASE_NOTES_WORKSPACE
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_NOTES_WORKSPACE
+            - name: CASE_NOTES_AFTER_FIELD
+              valueFrom:
+                secretKeyRef:
+                    name: visitz-api
+                    key: CASE_NOTES_AFTER_FIELD
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
             - name: VPI_APP_ENV

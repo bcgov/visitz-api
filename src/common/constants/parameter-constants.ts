@@ -8,6 +8,8 @@ const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
 const afterParamName = 'after';
+const queryHierarchyVisitParentClassName = 'ChildVisit';
+const queryHierarchyVisitChildClassName = 'VisitDetails';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -23,6 +25,8 @@ const contactIdName = 'contactId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
+const responseNarrativeIdName = 'responseNarrativeId';
+const caseNotesIdName = 'caseNoteId';
 
 const casesAttachmentsFieldName = 'Case Id';
 const incidentsAttachmentsFieldName = 'Incident Id';
@@ -41,6 +45,8 @@ export {
   recordCountHeaderName,
   inlineAttachmentParamName,
   afterParamName,
+  queryHierarchyVisitParentClassName,
+  queryHierarchyVisitChildClassName,
   idMaxLength,
   versionNumber,
   idRegex,
@@ -53,6 +59,8 @@ export {
   supportNetworkIdName,
   visitIdName,
   safetyAssessmentIdName,
+  responseNarrativeIdName,
+  caseNotesIdName,
   casesAttachmentsFieldName,
   incidentsAttachmentsFieldName,
   srAttachmentsFieldName,

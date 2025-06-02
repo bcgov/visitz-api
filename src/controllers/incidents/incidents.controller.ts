@@ -43,6 +43,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -60,6 +61,7 @@ import {
   safetyAssessmentIdName,
   supportNetworkIdName,
   attachmentIdFieldName,
+  responseNarrativeIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -105,6 +107,12 @@ import {
 } from '../../dto/post-attachment.dto';
 import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
 import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators';
+import {
+  NestedResponseNarrativeEntity,
+  ResponseNarrativeEntity,
+  ResponseNarrativeListResponseIncidentExample,
+  ResponseNarrativeSingleResponseIncidentExample,
+} from '../../entities/response-narrative.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -559,6 +567,99 @@ export class IncidentsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<SafetyAssessmentEntity> {
     return await this.incidentsService.getSingleIncidentSafetyAssessmentRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/response-narratives`)
+  @ApiOperation({
+    description: `Find all Response Narrative entries related to a given Incident entity by Incident id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiExtraModels(NestedResponseNarrativeEntity)
+  @ApiOkResponse({
+    headers: totalRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedResponseNarrativeEntity),
+        },
+        examples: {
+          ResponseNarrativeListResponse: {
+            value: ResponseNarrativeListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentResponseNarrativeRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: FilterQueryParams,
+  ): Promise<NestedResponseNarrativeEntity> {
+    return await this.incidentsService.getListIncidentResponseNarrativeRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/response-narratives/:${responseNarrativeIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${responseNarrativeIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(ResponseNarrativeEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ResponseNarrativeEntity),
+        },
+        examples: {
+          ResponseNarrativeSingleResponse: {
+            value: ResponseNarrativeSingleResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentResponseNarrativeRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ResponseNarrativeIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ResponseNarrativeEntity> {
+    return await this.incidentsService.getSingleIncidentResponseNarrativeRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

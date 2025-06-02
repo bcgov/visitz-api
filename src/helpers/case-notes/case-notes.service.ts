@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { UtilitiesService } from '../utilities/utilities.service';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
+import { caseNotesIdName } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
-  ContactIdPathParams,
+  CaseNotesIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
-import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  ContactsEntity,
-  NestedContactsEntity,
-} from '../../entities/contacts.entity';
-import { contactIdName } from '../../common/constants/parameter-constants';
-import { UtilitiesService } from '../utilities/utilities.service';
+  CaseNotesEntity,
+  NestedCaseNotesEntity,
+} from '../../entities/case-notes.entity';
+import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 
 @Injectable()
-export class ContactsService {
+export class CaseNotesService {
   baseUrl: string;
   endpointUrls: object;
   workspace: string | undefined;
@@ -31,29 +31,20 @@ export class ContactsService {
     );
     this.endpointUrls = {
       [RecordType.Case]: encodeURI(
-        this.configService.get<string>('endpointUrls.caseContacts'),
-      ),
-      [RecordType.Incident]: encodeURI(
-        this.configService.get<string>('endpointUrls.incidentContacts'),
-      ),
-      [RecordType.SR]: encodeURI(
-        this.configService.get<string>('endpointUrls.srContacts'),
-      ),
-      [RecordType.Memo]: encodeURI(
-        this.configService.get<string>('endpointUrls.memoContacts'),
+        this.configService.get<string>('endpointUrls.caseNotes'),
       ),
     };
-    this.workspace = this.configService.get('workspaces.contacts');
-    this.afterFieldName = this.configService.get('afterFieldName.contacts');
+    this.workspace = this.configService.get('workspaces.caseNotes');
+    this.afterFieldName = this.configService.get('afterFieldName.caseNotes');
   }
 
-  async getSingleContactRecord(
+  async getSingleCaseNotesRecord(
     type: RecordType,
-    id: ContactIdPathParams,
+    id: CaseNotesIdPathParams,
     res: Response,
     idir: string,
-  ): Promise<ContactsEntity> {
-    const baseSearchSpec = `([Id]="${id[contactIdName]}"`;
+  ): Promise<CaseNotesEntity> {
+    const baseSearchSpec = `([Id]="${id[caseNotesIdName]}"`;
     const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
       type,
       id,
@@ -74,16 +65,16 @@ export class ContactsService {
       res,
       params,
     );
-    return new ContactsEntity(response.data);
+    return new CaseNotesEntity(response.data);
   }
 
-  async getListContactRecord(
+  async getListCaseNotesRecord(
     type: RecordType,
     id: IdPathParams,
     res: Response,
     idir: string,
     filter?: FilterQueryParams,
-  ): Promise<NestedContactsEntity> {
+  ): Promise<NestedCaseNotesEntity> {
     const baseSearchSpec = ``;
     const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
       type,
@@ -106,6 +97,6 @@ export class ContactsService {
       res,
       params,
     );
-    return new NestedContactsEntity(response.data);
+    return new NestedCaseNotesEntity(response.data);
   }
 }

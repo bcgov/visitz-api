@@ -199,6 +199,48 @@ export class RequestPreparerService {
     return response;
   }
 
+  async sendPutRequest(url: string, body, headers, params?) {
+    let response;
+    try {
+      const token =
+        await this.tokenRefresherService.refreshUpstreamBearerToken();
+      if (token === undefined) {
+        throw new Error('Upstream auth failed');
+      }
+      headers['Authorization'] = token;
+      response = await firstValueFrom(
+        this.httpService.put(url, body, { params, headers }),
+      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        this.logger.error({
+          msg: error.message,
+          errorDetails: error.response?.data,
+          stack: error.stack,
+          cause: error.cause,
+          buildNumber: this.buildNumber,
+        });
+        if (error.status === 404) {
+          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
+        }
+      } else {
+        this.logger.error({ error, buildNumber: this.buildNumber });
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error:
+            error.response?.data !== undefined
+              ? error.response?.data
+              : error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
+    return response;
+  }
+
   async parallelGetRequest(
     requestSpecs: Array<GetRequestDetails>,
   ): Promise<ParallelResponse> {

@@ -104,3 +104,18 @@ export class AttachmentDetailsQueryParams extends FilterQueryParams {
   })
   [inlineAttachmentParamName]?: string = 'true';
 }
+
+@Exclude()
+export class VisitDetailsQueryParams extends FilterQueryParams {
+  @IsOptional()
+  @IsBooleanString()
+  @Expose()
+  @ApiProperty({
+    example: false,
+    default: false,
+    type: 'boolean',
+    description:
+      'Whether or not you want the visit details to be displayed as multiple values.',
+  })
+  multivalue?: string = 'false';
+}

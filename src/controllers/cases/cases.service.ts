@@ -7,6 +7,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   AttachmentIdPathParams,
+  CaseNotesIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -15,11 +16,14 @@ import {
 import {
   AttachmentDetailsQueryParams,
   FilterQueryParams,
+  VisitDetailsQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import {
-  InPersonVisitsEntity,
-  NestedInPersonVisitsEntity,
+  InPersonVisitsEntityMultiValue,
+  InPersonVisitsEntityNoMultiValue,
+  NestedInPersonVisitsMultiValueEntity,
+  NestedInPersonVisitsNoMultiValueEntity,
 } from '../../entities/in-person-visits.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -33,11 +37,12 @@ import {
 import {
   PostInPersonVisitDto,
   PostInPersonVisitDtoUpstream,
+  VisitDetail,
 } from '../../dto/post-in-person-visit.dto';
 import {
   childVisitEntityIdFieldName,
-  childVisitIdirFieldName,
-  dummyCreatedDate,
+  childVisitType,
+  upstreamVisitConstraintNull,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
@@ -46,6 +51,11 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { PostAttachmentDto } from '../../dto/post-attachment.dto';
+import { CaseNotesService } from '../../helpers/case-notes/case-notes.service';
+import {
+  CaseNotesEntity,
+  NestedCaseNotesEntity,
+} from '../../entities/case-notes.entity';
 
 @Injectable()
 export class CasesService {
@@ -54,6 +64,7 @@ export class CasesService {
     private readonly inPersonVisitsService: InPersonVisitsService,
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
+    private readonly caseNotesService: CaseNotesService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -88,12 +99,16 @@ export class CasesService {
     id: VisitIdPathParams,
     res: Response,
     idir: string,
-  ): Promise<InPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    InPersonVisitsEntityMultiValue | InPersonVisitsEntityNoMultiValue
+  > {
     return await this.inPersonVisitsService.getSingleInPersonVisitRecord(
       RecordType.Case,
       id,
       res,
       idir,
+      filter,
     );
   }
 
@@ -101,8 +116,11 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
-  ): Promise<NestedInPersonVisitsEntity> {
+    filter?: VisitDetailsQueryParams,
+  ): Promise<
+    | NestedInPersonVisitsMultiValueEntity
+    | NestedInPersonVisitsNoMultiValueEntity
+  > {
     return await this.inPersonVisitsService.getListInPersonVisitRecord(
       RecordType.Case,
       id,
@@ -116,13 +134,30 @@ export class CasesService {
     inPersonVisitsDto: PostInPersonVisitDto,
     idir: string,
     id: IdPathParams,
-  ): Promise<NestedInPersonVisitsEntity> {
-    const body = new PostInPersonVisitDtoUpstream({
+  ): Promise<NestedInPersonVisitsMultiValueEntity> {
+    const { ['Visit Details Value']: visitDetailValue, ...baseObject } = {
       ...inPersonVisitsDto,
-      [childVisitIdirFieldName]: idir,
       [childVisitEntityIdFieldName]: id[idName],
-      Created: dummyCreatedDate,
-    });
+      Id: upstreamVisitConstraintNull,
+      Type: childVisitType,
+      VisitDetails: new Array<VisitDetail>(),
+    };
+    if (typeof inPersonVisitsDto.VisitDetails !== 'undefined') {
+      for (const detail of inPersonVisitsDto.VisitDetails) {
+        baseObject.VisitDetails.push(
+          new VisitDetail({
+            'Visit Detail Value': detail['Visit Detail Value'],
+          }),
+        );
+      }
+    } else {
+      baseObject.VisitDetails.push(
+        new VisitDetail({
+          'Visit Detail Value': visitDetailValue,
+        }),
+      );
+    }
+    const body = new PostInPersonVisitDtoUpstream(baseObject);
     return await this.inPersonVisitsService.postSingleInPersonVisitRecord(
       RecordType.Case,
       body,
@@ -197,6 +232,34 @@ export class CasesService {
     filter?: FilterQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleCaseNotesRecord(
+    id: CaseNotesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<CaseNotesEntity> {
+    return await this.caseNotesService.getSingleCaseNotesRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseNotesRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: FilterQueryParams,
+  ): Promise<NestedCaseNotesEntity> {
+    return await this.caseNotesService.getListCaseNotesRecord(
       RecordType.Case,
       id,
       res,
