@@ -16,7 +16,7 @@ For every deployment into dev, test or prod OpenShift environments:
 5. If deploying to test, coordinate with project team to perform UAT.
 
 ## Technical tasks
-1. Create a branch off of dev, titled 'release/v\<version number\>'. Increment the version number in helm/Chart.yaml accordingly. Use [semantic versioning](https://semver.org/).
+1. Create a branch off of dev, titled 'release/v\<version number\>'. Increment the version number in helm/Chart.yaml and package.json accordingly. Use [semantic versioning](https://semver.org/).
 2. Review helm description, ensuring that it is up to date.
 3. Make sure dependencies, such as packages, Github actions, and Node versions are up to date with the latest [minor release](https://semver.org/).
 	- Run 
