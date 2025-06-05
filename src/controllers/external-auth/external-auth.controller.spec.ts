@@ -11,13 +11,13 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { ExternalAuthService } from './external-auth.service';
 import { getMockReq } from '@jest-mock/express';
-import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
+import { idirJWTFieldName } from '../../common/constants/upstream-constants';
 
 describe('ExternalAuthController', () => {
   let controller: ExternalAuthController;
   let externalAuthService: ExternalAuthService;
+  let jwtService: JwtService;
   const testIdir = 'idir';
-  const req = getMockReq({ headers: { [idirUsernameHeaderField]: testIdir } });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,6 +41,7 @@ describe('ExternalAuthController', () => {
 
     controller = module.get<ExternalAuthController>(ExternalAuthController);
     externalAuthService = module.get<ExternalAuthService>(ExternalAuthService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -48,16 +49,22 @@ describe('ExternalAuthController', () => {
   });
 
   describe('checkAuthorizationEmployeeStatus tests', () => {
-    it.each([[testIdir]])(
-      'should return void given good input',
-      async (idir) => {
-        const externalAuthServiceSpy = jest
-          .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
-          .mockReturnValueOnce(Promise.resolve());
+    it('should return void given good input', async () => {
+      const jwt = jwtService.sign(`{"${idirJWTFieldName}":"${testIdir}"}`, {
+        secret: 'aTotalSecret',
+      });
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+      const externalAuthServiceSpy = jest
+        .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+        .mockReturnValueOnce(Promise.resolve());
 
-        await controller.checkAuthorizationEmployeeStatus(req);
-        expect(externalAuthServiceSpy).toHaveBeenCalledWith(idir);
-      },
-    );
+      await controller.checkAuthorizationEmployeeStatus(req);
+      expect(externalAuthServiceSpy).toHaveBeenCalledWith(req);
+    });
   });
 });

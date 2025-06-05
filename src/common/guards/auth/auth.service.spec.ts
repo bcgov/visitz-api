@@ -16,7 +16,10 @@ import { RecordType } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
-import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
+import {
+  idirJWTFieldName,
+  idirUsernameHeaderField,
+} from '../../../common/constants/upstream-constants';
 import { idName } from '../../../common/constants/parameter-constants';
 import { JwtService } from '@nestjs/jwt';
 
@@ -25,6 +28,7 @@ describe('AuthService', () => {
   let configService: ConfigService;
   let httpService: HttpService;
   let cache: Cache;
+  let jwtService: JwtService;
 
   const validId = 'id1234';
   const validRecordType = RecordType.Case;
@@ -67,6 +71,7 @@ describe('AuthService', () => {
     configService = module.get<ConfigService>(ConfigService);
     httpService = module.get<HttpService>(HttpService);
     cache = module.get(CACHE_MANAGER);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -122,10 +127,17 @@ describe('AuthService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>),
         );
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${testIdir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            [idirUsernameHeaderField]: testIdir,
+            [idirUsernameHeaderField]: `notTestIdir`,
+            authorization: `Bearer ${jwt}`,
           };
           return headerVal[key];
         }),
@@ -141,14 +153,14 @@ describe('AuthService', () => {
     });
 
     it.each([
-      [{}, undefined, undefined, 0],
-      [{ [idirUsernameHeaderField]: testIdir }, 403, true, 2],
-      [{ [idirUsernameHeaderField]: testIdir }, 200, false, 2],
-      [{ [idirUsernameHeaderField]: testIdir }, 403, false, 2],
+      [undefined, undefined, undefined, 0],
+      [testIdir, 403, true, 2],
+      [testIdir, 200, false, 2],
+      [testIdir, 403, false, 2],
     ])(
       'should return false with invalid record in cache',
       async (
-        headers,
+        idir,
         cacheReturnRecord,
         cacheReturnEmpStatus,
         cacheSpyCallTimes,
@@ -157,9 +169,21 @@ describe('AuthService', () => {
           .spyOn(cache, 'get')
           .mockResolvedValueOnce(cacheReturnRecord)
           .mockResolvedValueOnce(cacheReturnEmpStatus);
+        let jwt = 'invalidJwt';
+        if (idir !== undefined) {
+          jwt = jwtService.sign(
+            `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+            {
+              secret: 'aTotalSecret',
+            },
+          );
+        }
         const mockRequest = getMockReq({
           header: jest.fn((key: string): string => {
-            const headerVal: { [key: string]: string } = headers;
+            const headerVal: { [key: string]: string } = {
+              [idirUsernameHeaderField]: `notTestIdir`,
+              authorization: `Bearer ${jwt}`,
+            };
             return headerVal[key];
           }),
           params: { [idName]: 'id' },
@@ -182,10 +206,17 @@ describe('AuthService', () => {
       const spy = jest.spyOn(httpService, 'get').mockImplementationOnce(() => {
         throw new AxiosError('not found', '404');
       });
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${testIdir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            [idirUsernameHeaderField]: testIdir,
+            [idirUsernameHeaderField]: `notTestIdir`,
+            authorization: `Bearer ${jwt}`,
           };
           return headerVal[key];
         }),
@@ -220,10 +251,17 @@ describe('AuthService', () => {
           statusText: 'Not Found',
         } as AxiosResponse<any, any>),
       );
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${testIdir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            [idirUsernameHeaderField]: testIdir,
+            [idirUsernameHeaderField]: `notTestIdir`,
+            authorization: `Bearer ${jwt}`,
           };
           return headerVal[key];
         }),

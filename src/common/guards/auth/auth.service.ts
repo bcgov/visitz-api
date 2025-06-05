@@ -25,7 +25,6 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  skipJWT: boolean;
   cacheTime: number;
   baseUrl: string;
   buildNumber: string;
@@ -45,7 +44,6 @@ export class AuthService {
       this.configService.get<string>('endpointUrls.baseUrl'),
     );
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
-    this.skipJWT = this.configService.get<boolean>('skipJWTCache');
     this.employeeWorkspace = this.configService.get<string>(
       'upstreamAuth.employee.workspace',
     );
@@ -60,7 +58,8 @@ export class AuthService {
   ): Promise<boolean> {
     let idir: string, jti: string, id: string, recordType: RecordType;
     try {
-      idir = req.header(idirUsernameHeaderField).trim();
+      idir = this.utilitiesService.grabIdir(req);
+      req.headers[idirUsernameHeaderField] = idir; // set header to jwt idir for future use
     } catch {
       this.logger.error(`Idir username not found`);
       return false;

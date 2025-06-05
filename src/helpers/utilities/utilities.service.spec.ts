@@ -7,7 +7,7 @@ import {
 import { DateTime } from 'luxon';
 import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { getMockReq } from '@jest-mock/express';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 import { InPersonVisitsSingleResponseCaseExample } from '../../entities/in-person-visits.entity';
@@ -17,8 +17,10 @@ import {
 } from '../../common/constants/parameter-constants';
 import {
   createdByFieldName,
+  idirJWTFieldName,
   updatedByFieldName,
 } from '../../common/constants/upstream-constants';
+import configuration from '../../configuration/configuration';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -26,21 +28,8 @@ describe('UtilitiesService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UtilitiesService,
-        JwtService,
-        {
-          provide: ConfigService,
-          useValue: {
-            get: jest.fn((key: string) => {
-              const lookup = {
-                skipJWTCache: false,
-              };
-              return lookup[key];
-            }),
-          },
-        },
-      ],
+      imports: [ConfigModule.forRoot({ load: [configuration] })],
+      providers: [UtilitiesService, JwtService],
     }).compile();
 
     service = module.get<UtilitiesService>(UtilitiesService);
@@ -113,28 +102,31 @@ describe('UtilitiesService', () => {
       },
     );
 
-    it(`should return local when skipping jwt`, async () => {
-      const localModule = await Test.createTestingModule({
-        providers: [
-          UtilitiesService,
-          JwtService,
-          {
-            provide: ConfigService,
-            useValue: {
-              get: jest.fn((key: string) => {
-                const lookup = {
-                  skipJWTCache: true,
-                };
-                return lookup[key];
-              }),
-            },
-          },
-        ],
-      }).compile();
+    it.each([['invalidJWT']])(`should throw error on invalid JWT`, (jwt) => {
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+      expect(() => {
+        service.grabJTI(req);
+      }).toThrow(`Invalid JWT`);
+    });
+  });
 
-      const localService = localModule.get<UtilitiesService>(UtilitiesService);
-      const req = getMockReq();
-      expect(localService.grabJTI(req)).toEqual('local');
+  describe('grabIdir tests', () => {
+    it.each([[`testIdir`]])(`should return idir on valid jwt`, (idir) => {
+      const jwt = jwtService.sign(`{"${idirJWTFieldName}":"${idir}"}`, {
+        secret: 'aTotalSecret',
+      });
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+      expect(service.grabIdir(req)).toEqual(idir);
     });
 
     it.each([['invalidJWT']])(`should throw error on invalid JWT`, (jwt) => {
@@ -145,7 +137,7 @@ describe('UtilitiesService', () => {
         }),
       });
       expect(() => {
-        service.grabJTI(req);
+        service.grabIdir(req);
       }).toThrow(`Invalid JWT`);
     });
   });

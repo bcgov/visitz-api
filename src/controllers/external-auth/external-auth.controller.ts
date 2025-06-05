@@ -11,7 +11,6 @@ import { versionInfo } from '../../common/constants/swagger-constants';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
-import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
 import { ExternalAuthService } from './external-auth.service';
 import { Request } from 'express';
 
@@ -33,8 +32,6 @@ export class ExternalAuthController {
     description: 'Empty body. Employee is active.',
   })
   async checkAuthorizationEmployeeStatus(@Req() req: Request): Promise<void> {
-    return await this.externalAuthService.checkEmployeeStatusUpstream(
-      req.headers[idirUsernameHeaderField] as string,
-    );
+    return await this.externalAuthService.checkEmployeeStatusUpstream(req);
   }
 }

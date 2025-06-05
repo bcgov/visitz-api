@@ -75,10 +75,6 @@ export default () => ({
     process.env.VPI_APP_ENV === 'prod'
       ? false
       : process.env.SKIP_AUTH_GUARD === 'true',
-  skipJWTCache:
-    process.env.VPI_APP_ENV === 'prod'
-      ? false
-      : process.env.SKIP_JWT_CACHE === 'true',
   endpointUrls: {
     baseUrl: process.env.UPSTREAM_BASE_URL ?? ' ',
     supportNetwork: process.env.SUPPORT_NETWORK_ENDPOINT ?? ' ',
