@@ -65,6 +65,10 @@ import {
                   'accept-language': req.raw.headers['accept-language'],
                   'x-credential-identifier':
                     req.raw.headers['x-credential-identifier'],
+                  'x-jti': req.raw.headers['x-jti'],
+                  'x-iss': req.raw.headers['x-iss'],
+                  'x-sub': req.raw.headers['x-sub'],
+                  'x-sid': req.raw.headers['x-sid'],
                   'x-idir-username': req.raw.headers['x-idir-username'],
                   'x-given-name': req.raw.headers['x-given-name'],
                   'x-family-name': req.raw.headers['x-family-name'],
