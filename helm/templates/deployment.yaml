@@ -79,11 +79,6 @@ spec:
                 secretKeyRef:
                     name: visitz-api
                     key: SKIP_AUTH_GUARD
-            - name: SKIP_JWT_CACHE
-              valueFrom:
-                secretKeyRef:
-                    name: visitz-api
-                    key: SKIP_JWT_CACHE
             - name: IN_PERSON_VISITS_ENDPOINT
               valueFrom:
                 secretKeyRef:
