@@ -71,20 +71,17 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: 'YAML poke: Set image tag'
-        uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
-        with:
-          valueFile: 'clamav/values.yaml'
-          propertyPath: 'clamav.tag'
-          value: ${{ github.event.inputs.environment }}
-          commitChange: false
-
       - name: 'YAML poke: Set image location'
         uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
         with:
           valueFile: 'clamav/values.yaml'
           propertyPath: 'clamav.image'
           value: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          changes: |
+            {
+              "clamav.image": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}",
+              "clamav.tag": "${{ github.event.inputs.environment }}",
+            }
           commitChange: false
 
       - name: Authenticate with OpenShift

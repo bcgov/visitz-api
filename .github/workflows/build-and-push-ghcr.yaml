@@ -67,44 +67,17 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: 'YAML poke: Set image tag'
-        uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
-        with:
-          valueFile: 'helm/values.yaml'
-          propertyPath: 'image.tag'
-          value: ${{ github.ref_name }}
-          commitChange: false
-
-      - name: 'YAML poke: Set APS namespace'
-        uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
-        with:
-          valueFile: 'helm/values.yaml'
-          propertyPath: 'aps.namespace'
-          value: ${{ secrets.APS_NAMESPACE }}
-          commitChange: false
-
       - name: 'YAML poke: Set App Environment'
         uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
         with:
           valueFile: 'helm/values.yaml'
-          propertyPath: 'vpiAppEnv'
-          value: ${{ vars.VPI_APP_ENV }}
-          commitChange: false
-
-      - name: 'YAML poke: Set build number'
-        uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
-        with:
-          valueFile: 'helm/values.yaml'
-          propertyPath: 'vpiAppBuildLabel.version'
-          value: "${{ github.ref_name }}-${{ github.run_number }}"
-          commitChange: false
-
-      - name: 'YAML poke: Set upstream url'
-        uses: fjogeleit/yaml-update-action@b75e8a929eb61bff6b67a6114943c9468f0bd933 #v0.16.0
-        with:
-          valueFile: 'helm/values.yaml'
-          propertyPath: 'upstream.baseUrl'
-          value: "${{ secrets.SIEBEL_API_URL }}"
+          changes: |
+            {
+              "image.tag": "${{ github.ref_name }}",
+              "vpiAppBuildLabel.version": "${{ github.ref_name }}-${{ github.run_number }}",
+              "vpiAppEnv": "${{ vars.VPI_APP_ENV }}",
+              "aps.namespace": "${{ secrets.APS_NAMESPACE }}"
+            }
           commitChange: false
 
       - name: Authenticate with OpenShift
@@ -114,6 +87,11 @@ jobs:
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
           openshift_token: ${{ secrets.OPENSHIFT_SERVICE_ACCOUNT_TOKEN }}
           insecure_skip_tls_verify: true
+
+      - name: Check for config map existence
+        run: |
+          oc get configmap visitz-api-config \
+            --namespace ${{ secrets.OPENSHIFT_NAMESPACE }}
 
       - name: Deploy with Helm
         run: |
