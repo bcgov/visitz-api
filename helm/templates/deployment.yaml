@@ -21,45 +21,7 @@ spec:
             - containerPort: {{ .Values.service.containerPort }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: visitz-api-config
-          env:
-            - name: CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                    name: visitz-api
-                    key: CLIENT_ID
-            - name: CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                    name: visitz-api
-                    key: CLIENT_SECRET
-            - name: CLAMD_HOST
-              valueFrom:
-                secretKeyRef:
-                    name: visitz-api
-                    key: CLAMD_HOST
-            - name: CLAMD_PORT
-              valueFrom:
-                secretKeyRef:
-                    name: visitz-api
-                    key: CLAMD_PORT
-            - name: CA_CERT
-              valueFrom:
-                secretKeyRef:
-                    name: mutual-authentication-mtls
-                    key: CA_CERT
-            - name: SERVER_CERT
-              valueFrom:
-                secretKeyRef:
-                    name: mutual-authentication-mtls
-                    key: SERVER_CERT
-            - name: SERVER_KEY
-              valueFrom:
-                secretKeyRef:
-                    name: mutual-authentication-mtls
-                    key: SERVER_KEY
+          env: {{- toYaml .Values.env | nindent 12 }}
             - name: VPI_APP_LABEL
               value: {{ .Values.vpiAppBuildLabel.version }}
             - name: VPI_APP_ENV

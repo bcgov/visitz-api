@@ -88,14 +88,10 @@ jobs:
           openshift_token: ${{ secrets.OPENSHIFT_SERVICE_ACCOUNT_TOKEN }}
           insecure_skip_tls_verify: true
 
-      - name: Check for config map existence
-        run: |
-          oc get configmap visitz-api-config \
-            --namespace ${{ secrets.OPENSHIFT_NAMESPACE }}
-
       - name: Deploy with Helm
         run: |
-          helm upgrade --install ${{ env.HELM_RELEASE_NAME }} ./helm \
+          helm upgrade -f helm/visitz-config-values.yaml -f helm/values.yaml \
+            --install ${{ env.HELM_RELEASE_NAME }} ./helm \
             --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ needs.build_and_push.outputs.image_tag }}
