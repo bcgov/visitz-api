@@ -314,6 +314,7 @@ describe('AuthService', () => {
         testIdir,
         testIdir,
         'cachetest1',
+        'searchspec',
       );
       expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(upstreamResult).toBe(200);
@@ -330,6 +331,7 @@ describe('AuthService', () => {
           upstreamIdir,
           testIdir,
           'cachetest2' + cacheSpyCallTimes,
+          'searchspec',
         );
         expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
         expect(upstreamResult).toBe(403);
@@ -339,38 +341,41 @@ describe('AuthService', () => {
 
   describe('getAssignedIdirUpstream tests', () => {
     it.each([
-      [validId, validRecordType],
-      [validId, RecordType.Memo],
-    ])('should return idir string given good input', async (id, recordType) => {
-      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
-      const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
-        of({
-          data: {
-            items: [
-              {
-                [configService.get(`upstreamAuth.${recordType}.idirField`)]:
-                  testIdir,
-              },
-            ],
-          },
-          headers: {},
-          config: {
-            url: 'exampleurl',
-            headers: {} as RawAxiosRequestHeaders,
-          },
-          status: 200,
-          statusText: 'OK',
-        } as AxiosResponse<any, any>),
-      );
-      const result = await service.getAssignedIdirUpstream(
-        id,
-        recordType,
-        testIdir,
-      );
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(testIdir);
-    });
+      [validId, validRecordType, `EXISTS ([undefined]='IDIRTEST')`],
+      [validId, RecordType.Memo, `([undefined]='IDIRTEST')`],
+    ])(
+      'should return idir string given good input',
+      async (id, recordType, searchspec) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
+          of({
+            data: {
+              items: [
+                {
+                  [configService.get(`upstreamAuth.${recordType}.idirField`)]:
+                    testIdir,
+                },
+              ],
+            },
+            headers: {},
+            config: {
+              url: 'exampleurl',
+              headers: {} as RawAxiosRequestHeaders,
+            },
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>),
+        );
+        const result = await service.getAssignedIdirUpstream(
+          id,
+          recordType,
+          testIdir,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual([testIdir, searchspec]);
+      },
+    );
 
     it.each([[404], [500]])(
       `Should return undefined on axios error`,
@@ -391,7 +396,8 @@ describe('AuthService', () => {
             },
           );
         });
-        const idir = await service.getAssignedIdirUpstream(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [idir, searchspec] = await service.getAssignedIdirUpstream(
           validId,
           RecordType.Case,
           'idir',
@@ -404,7 +410,8 @@ describe('AuthService', () => {
 
     it('should return undefined on token refresh error', async () => {
       const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
-      const result = await service.getAssignedIdirUpstream(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [result, searchspec] = await service.getAssignedIdirUpstream(
         validId,
         validRecordType,
         'idir',
