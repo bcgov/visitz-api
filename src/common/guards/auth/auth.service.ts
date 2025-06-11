@@ -25,7 +25,6 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  skipJWT: boolean;
   cacheTime: number;
   baseUrl: string;
   buildNumber: string;
@@ -45,7 +44,6 @@ export class AuthService {
       this.configService.get<string>('endpointUrls.baseUrl'),
     );
     this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
-    this.skipJWT = this.configService.get<boolean>('skipJWTCache');
     this.employeeWorkspace = this.configService.get<string>(
       'upstreamAuth.employee.workspace',
     );
@@ -60,7 +58,8 @@ export class AuthService {
   ): Promise<boolean> {
     let idir: string, jti: string, id: string, recordType: RecordType;
     try {
-      idir = req.header(idirUsernameHeaderField).trim();
+      idir = this.utilitiesService.grabIdir(req);
+      req.headers[idirUsernameHeaderField] = idir; // set header to jwt idir for future use
     } catch {
       this.logger.error(`Idir username not found`);
       return false;
@@ -86,8 +85,8 @@ export class AuthService {
       this.logger.log(
         `Cache not hit for record type and active status, going upstream...`,
       );
-      let upstreamIdir: string | undefined;
-      [upstreamIdir, employeeActive] = await Promise.all([
+      let upstreamIdir: string | undefined, searchspec: string;
+      [[upstreamIdir, searchspec], employeeActive] = await Promise.all([
         this.getAssignedIdirUpstream(id, recordType, idir),
         this.getEmployeeActiveUpstream(idir),
       ]);
@@ -95,10 +94,11 @@ export class AuthService {
         upstreamIdir,
         idir,
         key,
+        searchspec,
       );
     } else if (upstreamResult === null) {
       this.logger.log(`Cache not hit for record type, going upstream...`);
-      const upstreamIdir = await this.getAssignedIdirUpstream(
+      const [upstreamIdir, searchspec] = await this.getAssignedIdirUpstream(
         id,
         recordType,
         idir,
@@ -107,6 +107,7 @@ export class AuthService {
         upstreamIdir,
         idir,
         key,
+        searchspec,
       );
     } else if (employeeActive === null) {
       this.logger.log(`Cache not hit for active status, going upstream...`);
@@ -142,15 +143,20 @@ export class AuthService {
     upstreamIdir: string | undefined,
     idir: string,
     key: string,
+    searchspec: string,
   ) {
     const authStatus = upstreamIdir === idir ? 200 : 403;
     if (upstreamIdir !== undefined) {
       await this.cacheManager.set(key, authStatus, this.cacheTime);
+      this.logger.log(
+        `Assigned To check: user '${upstreamIdir}' is assigned to record`,
+      );
+    } else {
+      this.logger.log(
+        `Assigned To check: failed with searchspec '${searchspec}'`,
+      );
     }
     const upstreamResult = authStatus;
-    this.logger.log(
-      `Upstream idir: '${upstreamIdir}' Result: ${upstreamResult}`,
-    );
     return upstreamResult;
   }
 
@@ -158,7 +164,7 @@ export class AuthService {
     id: string,
     recordType: RecordType,
     idir: string,
-  ): Promise<string | undefined> {
+  ): Promise<[string | undefined, string]> {
     let workspace;
     const fieldName = this.configService.get<string>(
       `upstreamAuth.${recordType}.searchspecIdirField`,
@@ -203,7 +209,7 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      return idir;
+      return [idir, searchspec];
     } catch (error) {
       if (error instanceof AxiosError) {
         this.logger.error({
@@ -218,7 +224,7 @@ export class AuthService {
         this.logger.error({ error, buildNumber: this.buildNumber });
       }
     }
-    return undefined;
+    return [undefined, searchspec];
   }
 
   async getEmployeeActiveUpstream(idir: string): Promise<boolean> {

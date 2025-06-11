@@ -95,11 +95,9 @@ export class CaseloadController {
     )
     filter?: AfterQueryParams,
   ): Promise<CaseloadEntity> {
-    await this.externalAuthService.checkEmployeeStatusUpstream(
-      req.headers[idirUsernameHeaderField] as string,
-    ); // auth check
+    await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
     return await this.caseloadService.getCaseload(
-      req.headers[idirUsernameHeaderField] as string,
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
       req,
       filter,
     );

@@ -27,12 +27,18 @@ import {
   CaseloadLaterDateResponseExample,
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
-import { RecordType } from '../../common/constants/enumerations';
+import {
+  CaseType,
+  EntityStatus,
+  IncidentType,
+  RecordType,
+} from '../../common/constants/enumerations';
 import { plainToInstance } from 'class-transformer';
 import {
   pageSizeParamName,
   pageSizeMax,
   trustedIdirHeaderName,
+  idirJWTFieldName,
 } from '../../common/constants/upstream-constants';
 import { CaseExample } from '../../entities/case.entity';
 import { IncidentExample } from '../../entities/incident.entity';
@@ -44,7 +50,7 @@ describe('CaseloadService', () => {
   let configService: ConfigService;
   let cacheManager: Cache;
   let requestPreparerService: RequestPreparerService;
-  let utilitiesService: UtilitiesService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,10 +74,8 @@ describe('CaseloadService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
-    utilitiesService = module.get<UtilitiesService>(UtilitiesService);
+    jwtService = module.get<JwtService>(JwtService);
 
-    configService.set('skipJWTCache', true);
-    utilitiesService.skipJWT = true;
     configService.set('afterFieldName.cases', 'Last Updated Date');
     configService.set('afterFieldName.incidents', 'Updated Date');
     configService.set('afterFieldName.srs', 'Updated Date');
@@ -126,6 +130,24 @@ describe('CaseloadService', () => {
       const memoIdirFieldName = configService.get<string>(
         `upstreamAuth.memo.searchspecIdirField`,
       );
+      const caseTypeFieldName = configService.get<string>(
+        `upstreamAuth.case.typeField`,
+      );
+      const incidentTypeFieldName = configService.get<string>(
+        `upstreamAuth.incident.typeField`,
+      );
+      const caseStatusFieldName = configService.get<string>(
+        `upstreamAuth.case.statusField`,
+      );
+      const incidentStatusFieldName = configService.get<string>(
+        `upstreamAuth.incident.statusField`,
+      );
+      const srStatusFieldName = configService.get<string>(
+        `upstreamAuth.sr.statusField`,
+      );
+      const memoStatusFieldName = configService.get<string>(
+        `upstreamAuth.memo.statusField`,
+      );
       const headers = {
         Accept: CONTENT_TYPE,
         'Accept-Encoding': '*',
@@ -139,19 +161,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `([${srIdirFieldName}]="${idir}")`,
+        searchspec: `([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoIdirFieldName}]="${idir}")`,
+        searchspec: `([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
@@ -318,7 +340,18 @@ describe('CaseloadService', () => {
         srs: { assignedIds: ['d'] },
         memos: { assignedIds: ['e'] },
       };
-      const req = getMockReq();
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${idir}", "jti":"${jti}"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
       const caseKey = `${idir}|${RecordType.Case}|a|${jti}`;
       const incidentKey = `${idir}|${RecordType.Incident}|b|${jti}`;
       const srKey = `${idir}|${RecordType.SR}|d|${jti}`;
@@ -389,7 +422,18 @@ describe('CaseloadService', () => {
               },
             ],
           });
-        const req = getMockReq();
+        const jwt = jwtService.sign(
+          `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+          {
+            secret: 'aTotalSecret',
+          },
+        );
+        const req = getMockReq({
+          header: jest.fn((headerName) => {
+            const lookup = { authorization: `Bearer ${jwt}` };
+            return lookup[headerName];
+          }),
+        });
         const result = await service.getCaseload(idir, req, filterQueryParams);
         const expectedObject = plainToInstance(CaseloadEntity, data, {
           enableImplicitConversion: true,

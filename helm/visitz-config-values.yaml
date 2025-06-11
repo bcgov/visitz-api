@@ -1,0 +1,381 @@
+env:
+  - name: NODE_ENV
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: NODE_ENV
+  - name: RECORD_CACHE_MS
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: RECORD_CACHE_MS
+  - name: SUPPORT_NETWORK_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUPPORT_NETWORK_ENDPOINT
+  - name: CASE_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_ENDPOINT
+  - name: INCIDENT_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_ENDPOINT
+  - name: SR_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_ENDPOINT
+  - name: MEMO_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_ENDPOINT
+  - name: ACCESS_TOKEN_URL
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACCESS_TOKEN_URL
+  - name: SKIP_AUTH_GUARD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SKIP_AUTH_GUARD
+  - name: IN_PERSON_VISITS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: IN_PERSON_VISITS_ENDPOINT
+  - name: ATTACHMENTS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_ENDPOINT
+  - name: IN_PERSON_VISITS_POST_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: IN_PERSON_VISITS_POST_ENDPOINT
+  - name: CASE_CONTACTS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_CONTACTS_ENDPOINT
+  - name: INCIDENT_CONTACTS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONTACTS_ENDPOINT
+  - name: SR_CONTACTS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_CONTACTS_ENDPOINT
+  - name: MEMO_CONTACTS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_CONTACTS_ENDPOINT
+  - name: CASE_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_WORKSPACE
+  - name: INCIDENT_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_WORKSPACE
+  - name: SR_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_WORKSPACE
+  - name: MEMO_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_WORKSPACE
+  - name: SUPPORT_NETWORK_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUPPORT_NETWORK_WORKSPACE
+  - name: IN_PERSON_VISITS_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: IN_PERSON_VISITS_WORKSPACE
+  - name: ATTACHMENTS_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_WORKSPACE
+  - name: IN_PERSON_VISITS_POST_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: IN_PERSON_VISITS_POST_WORKSPACE
+  - name: CONTACTS_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACTS_WORKSPACE
+  - name: CASE_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_IDIR_FIELD
+  - name: INCIDENT_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_IDIR_FIELD
+  - name: SR_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_IDIR_FIELD
+  - name: MEMO_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_IDIR_FIELD
+  - name: CASE_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_AFTER_FIELD
+  - name: CASE_SEARCHSPEC_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_SEARCHSPEC_IDIR_FIELD
+  - name: CASE_RESTRICTED_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_RESTRICTED_FIELD
+  - name: INCIDENT_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_AFTER_FIELD
+  - name: INCIDENT_SEARCHSPEC_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_SEARCHSPEC_IDIR_FIELD
+  - name: INCIDENT_RESTRICTED_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_RESTRICTED_FIELD
+  - name: SR_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_AFTER_FIELD
+  - name: SR_SEARCHSPEC_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_SEARCHSPEC_IDIR_FIELD
+  - name: SR_RESTRICTED_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_RESTRICTED_FIELD
+  - name: MEMO_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_AFTER_FIELD
+  - name: MEMO_SEARCHSPEC_IDIR_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_SEARCHSPEC_IDIR_FIELD
+  - name: MEMO_RESTRICTED_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_RESTRICTED_FIELD
+  - name: CASE_TYPE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_TYPE_FIELD
+  - name: INCIDENT_TYPE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_TYPE_FIELD
+  - name: CASE_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_STATUS_FIELD
+  - name: INCIDENT_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_STATUS_FIELD
+  - name: SR_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_STATUS_FIELD
+  - name: MEMO_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_STATUS_FIELD
+  - name: EMPLOYEE_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: EMPLOYEE_ENDPOINT
+  - name: EMPLOYEE_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: EMPLOYEE_WORKSPACE
+  - name: SAFETY_ASSESSMENTS_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SAFETY_ASSESSMENTS_WORKSPACE
+  - name: SAFETY_ASSESSMENTS_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SAFETY_ASSESSMENTS_AFTER_FIELD
+  - name: SAFETY_ASSESSMENTS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SAFETY_ASSESSMENTS_ENDPOINT
+  - name: ATTACHMENTS_POST_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_POST_ENDPOINT
+  - name: ATTACHMENTS_POST_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_POST_WORKSPACE
+  - name: MAX_FILE_SIZE_BYTES
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MAX_FILE_SIZE_BYTES
+  - name: CLAM_DEBUG_MODE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CLAM_DEBUG_MODE
+  - name: CLAMD_TIMEOUT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CLAMD_TIMEOUT
+  - name: CLAMD_CONFIG_FILE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CLAMD_CONFIG_FILE
+  - name: CLAMD_MULTI_SCAN
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CLAMD_MULTI_SCAN
+  - name: CLAMD_BYPASS_TEST
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CLAMD_BYPASS_TEST
+  - name: ATTACHMENTS_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_AFTER_FIELD
+  - name: RESPONSE_NARRATIVES_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: RESPONSE_NARRATIVES_AFTER_FIELD
+  - name: INCIDENT_RESPONSE_NARRATIVES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_RESPONSE_NARRATIVES_ENDPOINT
+  - name: SR_RESPONSE_NARRATIVES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_RESPONSE_NARRATIVES_ENDPOINT
+  - name: RESPONSE_NARRATIVES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: RESPONSE_NARRATIVES_WORKSPACE
+  - name: CASE_NOTES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_NOTES_ENDPOINT
+  - name: CASE_NOTES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_NOTES_WORKSPACE
+  - name: CASE_NOTES_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_NOTES_AFTER_FIELD
+  - name: UPSTREAM_BASE_URL
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: UPSTREAM_BASE_URL
+  - name: CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+          name: visitz-api
+          key: CLIENT_ID
+  - name: CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+          name: visitz-api
+          key: CLIENT_SECRET
+  - name: CLAMD_HOST
+    valueFrom:
+      secretKeyRef:
+          name: visitz-api
+          key: CLAMD_HOST
+  - name: CLAMD_PORT
+    valueFrom:
+      secretKeyRef:
+          name: visitz-api
+          key: CLAMD_PORT
+  - name: CA_CERT
+    valueFrom:
+      secretKeyRef:
+          name: mutual-authentication-mtls
+          key: CA_CERT
+  - name: SERVER_CERT
+    valueFrom:
+      secretKeyRef:
+          name: mutual-authentication-mtls
+          key: SERVER_CERT
+  - name: SERVER_KEY
+    valueFrom:
+      secretKeyRef:
+          name: mutual-authentication-mtls
+          key: SERVER_KEY

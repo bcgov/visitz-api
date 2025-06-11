@@ -16,7 +16,10 @@ import { RecordType } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
-import { idirUsernameHeaderField } from '../../../common/constants/upstream-constants';
+import {
+  idirJWTFieldName,
+  idirUsernameHeaderField,
+} from '../../../common/constants/upstream-constants';
 import { idName } from '../../../common/constants/parameter-constants';
 import { JwtService } from '@nestjs/jwt';
 
@@ -25,6 +28,7 @@ describe('AuthService', () => {
   let configService: ConfigService;
   let httpService: HttpService;
   let cache: Cache;
+  let jwtService: JwtService;
 
   const validId = 'id1234';
   const validRecordType = RecordType.Case;
@@ -67,6 +71,7 @@ describe('AuthService', () => {
     configService = module.get<ConfigService>(ConfigService);
     httpService = module.get<HttpService>(HttpService);
     cache = module.get(CACHE_MANAGER);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -122,10 +127,17 @@ describe('AuthService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>),
         );
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${testIdir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            [idirUsernameHeaderField]: testIdir,
+            [idirUsernameHeaderField]: `notTestIdir`,
+            authorization: `Bearer ${jwt}`,
           };
           return headerVal[key];
         }),
@@ -141,14 +153,14 @@ describe('AuthService', () => {
     });
 
     it.each([
-      [{}, undefined, undefined, 0],
-      [{ [idirUsernameHeaderField]: testIdir }, 403, true, 2],
-      [{ [idirUsernameHeaderField]: testIdir }, 200, false, 2],
-      [{ [idirUsernameHeaderField]: testIdir }, 403, false, 2],
+      [undefined, undefined, undefined, 0],
+      [testIdir, 403, true, 2],
+      [testIdir, 200, false, 2],
+      [testIdir, 403, false, 2],
     ])(
       'should return false with invalid record in cache',
       async (
-        headers,
+        idir,
         cacheReturnRecord,
         cacheReturnEmpStatus,
         cacheSpyCallTimes,
@@ -157,9 +169,21 @@ describe('AuthService', () => {
           .spyOn(cache, 'get')
           .mockResolvedValueOnce(cacheReturnRecord)
           .mockResolvedValueOnce(cacheReturnEmpStatus);
+        let jwt = 'invalidJwt';
+        if (idir !== undefined) {
+          jwt = jwtService.sign(
+            `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+            {
+              secret: 'aTotalSecret',
+            },
+          );
+        }
         const mockRequest = getMockReq({
           header: jest.fn((key: string): string => {
-            const headerVal: { [key: string]: string } = headers;
+            const headerVal: { [key: string]: string } = {
+              [idirUsernameHeaderField]: `notTestIdir`,
+              authorization: `Bearer ${jwt}`,
+            };
             return headerVal[key];
           }),
           params: { [idName]: 'id' },
@@ -182,10 +206,17 @@ describe('AuthService', () => {
       const spy = jest.spyOn(httpService, 'get').mockImplementationOnce(() => {
         throw new AxiosError('not found', '404');
       });
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${testIdir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            [idirUsernameHeaderField]: testIdir,
+            [idirUsernameHeaderField]: `notTestIdir`,
+            authorization: `Bearer ${jwt}`,
           };
           return headerVal[key];
         }),
@@ -220,10 +251,17 @@ describe('AuthService', () => {
           statusText: 'Not Found',
         } as AxiosResponse<any, any>),
       );
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${testIdir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
       const mockRequest = getMockReq({
         header: jest.fn((key: string): string => {
           const headerVal: { [key: string]: string } = {
-            [idirUsernameHeaderField]: testIdir,
+            [idirUsernameHeaderField]: `notTestIdir`,
+            authorization: `Bearer ${jwt}`,
           };
           return headerVal[key];
         }),
@@ -276,6 +314,7 @@ describe('AuthService', () => {
         testIdir,
         testIdir,
         'cachetest1',
+        'searchspec',
       );
       expect(cacheSpy).toHaveBeenCalledTimes(1);
       expect(upstreamResult).toBe(200);
@@ -292,6 +331,7 @@ describe('AuthService', () => {
           upstreamIdir,
           testIdir,
           'cachetest2' + cacheSpyCallTimes,
+          'searchspec',
         );
         expect(cacheSpy).toHaveBeenCalledTimes(cacheSpyCallTimes);
         expect(upstreamResult).toBe(403);
@@ -301,38 +341,41 @@ describe('AuthService', () => {
 
   describe('getAssignedIdirUpstream tests', () => {
     it.each([
-      [validId, validRecordType],
-      [validId, RecordType.Memo],
-    ])('should return idir string given good input', async (id, recordType) => {
-      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
-      const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
-        of({
-          data: {
-            items: [
-              {
-                [configService.get(`upstreamAuth.${recordType}.idirField`)]:
-                  testIdir,
-              },
-            ],
-          },
-          headers: {},
-          config: {
-            url: 'exampleurl',
-            headers: {} as RawAxiosRequestHeaders,
-          },
-          status: 200,
-          statusText: 'OK',
-        } as AxiosResponse<any, any>),
-      );
-      const result = await service.getAssignedIdirUpstream(
-        id,
-        recordType,
-        testIdir,
-      );
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(testIdir);
-    });
+      [validId, validRecordType, `EXISTS ([undefined]='IDIRTEST')`],
+      [validId, RecordType.Memo, `([undefined]='IDIRTEST')`],
+    ])(
+      'should return idir string given good input',
+      async (id, recordType, searchspec) => {
+        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+        const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
+          of({
+            data: {
+              items: [
+                {
+                  [configService.get(`upstreamAuth.${recordType}.idirField`)]:
+                    testIdir,
+                },
+              ],
+            },
+            headers: {},
+            config: {
+              url: 'exampleurl',
+              headers: {} as RawAxiosRequestHeaders,
+            },
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>),
+        );
+        const result = await service.getAssignedIdirUpstream(
+          id,
+          recordType,
+          testIdir,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(cacheSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual([testIdir, searchspec]);
+      },
+    );
 
     it.each([[404], [500]])(
       `Should return undefined on axios error`,
@@ -353,7 +396,8 @@ describe('AuthService', () => {
             },
           );
         });
-        const idir = await service.getAssignedIdirUpstream(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [idir, searchspec] = await service.getAssignedIdirUpstream(
           validId,
           RecordType.Case,
           'idir',
@@ -366,7 +410,8 @@ describe('AuthService', () => {
 
     it('should return undefined on token refresh error', async () => {
       const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
-      const result = await service.getAssignedIdirUpstream(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [result, searchspec] = await service.getAssignedIdirUpstream(
         validId,
         validRecordType,
         'idir',
