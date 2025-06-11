@@ -27,7 +27,12 @@ import {
   CaseloadLaterDateResponseExample,
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
-import { RecordType } from '../../common/constants/enumerations';
+import {
+  CaseType,
+  EntityStatus,
+  IncidentType,
+  RecordType,
+} from '../../common/constants/enumerations';
 import { plainToInstance } from 'class-transformer';
 import {
   pageSizeParamName,
@@ -125,6 +130,24 @@ describe('CaseloadService', () => {
       const memoIdirFieldName = configService.get<string>(
         `upstreamAuth.memo.searchspecIdirField`,
       );
+      const caseTypeFieldName = configService.get<string>(
+        `upstreamAuth.case.typeField`,
+      );
+      const incidentTypeFieldName = configService.get<string>(
+        `upstreamAuth.incident.typeField`,
+      );
+      const caseStatusFieldName = configService.get<string>(
+        `upstreamAuth.case.statusField`,
+      );
+      const incidentStatusFieldName = configService.get<string>(
+        `upstreamAuth.incident.statusField`,
+      );
+      const srStatusFieldName = configService.get<string>(
+        `upstreamAuth.sr.statusField`,
+      );
+      const memoStatusFieldName = configService.get<string>(
+        `upstreamAuth.memo.statusField`,
+      );
       const headers = {
         Accept: CONTENT_TYPE,
         'Accept-Encoding': '*',
@@ -138,19 +161,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}")`,
+        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `([${srIdirFieldName}]="${idir}")`,
+        searchspec: `([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoIdirFieldName}]="${idir}")`,
+        searchspec: `([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
