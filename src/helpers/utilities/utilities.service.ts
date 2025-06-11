@@ -1,7 +1,10 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { isISO8601 } from 'class-validator';
 import { DateTime } from 'luxon';
-import { upstreamDateFormat } from '../../common/constants/upstream-constants';
+import {
+  idirJWTFieldName,
+  upstreamDateFormat,
+} from '../../common/constants/upstream-constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -16,15 +19,12 @@ import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto
 
 @Injectable()
 export class UtilitiesService {
-  skipJWT: boolean;
   private readonly logger = new Logger(UtilitiesService.name);
 
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) {
-    this.skipJWT = this.configService.get<boolean>('skipJWTCache');
-  }
+  ) {}
   /**
    * Converts an ISO 8601 formatted string to the MM/dd/yyyy HH:mm:ss format.
    * @param isoDate an ISO 8601 formatted string. Assumes the date given is provided in UTC
@@ -58,14 +58,24 @@ export class UtilitiesService {
   }
 
   grabJTI(req: Request): string {
-    if (this.skipJWT) {
-      return 'local'; // we won't have a JWT locally
-    }
     const authToken = req.header('authorization').split(/\s+/)[1];
     try {
       const decoded = this.jwtService.decode(authToken);
       const jti = decoded['jti'];
       return jti;
+    } catch {
+      const error = `Invalid JWT`;
+      this.logger.error(error);
+      throw new Error(error);
+    }
+  }
+
+  grabIdir(req: Request): string {
+    const authToken = req.header('authorization').split(/\s+/)[1];
+    try {
+      const decoded = this.jwtService.decode(authToken);
+      const idir = decoded[idirJWTFieldName];
+      return idir;
     } catch {
       const error = `Invalid JWT`;
       this.logger.error(error);

@@ -4,6 +4,9 @@ import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  CaseType,
+  EntityStatus,
+  IncidentType,
   RecordType,
   RestrictedRecordEnum,
 } from '../../common/constants/enumerations';
@@ -31,6 +34,10 @@ export class CaseloadService {
   incidentIdirFieldName: string;
   srIdirFieldName: string;
   memoIdirFieldName: string;
+  caseStatusFieldName: string;
+  incidentStatusFieldName: string;
+  srStatusFieldName: string;
+  memoStatusFieldName: string;
   caseAfterFieldName: string;
   incidentAfterFieldName: string;
   srAfterFieldName: string;
@@ -39,6 +46,8 @@ export class CaseloadService {
   incidentRestrictedFieldName: string;
   srRestrictedFieldName: string;
   memoRestrictedFieldName: string;
+  caseTypeFieldName: string;
+  incidentTypeFieldName: string;
   caseWorkspace: string;
   incidentWorkspace: string;
   srWorkspace: string;
@@ -73,6 +82,18 @@ export class CaseloadService {
     this.memoIdirFieldName = this.configService.get<string>(
       `upstreamAuth.memo.searchspecIdirField`,
     );
+    this.caseStatusFieldName = this.configService.get<string>(
+      `upstreamAuth.case.statusField`,
+    );
+    this.incidentStatusFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.statusField`,
+    );
+    this.srStatusFieldName = this.configService.get<string>(
+      `upstreamAuth.sr.statusField`,
+    );
+    this.memoStatusFieldName = this.configService.get<string>(
+      `upstreamAuth.memo.statusField`,
+    );
     this.caseAfterFieldName =
       this.configService.get<string>(`afterFieldName.cases`);
     this.incidentAfterFieldName = this.configService.get<string>(
@@ -93,6 +114,12 @@ export class CaseloadService {
     );
     this.memoRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.memo.restrictedField`,
+    );
+    this.caseTypeFieldName = this.configService.get<string>(
+      `upstreamAuth.case.typeField`,
+    );
+    this.incidentTypeFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.typeField`,
     );
     this.caseWorkspace = this.configService.get<string>(
       `upstreamAuth.case.workspace`,
@@ -129,6 +156,7 @@ export class CaseloadService {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of this.recordTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
+      const statusFieldVarName = `${type}StatusFieldName`;
       let baseSearchSpec = ``;
       let containsExists = false;
       if (type === RecordType.Case || type == RecordType.Incident) {
@@ -136,7 +164,8 @@ export class CaseloadService {
         containsExists = true;
       }
       baseSearchSpec =
-        baseSearchSpec + `([${this[idirFieldVarName]}]="${idir}"`;
+        baseSearchSpec +
+        `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}"`;
       const [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
@@ -147,6 +176,16 @@ export class CaseloadService {
           filter,
           containsExists,
         );
+      if (type === RecordType.Case) {
+        params['searchspec'] =
+          params['searchspec'] +
+          ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
+          ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}")`;
+      } else if (type == RecordType.Incident) {
+        params['searchspec'] =
+          params['searchspec'] +
+          ` AND ([${this.incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
+      }
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],

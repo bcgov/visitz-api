@@ -11,10 +11,13 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { CaseloadService } from '../caseload/caseload.service';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { HttpException } from '@nestjs/common';
+import { idirJWTFieldName } from '../../common/constants/upstream-constants';
+import { getMockReq } from '@jest-mock/express';
 
 describe('ExternalAuthService', () => {
   let service: ExternalAuthService;
   let authService: AuthService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +39,7 @@ describe('ExternalAuthService', () => {
 
     service = module.get<ExternalAuthService>(ExternalAuthService);
     authService = module.get<AuthService>(AuthService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -46,23 +50,41 @@ describe('ExternalAuthService', () => {
     it.each([['idirHere']])(
       'should return void given good input',
       async (idir) => {
+        const jwt = jwtService.sign(`{"${idirJWTFieldName}":"${idir}"}`, {
+          secret: 'aTotalSecret',
+        });
+        const req = getMockReq({
+          header: jest.fn((headerName) => {
+            const lookup = { authorization: `Bearer ${jwt}` };
+            return lookup[headerName];
+          }),
+        });
         const authSpy = jest
           .spyOn(authService, 'getEmployeeActiveUpstream')
           .mockReturnValueOnce(Promise.resolve(true));
         const spy = jest.spyOn(service, 'checkEmployeeStatusUpstream');
 
-        await service.checkEmployeeStatusUpstream(idir);
+        await service.checkEmployeeStatusUpstream(req);
         expect(authSpy).toHaveBeenCalledWith(idir);
         expect(spy).toHaveBeenCalledTimes(1);
       },
     );
 
     it.each([['idirHere']])('should throw error on bad input', async (idir) => {
+      const jwt = jwtService.sign(`{"${idirJWTFieldName}":"${idir}"}`, {
+        secret: 'aTotalSecret',
+      });
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
       const authSpy = jest
         .spyOn(authService, 'getEmployeeActiveUpstream')
         .mockReturnValueOnce(Promise.resolve(false));
 
-      await expect(service.checkEmployeeStatusUpstream(idir)).rejects.toThrow(
+      await expect(service.checkEmployeeStatusUpstream(req)).rejects.toThrow(
         HttpException,
       );
       expect(authSpy).toHaveBeenCalledWith(idir);
