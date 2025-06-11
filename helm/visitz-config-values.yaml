@@ -209,6 +209,31 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: CASE_TYPE_FIELD
+  - name: INCIDENT_TYPE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_TYPE_FIELD
+  - name: CASE_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_STATUS_FIELD
+  - name: INCIDENT_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_STATUS_FIELD
+  - name: SR_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_STATUS_FIELD
+  - name: MEMO_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_STATUS_FIELD
   - name: EMPLOYEE_ENDPOINT
     valueFrom:
       configMapKeyRef:

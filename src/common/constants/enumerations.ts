@@ -68,6 +68,22 @@ enum AttachmentStatusEnum {
   // the user to set this.
 }
 
+enum CaseType {
+  ChildServices = 'Child Services',
+  FamilyServices = 'Family Services',
+  // There are additional types, but these are the only ones we want to show
+}
+
+enum IncidentType {
+  ChildProtection = 'Child Protection',
+  // There are additional types, but these are the only ones we want to show
+}
+
+enum EntityStatus {
+  Open = 'Open',
+  // We only want to show open cases
+}
+
 export {
   RecordType,
   EntityType,
@@ -77,4 +93,7 @@ export {
   RestrictedRecordEnum,
   AttachmentParentIdFieldMap,
   AttachmentStatusEnum,
+  CaseType,
+  IncidentType,
+  EntityStatus,
 };
