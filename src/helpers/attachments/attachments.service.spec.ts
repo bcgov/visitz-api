@@ -187,6 +187,14 @@ describe('AttachmentsService', () => {
     ])(
       'should return post values given good input',
       async (data, recordType, body, id, file) => {
+        const checkSpy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: {},
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
         const spy = jest
           .spyOn(requestPreparerService, 'sendPostRequest')
           .mockResolvedValueOnce({
@@ -209,6 +217,7 @@ describe('AttachmentsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(virusScanSpy).toHaveBeenCalledTimes(1);
+        expect(checkSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new NestedAttachmentsEntity(data));
       },
     );

@@ -1,5 +1,9 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { RecordType } from '../../common/constants/enumerations';
+import {
+  EntityStatus,
+  RecordType,
+  RestrictedRecordEnum,
+} from '../../common/constants/enumerations';
 import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
 import { VisitDetailsQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
@@ -34,7 +38,10 @@ import {
   updatedByFieldName,
   updatedDateFieldName,
 } from '../../common/constants/upstream-constants';
-import { childServicesTypeError } from '../../common/constants/error-constants';
+import {
+  childServicesTypeError,
+  restrictedNotOpenPostError,
+} from '../../common/constants/error-constants';
 import { UtilitiesService } from '../utilities/utilities.service';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
@@ -48,6 +55,8 @@ export class InPersonVisitsService {
   caseWorkspace: string | undefined;
   afterFieldName: string | undefined;
   typeFieldName: string | undefined;
+  statusFieldName: string | undefined;
+  restrictedFieldName: string | undefined;
 
   private readonly logger = new Logger(InPersonVisitsService.name);
 
@@ -77,6 +86,12 @@ export class InPersonVisitsService {
       'afterFieldName.inPersonVisits',
     );
     this.typeFieldName = this.configService.get('upstreamAuth.case.typeField');
+    this.statusFieldName = this.configService.get(
+      'upstreamAuth.case.statusField',
+    );
+    this.restrictedFieldName = this.configService.get(
+      'upstreamAuth.case.restrictedField',
+    );
   }
 
   async getSingleInPersonVisitRecord(
@@ -222,8 +237,8 @@ export class InPersonVisitsService {
     idir: string,
   ): Promise<NestedInPersonVisitsMultiValueEntity> {
     const parentId = body[childVisitEntityIdFieldName];
-    const isValidChildCase = await this.isChildCaseType(parentId, idir);
-    if (!isValidChildCase) {
+    const isEligible = await this.isEligibleForPost(parentId, idir);
+    if (!isEligible) {
       throw new BadRequestException([childServicesTypeError]);
     }
     const headers = {
@@ -245,6 +260,41 @@ export class InPersonVisitsService {
       params,
     );
     return new NestedInPersonVisitsMultiValueEntity(response.data);
+  }
+
+  async isEligibleForPost(parentId: string, idir: string): Promise<boolean> {
+    const baseSearchSpec =
+      `([Id]="${parentId}" AND ` +
+      `[${this.restrictedFieldName}]="${RestrictedRecordEnum.False}" ` +
+      `AND [${this.statusFieldName}]="${EntityStatus.Open}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.caseWorkspace,
+        undefined,
+        true,
+        idir,
+      );
+    let response;
+    try {
+      response = await this.requestPreparerService.sendGetRequest(
+        this.caseUrl,
+        headers,
+        undefined,
+        params,
+      );
+    } catch {
+      this.logger.error(
+        `Parent case record with id '${parentId}' is not open or is restricted`,
+      );
+      throw new BadRequestException([restrictedNotOpenPostError]);
+    }
+    const type = response.data['items'][0][`${this.typeFieldName}`];
+    if (type === undefined) {
+      this.logger.error(`${this.typeFieldName} field not found in request`);
+      return false;
+    }
+    return type === caseChildServices;
   }
 
   async isChildCaseType(parentId: string, idir: string): Promise<boolean> {
