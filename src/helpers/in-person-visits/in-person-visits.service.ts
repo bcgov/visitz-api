@@ -289,12 +289,7 @@ export class InPersonVisitsService {
       );
       throw new BadRequestException([restrictedNotOpenPostError]);
     }
-    const type = response.data['items'][0][`${this.typeFieldName}`];
-    if (type === undefined) {
-      this.logger.error(`${this.typeFieldName} field not found in request`);
-      return false;
-    }
-    return type === caseChildServices;
+    return this.childCaseTypeCheck(response);
   }
 
   async isChildCaseType(parentId: string, idir: string): Promise<boolean> {
@@ -318,6 +313,10 @@ export class InPersonVisitsService {
     } catch {
       return false;
     }
+    return this.childCaseTypeCheck(response);
+  }
+
+  private childCaseTypeCheck(response): boolean {
     const type = response.data['items'][0][`${this.typeFieldName}`];
     if (type === undefined) {
       this.logger.error(`${this.typeFieldName} field not found in request`);
