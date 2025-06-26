@@ -43,6 +43,16 @@ export default () => ({
     employee: {
       endpoint: encodeURI((process.env.EMPLOYEE_ENDPOINT ?? ' ').trim()),
       workspace: process.env.EMPLOYEE_WORKSPACE ?? undefined,
+      restrictToOrg: (() => {
+        if (typeof process.env.RESTRICT_TO_ORG === 'string') {
+          const trimmedInput = process.env.RESTRICT_TO_ORG.trim();
+          if (trimmedInput === '') {
+            return undefined;
+          }
+          return trimmedInput;
+        }
+        return undefined;
+      })(),
     },
   },
   oauth: {

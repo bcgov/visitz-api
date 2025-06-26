@@ -10,6 +10,8 @@ const inlineAttachmentParamName = 'inlineattachment';
 const afterParamName = 'after';
 const queryHierarchyVisitParentClassName = 'ChildVisit';
 const queryHierarchyVisitChildClassName = 'VisitDetails';
+const queryHierarchyEmployeeParentClassName = 'Employee';
+const queryHierarchyEmployeeChildClassName = 'Position';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -47,6 +49,8 @@ export {
   afterParamName,
   queryHierarchyVisitParentClassName,
   queryHierarchyVisitChildClassName,
+  queryHierarchyEmployeeParentClassName,
+  queryHierarchyEmployeeChildClassName,
   idMaxLength,
   versionNumber,
   idRegex,

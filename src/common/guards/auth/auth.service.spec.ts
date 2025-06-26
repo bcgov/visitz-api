@@ -20,7 +20,10 @@ import {
   idirJWTFieldName,
   idirUsernameHeaderField,
 } from '../../../common/constants/upstream-constants';
-import { idName } from '../../../common/constants/parameter-constants';
+import {
+  idName,
+  queryHierarchyEmployeeChildClassName,
+} from '../../../common/constants/parameter-constants';
 import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
@@ -34,6 +37,8 @@ describe('AuthService', () => {
   const validRecordType = RecordType.Case;
   const notinEnumPath = `fjofijp`;
   const testIdir = 'IDIRTEST';
+  const testOrg = 'testorg';
+  const testOrgId = 'testorgid';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -55,6 +60,7 @@ describe('AuthService', () => {
               const lookup = {
                 [`upstreamAuth.${validRecordType}.idirField`]: 'testfield',
                 [`upstreamAuth.${validRecordType}.workspace`]: 'testspace',
+                [`upstreamAuth.employee.restrictToOrg`]: testOrg,
                 'recordCache.cacheTtlMs': 1000000,
                 skipJWTCache: true,
               };
@@ -115,6 +121,13 @@ describe('AuthService', () => {
                 {
                   'Login Name': testIdir,
                   'Employment Status': 'Active',
+                  'Primary Organization Id': testOrgId,
+                  [queryHierarchyEmployeeChildClassName]: [
+                    {
+                      'Organization Id': testOrgId,
+                      Organization: testOrg,
+                    },
+                  ],
                 },
               ],
             },
@@ -339,6 +352,123 @@ describe('AuthService', () => {
     );
   });
 
+  describe('positionCheck tests', () => {
+    it('should return false on non-matching primary organization', async () => {
+      const response = {
+        data: {
+          items: [
+            {
+              'Login Name': testIdir,
+              'Employment Status': 'Active',
+              'Primary Organization Id': testOrgId,
+              [queryHierarchyEmployeeChildClassName]: [
+                {
+                  'Organization Id': testOrgId,
+                  Organization: testOrg + 'abcd',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const cacheSpy = jest
+        .spyOn(cache, 'set')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.positionCheck(testIdir, response);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(result).toBe(false);
+    });
+
+    it('should return false on primary organization not found', async () => {
+      const response = {
+        data: {
+          items: [
+            {
+              'Login Name': testIdir,
+              'Employment Status': 'Active',
+              'Primary Organization Id': testOrgId,
+              [queryHierarchyEmployeeChildClassName]: [
+                {
+                  'Organization Id': testOrgId + 'abcd',
+                  Organization: testOrg,
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const cacheSpy = jest
+        .spyOn(cache, 'set')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.positionCheck(testIdir, response);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(result).toBe(false);
+    });
+
+    it('should return true if restrict to org is undefined', async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          AuthService,
+          TokenRefresherService,
+          {
+            provide: CACHE_MANAGER,
+            useValue: {
+              set: () => jest.fn(),
+              get: () => jest.fn(),
+            },
+          },
+          UtilitiesService,
+          {
+            provide: ConfigService,
+            useValue: {
+              get: jest.fn((key: string) => {
+                const lookup = {
+                  [`upstreamAuth.${validRecordType}.idirField`]: 'testfield',
+                  [`upstreamAuth.${validRecordType}.workspace`]: 'testspace',
+                  [`upstreamAuth.employee.restrictToOrg`]: undefined,
+                  'recordCache.cacheTtlMs': 1000000,
+                  skipJWTCache: true,
+                };
+                return lookup[key];
+              }),
+            },
+          },
+          { provide: HttpService, useValue: { get: jest.fn() } },
+          JwtService,
+        ],
+      }).compile();
+
+      service = module.get<AuthService>(AuthService);
+      configService = module.get<ConfigService>(ConfigService);
+      httpService = module.get<HttpService>(HttpService);
+      cache = module.get(CACHE_MANAGER);
+      jwtService = module.get<JwtService>(JwtService);
+      const response = {
+        data: {
+          items: [
+            {
+              'Login Name': testIdir,
+              'Employment Status': 'Active',
+              'Primary Organization Id': testOrgId,
+              [queryHierarchyEmployeeChildClassName]: [
+                {
+                  'Organization Id': testOrgId,
+                  Organization: testOrg,
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const cacheSpy = jest
+        .spyOn(cache, 'set')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.positionCheck(testIdir, response);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+      expect(result).toBe(true);
+    });
+  });
+
   describe('getAssignedIdirUpstream tests', () => {
     it.each([
       [validId, validRecordType, `EXISTS ([undefined]='IDIRTEST')`],
@@ -433,6 +563,13 @@ describe('AuthService', () => {
                 {
                   'Login Name': idir,
                   'Employment Status': 'Active',
+                  'Primary Organization Id': testOrgId,
+                  [queryHierarchyEmployeeChildClassName]: [
+                    {
+                      'Organization Id': testOrgId,
+                      Organization: testOrg,
+                    },
+                  ],
                 },
               ],
             },

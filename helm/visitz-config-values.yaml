@@ -379,3 +379,8 @@ env:
       secretKeyRef:
           name: mutual-authentication-mtls
           key: SERVER_KEY
+  - name: RESTRICT_TO_ORG
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: RESTRICT_TO_ORG
