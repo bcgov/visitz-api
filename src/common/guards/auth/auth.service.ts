@@ -60,7 +60,6 @@ export class AuthService {
     this.restrictToOrganization = this.configService.get<string | undefined>(
       'upstreamAuth.employee.restrictToOrg',
     );
-    console.log(this.restrictToOrganization);
   }
 
   async getRecordAndValidate(
