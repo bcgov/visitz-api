@@ -12,3 +12,6 @@ export const virusScanFailedError = 'Virus scan unavailable.';
 
 export const fileTypeError =
   'File is not one of the allowed file types (jpg, png, pdf).';
+
+export const restrictedNotOpenPostError =
+  'Parent record is restricted on not in "Open" status, cannot submit additional data.';

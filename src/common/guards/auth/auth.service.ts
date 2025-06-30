@@ -11,6 +11,8 @@ import {
   CHILD_LINKS,
   CONTENT_TYPE,
   idName,
+  queryHierarchyEmployeeChildClassName,
+  queryHierarchyEmployeeParentClassName,
   UNIFORM_RESPONSE,
   uniformResponseParamName,
   VIEW_MODE,
@@ -19,9 +21,13 @@ import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import {
   idirUsernameHeaderField,
+  queryHierarchyParamName,
   trustedIdirHeaderName,
 } from '../../../common/constants/upstream-constants';
 import { firstValueFrom } from 'rxjs';
+import { QueryHierarchyComponent } from '../../../dto/query-hierarchy-component.dto';
+import { PositionExample } from '../../../entities/position.entity';
+import { EmployeeExample } from '../../../entities/employee.entity';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +36,7 @@ export class AuthService {
   buildNumber: string;
   employeeWorkspace: string;
   employeeEndpoint: string;
+  restrictToOrganization: string | undefined;
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
@@ -49,6 +56,9 @@ export class AuthService {
     );
     this.employeeEndpoint = this.configService.get<string>(
       'upstreamAuth.employee.endpoint',
+    );
+    this.restrictToOrganization = this.configService.get<string | undefined>(
+      'upstreamAuth.employee.restrictToOrg',
     );
   }
 
@@ -160,6 +170,42 @@ export class AuthService {
     return upstreamResult;
   }
 
+  async positionCheck(idir: string, response): Promise<boolean> {
+    if (this.restrictToOrganization !== undefined) {
+      const primaryOrganizationId =
+        response.data['items'][0]['Primary Organization Id'];
+      let foundPositionOrganization: boolean = false;
+      for (const position of response.data['items'][0][
+        queryHierarchyEmployeeChildClassName
+      ]) {
+        if (position['Organization Id'] === primaryOrganizationId) {
+          foundPositionOrganization = true;
+          if (position['Organization'] !== this.restrictToOrganization) {
+            this.logger.error({
+              msg: `Employees with primary organization '${position['Organization']}' are restricted from using this API`,
+              buildNumber: this.buildNumber,
+              function: this.getEmployeeActiveUpstream.name,
+            });
+            await this.cacheManager.set(idir, false, this.cacheTime);
+            return false;
+          }
+          break;
+        }
+      }
+      if (foundPositionOrganization === false) {
+        this.logger.error({
+          msg: `Primary organization with id '${primaryOrganizationId}' not found in Employee Position array`,
+          buildNumber: this.buildNumber,
+          function: this.getEmployeeActiveUpstream.name,
+        });
+        await this.cacheManager.set(idir, false, this.cacheTime);
+        return false;
+      }
+    }
+    await this.cacheManager.set(idir, true, this.cacheTime);
+    return true;
+  }
+
   async getAssignedIdirUpstream(
     id: string,
     recordType: RecordType,
@@ -232,9 +278,20 @@ export class AuthService {
       ViewMode: 'Catalog',
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
-      fields: 'Login Name,Employment Status',
       excludeEmptyFieldsInResponse: 'true',
-      searchspec: `([Login Name]="${idir}" AND [Employment Status]="Active")`,
+      [queryHierarchyParamName]: this.utilitiesService.constructQueryHierarchy(
+        new QueryHierarchyComponent({
+          classExample: EmployeeExample,
+          name: queryHierarchyEmployeeParentClassName,
+          searchspec: `([Login Name]="${idir}" AND [Employment Status]="Active")`,
+          childComponents: [
+            new QueryHierarchyComponent({
+              classExample: PositionExample,
+              name: queryHierarchyEmployeeChildClassName,
+            }),
+          ],
+        }),
+      ),
     };
     if (this.employeeWorkspace !== undefined) {
       params['workspace'] = this.employeeWorkspace;
@@ -257,14 +314,7 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      const employmentStatus = response.data['items'][0]['Employment Status'];
-      if (employmentStatus === undefined) {
-        this.logger.error(`${idir} is not an active user`);
-        await this.cacheManager.set(idir, false, this.cacheTime);
-        return false;
-      }
-      await this.cacheManager.set(idir, true, this.cacheTime);
-      return true;
+      return await this.positionCheck(idir, response);
     } catch (error) {
       if (error instanceof AxiosError) {
         this.logger.error({
