@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import {
   idirJWTFieldName,
   upstreamDateFormat,
+  upstreamDateFormatDateOfVisit,
 } from '../../common/constants/upstream-constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -146,7 +147,7 @@ export function isPastISO8601Date(date: string): string {
     });
     const currentTimeUTC = DateTime.now().toUTC();
     if (dateObject <= currentTimeUTC) {
-      return dateObject.toFormat(upstreamDateFormat);
+      return dateObject.toFormat(upstreamDateFormatDateOfVisit);
     }
   }
   throw new BadRequestException([dateFormatError]);
