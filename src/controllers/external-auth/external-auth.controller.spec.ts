@@ -49,7 +49,7 @@ describe('ExternalAuthController', () => {
   });
 
   describe('checkAuthorizationEmployeeStatus tests', () => {
-    it('should return void given good input', async () => {
+    it('should return office names given good input', async () => {
       const jwt = jwtService.sign(`{"${idirJWTFieldName}":"${testIdir}"}`, {
         secret: 'aTotalSecret',
       });
@@ -61,7 +61,7 @@ describe('ExternalAuthController', () => {
       });
       const externalAuthServiceSpy = jest
         .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
-        .mockReturnValueOnce(Promise.resolve());
+        .mockReturnValueOnce(Promise.resolve('officeNames'));
 
       await controller.checkAuthorizationEmployeeStatus(req);
       expect(externalAuthServiceSpy).toHaveBeenCalledWith(req);

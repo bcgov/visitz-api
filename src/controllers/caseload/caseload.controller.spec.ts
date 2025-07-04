@@ -26,6 +26,7 @@ describe('CaseloadController', () => {
   let caseloadService: CaseloadService;
   let externalAuthService: ExternalAuthService;
   const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
+  const officeNames = '["office1","office2"]';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,7 +69,7 @@ describe('CaseloadController', () => {
         const externalAuthServiceSpy = jest
           .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
           .mockImplementationOnce(() => {
-            return Promise.resolve();
+            return Promise.resolve(officeNames);
           });
         const caseloadServiceSpy = jest
           .spyOn(caseloadService, 'getCaseload')

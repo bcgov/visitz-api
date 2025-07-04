@@ -92,6 +92,23 @@ export class UtilitiesService {
     return `${idir}|${recordType}|${id}|${jti}`;
   }
 
+  officeNamesCacheKeyPreparer(idir: string): string {
+    return `${idir}|OfficeNames`;
+  }
+
+  officeNamesStringToSearchSpec(
+    officeNames: string,
+    officeFieldName: string,
+  ): string {
+    let searchspec = `(`;
+    const officeNamesArray: Array<string> = JSON.parse(officeNames);
+    for (const officeName of officeNamesArray) {
+      searchspec = searchspec + `[${officeFieldName}]='${officeName}' OR `;
+    }
+    searchspec = searchspec.substring(0, searchspec.length - 4) + `)`;
+    return searchspec;
+  }
+
   convertFileBufferToBase64(buffer: Buffer): string {
     return buffer.toString('base64');
   }

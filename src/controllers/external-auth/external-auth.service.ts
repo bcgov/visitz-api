@@ -13,7 +13,7 @@ export class ExternalAuthService {
     private readonly utilitiesService: UtilitiesService,
   ) {}
 
-  async checkEmployeeStatusUpstream(req: Request): Promise<void> {
+  async checkEmployeeStatusUpstream(req: Request): Promise<string> {
     let idir = ``;
     try {
       idir = this.utilitiesService.grabIdir(req);
@@ -29,8 +29,9 @@ export class ExternalAuthService {
         HttpStatus.FORBIDDEN,
       );
     }
-    const status = await this.authService.getEmployeeActiveUpstream(idir);
-    if (status === false) {
+    const [status, officeNames] =
+      await this.authService.getEmployeeActiveUpstream(idir);
+    if (status === false || officeNames === null) {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
@@ -40,5 +41,6 @@ export class ExternalAuthService {
         HttpStatus.FORBIDDEN,
       );
     }
+    return officeNames;
   }
 }

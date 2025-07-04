@@ -24,7 +24,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class CaseloadService {
@@ -38,6 +38,10 @@ export class CaseloadService {
   incidentStatusFieldName: string;
   srStatusFieldName: string;
   memoStatusFieldName: string;
+  caseOfficeFieldName: string;
+  incidentOfficeFieldName: string;
+  srOfficeFieldName: string;
+  memoOfficeFieldName: string;
   caseAfterFieldName: string;
   incidentAfterFieldName: string;
   srAfterFieldName: string;
@@ -94,6 +98,18 @@ export class CaseloadService {
     this.memoStatusFieldName = this.configService.get<string>(
       `upstreamAuth.memo.statusField`,
     );
+    this.caseOfficeFieldName = this.configService.get<string>(
+      `upstreamAuth.case.officeField`,
+    );
+    this.incidentOfficeFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.officeField`,
+    );
+    this.srOfficeFieldName = this.configService.get<string>(
+      `upstreamAuth.sr.officeField`,
+    );
+    this.memoOfficeFieldName = this.configService.get<string>(
+      `upstreamAuth.memo.officeField`,
+    );
     this.caseAfterFieldName =
       this.configService.get<string>(`afterFieldName.cases`);
     this.incidentAfterFieldName = this.configService.get<string>(
@@ -149,6 +165,20 @@ export class CaseloadService {
     this.baseUrl = this.configService.get<string>(`endpointUrls.baseUrl`);
   }
 
+  recordTypeSearchSpecAppend(params, type: RecordType) {
+    if (type === RecordType.Case) {
+      params['searchspec'] =
+        params['searchspec'] +
+        ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
+        ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}")`;
+    } else if (type == RecordType.Incident) {
+      params['searchspec'] =
+        params['searchspec'] +
+        ` AND ([${this.incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
+    }
+    return params;
+  }
+
   caseloadUpstreamRequestPreparer(
     idir: string,
     filter: FilterQueryParams,
@@ -158,15 +188,14 @@ export class CaseloadService {
       const idirFieldVarName = `${type}IdirFieldName`;
       const statusFieldVarName = `${type}StatusFieldName`;
       let baseSearchSpec = ``;
-      let containsExists = false;
       if (type === RecordType.Case || type == RecordType.Incident) {
         baseSearchSpec = `EXISTS `;
-        containsExists = true;
       }
       baseSearchSpec =
         baseSearchSpec +
         `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}"`;
-      const [headers, params] =
+      // eslint-disable-next-line prefer-const
+      let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
@@ -174,18 +203,52 @@ export class CaseloadService {
           true,
           idir,
           filter,
-          containsExists,
         );
-      if (type === RecordType.Case) {
-        params['searchspec'] =
-          params['searchspec'] +
-          ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
-          ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}")`;
-      } else if (type == RecordType.Incident) {
-        params['searchspec'] =
-          params['searchspec'] +
-          ` AND ([${this.incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
+      params = this.recordTypeSearchSpecAppend(params, type as RecordType);
+      getRequestSpecs.push(
+        new GetRequestDetails({
+          url: this.baseUrl + this[`${type}Endpoint`],
+          headers: headers,
+          params: params,
+        }),
+      );
+    }
+    return getRequestSpecs;
+  }
+
+  officeCaseloadUpstreamRequestPreparer(
+    idir: string,
+    filter: FilterQueryParams,
+    officeNames: string,
+  ): Array<GetRequestDetails> {
+    const getRequestSpecs: Array<GetRequestDetails> = [];
+    for (const type of this.recordTypes) {
+      const idirFieldVarName = `${type}IdirFieldName`;
+      const officeFieldVarName = `${type}OfficeFieldName`;
+      const statusFieldVarName = `${type}StatusFieldName`;
+      let baseSearchSpec =
+        this.utilitiesService.officeNamesStringToSearchSpec(
+          officeNames,
+          `${this[officeFieldVarName]}`,
+        ) + ' OR ';
+      if (type === RecordType.Case || type == RecordType.Incident) {
+        baseSearchSpec = baseSearchSpec + `EXISTS `;
       }
+      baseSearchSpec =
+        baseSearchSpec +
+        `([${this[idirFieldVarName]}]="${idir}")` +
+        ` AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}"`;
+      // eslint-disable-next-line prefer-const
+      let [headers, params] =
+        this.requestPreparerService.prepareHeadersAndParams(
+          baseSearchSpec,
+          this[`${type}Workspace`],
+          undefined, // we filter for after ourselves
+          true,
+          idir,
+          filter,
+        );
+      params = this.recordTypeSearchSpecAppend(params, type as RecordType);
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
@@ -313,23 +376,17 @@ export class CaseloadService {
     }
   }
 
-  async getCaseload(
+  async getMapAndFilterCaseload(
+    getRequestSpecs: Array<GetRequestDetails>,
     idir: string,
     req: Request,
-    filter?: AfterQueryParams,
+    filter?: FilterQueryParams,
+    res?: Response,
   ): Promise<CaseloadEntity> {
-    const filterObject = {
-      [pageSizeParamName]: pageSizeMax,
-    };
-    const initialFilter = plainToInstance(FilterQueryParams, filterObject, {
-      enableImplicitConversion: true,
-    });
-    const getRequestSpecs = this.caseloadUpstreamRequestPreparer(
-      idir,
-      initialFilter,
+    const results = await this.requestPreparerService.parallelGetRequest(
+      getRequestSpecs,
+      res,
     );
-    const results =
-      await this.requestPreparerService.parallelGetRequest(getRequestSpecs);
 
     if (results.overallError !== undefined) {
       throw results.overallError;
@@ -347,5 +404,49 @@ export class CaseloadService {
     return plainToInstance(CaseloadEntity, response, {
       enableImplicitConversion: true,
     });
+  }
+
+  async getCaseload(
+    idir: string,
+    req: Request,
+    filter?: AfterQueryParams,
+  ): Promise<CaseloadEntity> {
+    const filterObject = {
+      [pageSizeParamName]: pageSizeMax,
+    };
+    const initialFilter = plainToInstance(FilterQueryParams, filterObject, {
+      enableImplicitConversion: true,
+    });
+    const getRequestSpecs = this.caseloadUpstreamRequestPreparer(
+      idir,
+      initialFilter,
+    );
+    return await this.getMapAndFilterCaseload(
+      getRequestSpecs,
+      idir,
+      req,
+      filter,
+    );
+  }
+
+  async getOfficeCaseload(
+    idir: string,
+    req: Request,
+    res: Response,
+    officeNames: string,
+    filter?: FilterQueryParams,
+  ) {
+    const getRequestSpecs = this.officeCaseloadUpstreamRequestPreparer(
+      idir,
+      filter,
+      officeNames,
+    );
+    return await this.getMapAndFilterCaseload(
+      getRequestSpecs,
+      idir,
+      req,
+      filter,
+      res,
+    );
   }
 }
