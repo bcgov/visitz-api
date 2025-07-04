@@ -20,7 +20,7 @@ import {
   uniformResponseParamName,
   VIEW_MODE,
 } from '../../common/constants/parameter-constants';
-import { getMockReq } from '@jest-mock/express';
+import { getMockReq, getMockRes } from '@jest-mock/express';
 import {
   CaseloadCompleteResponseExample,
   CaseloadEntity,
@@ -51,6 +51,8 @@ describe('CaseloadService', () => {
   let cacheManager: Cache;
   let requestPreparerService: RequestPreparerService;
   let jwtService: JwtService;
+  const { res, mockClear } = getMockRes();
+  const officeNames = '["office1","office2"]';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -87,6 +89,7 @@ describe('CaseloadService', () => {
     );
     configService.set('upstreamAuth.sr.restrictedField', 'Restricted Flag');
     configService.set('upstreamAuth.memo.restrictedField', 'Restricted Flag');
+    mockClear();
   });
 
   it('should be defined', () => {
@@ -174,6 +177,118 @@ describe('CaseloadService', () => {
       const memoParams = {
         ...params,
         searchspec: `([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
+      };
+
+      expect(getRequestSpecs.length).toBe(4);
+      expect(getRequestSpecs[0].url).toBe(baseUrl + caseEndpoint);
+      expect(getRequestSpecs[0].headers).toMatchObject(headers);
+      expect(getRequestSpecs[0].params).toMatchObject(caseParams);
+      expect(getRequestSpecs[1].url).toBe(baseUrl + incidentEndpoint);
+      expect(getRequestSpecs[1].headers).toMatchObject(headers);
+      expect(getRequestSpecs[1].params).toMatchObject(incidentParams);
+      expect(getRequestSpecs[2].url).toBe(baseUrl + srEndpoint);
+      expect(getRequestSpecs[2].headers).toMatchObject(headers);
+      expect(getRequestSpecs[2].params).toMatchObject(srParams);
+      expect(getRequestSpecs[3].url).toBe(baseUrl + memoEndpoint);
+      expect(getRequestSpecs[3].headers).toMatchObject(headers);
+      expect(getRequestSpecs[3].params).toMatchObject(memoParams);
+    });
+  });
+
+  describe('officeCaseloadUpstreamRequestPreparer tests', () => {
+    it(`prepares a request for upstream`, () => {
+      const idir = 'testIdir';
+      const filter = plainToInstance(
+        FilterQueryParams,
+        {
+          [pageSizeParamName]: pageSizeMax,
+        },
+        { enableImplicitConversion: true },
+      );
+      const getRequestSpecs = service.officeCaseloadUpstreamRequestPreparer(
+        idir,
+        filter,
+        officeNames,
+      );
+      const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
+      const caseEndpoint = configService.get<string>(
+        `upstreamAuth.case.endpoint`,
+      );
+      const incidentEndpoint = configService.get<string>(
+        `upstreamAuth.incident.endpoint`,
+      );
+      const srEndpoint = configService.get<string>(`upstreamAuth.sr.endpoint`);
+      const memoEndpoint = configService.get<string>(
+        `upstreamAuth.memo.endpoint`,
+      );
+      const caseIdirFieldName = configService.get<string>(
+        `upstreamAuth.case.searchspecIdirField`,
+      );
+      const incidentIdirFieldName = configService.get<string>(
+        `upstreamAuth.incident.searchspecIdirField`,
+      );
+      const srIdirFieldName = configService.get<string>(
+        `upstreamAuth.sr.searchspecIdirField`,
+      );
+      const memoIdirFieldName = configService.get<string>(
+        `upstreamAuth.memo.searchspecIdirField`,
+      );
+      const caseTypeFieldName = configService.get<string>(
+        `upstreamAuth.case.typeField`,
+      );
+      const incidentTypeFieldName = configService.get<string>(
+        `upstreamAuth.incident.typeField`,
+      );
+      const caseStatusFieldName = configService.get<string>(
+        `upstreamAuth.case.statusField`,
+      );
+      const incidentStatusFieldName = configService.get<string>(
+        `upstreamAuth.incident.statusField`,
+      );
+      const srStatusFieldName = configService.get<string>(
+        `upstreamAuth.sr.statusField`,
+      );
+      const memoStatusFieldName = configService.get<string>(
+        `upstreamAuth.memo.statusField`,
+      );
+      const caseOfficeFieldName = configService.get<string>(
+        `upstreamAuth.case.officeField`,
+      );
+      const incidentOfficeFieldName = configService.get<string>(
+        `upstreamAuth.incident.officeField`,
+      );
+      const srOfficeFieldName = configService.get<string>(
+        `upstreamAuth.sr.officeField`,
+      );
+      const memoOfficeFieldName = configService.get<string>(
+        `upstreamAuth.memo.officeField`,
+      );
+      const headers = {
+        Accept: CONTENT_TYPE,
+        'Accept-Encoding': '*',
+        [trustedIdirHeaderName]: idir,
+      };
+      const params = {
+        ViewMode: VIEW_MODE,
+        ChildLinks: CHILD_LINKS,
+        [uniformResponseParamName]: UNIFORM_RESPONSE,
+        [pageSizeParamName]: pageSizeMax,
+      };
+      const caseParams = {
+        ...params,
+        searchspec: `([${caseOfficeFieldName}]='office1' OR [${caseOfficeFieldName}]='office2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+      };
+      const incidentParams = {
+        ...params,
+        searchspec: `([${incidentOfficeFieldName}]='office1' OR [${incidentOfficeFieldName}]='office2') OR EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+      };
+      const srParams = {
+        ...params,
+        searchspec: `([${srOfficeFieldName}]='office1' OR [${srOfficeFieldName}]='office2') OR ([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
+      };
+      const memoParams = {
+        ...params,
+        searchspec: `([${memoOfficeFieldName}]='office1' OR [${memoOfficeFieldName}]='office2') OR ([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
@@ -455,6 +570,97 @@ describe('CaseloadService', () => {
         const req = getMockReq();
         await expect(
           service.getCaseload(idir, req, filterQueryParams),
+        ).rejects.toThrow(error);
+      },
+    );
+  });
+
+  describe('getOfficeCaseload tests', () => {
+    it.each([
+      [
+        'idir',
+        { [afterParamName]: '1900-01-01' } as AfterQueryParams,
+        { ...CaseloadCompleteResponseExample },
+      ],
+      ['idir', undefined, { ...CaseloadCompleteResponseExample }],
+    ])(
+      'should return nested values given good input',
+      async (idir, filterQueryParams, data) => {
+        const requestSpy = jest
+          .spyOn(requestPreparerService, 'parallelGetRequest')
+          .mockResolvedValueOnce({
+            responses: [
+              {
+                status: 200,
+                data: {
+                  items: [CaseExample],
+                },
+              },
+              {
+                status: 200,
+                data: {
+                  items: [IncidentExample],
+                },
+              },
+              {
+                status: 200,
+                data: {
+                  items: [SRExample],
+                },
+              },
+              {
+                status: 200,
+                data: {
+                  items: [MemoExample],
+                },
+              },
+            ],
+          });
+        const jwt = jwtService.sign(
+          `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+          {
+            secret: 'aTotalSecret',
+          },
+        );
+        const req = getMockReq({
+          header: jest.fn((headerName) => {
+            const lookup = { authorization: `Bearer ${jwt}` };
+            return lookup[headerName];
+          }),
+        });
+        const result = await service.getOfficeCaseload(
+          idir,
+          req,
+          res,
+          officeNames,
+          filterQueryParams,
+        );
+        const expectedObject = plainToInstance(CaseloadEntity, data, {
+          enableImplicitConversion: true,
+        });
+        expect(requestSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(expectedObject);
+      },
+    );
+
+    it.each([['idir', undefined]])(
+      'should throw an error on overall error',
+      async (idir, filterQueryParams) => {
+        const error = new Error('This is an error.');
+        jest
+          .spyOn(requestPreparerService, 'parallelGetRequest')
+          .mockResolvedValueOnce({
+            overallError: error,
+          });
+        const req = getMockReq();
+        await expect(
+          service.getOfficeCaseload(
+            idir,
+            req,
+            res,
+            officeNames,
+            filterQueryParams,
+          ),
         ).rejects.toThrow(error);
       },
     );
