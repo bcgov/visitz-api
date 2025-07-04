@@ -32,6 +32,6 @@ export class ExternalAuthController {
     description: 'Empty body. Employee is active.',
   })
   async checkAuthorizationEmployeeStatus(@Req() req: Request): Promise<void> {
-    return await this.externalAuthService.checkEmployeeStatusUpstream(req);
+    await this.externalAuthService.checkEmployeeStatusUpstream(req);
   }
 }

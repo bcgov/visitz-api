@@ -384,3 +384,23 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: RESTRICT_TO_ORG
+  - name: CASE_OFFICE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_OFFICE_FIELD
+  - name: INCIDENT_OFFICE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_OFFICE_FIELD
+  - name: SR_OFFICE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_OFFICE_FIELD
+  - name: MEMO_OFFICE_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_OFFICE_FIELD

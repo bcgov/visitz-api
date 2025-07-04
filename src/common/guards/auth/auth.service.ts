@@ -87,41 +87,52 @@ export class AuthService {
       id,
       jti,
     );
+    const officeNamesKey =
+      this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
     let employeeActive: boolean | null = await this.cacheManager.get(idir);
+    let officeNames: string | null =
+      await this.cacheManager.get(officeNamesKey);
 
-    if (upstreamResult === null && employeeActive === null) {
+    if (employeeActive === null || officeNames === null) {
       this.logger.log(
         `Cache not hit for record type and active status, going upstream...`,
       );
-      let upstreamIdir: string | undefined, searchspec: string;
-      [[upstreamIdir, searchspec], employeeActive] = await Promise.all([
-        this.getAssignedIdirUpstream(id, recordType, idir),
-        this.getEmployeeActiveUpstream(idir),
-      ]);
+      let isAssignedToOffice: boolean = false,
+        searchspec: string = 'Not Set';
+      [employeeActive, officeNames] =
+        await this.getEmployeeActiveUpstream(idir);
+      if (employeeActive === true && officeNames !== null) {
+        [isAssignedToOffice, searchspec] =
+          await this.getIsAssignedToOfficeUpstream(
+            id,
+            recordType,
+            idir,
+            officeNames,
+          );
+      }
       upstreamResult = await this.evaluateUpstreamResult(
-        upstreamIdir,
+        isAssignedToOffice,
         idir,
         key,
         searchspec,
       );
     } else if (upstreamResult === null) {
       this.logger.log(`Cache not hit for record type, going upstream...`);
-      const [upstreamIdir, searchspec] = await this.getAssignedIdirUpstream(
-        id,
-        recordType,
-        idir,
-      );
+      const [upstreamIdir, searchspec] =
+        await this.getIsAssignedToOfficeUpstream(
+          id,
+          recordType,
+          idir,
+          officeNames,
+        );
       upstreamResult = await this.evaluateUpstreamResult(
         upstreamIdir,
         idir,
         key,
         searchspec,
       );
-    } else if (employeeActive === null) {
-      this.logger.log(`Cache not hit for active status, going upstream...`);
-      employeeActive = await this.getEmployeeActiveUpstream(idir);
     } else {
       this.logger.log(
         `Cache hit for record type! Key: ${key} Result: ${upstreamResult}`,
@@ -129,8 +140,15 @@ export class AuthService {
       this.logger.log(
         `Cache hit for employee status! Key: ${idir} Result: ${employeeActive}`,
       );
+      this.logger.log(
+        `Cache hit for employee offices! Key: ${officeNamesKey} Result: ${officeNames}`,
+      );
     }
-    if (upstreamResult === 403 || employeeActive === false) {
+    if (
+      upstreamResult === 403 ||
+      employeeActive === false ||
+      officeNames === undefined
+    ) {
       return false;
     }
     return true;
@@ -150,27 +168,33 @@ export class AuthService {
   }
 
   async evaluateUpstreamResult(
-    upstreamIdir: string | undefined,
+    isAssignedToOffice: boolean,
     idir: string,
     key: string,
     searchspec: string,
   ) {
-    const authStatus = upstreamIdir === idir ? 200 : 403;
-    if (upstreamIdir !== undefined) {
+    const authStatus = isAssignedToOffice ? 200 : 403;
+    if (isAssignedToOffice === true) {
       await this.cacheManager.set(key, authStatus, this.cacheTime);
       this.logger.log(
-        `Assigned To check: user '${upstreamIdir}' is assigned to record`,
+        `Assigned To Office check: user '${idir}' is assigned to an office with this record`,
       );
     } else {
       this.logger.log(
-        `Assigned To check: failed with searchspec '${searchspec}'`,
+        `Assigned To Office check: failed with searchspec '${searchspec}'`,
       );
     }
     const upstreamResult = authStatus;
     return upstreamResult;
   }
 
-  async positionCheck(idir: string, response): Promise<boolean> {
+  async positionCheck(
+    idir: string,
+    response,
+  ): Promise<[boolean, string | null]> {
+    const officeNames = [];
+    const officeNamesKey =
+      this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     if (this.restrictToOrganization !== undefined) {
       const primaryOrganizationId =
         response.data['items'][0]['Primary Organization Id'];
@@ -182,44 +206,69 @@ export class AuthService {
           foundPositionOrganization = true;
           if (position['Organization'] !== this.restrictToOrganization) {
             this.logger.error({
-              msg: `Employees with primary organization '${position['Organization']}' are restricted from using this API`,
+              msg: `Employees with primary organization '${position['Organization']}' are restricted from using this API.`,
               buildNumber: this.buildNumber,
               function: this.getEmployeeActiveUpstream.name,
             });
+            await this.cacheManager.set(
+              officeNamesKey,
+              undefined,
+              this.cacheTime,
+            );
             await this.cacheManager.set(idir, false, this.cacheTime);
-            return false;
+            return [false, null];
           }
-          break;
         }
+        officeNames.push(position['Division']);
       }
       if (foundPositionOrganization === false) {
         this.logger.error({
-          msg: `Primary organization with id '${primaryOrganizationId}' not found in Employee Position array`,
+          msg: `Primary organization with id '${primaryOrganizationId}' not found in Employee Position array.`,
           buildNumber: this.buildNumber,
           function: this.getEmployeeActiveUpstream.name,
         });
+        await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
-        return false;
+        return [false, null];
       }
     }
+    let officeNamesString = '[';
+    for (const officeName of officeNames) {
+      officeNamesString = officeNamesString + `"` + officeName + `",`;
+    }
+    officeNamesString =
+      officeNamesString.substring(0, officeNamesString.length - 1) + ']';
+    await this.cacheManager.set(
+      officeNamesKey,
+      officeNamesString,
+      this.cacheTime,
+    );
     await this.cacheManager.set(idir, true, this.cacheTime);
-    return true;
+    return [true, officeNamesString];
   }
 
-  async getAssignedIdirUpstream(
+  async getIsAssignedToOfficeUpstream(
     id: string,
     recordType: RecordType,
     idir: string,
-  ): Promise<[string | undefined, string]> {
+    officeNames: string,
+  ): Promise<[boolean | undefined, string]> {
     let workspace;
-    const fieldName = this.configService.get<string>(
+    const idirFieldName = this.configService.get<string>(
       `upstreamAuth.${recordType}.searchspecIdirField`,
     );
-    let searchspec = ``;
+    const officeFieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.officeField`,
+    );
+    let searchspec = this.utilitiesService.officeNamesStringToSearchSpec(
+      officeNames,
+      officeFieldName,
+    );
+    searchspec = searchspec.substring(0, searchspec.length - 1) + ` OR `;
     if (recordType === RecordType.Case || recordType == RecordType.Incident) {
-      searchspec = `EXISTS `;
+      searchspec = searchspec + `EXISTS `;
     }
-    searchspec = searchspec + `([${fieldName}]='${idir}')`;
+    searchspec = searchspec + `[${idirFieldName}]='${idir}')`;
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
@@ -255,7 +304,7 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      return [idir, searchspec];
+      return [true, searchspec];
     } catch (error) {
       if (error instanceof AxiosError) {
         this.logger.error({
@@ -264,16 +313,20 @@ export class AuthService {
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
-          function: this.getAssignedIdirUpstream.name,
+          function: this.getIsAssignedToOfficeUpstream.name,
         });
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
       }
     }
-    return [undefined, searchspec];
+    return [false, searchspec];
   }
 
-  async getEmployeeActiveUpstream(idir: string): Promise<boolean> {
+  async getEmployeeActiveUpstream(
+    idir: string,
+  ): Promise<[boolean, string | null]> {
+    const officeNamesKey =
+      this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     const params = {
       ViewMode: 'Catalog',
       ChildLinks: CHILD_LINKS,
@@ -325,11 +378,12 @@ export class AuthService {
           buildNumber: this.buildNumber,
           function: this.getEmployeeActiveUpstream.name,
         });
+        await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
       }
     }
-    return false;
+    return [false, undefined];
   }
 }
