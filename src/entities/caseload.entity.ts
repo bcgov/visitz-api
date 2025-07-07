@@ -33,6 +33,11 @@ export const CaseloadCompleteResponseExample = {
   },
 };
 
+export const OfficeCaseloadCompleteResponseExample = {
+  ...CaseloadCompleteResponseExample,
+  officeNames: ['Office Name 1', 'Office Name 2'],
+};
+
 export const CaseloadLaterDateResponseExample = {
   cases: {
     assignedIds: [CaseExample['Id']],
@@ -54,6 +59,11 @@ export const CaseloadLaterDateResponseExample = {
     status: 200,
     items: [MemoExample],
   },
+};
+
+export const OfficeCaseloadLaterDateResponseExample = {
+  ...CaseloadLaterDateResponseExample,
+  officeNames: ['Office Name 1', 'Office Name 2'],
 };
 
 export const CaseloadEmptyArrayResponseExample = {
@@ -85,6 +95,11 @@ export const CaseloadEmptyArrayResponseExample = {
       ERROR: 'There is no data for the requested resource',
     },
   },
+};
+
+export const OfficeCaseloadEmptyArrayResponseExample = {
+  ...CaseloadEmptyArrayResponseExample,
+  officeNames: ['Office Name 1', 'Office Name 2'],
 };
 
 /*
@@ -199,6 +214,26 @@ export class CaseloadEntity {
   memos: MemoOrganizerEntity;
 
   constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'OfficeCaseloadResponse' })
+export class OfficeCaseloadEntity extends CaseloadEntity {
+  @Expose()
+  @IsOptional()
+  @ApiProperty({
+    isArray: true,
+    type: 'string',
+    required: false,
+    example: OfficeCaseloadCompleteResponseExample['officeNames'],
+    description: `The office names that this user has access to.`,
+  })
+  officeNames?: Array<string>;
+
+  constructor(object) {
+    super(object);
     Object.assign(this, object);
   }
 }

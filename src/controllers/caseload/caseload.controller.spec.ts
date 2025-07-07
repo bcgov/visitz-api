@@ -16,7 +16,10 @@ import {
 import { AfterQueryParams } from '../../dto/filter-query-params.dto';
 import { plainToInstance } from 'class-transformer';
 import { getMockReq, getMockRes } from '@jest-mock/express';
-import { afterParamName } from '../../common/constants/parameter-constants';
+import {
+  afterParamName,
+  officeNamesSeparator,
+} from '../../common/constants/parameter-constants';
 import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
 import { AuthService } from '../../common/guards/auth/auth.service';
 import { ExternalAuthService } from '../external-auth/external-auth.service';
@@ -27,7 +30,7 @@ describe('CaseloadController', () => {
   let externalAuthService: ExternalAuthService;
   const { res, mockClear } = getMockRes();
   const req = getMockReq({ headers: { [idirUsernameHeaderField]: 'idir' } });
-  const officeNames = '["office1","office2"]';
+  const officeNames = `office1${officeNamesSeparator}office2`;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

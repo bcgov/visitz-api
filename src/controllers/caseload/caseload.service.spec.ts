@@ -19,12 +19,15 @@ import {
   UNIFORM_RESPONSE,
   uniformResponseParamName,
   VIEW_MODE,
+  officeNamesSeparator,
 } from '../../common/constants/parameter-constants';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import {
   CaseloadCompleteResponseExample,
   CaseloadEntity,
   CaseloadLaterDateResponseExample,
+  OfficeCaseloadCompleteResponseExample,
+  OfficeCaseloadEntity,
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
 import {
@@ -52,7 +55,7 @@ describe('CaseloadService', () => {
   let requestPreparerService: RequestPreparerService;
   let jwtService: JwtService;
   const { res, mockClear } = getMockRes();
-  const officeNames = '["office1","office2"]';
+  const officeNames = `Office Name 1${officeNamesSeparator}Office Name 2`;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -276,19 +279,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `([${caseOfficeFieldName}]='office1' OR [${caseOfficeFieldName}]='office2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+        searchspec: `([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `([${incidentOfficeFieldName}]='office1' OR [${incidentOfficeFieldName}]='office2') OR EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+        searchspec: `([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `([${srOfficeFieldName}]='office1' OR [${srOfficeFieldName}]='office2') OR ([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
+        searchspec: `([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoOfficeFieldName}]='office1' OR [${memoOfficeFieldName}]='office2') OR ([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
+        searchspec: `([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
@@ -580,9 +583,9 @@ describe('CaseloadService', () => {
       [
         'idir',
         { [afterParamName]: '1900-01-01' } as AfterQueryParams,
-        { ...CaseloadCompleteResponseExample },
+        { ...OfficeCaseloadCompleteResponseExample },
       ],
-      ['idir', undefined, { ...CaseloadCompleteResponseExample }],
+      ['idir', undefined, { ...OfficeCaseloadCompleteResponseExample }],
     ])(
       'should return nested values given good input',
       async (idir, filterQueryParams, data) => {
@@ -635,7 +638,7 @@ describe('CaseloadService', () => {
           officeNames,
           filterQueryParams,
         );
-        const expectedObject = plainToInstance(CaseloadEntity, data, {
+        const expectedObject = plainToInstance(OfficeCaseloadEntity, data, {
           enableImplicitConversion: true,
         });
         expect(requestSpy).toHaveBeenCalledTimes(1);

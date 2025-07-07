@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CaseloadEntity } from '../../entities/caseload.entity';
+import {
+  CaseloadEntity,
+  OfficeCaseloadEntity,
+} from '../../entities/caseload.entity';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
@@ -25,6 +28,7 @@ import {
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
+import { officeNamesSeparator } from '../../common/constants/parameter-constants';
 
 @Injectable()
 export class CaseloadService {
@@ -382,7 +386,7 @@ export class CaseloadService {
     req: Request,
     filter?: FilterQueryParams,
     res?: Response,
-  ): Promise<CaseloadEntity> {
+  ) {
     const results = await this.requestPreparerService.parallelGetRequest(
       getRequestSpecs,
       res,
@@ -401,9 +405,7 @@ export class CaseloadService {
 
     await this.caseloadUnsetCacheItems(response, idir, req);
 
-    return plainToInstance(CaseloadEntity, response, {
-      enableImplicitConversion: true,
-    });
+    return response;
   }
 
   async getCaseload(
@@ -421,12 +423,15 @@ export class CaseloadService {
       idir,
       initialFilter,
     );
-    return await this.getMapAndFilterCaseload(
+    const response = await this.getMapAndFilterCaseload(
       getRequestSpecs,
       idir,
       req,
       filter,
     );
+    return plainToInstance(CaseloadEntity, response, {
+      enableImplicitConversion: true,
+    });
   }
 
   async getOfficeCaseload(
@@ -441,12 +446,16 @@ export class CaseloadService {
       filter,
       officeNames,
     );
-    return await this.getMapAndFilterCaseload(
+    const response = await this.getMapAndFilterCaseload(
       getRequestSpecs,
       idir,
       req,
       filter,
       res,
     );
+    response['officeNames'] = officeNames.split(officeNamesSeparator);
+    return plainToInstance(OfficeCaseloadEntity, response, {
+      enableImplicitConversion: true,
+    });
   }
 }

@@ -21,6 +21,7 @@ const emojiRegex =
 const mimeTypeRegex = /.(jpg|jpeg|png|pdf)/;
 const fileExtensionRegex =
   /(\.[pP][nN][gG]|\.[jJ][pP][eE]?[gG]|\.[pP][dD][fF])$/;
+const officeNamesSeparator = '{:|:}';
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
@@ -57,6 +58,7 @@ export {
   emojiRegex,
   mimeTypeRegex,
   fileExtensionRegex,
+  officeNamesSeparator,
   idName,
   attachmentIdName,
   contactIdName,

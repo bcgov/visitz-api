@@ -40,6 +40,9 @@ import {
   CaseloadCompleteResponseExample,
   CaseloadEmptyArrayResponseExample,
   CaseloadEntity,
+  OfficeCaseloadCompleteResponseExample,
+  OfficeCaseloadEmptyArrayResponseExample,
+  OfficeCaseloadEntity,
 } from '../../entities/caseload.entity';
 import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.entity';
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
@@ -107,27 +110,26 @@ export class CaseloadController {
     );
   }
 
-  // TODO: Change entity / examples
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('office-caseload')
   @ApiOperation({
     description: `Displays the case, incident, service request and memo details related to the user's assigned office(s)`,
   })
   @ApiQuery({ name: afterParamName, required: false })
-  @ApiExtraModels(CaseloadEntity)
+  @ApiExtraModels(OfficeCaseloadEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
     content: {
       [CONTENT_TYPE]: {
         schema: {
-          $ref: getSchemaPath(CaseloadEntity),
+          $ref: getSchemaPath(OfficeCaseloadEntity),
         },
         examples: {
           CaseloadCompleteResponse: {
-            value: CaseloadCompleteResponseExample,
+            value: OfficeCaseloadCompleteResponseExample,
           },
           CaseEmptyArrayResponse: {
-            value: CaseloadEmptyArrayResponseExample,
+            value: OfficeCaseloadEmptyArrayResponseExample,
           },
         },
       },
@@ -145,7 +147,7 @@ export class CaseloadController {
       }),
     )
     filter?: FilterQueryParams,
-  ): Promise<CaseloadEntity> {
+  ): Promise<OfficeCaseloadEntity> {
     const officeNames =
       await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
     return await this.caseloadService.getOfficeCaseload(

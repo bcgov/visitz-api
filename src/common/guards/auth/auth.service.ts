@@ -11,6 +11,7 @@ import {
   CHILD_LINKS,
   CONTENT_TYPE,
   idName,
+  officeNamesSeparator,
   queryHierarchyEmployeeChildClassName,
   queryHierarchyEmployeeParentClassName,
   UNIFORM_RESPONSE,
@@ -140,8 +141,12 @@ export class AuthService {
       this.logger.log(
         `Cache hit for employee status! Key: ${idir} Result: ${employeeActive}`,
       );
+      const readableOfficeNames =
+        typeof officeNames === 'string'
+          ? `["` + officeNames.replace(officeNamesSeparator, `","`) + `"]`
+          : officeNames;
       this.logger.log(
-        `Cache hit for employee offices! Key: ${officeNamesKey} Result: ${officeNames}`,
+        `Cache hit for employee offices! Key: ${officeNamesKey} Result: ${readableOfficeNames}`,
       );
     }
     if (
@@ -232,12 +237,7 @@ export class AuthService {
         return [false, null];
       }
     }
-    let officeNamesString = '[';
-    for (const officeName of officeNames) {
-      officeNamesString = officeNamesString + `"` + officeName + `",`;
-    }
-    officeNamesString =
-      officeNamesString.substring(0, officeNamesString.length - 1) + ']';
+    const officeNamesString = officeNames.join(officeNamesSeparator);
     await this.cacheManager.set(
       officeNamesKey,
       officeNamesString,
@@ -264,11 +264,11 @@ export class AuthService {
       officeNames,
       officeFieldName,
     );
-    searchspec = searchspec.substring(0, searchspec.length - 1) + ` OR `;
+    searchspec = searchspec.substring(0, searchspec.length - 1) + `) OR `;
     if (recordType === RecordType.Case || recordType == RecordType.Incident) {
       searchspec = searchspec + `EXISTS `;
     }
-    searchspec = searchspec + `[${idirFieldName}]='${idir}')`;
+    searchspec = searchspec + `([${idirFieldName}]='${idir}')`;
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,

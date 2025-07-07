@@ -22,6 +22,7 @@ import {
 } from '../../../common/constants/upstream-constants';
 import {
   idName,
+  officeNamesSeparator,
   queryHierarchyEmployeeChildClassName,
 } from '../../../common/constants/parameter-constants';
 import { JwtService } from '@nestjs/jwt';
@@ -39,7 +40,7 @@ describe('AuthService', () => {
   const testIdir = 'IDIRTEST';
   const testOrg = 'testorg';
   const testOrgId = 'testorgid';
-  const officeNames = '["office1","office2"]';
+  const officeNames = `office1${officeNamesSeparator}office2`;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -472,7 +473,7 @@ describe('AuthService', () => {
         .mockResolvedValueOnce(undefined);
       const result = await service.positionCheck(testIdir, response);
       expect(cacheSpy).toHaveBeenCalledTimes(2);
-      expect(result).toStrictEqual([true, ']']);
+      expect(result).toStrictEqual([true, '']);
     });
   });
 
@@ -481,12 +482,12 @@ describe('AuthService', () => {
       [
         validId,
         validRecordType,
-        `([undefined]='office1' OR [undefined]='office2' OR EXISTS [undefined]='IDIRTEST')`,
+        `([undefined]='office1' OR [undefined]='office2') OR EXISTS ([undefined]='IDIRTEST')`,
       ],
       [
         validId,
         RecordType.Memo,
-        `([undefined]='office1' OR [undefined]='office2' OR [undefined]='IDIRTEST')`,
+        `([undefined]='office1' OR [undefined]='office2') OR ([undefined]='IDIRTEST')`,
       ],
     ])(
       'should return idir string given good input',
