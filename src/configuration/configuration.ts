@@ -13,6 +13,7 @@ export default () => ({
       restrictedField: process.env.CASE_RESTRICTED_FIELD ?? undefined,
       typeField: process.env.CASE_TYPE_FIELD ?? undefined,
       statusField: process.env.CASE_STATUS_FIELD ?? undefined,
+      officeField: process.env.CASE_OFFICE_FIELD ?? undefined,
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
@@ -23,6 +24,7 @@ export default () => ({
       restrictedField: process.env.INCIDENT_RESTRICTED_FIELD ?? undefined,
       typeField: process.env.INCIDENT_TYPE_FIELD ?? undefined,
       statusField: process.env.INCIDENT_STATUS_FIELD ?? undefined,
+      officeField: process.env.INCIDENT_OFFICE_FIELD ?? undefined,
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
@@ -31,6 +33,7 @@ export default () => ({
       searchspecIdirField: process.env.SR_SEARCHSPEC_IDIR_FIELD ?? undefined,
       restrictedField: process.env.SR_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.SR_STATUS_FIELD ?? undefined,
+      officeField: process.env.SR_OFFICE_FIELD ?? undefined,
     },
     memo: {
       endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
@@ -39,6 +42,7 @@ export default () => ({
       searchspecIdirField: process.env.MEMO_SEARCHSPEC_IDIR_FIELD ?? undefined,
       restrictedField: process.env.MEMO_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.MEMO_STATUS_FIELD ?? undefined,
+      officeField: process.env.MEMO_OFFICE_FIELD ?? undefined,
     },
     employee: {
       endpoint: encodeURI((process.env.EMPLOYEE_ENDPOINT ?? ' ').trim()),

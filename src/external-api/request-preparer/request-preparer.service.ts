@@ -243,6 +243,7 @@ export class RequestPreparerService {
 
   async parallelGetRequest(
     requestSpecs: Array<GetRequestDetails>,
+    res?: Response,
   ): Promise<ParallelResponse> {
     let response: ParallelResponse;
     try {
@@ -282,6 +283,20 @@ export class RequestPreparerService {
     }
     const parallelObservable = forkJoin(requestArray);
     const outputArray = await lastValueFrom(parallelObservable);
+    // Return largest record count in header
+    if (res !== undefined) {
+      const recordCountArray: number[] = [];
+      for (const responseObject of outputArray) {
+        if (responseObject?.headers?.hasOwnProperty(recordCountHeaderName)) {
+          recordCountArray.push(
+            parseInt(responseObject.headers[recordCountHeaderName]),
+          );
+        }
+      }
+      if (recordCountArray.length > 0) {
+        res.setHeader(recordCountHeaderName, Math.max(...recordCountArray));
+      }
+    }
     return new ParallelResponse({ responses: outputArray });
   }
 }
