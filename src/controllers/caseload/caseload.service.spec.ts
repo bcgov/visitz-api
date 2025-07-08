@@ -20,6 +20,8 @@ import {
   uniformResponseParamName,
   VIEW_MODE,
   officeNamesSeparator,
+  queryHierarchyCaseChildClassName,
+  queryHierarchyCaseParentClassName,
 } from '../../common/constants/parameter-constants';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import {
@@ -42,11 +44,13 @@ import {
   pageSizeMax,
   trustedIdirHeaderName,
   idirJWTFieldName,
+  queryHierarchyParamName,
 } from '../../common/constants/upstream-constants';
-import { CaseExample } from '../../entities/case.entity';
+import { CaseExample, CasePositionExample } from '../../entities/case.entity';
 import { IncidentExample } from '../../entities/incident.entity';
 import { MemoExample } from '../../entities/memo.entity';
 import { SRExample } from '../../entities/sr.entity';
+import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
@@ -54,6 +58,7 @@ describe('CaseloadService', () => {
   let cacheManager: Cache;
   let requestPreparerService: RequestPreparerService;
   let jwtService: JwtService;
+  let utilitiesService: UtilitiesService;
   const { res, mockClear } = getMockRes();
   const officeNames = `Office Name 1${officeNamesSeparator}Office Name 2`;
 
@@ -80,6 +85,7 @@ describe('CaseloadService', () => {
       RequestPreparerService,
     );
     jwtService = module.get<JwtService>(JwtService);
+    utilitiesService = module.get<UtilitiesService>(UtilitiesService);
 
     configService.set('afterFieldName.cases', 'Last Updated Date');
     configService.set('afterFieldName.incidents', 'Updated Date');
@@ -279,7 +285,20 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+          new QueryHierarchyComponent({
+            classExample: CaseExample,
+            name: queryHierarchyCaseParentClassName,
+            searchspec: `([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+            exclude: [queryHierarchyCaseChildClassName],
+            childComponents: [
+              new QueryHierarchyComponent({
+                classExample: CasePositionExample,
+                name: queryHierarchyCaseChildClassName,
+              }),
+            ],
+          }),
+        ),
       };
       const incidentParams = {
         ...params,
