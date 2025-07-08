@@ -12,6 +12,8 @@ const queryHierarchyVisitParentClassName = 'ChildVisit';
 const queryHierarchyVisitChildClassName = 'VisitDetails';
 const queryHierarchyEmployeeParentClassName = 'Employee';
 const queryHierarchyEmployeeChildClassName = 'Position';
+const queryHierarchyCaseParentClassName = 'Case';
+const queryHierarchyCaseChildClassName = 'Position';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -52,6 +54,8 @@ export {
   queryHierarchyVisitChildClassName,
   queryHierarchyEmployeeParentClassName,
   queryHierarchyEmployeeChildClassName,
+  queryHierarchyCaseParentClassName,
+  queryHierarchyCaseChildClassName,
   idMaxLength,
   versionNumber,
   idRegex,

@@ -24,11 +24,18 @@ import { plainToInstance } from 'class-transformer';
 import {
   pageSizeMax,
   pageSizeParamName,
+  queryHierarchyParamName,
 } from '../../common/constants/upstream-constants';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
-import { officeNamesSeparator } from '../../common/constants/parameter-constants';
+import {
+  officeNamesSeparator,
+  queryHierarchyCaseChildClassName,
+  queryHierarchyCaseParentClassName,
+} from '../../common/constants/parameter-constants';
+import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
+import { CaseExample, CasePositionExample } from '../../entities/case.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -253,6 +260,24 @@ export class CaseloadService {
           filter,
         );
       params = this.recordTypeSearchSpecAppend(params, type as RecordType);
+      if (type === RecordType.Case) {
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: CaseExample,
+              name: queryHierarchyCaseParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [queryHierarchyCaseChildClassName],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: CasePositionExample,
+                  name: queryHierarchyCaseChildClassName,
+                }),
+              ],
+            }),
+          );
+        delete params['searchspec'];
+      }
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
