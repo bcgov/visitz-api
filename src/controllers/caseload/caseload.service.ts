@@ -277,7 +277,6 @@ export class CaseloadService {
             }),
           );
         delete params['searchspec'];
-        console.log(params[queryHierarchyParamName]);
       }
       getRequestSpecs.push(
         new GetRequestDetails({
