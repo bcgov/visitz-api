@@ -1,5 +1,5 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
   createdByIdFieldName,
@@ -8,6 +8,13 @@ import {
   updatedByIdFieldName,
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
+
+export const CasePositionExample = {
+  IsPrimaryMVG: 'Y',
+  Id: 'Id-Here',
+  'Row Status': 'Y',
+  'Sales Rep': 'IDIR-Here',
+};
 
 export const CaseExample = {
   Id: 'Id Here',
@@ -35,6 +42,7 @@ export const CaseExample = {
   'Close Reason': '',
   'Closed Date': '',
   'Reopened Date': '',
+  Position: [CasePositionExample],
   [createdByFieldName]: 'Idir Here',
   [createdByIdFieldName]: 'Id Here',
   [createdDateFieldName]: '01/01/1970 00:00:00',
@@ -43,6 +51,38 @@ export const CaseExample = {
   'Last Updated Date': '01/01/1970 00:00:00',
   [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
+
+@Exclude()
+@ApiSchema({ name: 'CasePosition' })
+export class CasePositionEntity {
+  @ApiProperty({
+    example: CasePositionExample['IsPrimaryMVG'],
+  })
+  @Expose()
+  IsPrimaryMVG: string;
+
+  @ApiProperty({
+    example: CasePositionExample['Id'],
+  })
+  @Expose()
+  Id: string;
+
+  @ApiProperty({
+    example: CasePositionExample['Row Status'],
+  })
+  @Expose()
+  'Row Status': string;
+
+  @ApiProperty({
+    example: CasePositionExample['Sales Rep'],
+  })
+  @Expose()
+  'Sales Rep': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
 
 @Exclude()
 @ApiSchema({ name: 'Case' })
@@ -196,6 +236,15 @@ export class CaseEntity {
   })
   @Expose()
   'Reopened Date': string;
+
+  @ApiProperty({
+    example: [CasePositionExample],
+    type: CasePositionEntity,
+    isArray: true,
+  })
+  @Type(() => CasePositionEntity)
+  @Expose()
+  'Position': Array<CasePositionEntity>;
 
   @ApiProperty({
     example: CaseExample['Created By'],

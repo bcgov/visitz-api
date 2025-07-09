@@ -14,7 +14,10 @@ import {
   dateFormatError,
   emojiError,
 } from '../../common/constants/error-constants';
-import { emojiRegex } from '../../common/constants/parameter-constants';
+import {
+  emojiRegex,
+  officeNamesSeparator,
+} from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
@@ -91,6 +94,24 @@ export class UtilitiesService {
     jti: string,
   ): string {
     return `${idir}|${recordType}|${id}|${jti}`;
+  }
+
+  officeNamesCacheKeyPreparer(idir: string): string {
+    return `${idir}|OfficeNames`;
+  }
+
+  officeNamesStringToSearchSpec(
+    officeNames: string,
+    officeFieldName: string,
+  ): string {
+    let searchspec = `(`;
+    const officeNamesArray: Array<string> =
+      officeNames.split(officeNamesSeparator);
+    for (const officeName of officeNamesArray) {
+      searchspec = searchspec + `[${officeFieldName}]='${officeName}' OR `;
+    }
+    searchspec = searchspec.substring(0, searchspec.length - 4) + `)`;
+    return searchspec;
   }
 
   convertFileBufferToBase64(buffer: Buffer): string {

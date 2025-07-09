@@ -12,6 +12,8 @@ const queryHierarchyVisitParentClassName = 'ChildVisit';
 const queryHierarchyVisitChildClassName = 'VisitDetails';
 const queryHierarchyEmployeeParentClassName = 'Employee';
 const queryHierarchyEmployeeChildClassName = 'Position';
+const queryHierarchyCaseParentClassName = 'Case';
+const queryHierarchyCaseChildClassName = 'Position';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -21,6 +23,7 @@ const emojiRegex =
 const mimeTypeRegex = /.(jpg|jpeg|png|pdf)/;
 const fileExtensionRegex =
   /(\.[pP][nN][gG]|\.[jJ][pP][eE]?[gG]|\.[pP][dD][fF])$/;
+const officeNamesSeparator = '{:|:}';
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
@@ -51,12 +54,15 @@ export {
   queryHierarchyVisitChildClassName,
   queryHierarchyEmployeeParentClassName,
   queryHierarchyEmployeeChildClassName,
+  queryHierarchyCaseParentClassName,
+  queryHierarchyCaseChildClassName,
   idMaxLength,
   versionNumber,
   idRegex,
   emojiRegex,
   mimeTypeRegex,
   fileExtensionRegex,
+  officeNamesSeparator,
   idName,
   attachmentIdName,
   contactIdName,
