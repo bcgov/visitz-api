@@ -198,13 +198,15 @@ export class CaseloadService {
     for (const type of this.recordTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
       const statusFieldVarName = `${type}StatusFieldName`;
+      const restrictedFieldVarName = `${type}RestrictedFieldName`;
       let baseSearchSpec = ``;
       if (type === RecordType.Case || type == RecordType.Incident) {
         baseSearchSpec = `EXISTS `;
       }
       baseSearchSpec =
         baseSearchSpec +
-        `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}"`;
+        `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}")` +
+        ` AND ([${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
@@ -237,6 +239,7 @@ export class CaseloadService {
       const idirFieldVarName = `${type}IdirFieldName`;
       const officeFieldVarName = `${type}OfficeFieldName`;
       const statusFieldVarName = `${type}StatusFieldName`;
+      const restrictedFieldVarName = `${type}RestrictedFieldName`;
       let baseSearchSpec =
         this.utilitiesService.officeNamesStringToSearchSpec(
           officeNames,
@@ -248,7 +251,8 @@ export class CaseloadService {
       baseSearchSpec =
         baseSearchSpec +
         `([${this[idirFieldVarName]}]="${idir}")` +
-        ` AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}"`;
+        ` AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}") AND (` +
+        `[${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
@@ -371,21 +375,6 @@ export class CaseloadService {
     return response;
   }
 
-  caseloadFilterRestrictedItems(response) {
-    for (const type of this.recordTypes) {
-      const items = response[`${type}s`][`items`];
-      const restrictedFieldVarName = `${type}RestrictedFieldName`;
-      if (items !== undefined) {
-        response[`${type}s`][`items`] = items.filter(
-          (entry) =>
-            entry[`${this[restrictedFieldVarName]}`] ===
-            RestrictedRecordEnum.False,
-        );
-      }
-    }
-    return response;
-  }
-
   async caseloadUnsetCacheItems(response, idir: string, req: Request) {
     const jti = this.utilitiesService.grabJTI(req);
     for (const type of this.recordTypes) {
@@ -422,8 +411,6 @@ export class CaseloadService {
     }
 
     let response = this.caseloadMapResponse(results);
-    response = this.caseloadFilterRestrictedItems(response);
-
     if (filter?.after !== undefined) {
       response = this.caseloadFilterItemsAfter(response, filter.after);
     }
