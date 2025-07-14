@@ -7,6 +7,7 @@ const GET_CHILDREN = 'all';
 const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
+const excludeEmptyFieldsParamName = 'excludeEmptyFieldsInResponse';
 const afterParamName = 'after';
 const queryHierarchyVisitParentClassName = 'ChildVisit';
 const queryHierarchyVisitChildClassName = 'VisitDetails';
@@ -49,6 +50,7 @@ export {
   uniformResponseParamName,
   recordCountHeaderName,
   inlineAttachmentParamName,
+  excludeEmptyFieldsParamName,
   afterParamName,
   queryHierarchyVisitParentClassName,
   queryHierarchyVisitChildClassName,

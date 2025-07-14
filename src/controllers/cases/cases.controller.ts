@@ -62,6 +62,7 @@ import {
   visitIdName,
   attachmentIdFieldName,
   caseNotesIdName,
+  excludeEmptyFieldsParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -141,6 +142,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
@@ -237,6 +239,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiQuery({ name: multivalueParamName, required: false })
   @ApiExtraModels(
     NestedInPersonVisitsMultiValueEntity,
@@ -309,6 +312,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiQuery({ name: multivalueParamName, required: false })
   @ApiExtraModels(
     InPersonVisitsEntityMultiValue,
@@ -419,6 +423,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -475,6 +480,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
@@ -587,6 +593,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedContactsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -683,6 +690,7 @@ export class CasesController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedCaseNotesEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({

@@ -40,6 +40,7 @@ import {
   contactIdName,
   inlineAttachmentParamName,
   attachmentIdFieldName,
+  excludeEmptyFieldsParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
@@ -111,6 +112,7 @@ export class MemosController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -166,6 +168,7 @@ export class MemosController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
@@ -277,6 +280,7 @@ export class MemosController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedContactsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
