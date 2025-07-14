@@ -279,6 +279,7 @@ export class RequestPreparerService {
     }
 
     const requestArray: Array<Observable<any>> = [];
+    const typeArray: Array<any> = [];
     for (const req of requestSpecs) {
       requestArray.push(
         this.httpService
@@ -288,6 +289,9 @@ export class RequestPreparerService {
           })
           .pipe(catchError((err) => of(err))),
       );
+      if (req.type) {
+        typeArray.push(req.type);
+      }
     }
     const parallelObservable = forkJoin(requestArray);
     const outputArray = await lastValueFrom(parallelObservable);
@@ -305,6 +309,9 @@ export class RequestPreparerService {
         res.setHeader(recordCountHeaderName, Math.max(...recordCountArray));
       }
     }
-    return new ParallelResponse({ responses: outputArray });
+    return new ParallelResponse({
+      responses: outputArray,
+      orderedTypes: typeArray,
+    });
   }
 }
