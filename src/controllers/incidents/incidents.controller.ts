@@ -62,6 +62,7 @@ import {
   supportNetworkIdName,
   attachmentIdFieldName,
   responseNarrativeIdName,
+  excludeEmptyFieldsParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -135,6 +136,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -229,6 +231,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -284,6 +287,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
@@ -395,6 +399,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedContactsEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -489,6 +494,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedSafetyAssessmentEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
@@ -582,6 +588,7 @@ export class IncidentsController {
   @ApiQuery({ name: recordCountNeededParamName, required: false })
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiExtraModels(NestedResponseNarrativeEntity)
   @ApiOkResponse({
     headers: totalRecordCountHeadersSwagger,
