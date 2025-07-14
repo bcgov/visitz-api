@@ -4,7 +4,10 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { Request } from 'express';
-import { RecordType } from '../../../common/constants/enumerations';
+import {
+  RecordType,
+  RestrictedRecordEnum,
+} from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import {
@@ -267,6 +270,9 @@ export class AuthService {
     const officeFieldName = this.configService.get<string>(
       `upstreamAuth.${recordType}.officeField`,
     );
+    const restrictedFieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.restrictedField`,
+    );
     let searchspec = this.utilitiesService.officeNamesStringToSearchSpec(
       officeNames,
       officeFieldName,
@@ -275,7 +281,9 @@ export class AuthService {
     if (recordType === RecordType.Case || recordType == RecordType.Incident) {
       searchspec = searchspec + `EXISTS `;
     }
-    searchspec = searchspec + `([${idirFieldName}]='${idir}')`;
+    searchspec =
+      searchspec +
+      `([${idirFieldName}]='${idir}') AND ([${restrictedFieldName}]='${RestrictedRecordEnum.False}')`;
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
