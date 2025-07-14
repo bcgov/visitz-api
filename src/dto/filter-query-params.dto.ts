@@ -42,6 +42,19 @@ export class AfterQueryParams {
       ' Only results after the selected datetime will appear.',
   })
   [afterParamName]?: string;
+
+  @IsOptional()
+  @IsEnum(ExcludeEmptyFieldsEnum)
+  @Expose()
+  @ApiProperty({
+    example: ExcludeEmptyFieldsEnum.False,
+    default: ExcludeEmptyFieldsEnum.False,
+    enum: ExcludeEmptyFieldsEnum,
+    description:
+      `Whether or not empty fields should be removed from the response. Set to` +
+      ` ${ExcludeEmptyFieldsEnum.True} if you want these fields to be removed.`,
+  })
+  [excludeEmptyFieldsParamName]?: string = ExcludeEmptyFieldsEnum.False;
 }
 
 @Exclude()
@@ -92,19 +105,6 @@ export class FilterQueryParams extends AfterQueryParams {
       ` response header and PageSize parameter to enable pagination.`,
   })
   [startRowNumParamName]?: number;
-
-  @IsOptional()
-  @IsEnum(ExcludeEmptyFieldsEnum)
-  @Expose()
-  @ApiProperty({
-    example: ExcludeEmptyFieldsEnum.False,
-    default: ExcludeEmptyFieldsEnum.False,
-    enum: ExcludeEmptyFieldsEnum,
-    description:
-      `Whether or not empty fields should be removed from the response. Set to` +
-      ` ${ExcludeEmptyFieldsEnum.True} if you want these fields to be removed.`,
-  })
-  [excludeEmptyFieldsParamName]?: string = ExcludeEmptyFieldsEnum.False;
 }
 
 @Exclude()

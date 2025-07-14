@@ -30,6 +30,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
 import {
+  excludeEmptyFieldsParamName,
   officeNamesSeparator,
   queryHierarchyCaseChildClassName,
   queryHierarchyCaseParentClassName,
@@ -428,6 +429,10 @@ export class CaseloadService {
     const filterObject = {
       [pageSizeParamName]: pageSizeMax,
     };
+    if (filter && filter[excludeEmptyFieldsParamName] !== undefined) {
+      filterObject[excludeEmptyFieldsParamName] =
+        filter[excludeEmptyFieldsParamName];
+    }
     const initialFilter = plainToInstance(FilterQueryParams, filterObject, {
       enableImplicitConversion: true,
     });
