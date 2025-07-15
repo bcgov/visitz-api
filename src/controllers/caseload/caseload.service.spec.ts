@@ -9,8 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
 import {
+  CaseloadQueryParams,
   FilterQueryParams,
-  AfterQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   CHILD_LINKS,
@@ -119,6 +119,7 @@ describe('CaseloadService', () => {
       const getRequestSpecs = service.caseloadUpstreamRequestPreparer(
         idir,
         filter,
+        service.recordTypes,
       );
       const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
       const caseEndpoint = configService.get<string>(
@@ -231,6 +232,7 @@ describe('CaseloadService', () => {
         idir,
         filter,
         officeNames,
+        service.recordTypes,
       );
       const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
       const caseEndpoint = configService.get<string>(
@@ -392,6 +394,12 @@ describe('CaseloadService', () => {
               },
             },
           ],
+          orderedTypes: [
+            RecordType.Case,
+            RecordType.Incident,
+            RecordType.SR,
+            RecordType.Memo,
+          ],
         },
         {
           cases: {
@@ -456,8 +464,58 @@ describe('CaseloadService', () => {
               },
             },
           ],
+          orderedTypes: [
+            RecordType.Case,
+            RecordType.Incident,
+            RecordType.SR,
+            RecordType.Memo,
+          ],
         },
         { ...CaseloadCompleteResponseExample },
+      ],
+      [
+        {
+          responses: [
+            {
+              status: 200,
+              data: {
+                items: [{ ...CaseExample }],
+              },
+            },
+          ],
+          orderedTypes: [RecordType.Case],
+        },
+        { cases: { ...CaseloadCompleteResponseExample['cases'] } },
+      ],
+      [
+        {
+          responses: [
+            {
+              status: 200,
+              data: {
+                items: [{ ...IncidentExample }],
+              },
+            },
+            {
+              status: 200,
+              data: {
+                items: [{ ...SRExample }],
+              },
+            },
+            {
+              status: 200,
+              data: {
+                items: [{ ...MemoExample }],
+              },
+            },
+          ],
+          orderedTypes: [RecordType.Incident, RecordType.SR, RecordType.Memo],
+        },
+        {
+          incidents: { ...CaseloadCompleteResponseExample['incidents'] },
+          srs: { ...CaseloadCompleteResponseExample['srs'] },
+          memos: { ...CaseloadCompleteResponseExample['memos'] },
+        },
       ],
     ])(
       'returns response with and without errors included',
@@ -483,6 +541,7 @@ describe('CaseloadService', () => {
         const result = service.caseloadFilterItemsAfter(
           deepCopyResponse,
           afterString,
+          service.recordTypes,
         );
         expect(result.cases.items).toEqual(expectedCase);
         expect(result.incidents.items).toEqual(expectedIncident);
@@ -533,7 +592,12 @@ describe('CaseloadService', () => {
           throw new Error('delete error');
         });
 
-      await service.caseloadUnsetCacheItems(response, idir, req);
+      await service.caseloadUnsetCacheItems(
+        response,
+        idir,
+        req,
+        service.recordTypes,
+      );
       expect(cacheSpy).toHaveBeenCalledTimes(5);
 
       await expect(cacheManager.get(caseKey)).resolves.toBe(null);
@@ -547,7 +611,7 @@ describe('CaseloadService', () => {
     it.each([
       [
         'idir',
-        { [afterParamName]: '1900-01-01' } as AfterQueryParams,
+        { [afterParamName]: '1900-01-01' } as CaseloadQueryParams,
         { ...CaseloadCompleteResponseExample },
       ],
       ['idir', undefined, { ...CaseloadCompleteResponseExample }],
@@ -582,6 +646,12 @@ describe('CaseloadService', () => {
                   items: [MemoExample],
                 },
               },
+            ],
+            orderedTypes: [
+              RecordType.Case,
+              RecordType.Incident,
+              RecordType.SR,
+              RecordType.Memo,
             ],
           });
         const jwt = jwtService.sign(
@@ -626,7 +696,7 @@ describe('CaseloadService', () => {
     it.each([
       [
         'idir',
-        { [afterParamName]: '1900-01-01' } as AfterQueryParams,
+        { [afterParamName]: '1900-01-01' } as CaseloadQueryParams,
         { ...OfficeCaseloadCompleteResponseExample },
       ],
       ['idir', undefined, { ...OfficeCaseloadCompleteResponseExample }],
@@ -661,6 +731,12 @@ describe('CaseloadService', () => {
                   items: [MemoExample],
                 },
               },
+            ],
+            orderedTypes: [
+              RecordType.Case,
+              RecordType.Incident,
+              RecordType.SR,
+              RecordType.Memo,
             ],
           });
         const jwt = jwtService.sign(

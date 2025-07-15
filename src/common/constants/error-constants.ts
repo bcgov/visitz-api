@@ -15,3 +15,6 @@ export const fileTypeError =
 
 export const restrictedNotOpenPostError =
   'Parent record is restricted on not in "Open" status, cannot submit additional data.';
+
+export const caseloadIncludeEntityError =
+  'At least one entity type must be included in a caseload request.';

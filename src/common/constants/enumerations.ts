@@ -52,6 +52,11 @@ enum ExcludeEmptyFieldsEnum {
   False = 'N',
 }
 
+enum IncludeEntityEnum {
+  True = 'true',
+  False = 'false',
+}
+
 const AttachmentParentIdFieldMap = {
   [RecordType.Case]: casesAttachmentsFieldName,
   [RecordType.Incident]: incidentsAttachmentsFieldName,
@@ -97,6 +102,7 @@ export {
   RecordCountNeededEnum,
   RestrictedRecordEnum,
   ExcludeEmptyFieldsEnum,
+  IncludeEntityEnum,
   AttachmentParentIdFieldMap,
   AttachmentStatusEnum,
   CaseType,
