@@ -7,6 +7,7 @@ import {
   UNIFORM_RESPONSE,
   afterParamName,
   uniformResponseParamName,
+  excludeEmptyFieldsParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -29,7 +30,10 @@ import {
   startRowNumParamName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
-import { RecordCountNeededEnum } from '../../common/constants/enumerations';
+import {
+  ExcludeEmptyFieldsEnum,
+  RecordCountNeededEnum,
+} from '../../common/constants/enumerations';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ParallelResponse } from '../../dto/parallel-response.dto';
 
@@ -96,6 +100,10 @@ export class RequestPreparerService {
       }
       if (typeof filter[startRowNumParamName] === 'number') {
         params[startRowNumParamName] = filter[startRowNumParamName];
+      }
+      if (filter[excludeEmptyFieldsParamName] === ExcludeEmptyFieldsEnum.True) {
+        params[excludeEmptyFieldsParamName] =
+          filter[excludeEmptyFieldsParamName];
       }
     }
     const headers = {
@@ -271,6 +279,7 @@ export class RequestPreparerService {
     }
 
     const requestArray: Array<Observable<any>> = [];
+    const typeArray: Array<any> = [];
     for (const req of requestSpecs) {
       requestArray.push(
         this.httpService
@@ -280,6 +289,9 @@ export class RequestPreparerService {
           })
           .pipe(catchError((err) => of(err))),
       );
+      if (req.type) {
+        typeArray.push(req.type);
+      }
     }
     const parallelObservable = forkJoin(requestArray);
     const outputArray = await lastValueFrom(parallelObservable);
@@ -297,6 +309,9 @@ export class RequestPreparerService {
         res.setHeader(recordCountHeaderName, Math.max(...recordCountArray));
       }
     }
-    return new ParallelResponse({ responses: outputArray });
+    return new ParallelResponse({
+      responses: outputArray,
+      orderedTypes: typeArray,
+    });
   }
 }

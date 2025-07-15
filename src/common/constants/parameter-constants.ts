@@ -7,7 +7,12 @@ const GET_CHILDREN = 'all';
 const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
+const excludeEmptyFieldsParamName = 'excludeEmptyFieldsInResponse';
 const afterParamName = 'after';
+const caseIncludeParam = 'includeCase';
+const incidentIncludeParam = 'includeIncident';
+const srIncludeParam = 'includeSR';
+const memoIncludeParam = 'includeMemo';
 const queryHierarchyVisitParentClassName = 'ChildVisit';
 const queryHierarchyVisitChildClassName = 'VisitDetails';
 const queryHierarchyEmployeeParentClassName = 'Employee';
@@ -49,7 +54,12 @@ export {
   uniformResponseParamName,
   recordCountHeaderName,
   inlineAttachmentParamName,
+  excludeEmptyFieldsParamName,
   afterParamName,
+  caseIncludeParam,
+  incidentIncludeParam,
+  srIncludeParam,
+  memoIncludeParam,
   queryHierarchyVisitParentClassName,
   queryHierarchyVisitChildClassName,
   queryHierarchyEmployeeParentClassName,

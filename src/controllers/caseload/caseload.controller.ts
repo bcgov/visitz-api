@@ -26,16 +26,23 @@ import {
 import {
   CONTENT_TYPE,
   afterParamName,
+  caseIncludeParam,
+  excludeEmptyFieldsParamName,
+  incidentIncludeParam,
+  memoIncludeParam,
+  srIncludeParam,
 } from '../../common/constants/parameter-constants';
 import {
   versionInfo,
   noContentResponseSwagger,
 } from '../../common/constants/swagger-constants';
-import { idirUsernameHeaderField } from '../../common/constants/upstream-constants';
 import {
-  AfterQueryParams,
-  FilterQueryParams,
-} from '../../dto/filter-query-params.dto';
+  idirUsernameHeaderField,
+  pageSizeParamName,
+  recordCountNeededParamName,
+  startRowNumParamName,
+} from '../../common/constants/upstream-constants';
+import { CaseloadQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CaseloadCompleteResponseExample,
   CaseloadEmptyArrayResponseExample,
@@ -71,6 +78,11 @@ export class CaseloadController {
     description: `Displays the case, incident, service request and memo details related to the user's IDIR`,
   })
   @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: caseIncludeParam, required: false })
+  @ApiQuery({ name: incidentIncludeParam, required: false })
+  @ApiQuery({ name: srIncludeParam, required: false })
+  @ApiQuery({ name: memoIncludeParam, required: false })
   @ApiExtraModels(CaseloadEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -100,7 +112,7 @@ export class CaseloadController {
         skipMissingProperties: true,
       }),
     )
-    filter?: AfterQueryParams,
+    filter?: CaseloadQueryParams,
   ): Promise<CaseloadEntity> {
     await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
     return await this.caseloadService.getCaseload(
@@ -116,6 +128,14 @@ export class CaseloadController {
     description: `Displays the case, incident, service request and memo details related to the user's assigned office(s)`,
   })
   @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: caseIncludeParam, required: false })
+  @ApiQuery({ name: incidentIncludeParam, required: false })
+  @ApiQuery({ name: srIncludeParam, required: false })
+  @ApiQuery({ name: memoIncludeParam, required: false })
   @ApiExtraModels(OfficeCaseloadEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
@@ -146,7 +166,7 @@ export class CaseloadController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CaseloadQueryParams,
   ): Promise<OfficeCaseloadEntity> {
     const officeNames =
       await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check

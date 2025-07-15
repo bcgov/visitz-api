@@ -9,7 +9,11 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { RecordCountNeededEnum } from '../common/constants/enumerations';
+import {
+  ExcludeEmptyFieldsEnum,
+  IncludeEntityEnum,
+  RecordCountNeededEnum,
+} from '../common/constants/enumerations';
 import {
   pageSizeDefault,
   pageSizeMax,
@@ -23,10 +27,15 @@ import {
 import {
   inlineAttachmentParamName,
   afterParamName,
+  excludeEmptyFieldsParamName,
+  caseIncludeParam,
+  incidentIncludeParam,
+  srIncludeParam,
+  memoIncludeParam,
 } from '../common/constants/parameter-constants';
 
 @Exclude()
-export class AfterQueryParams {
+export class FilterQueryParams {
   @IsOptional()
   @IsISO8601({ strict: true })
   @Expose()
@@ -38,10 +47,7 @@ export class AfterQueryParams {
       ' Only results after the selected datetime will appear.',
   })
   [afterParamName]?: string;
-}
 
-@Exclude()
-export class FilterQueryParams extends AfterQueryParams {
   @IsOptional()
   @IsEnum(RecordCountNeededEnum)
   @Expose()
@@ -88,6 +94,74 @@ export class FilterQueryParams extends AfterQueryParams {
       ` response header and PageSize parameter to enable pagination.`,
   })
   [startRowNumParamName]?: number;
+
+  @IsOptional()
+  @IsEnum(ExcludeEmptyFieldsEnum)
+  @Expose()
+  @ApiProperty({
+    example: ExcludeEmptyFieldsEnum.False,
+    default: ExcludeEmptyFieldsEnum.False,
+    enum: ExcludeEmptyFieldsEnum,
+    description:
+      `Whether or not empty fields should be removed from the response. Set to` +
+      ` ${ExcludeEmptyFieldsEnum.True} if you want these fields to be removed.`,
+  })
+  [excludeEmptyFieldsParamName]?: string = ExcludeEmptyFieldsEnum.False;
+}
+
+@Exclude()
+export class CaseloadQueryParams extends FilterQueryParams {
+  @IsOptional()
+  @IsEnum(IncludeEntityEnum)
+  @Expose()
+  @ApiProperty({
+    example: IncludeEntityEnum.True,
+    default: IncludeEntityEnum.True,
+    enum: IncludeEntityEnum,
+    description:
+      `Whether or not to include cases in caseload return. Set to` +
+      ` ${IncludeEntityEnum.False} if you wish to exclude cases.`,
+  })
+  [caseIncludeParam]?: string = IncludeEntityEnum.True;
+
+  @IsOptional()
+  @IsEnum(IncludeEntityEnum)
+  @Expose()
+  @ApiProperty({
+    example: IncludeEntityEnum.True,
+    default: IncludeEntityEnum.True,
+    enum: IncludeEntityEnum,
+    description:
+      `Whether or not to include incidents in caseload return. Set to` +
+      ` ${IncludeEntityEnum.False} if you wish to exclude incidents.`,
+  })
+  [incidentIncludeParam]?: string = IncludeEntityEnum.True;
+
+  @IsOptional()
+  @IsEnum(IncludeEntityEnum)
+  @Expose()
+  @ApiProperty({
+    example: IncludeEntityEnum.True,
+    default: IncludeEntityEnum.True,
+    enum: IncludeEntityEnum,
+    description:
+      `Whether or not to include service requests in caseload return. Set to` +
+      ` ${IncludeEntityEnum.False} if you wish to exclude service requests.`,
+  })
+  [srIncludeParam]?: string = IncludeEntityEnum.True;
+
+  @IsOptional()
+  @IsEnum(IncludeEntityEnum)
+  @Expose()
+  @ApiProperty({
+    example: IncludeEntityEnum.True,
+    default: IncludeEntityEnum.True,
+    enum: IncludeEntityEnum,
+    description:
+      `Whether or not to include memos in caseload return. Set to` +
+      ` ${IncludeEntityEnum.False} if you wish to exclude memos.`,
+  })
+  [memoIncludeParam]?: string = IncludeEntityEnum.True;
 }
 
 @Exclude()

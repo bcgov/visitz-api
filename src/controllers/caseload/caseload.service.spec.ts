@@ -9,8 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
 import {
+  CaseloadQueryParams,
   FilterQueryParams,
-  AfterQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   CHILD_LINKS,
@@ -37,6 +37,7 @@ import {
   EntityStatus,
   IncidentType,
   RecordType,
+  RestrictedRecordEnum,
 } from '../../common/constants/enumerations';
 import { plainToInstance } from 'class-transformer';
 import {
@@ -97,7 +98,7 @@ describe('CaseloadService', () => {
       'Restricted Flag',
     );
     configService.set('upstreamAuth.sr.restrictedField', 'Restricted Flag');
-    configService.set('upstreamAuth.memo.restrictedField', 'Restricted Flag');
+    configService.set('upstreamAuth.memo.restrictedField', 'ICMCPU Restricted');
     mockClear();
   });
 
@@ -118,6 +119,7 @@ describe('CaseloadService', () => {
       const getRequestSpecs = service.caseloadUpstreamRequestPreparer(
         idir,
         filter,
+        service.recordTypes,
       );
       const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
       const caseEndpoint = configService.get<string>(
@@ -160,6 +162,18 @@ describe('CaseloadService', () => {
       const memoStatusFieldName = configService.get<string>(
         `upstreamAuth.memo.statusField`,
       );
+      const caseRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.case.restrictedField`,
+      );
+      const incidentRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.incident.restrictedField`,
+      );
+      const srRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.sr.restrictedField`,
+      );
+      const memoRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.memo.restrictedField`,
+      );
       const headers = {
         Accept: CONTENT_TYPE,
         'Accept-Encoding': '*',
@@ -173,19 +187,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
+        searchspec: `([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
+        searchspec: `([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
@@ -218,6 +232,7 @@ describe('CaseloadService', () => {
         idir,
         filter,
         officeNames,
+        service.recordTypes,
       );
       const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
       const caseEndpoint = configService.get<string>(
@@ -272,6 +287,18 @@ describe('CaseloadService', () => {
       const memoOfficeFieldName = configService.get<string>(
         `upstreamAuth.memo.officeField`,
       );
+      const caseRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.case.restrictedField`,
+      );
+      const incidentRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.incident.restrictedField`,
+      );
+      const srRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.sr.restrictedField`,
+      );
+      const memoRestrictedFieldName = configService.get<string>(
+        `upstreamAuth.memo.restrictedField`,
+      );
       const headers = {
         Accept: CONTENT_TYPE,
         'Accept-Encoding': '*',
@@ -289,7 +316,7 @@ describe('CaseloadService', () => {
           new QueryHierarchyComponent({
             classExample: CaseExample,
             name: queryHierarchyCaseParentClassName,
-            searchspec: `([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+            searchspec: `([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
             exclude: [queryHierarchyCaseChildClassName],
             childComponents: [
               new QueryHierarchyComponent({
@@ -302,15 +329,15 @@ describe('CaseloadService', () => {
       };
       const incidentParams = {
         ...params,
-        searchspec: `([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+        searchspec: `([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}")`,
+        searchspec: `([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}")`,
+        searchspec: `([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
@@ -366,6 +393,12 @@ describe('CaseloadService', () => {
                 },
               },
             },
+          ],
+          orderedTypes: [
+            RecordType.Case,
+            RecordType.Incident,
+            RecordType.SR,
+            RecordType.Memo,
           ],
         },
         {
@@ -431,8 +464,58 @@ describe('CaseloadService', () => {
               },
             },
           ],
+          orderedTypes: [
+            RecordType.Case,
+            RecordType.Incident,
+            RecordType.SR,
+            RecordType.Memo,
+          ],
         },
         { ...CaseloadCompleteResponseExample },
+      ],
+      [
+        {
+          responses: [
+            {
+              status: 200,
+              data: {
+                items: [{ ...CaseExample }],
+              },
+            },
+          ],
+          orderedTypes: [RecordType.Case],
+        },
+        { cases: { ...CaseloadCompleteResponseExample['cases'] } },
+      ],
+      [
+        {
+          responses: [
+            {
+              status: 200,
+              data: {
+                items: [{ ...IncidentExample }],
+              },
+            },
+            {
+              status: 200,
+              data: {
+                items: [{ ...SRExample }],
+              },
+            },
+            {
+              status: 200,
+              data: {
+                items: [{ ...MemoExample }],
+              },
+            },
+          ],
+          orderedTypes: [RecordType.Incident, RecordType.SR, RecordType.Memo],
+        },
+        {
+          incidents: { ...CaseloadCompleteResponseExample['incidents'] },
+          srs: { ...CaseloadCompleteResponseExample['srs'] },
+          memos: { ...CaseloadCompleteResponseExample['memos'] },
+        },
       ],
     ])(
       'returns response with and without errors included',
@@ -458,6 +541,7 @@ describe('CaseloadService', () => {
         const result = service.caseloadFilterItemsAfter(
           deepCopyResponse,
           afterString,
+          service.recordTypes,
         );
         expect(result.cases.items).toEqual(expectedCase);
         expect(result.incidents.items).toEqual(expectedIncident);
@@ -508,7 +592,12 @@ describe('CaseloadService', () => {
           throw new Error('delete error');
         });
 
-      await service.caseloadUnsetCacheItems(response, idir, req);
+      await service.caseloadUnsetCacheItems(
+        response,
+        idir,
+        req,
+        service.recordTypes,
+      );
       expect(cacheSpy).toHaveBeenCalledTimes(5);
 
       await expect(cacheManager.get(caseKey)).resolves.toBe(null);
@@ -522,7 +611,7 @@ describe('CaseloadService', () => {
     it.each([
       [
         'idir',
-        { [afterParamName]: '1900-01-01' } as AfterQueryParams,
+        { [afterParamName]: '1900-01-01' } as CaseloadQueryParams,
         { ...CaseloadCompleteResponseExample },
       ],
       ['idir', undefined, { ...CaseloadCompleteResponseExample }],
@@ -557,6 +646,12 @@ describe('CaseloadService', () => {
                   items: [MemoExample],
                 },
               },
+            ],
+            orderedTypes: [
+              RecordType.Case,
+              RecordType.Incident,
+              RecordType.SR,
+              RecordType.Memo,
             ],
           });
         const jwt = jwtService.sign(
@@ -601,7 +696,7 @@ describe('CaseloadService', () => {
     it.each([
       [
         'idir',
-        { [afterParamName]: '1900-01-01' } as AfterQueryParams,
+        { [afterParamName]: '1900-01-01' } as CaseloadQueryParams,
         { ...OfficeCaseloadCompleteResponseExample },
       ],
       ['idir', undefined, { ...OfficeCaseloadCompleteResponseExample }],
@@ -636,6 +731,12 @@ describe('CaseloadService', () => {
                   items: [MemoExample],
                 },
               },
+            ],
+            orderedTypes: [
+              RecordType.Case,
+              RecordType.Incident,
+              RecordType.SR,
+              RecordType.Memo,
             ],
           });
         const jwt = jwtService.sign(

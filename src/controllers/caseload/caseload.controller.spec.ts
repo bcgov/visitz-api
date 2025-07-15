@@ -13,7 +13,7 @@ import {
   CaseloadCompleteResponseExample,
   CaseloadEntity,
 } from '../../entities/caseload.entity';
-import { AfterQueryParams } from '../../dto/filter-query-params.dto';
+import { CaseloadQueryParams } from '../../dto/filter-query-params.dto';
 import { plainToInstance } from 'class-transformer';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import {
@@ -66,7 +66,7 @@ describe('CaseloadController', () => {
         CaseloadCompleteResponseExample,
         {
           [afterParamName]: '1900-01-01',
-        } as AfterQueryParams,
+        } as CaseloadQueryParams,
       ],
     ])(
       'should return nested values given good input',
@@ -108,7 +108,7 @@ describe('CaseloadController', () => {
         CaseloadCompleteResponseExample,
         {
           [afterParamName]: '1900-01-01',
-        } as AfterQueryParams,
+        } as CaseloadQueryParams,
       ],
     ])(
       'should return nested values given good input',
