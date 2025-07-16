@@ -138,20 +138,31 @@ export class RequestPreparerService {
         if (error.status === 404) {
           throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error:
-            error.response?.data !== undefined
-              ? error.response?.data
-              : error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { cause: error },
-      );
     }
     if (
       res !== undefined &&
@@ -189,20 +200,31 @@ export class RequestPreparerService {
         if (error.status === 404) {
           throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error:
-            error.response?.data !== undefined
-              ? error.response?.data
-              : error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { cause: error },
-      );
     }
     return response;
   }
@@ -231,20 +253,31 @@ export class RequestPreparerService {
         if (error.status === 404) {
           throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error:
-            error.response?.data !== undefined
-              ? error.response?.data
-              : error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { cause: error },
-      );
     }
     return response;
   }
