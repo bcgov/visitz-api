@@ -39,7 +39,7 @@
     "file-type": "^21.0.0",
     "load-esm": "^1.0.2",
     "luxon": "^3.5.0",
-    "multer": "^2.0.0",
+    "multer": "^2.0.2",
     "nestjs-pino": "^4.1.0",
     "pino-http": "^10.3.0",
     "pino-std-serializers": "^7.0.0",
