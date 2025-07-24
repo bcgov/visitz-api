@@ -29,9 +29,7 @@ describe('WorkflowAuthService', () => {
   let cache: Cache;
   let jwtService: JwtService;
 
-  const validId = 'id1234';
   const validRecordType = RecordType.Case;
-  const notinEnumPath = `fjofijp`;
   const testIdir = 'IDIRTEST';
   const testOrg = 'testorg';
   const testOrgId = 'testorgid';
