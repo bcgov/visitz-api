@@ -262,6 +262,7 @@ export class AuthService {
     recordType: RecordType,
     idir: string,
     officeNames: string,
+    isEntityNumber?: boolean,
   ): Promise<[boolean | undefined, string]> {
     let workspace;
     const idirFieldName = this.configService.get<string>(
@@ -284,6 +285,12 @@ export class AuthService {
     searchspec =
       searchspec +
       `([${idirFieldName}]='${idir}') AND ([${restrictedFieldName}]='${RestrictedRecordEnum.False}')`;
+    if (isEntityNumber !== undefined && isEntityNumber === true) {
+      const entityNumberFieldName = this.configService.get<string>(
+        `upstreamAuth.${recordType}.entityNumberField`,
+      );
+      searchspec = searchspec + ` AND ([${entityNumberFieldName}]='${id}')`;
+    }
     const params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
@@ -302,10 +309,13 @@ export class AuthService {
       'Accept-Encoding': '*',
       [trustedIdirHeaderName]: idir,
     };
-    const url =
+    let url =
       this.baseUrl +
-      this.configService.get<string>(`upstreamAuth.${recordType}.endpoint`) +
-      id;
+      this.configService.get<string>(`upstreamAuth.${recordType}.endpoint`);
+
+    if (isEntityNumber === undefined || isEntityNumber === false) {
+      url = url + id;
+    }
 
     let response;
     try {

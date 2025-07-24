@@ -27,6 +27,8 @@ const updatedByIdFieldName = 'Updated By Id';
 const updatedDateFieldName = 'Updated Date';
 const trustedIdirHeaderName = 'X-ICM-TrustedUsername';
 const idirJWTFieldName = 'idir_username';
+const entityNumberFieldName = 'entityNumber';
+const entityTypeFieldName = 'entityType';
 const pageSizeMin = 1;
 const pageSizeMax = 100;
 const pageSizeDefault = 10;
@@ -69,6 +71,8 @@ export {
   updatedDateFieldName,
   trustedIdirHeaderName,
   idirJWTFieldName,
+  entityNumberFieldName,
+  entityTypeFieldName,
   pageSizeMin,
   pageSizeMax,
   pageSizeDefault,
