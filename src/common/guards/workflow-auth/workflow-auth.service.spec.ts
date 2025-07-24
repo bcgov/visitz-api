@@ -21,6 +21,7 @@ import {
   idirUsernameHeaderField,
 } from '../../../common/constants/upstream-constants';
 import { getMockReq } from '@jest-mock/express';
+import { HttpException } from '@nestjs/common';
 
 describe('WorkflowAuthService', () => {
   let service: WorkflowAuthService;
@@ -214,7 +215,7 @@ describe('WorkflowAuthService', () => {
       },
     );
 
-    it('should return false with upstream invalid record for record type', async () => {
+    it('should throw with upstream invalid record for record type', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(null)
@@ -244,13 +245,14 @@ describe('WorkflowAuthService', () => {
           entityType: 'Case',
         },
       });
-      const isAuthed = await service.getRecordAndValidate(mockRequest);
+      await expect(service.getRecordAndValidate(mockRequest)).rejects.toThrow(
+        HttpException,
+      );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(4);
-      expect(isAuthed).toBe(false);
     });
 
-    it('should return false with upstream invalid record for employee', async () => {
+    it('should throw with upstream invalid record for employee', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(200)
@@ -291,10 +293,11 @@ describe('WorkflowAuthService', () => {
           entityType: 'Case',
         },
       });
-      const isAuthed = await service.getRecordAndValidate(mockRequest);
+      await expect(service.getRecordAndValidate(mockRequest)).rejects.toThrow(
+        HttpException,
+      );
       expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(4);
-      expect(isAuthed).toBe(false);
     });
   });
 });
