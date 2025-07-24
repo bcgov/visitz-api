@@ -5,6 +5,7 @@ import { ServiceRequestsModule } from './service-requests/service-requests.modul
 import { MemosModule } from './memos/memos.module';
 import { CaseloadModule } from './caseload/caseload.module';
 import { ExternalAuthModule } from './external-auth/external-auth.module';
+import { WorkflowsModule } from './workflows/workflows.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ExternalAuthModule } from './external-auth/external-auth.module';
     MemosModule,
     CaseloadModule,
     ExternalAuthModule,
+    WorkflowsModule,
   ],
 })
 export class ControllersModule {}

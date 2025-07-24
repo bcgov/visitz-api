@@ -404,3 +404,48 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: MEMO_OFFICE_FIELD
+  - name: SUBMIT_NOTES_INT_OBJECT_NAME
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_INT_OBJECT_NAME
+  - name: SUBMIT_NOTES_INT_OBJECT_FORMAT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_INT_OBJECT_FORMAT
+  - name: SUBMIT_NOTES_REQUEST_PARENT_FIELD_NAME
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_REQUEST_PARENT_FIELD_NAME
+  - name: SUBMIT_NOTES_WORKFLOW_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_WORKFLOW_WORKSPACE
+  - name: SUBMIT_NOTES_WORKFLOW_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_WORKFLOW_ENDPOINT
+  - name: CASE_ENTITY_NUMBER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_ENTITY_NUMBER_FIELD
+  - name: INCIDENT_ENTITY_NUMBER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_ENTITY_NUMBER_FIELD
+  - name: SR_ENTITY_NUMBER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_ENTITY_NUMBER_FIELD
+  - name: SUBMIT_NOTES_MESSAGE_TYPE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_MESSAGE_TYPE
