@@ -151,6 +151,7 @@ export default () => ({
   },
   workflowParameters: {
     submitNotes: {
+      messageType: process.env.SUBMIT_NOTES_MESSAGE_TYPE ?? ' ',
       intObjectName: process.env.SUBMIT_NOTES_INT_OBJECT_NAME ?? ' ',
       intObjectFormat: process.env.SUBMIT_NOTES_INT_OBJECT_FORMAT ?? ' ',
       requestParentFieldName:

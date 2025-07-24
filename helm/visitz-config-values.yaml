@@ -444,3 +444,8 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: SR_ENTITY_NUMBER_FIELD
+  - name: SUBMIT_NOTES_MESSAGE_TYPE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_NOTES_MESSAGE_TYPE

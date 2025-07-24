@@ -8,6 +8,7 @@ import { trustedIdirHeaderName } from '../../common/constants/upstream-constants
 
 @Injectable()
 export class WorkflowsService {
+  submitNotesMessageType: string;
   submitNotesIntObjectName: string;
   submitNotesIntObjectFormat: string;
   submitNotesRequestParentFieldName: string;
@@ -18,6 +19,9 @@ export class WorkflowsService {
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
   ) {
+    this.submitNotesMessageType = this.configService.get<string>(
+      'workflowParameters.submitNotes.messageType',
+    );
     this.submitNotesIntObjectName = this.configService.get<string>(
       'workflowParameters.submitNotes.intObjectName',
     );
@@ -40,9 +44,12 @@ export class WorkflowsService {
     notesDto: SubmitNotesWorkflowDto,
     idir: string,
   ): Promise<SubmitNotesWorkflowEntity> {
+    for (const submitNotesObj of notesDto.RequestSubmitNotes) {
+      submitNotesObj['LengthOfNotes'] = submitNotesObj.notes.length.toString();
+    }
     const body = {
       InboundMessage: {
-        MessageType: 'Integration Object',
+        MessageType: this.submitNotesMessageType,
         IntObjectName: this.submitNotesIntObjectName,
         IntObjectFormat: this.submitNotesIntObjectFormat,
         [this.submitNotesRequestParentFieldName]: notesDto,

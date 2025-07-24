@@ -40,6 +40,8 @@ const attachmentFormDescriptionMax = 250;
 const attachmentCategoryMax = 30;
 const attachmentTemplateMax = 1000;
 const attachmentStatusMax = 30;
+const notesPeriodMax = 50;
+const notesMax = 16000;
 
 export {
   baseUrlEnvVarName,
@@ -84,4 +86,6 @@ export {
   attachmentCategoryMax,
   attachmentTemplateMax,
   attachmentStatusMax,
+  notesPeriodMax,
+  notesMax,
 };

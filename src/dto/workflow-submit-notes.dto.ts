@@ -7,12 +7,15 @@ import {
   IsEnum,
   IsNotEmpty,
   Matches,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import { EntityType } from '../common/constants/enumerations';
 import {
   entityNumberFieldName,
   entityTypeFieldName,
+  notesMax,
+  notesPeriodMax,
 } from '../common/constants/upstream-constants';
 import { idMaxLength, idRegex } from '../common/constants/parameter-constants';
 
@@ -42,6 +45,7 @@ export class SubmitNotesItem {
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })
+  @MaxLength(notesPeriodMax)
   @Expose()
   @ApiProperty({
     example: 'Note period here',
@@ -53,6 +57,7 @@ export class SubmitNotesItem {
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })
+  @MaxLength(notesMax)
   @Expose()
   @ApiProperty({
     example: 'Notes',
