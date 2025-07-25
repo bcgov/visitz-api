@@ -101,6 +101,7 @@ export default () => ({
       : process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {
     baseUrl: process.env.UPSTREAM_BASE_URL ?? ' ',
+    workflowBaseUrl: process.env.WORKFLOW_BASE_URL ?? ' ',
     supportNetwork: process.env.SUPPORT_NETWORK_ENDPOINT ?? ' ',
     inPersonVisits: process.env.IN_PERSON_VISITS_ENDPOINT ?? ' ',
     postInPersonVisits: process.env.IN_PERSON_VISITS_POST_ENDPOINT ?? ' ',

@@ -449,3 +449,8 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: SUBMIT_NOTES_MESSAGE_TYPE
+  - name: WORKFLOW_BASE_URL
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: WORKFLOW_BASE_URL
