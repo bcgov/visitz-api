@@ -32,7 +32,7 @@ export class WorkflowsService {
       'workflowParameters.submitNotes.requestParentFieldName',
     );
     this.submitNotesUrl = encodeURI(
-      this.configService.get<string>('endpointUrls.baseUrl') +
+      this.configService.get<string>('endpointUrls.workflowBaseUrl') +
         this.configService.get<string>('endpointUrls.submitNotesWorkflow'),
     );
     this.submitNotesWorkspace = this.configService.get(
