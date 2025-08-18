@@ -22,6 +22,10 @@ import {
   officeNamesSeparator,
   queryHierarchyCaseChildClassName,
   queryHierarchyCaseParentClassName,
+  queryHierarchyIncidentChildAdditionalClassName,
+  queryHierarchyIncidentChildCallClassName,
+  queryHierarchyIncidentChildConcernsClassName,
+  queryHierarchyIncidentParentClassName,
 } from '../../common/constants/parameter-constants';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import {
@@ -48,7 +52,12 @@ import {
   queryHierarchyParamName,
 } from '../../common/constants/upstream-constants';
 import { CaseExample, CasePositionExample } from '../../entities/case.entity';
-import { IncidentExample } from '../../entities/incident.entity';
+import {
+  IncidentAdditionalInformationExample,
+  IncidentCallInformationExample,
+  IncidentConcernsExample,
+  IncidentExample,
+} from '../../entities/incident.entity';
 import { MemoExample } from '../../entities/memo.entity';
 import { SRExample } from '../../entities/sr.entity';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
@@ -187,11 +196,49 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+          new QueryHierarchyComponent({
+            classExample: CaseExample,
+            name: queryHierarchyCaseParentClassName,
+            searchspec: `EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+            exclude: [queryHierarchyCaseChildClassName],
+            childComponents: [
+              new QueryHierarchyComponent({
+                classExample: CasePositionExample,
+                name: queryHierarchyCaseChildClassName,
+              }),
+            ],
+          }),
+        ),
       };
       const incidentParams = {
         ...params,
-        searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+          new QueryHierarchyComponent({
+            classExample: IncidentExample,
+            name: queryHierarchyIncidentParentClassName,
+            searchspec: `EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+            exclude: [
+              queryHierarchyIncidentChildAdditionalClassName,
+              queryHierarchyIncidentChildCallClassName,
+              queryHierarchyIncidentChildConcernsClassName,
+            ],
+            childComponents: [
+              new QueryHierarchyComponent({
+                classExample: IncidentAdditionalInformationExample,
+                name: queryHierarchyIncidentChildAdditionalClassName,
+              }),
+              new QueryHierarchyComponent({
+                classExample: IncidentCallInformationExample,
+                name: queryHierarchyIncidentChildCallClassName,
+              }),
+              new QueryHierarchyComponent({
+                classExample: IncidentConcernsExample,
+                name: queryHierarchyIncidentChildConcernsClassName,
+              }),
+            ],
+          }),
+        ),
       };
       const srParams = {
         ...params,
@@ -316,7 +363,7 @@ describe('CaseloadService', () => {
           new QueryHierarchyComponent({
             classExample: CaseExample,
             name: queryHierarchyCaseParentClassName,
-            searchspec: `([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}") AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
+            searchspec: `(([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}")`,
             exclude: [queryHierarchyCaseChildClassName],
             childComponents: [
               new QueryHierarchyComponent({
@@ -329,15 +376,40 @@ describe('CaseloadService', () => {
       };
       const incidentParams = {
         ...params,
-        searchspec: `([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}") AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+          new QueryHierarchyComponent({
+            classExample: IncidentExample,
+            name: queryHierarchyIncidentParentClassName,
+            searchspec: `(([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${RestrictedRecordEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+            exclude: [
+              queryHierarchyIncidentChildAdditionalClassName,
+              queryHierarchyIncidentChildCallClassName,
+              queryHierarchyIncidentChildConcernsClassName,
+            ],
+            childComponents: [
+              new QueryHierarchyComponent({
+                classExample: IncidentAdditionalInformationExample,
+                name: queryHierarchyIncidentChildAdditionalClassName,
+              }),
+              new QueryHierarchyComponent({
+                classExample: IncidentCallInformationExample,
+                name: queryHierarchyIncidentChildCallClassName,
+              }),
+              new QueryHierarchyComponent({
+                classExample: IncidentConcernsExample,
+                name: queryHierarchyIncidentChildConcernsClassName,
+              }),
+            ],
+          }),
+        ),
       };
       const srParams = {
         ...params,
-        searchspec: `([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}") AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `(([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}") AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
+        searchspec: `(([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${RestrictedRecordEnum.False}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);

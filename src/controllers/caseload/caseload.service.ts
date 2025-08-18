@@ -38,11 +38,21 @@ import {
   officeNamesSeparator,
   queryHierarchyCaseChildClassName,
   queryHierarchyCaseParentClassName,
+  queryHierarchyIncidentChildAdditionalClassName,
+  queryHierarchyIncidentChildCallClassName,
+  queryHierarchyIncidentChildConcernsClassName,
+  queryHierarchyIncidentParentClassName,
   srIncludeParam,
 } from '../../common/constants/parameter-constants';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 import { CaseExample, CasePositionExample } from '../../entities/case.entity';
 import { caseloadIncludeEntityError } from '../../common/constants/error-constants';
+import {
+  IncidentAdditionalInformationExample,
+  IncidentCallInformationExample,
+  IncidentConcernsExample,
+  IncidentExample,
+} from '../../entities/incident.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -226,6 +236,53 @@ export class CaseloadService {
           filter,
         );
       params = this.recordTypeSearchSpecAppend(params, type as RecordType);
+      if (type === RecordType.Case) {
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: CaseExample,
+              name: queryHierarchyCaseParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [queryHierarchyCaseChildClassName],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: CasePositionExample,
+                  name: queryHierarchyCaseChildClassName,
+                }),
+              ],
+            }),
+          );
+        delete params['searchspec'];
+      } else if (type === RecordType.Incident) {
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: IncidentExample,
+              name: queryHierarchyIncidentParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [
+                queryHierarchyIncidentChildAdditionalClassName,
+                queryHierarchyIncidentChildCallClassName,
+                queryHierarchyIncidentChildConcernsClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: IncidentAdditionalInformationExample,
+                  name: queryHierarchyIncidentChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentCallInformationExample,
+                  name: queryHierarchyIncidentChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentConcernsExample,
+                  name: queryHierarchyIncidentChildConcernsClassName,
+                }),
+              ],
+            }),
+          );
+        delete params['searchspec'];
+      }
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
@@ -251,16 +308,18 @@ export class CaseloadService {
       const statusFieldVarName = `${type}StatusFieldName`;
       const restrictedFieldVarName = `${type}RestrictedFieldName`;
       let baseSearchSpec =
+        `(` +
         this.utilitiesService.officeNamesStringToSearchSpec(
           officeNames,
           `${this[officeFieldVarName]}`,
-        ) + ' OR ';
+        ) +
+        ' OR ';
       if (type === RecordType.Case || type == RecordType.Incident) {
         baseSearchSpec = baseSearchSpec + `EXISTS `;
       }
       baseSearchSpec =
         baseSearchSpec +
-        `([${this[idirFieldVarName]}]="${idir}")` +
+        `([${this[idirFieldVarName]}]="${idir}"))` +
         ` AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}") AND (` +
         `[${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
       // eslint-disable-next-line prefer-const
@@ -286,6 +345,35 @@ export class CaseloadService {
                 new QueryHierarchyComponent({
                   classExample: CasePositionExample,
                   name: queryHierarchyCaseChildClassName,
+                }),
+              ],
+            }),
+          );
+        delete params['searchspec'];
+      } else if (type === RecordType.Incident) {
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: IncidentExample,
+              name: queryHierarchyIncidentParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [
+                queryHierarchyIncidentChildAdditionalClassName,
+                queryHierarchyIncidentChildCallClassName,
+                queryHierarchyIncidentChildConcernsClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: IncidentAdditionalInformationExample,
+                  name: queryHierarchyIncidentChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentCallInformationExample,
+                  name: queryHierarchyIncidentChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentConcernsExample,
+                  name: queryHierarchyIncidentChildConcernsClassName,
                 }),
               ],
             }),

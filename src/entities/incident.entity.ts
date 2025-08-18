@@ -1,5 +1,5 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
   createdByIdFieldName,
@@ -9,9 +9,26 @@ import {
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
 
+export const IncidentConcernsExample = {
+  'Start Date': 'Start Date Here',
+  Id: 'Id Here',
+  Concern: 'Concern Here',
+  'End Date': 'End Date Here',
+  Original: 'Original Here',
+};
+
+export const IncidentCallInformationExample = {
+  Id: 'Id Here',
+  'Call Information': 'Call Information Here',
+};
+
+export const IncidentAdditionalInformationExample = {
+  Id: 'Id Here',
+  'Additional Information': 'Additional Information Here',
+};
+
 export const IncidentExample = {
   'Acceptance Date': '01/01/1970 00:00:00',
-  'Additional Information': 'Additional Details',
   Address: 'Address Here',
   'Address Comments': 'Address Comments Here',
   'Are Any Of The Family Members Indigenous': 'N',
@@ -21,7 +38,6 @@ export const IncidentExample = {
   'Caller Email': 'Caller Email Here',
   'Caller Name': 'Caller Name Here',
   'Caller Phone': 'Caller Phone Here',
-  'Call Information': 'Call Info Here',
   Caseload: '',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
@@ -33,8 +49,12 @@ export const IncidentExample = {
   'Given Names': 'First Names',
   'Home Phone': '123-456-7890',
   Id: 'Id Here',
+  IncidentAdditionalInformation: [{ ...IncidentAdditionalInformationExample }],
+  IncidentCallInformation: [{ ...IncidentCallInformationExample }],
+  IncidentConcerns: [{ ...IncidentConcernsExample }],
   'Incident Number': 'Incident Number Here',
   'Indigenous Authority': '',
+  Kkcfs: '',
   'Last Name': 'Last Name',
   'Medical Exam Required': 'Medical Exam Required Here',
   Method: 'Method Here',
@@ -60,6 +80,87 @@ export const IncidentExample = {
   [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
+/*
+ * Model definitions
+ */
+@Exclude()
+@ApiSchema({ name: 'IncidentAdditionalInformationValue' })
+export class IncidentAdditionalInformationValue {
+  @ApiProperty({
+    example: IncidentAdditionalInformationExample['Id'],
+  })
+  @Expose()
+  Id: string;
+
+  @ApiProperty({
+    example: IncidentAdditionalInformationExample['Additional Information'],
+  })
+  @Expose()
+  'Additional Information': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'IncidentCallInformationValue' })
+export class IncidentCallInformationValue {
+  @ApiProperty({
+    example: IncidentCallInformationExample['Id'],
+  })
+  @Expose()
+  Id: string;
+
+  @ApiProperty({
+    example: IncidentCallInformationExample['Call Information'],
+  })
+  @Expose()
+  'Call Information': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'IncidentConcernsValue' })
+export class IncidentConcernsValue {
+  @ApiProperty({
+    example: IncidentConcernsExample['Start Date'],
+  })
+  @Expose()
+  'Start Date': string;
+
+  @ApiProperty({
+    example: IncidentConcernsExample['Id'],
+  })
+  @Expose()
+  Id: string;
+
+  @ApiProperty({
+    example: IncidentConcernsExample['Concern'],
+  })
+  @Expose()
+  Concern: string;
+
+  @ApiProperty({
+    example: IncidentConcernsExample['End Date'],
+  })
+  @Expose()
+  'End Date': string;
+
+  @ApiProperty({
+    example: IncidentConcernsExample['Original'],
+  })
+  @Expose()
+  Original: string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
 @Exclude()
 @ApiSchema({ name: 'Incident' })
 export class IncidentEntity {
@@ -68,12 +169,6 @@ export class IncidentEntity {
   })
   @Expose()
   'Acceptance Date': string;
-
-  @ApiProperty({
-    example: IncidentExample['Additional Information'],
-  })
-  @Expose()
-  'Additional Information': string;
 
   @ApiProperty({
     example: IncidentExample['Address Comments'],
@@ -128,12 +223,6 @@ export class IncidentEntity {
   })
   @Expose()
   'Caller Phone': string;
-
-  @ApiProperty({
-    example: IncidentExample['Call Information'],
-  })
-  @Expose()
-  'Call Information': string;
 
   @ApiProperty({
     example: IncidentExample['Caseload'],
@@ -201,6 +290,33 @@ export class IncidentEntity {
   @Expose()
   Id: string;
 
+  @Expose()
+  @ApiProperty({
+    example: IncidentAdditionalInformationExample,
+    type: IncidentAdditionalInformationValue,
+    isArray: true,
+  })
+  @Type(() => IncidentAdditionalInformationValue)
+  IncidentAdditionalInformation: Array<IncidentAdditionalInformationValue>;
+
+  @Expose()
+  @ApiProperty({
+    example: IncidentCallInformationExample,
+    type: IncidentCallInformationValue,
+    isArray: true,
+  })
+  @Type(() => IncidentCallInformationValue)
+  IncidentCallInformation: Array<IncidentCallInformationValue>;
+
+  @Expose()
+  @ApiProperty({
+    example: IncidentConcernsExample,
+    type: IncidentConcernsValue,
+    isArray: true,
+  })
+  @Type(() => IncidentConcernsValue)
+  IncidentConcerns: Array<IncidentConcernsValue>;
+
   @ApiProperty({
     example: IncidentExample['Incident Number'],
   })
@@ -212,6 +328,12 @@ export class IncidentEntity {
   })
   @Expose()
   'Indigenous Authority': string;
+
+  @ApiProperty({
+    example: IncidentExample['Kkcfs'],
+  })
+  @Expose()
+  'Kkcfs': string;
 
   @ApiProperty({
     example: IncidentExample['Last Name'],
