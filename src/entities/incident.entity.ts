@@ -29,6 +29,7 @@ export const IncidentAdditionalInformationExample = {
 
 export const IncidentExample = {
   'Acceptance Date': '01/01/1970 00:00:00',
+  'Additional Information': 'Additional Details', // TODO: Update app to remove this field
   Address: 'Address Here',
   'Address Comments': 'Address Comments Here',
   'Are Any Of The Family Members Indigenous': 'N',
@@ -38,6 +39,7 @@ export const IncidentExample = {
   'Caller Email': 'Caller Email Here',
   'Caller Name': 'Caller Name Here',
   'Caller Phone': 'Caller Phone Here',
+  'Call Information': 'Call Info Here', // TODO: Update app to remove this field
   Caseload: '',
   'Cell Phone': '123-456-7890',
   'Closed Date': '01/01/1970 00:00:00',
@@ -54,7 +56,6 @@ export const IncidentExample = {
   IncidentConcerns: [{ ...IncidentConcernsExample }],
   'Incident Number': 'Incident Number Here',
   'Indigenous Authority': '',
-  Kkcfs: '',
   'Last Name': 'Last Name',
   'Medical Exam Required': 'Medical Exam Required Here',
   Method: 'Method Here',
@@ -171,6 +172,12 @@ export class IncidentEntity {
   'Acceptance Date': string;
 
   @ApiProperty({
+    example: IncidentExample['Additional Information'],
+  })
+  @Expose()
+  'Additional Information': string;
+
+  @ApiProperty({
     example: IncidentExample['Address Comments'],
   })
   @Expose()
@@ -223,6 +230,12 @@ export class IncidentEntity {
   })
   @Expose()
   'Caller Phone': string;
+
+  @ApiProperty({
+    example: IncidentExample['Call Information'],
+  })
+  @Expose()
+  'Call Information': string;
 
   @ApiProperty({
     example: IncidentExample['Caseload'],
@@ -328,12 +341,6 @@ export class IncidentEntity {
   })
   @Expose()
   'Indigenous Authority': string;
-
-  @ApiProperty({
-    example: IncidentExample['Kkcfs'],
-  })
-  @Expose()
-  'Kkcfs': string;
 
   @ApiProperty({
     example: IncidentExample['Last Name'],
