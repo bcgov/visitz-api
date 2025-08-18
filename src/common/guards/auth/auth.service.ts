@@ -284,13 +284,13 @@ export class AuthService {
       officeNames,
       officeFieldName,
     );
-    searchspec = searchspec.substring(0, searchspec.length - 1) + `) OR `;
+    searchspec = `(` + searchspec.substring(0, searchspec.length - 1) + `) OR `;
     if (recordType === RecordType.Case || recordType == RecordType.Incident) {
       searchspec = searchspec + `EXISTS `;
     }
     searchspec =
       searchspec +
-      `([${idirFieldName}]='${idir}') AND ([${restrictedFieldName}]='${RestrictedRecordEnum.False}')`;
+      `([${idirFieldName}]='${idir}')) AND ([${restrictedFieldName}]='${RestrictedRecordEnum.False}')`;
     if (isEntityNumber !== undefined && isEntityNumber === true) {
       const entityNumberFieldName = this.configService.get<string>(
         `upstreamAuth.${recordType}.entityNumberField`,

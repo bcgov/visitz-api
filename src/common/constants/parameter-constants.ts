@@ -19,6 +19,11 @@ const queryHierarchyEmployeeParentClassName = 'Employee';
 const queryHierarchyEmployeeChildClassName = 'Position';
 const queryHierarchyCaseParentClassName = 'Case';
 const queryHierarchyCaseChildClassName = 'Position';
+const queryHierarchyIncidentParentClassName = 'Incident';
+const queryHierarchyIncidentChildAdditionalClassName =
+  'IncidentAdditionalInformation';
+const queryHierarchyIncidentChildCallClassName = 'IncidentCallInformation';
+const queryHierarchyIncidentChildConcernsClassName = 'IncidentConcerns';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -66,6 +71,10 @@ export {
   queryHierarchyEmployeeChildClassName,
   queryHierarchyCaseParentClassName,
   queryHierarchyCaseChildClassName,
+  queryHierarchyIncidentParentClassName,
+  queryHierarchyIncidentChildAdditionalClassName,
+  queryHierarchyIncidentChildCallClassName,
+  queryHierarchyIncidentChildConcernsClassName,
   idMaxLength,
   versionNumber,
   idRegex,
