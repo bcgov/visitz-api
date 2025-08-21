@@ -14,6 +14,7 @@ export default () => ({
       typeField: process.env.CASE_TYPE_FIELD ?? undefined,
       statusField: process.env.CASE_STATUS_FIELD ?? undefined,
       officeField: process.env.CASE_OFFICE_FIELD ?? undefined,
+      entityNumberField: process.env.CASE_ENTITY_NUMBER_FIELD ?? undefined,
     },
     incident: {
       endpoint: encodeURI((process.env.INCIDENT_ENDPOINT ?? ' ').trim()),
@@ -25,6 +26,7 @@ export default () => ({
       typeField: process.env.INCIDENT_TYPE_FIELD ?? undefined,
       statusField: process.env.INCIDENT_STATUS_FIELD ?? undefined,
       officeField: process.env.INCIDENT_OFFICE_FIELD ?? undefined,
+      entityNumberField: process.env.INCIDENT_ENTITY_NUMBER_FIELD ?? undefined,
     },
     sr: {
       endpoint: encodeURI((process.env.SR_ENDPOINT ?? ' ').trim()),
@@ -34,6 +36,7 @@ export default () => ({
       restrictedField: process.env.SR_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.SR_STATUS_FIELD ?? undefined,
       officeField: process.env.SR_OFFICE_FIELD ?? undefined,
+      entityNumberField: process.env.SR_ENTITY_NUMBER_FIELD ?? undefined,
     },
     memo: {
       endpoint: encodeURI((process.env.MEMO_ENDPOINT ?? ' ').trim()),
@@ -75,6 +78,8 @@ export default () => ({
     safetyAssessments: process.env.SAFETY_ASSESSMENTS_WORKSPACE ?? undefined,
     responseNarratives: process.env.RESPONSE_NARRATIVES_WORKSPACE ?? undefined,
     caseNotes: process.env.CASE_NOTES_WORKSPACE ?? undefined,
+    submitNotesWorkflow:
+      process.env.SUBMIT_NOTES_WORKFLOW_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -96,6 +101,7 @@ export default () => ({
       : process.env.SKIP_AUTH_GUARD === 'true',
   endpointUrls: {
     baseUrl: process.env.UPSTREAM_BASE_URL ?? ' ',
+    workflowBaseUrl: process.env.WORKFLOW_BASE_URL ?? ' ',
     supportNetwork: process.env.SUPPORT_NETWORK_ENDPOINT ?? ' ',
     inPersonVisits: process.env.IN_PERSON_VISITS_ENDPOINT ?? ' ',
     postInPersonVisits: process.env.IN_PERSON_VISITS_POST_ENDPOINT ?? ' ',
@@ -110,6 +116,7 @@ export default () => ({
       process.env.INCIDENT_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',
     srResponseNarratives: process.env.SR_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',
     caseNotes: process.env.CASE_NOTES_ENDPOINT ?? ' ',
+    submitNotesWorkflow: process.env.SUBMIT_NOTES_WORKFLOW_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,
@@ -142,5 +149,14 @@ export default () => ({
   },
   buildInfo: {
     buildNumber: process.env.VPI_APP_LABEL ?? 'localBuild',
+  },
+  workflowParameters: {
+    submitNotes: {
+      messageType: process.env.SUBMIT_NOTES_MESSAGE_TYPE ?? ' ',
+      intObjectName: process.env.SUBMIT_NOTES_INT_OBJECT_NAME ?? ' ',
+      intObjectFormat: process.env.SUBMIT_NOTES_INT_OBJECT_FORMAT ?? ' ',
+      requestParentFieldName:
+        process.env.SUBMIT_NOTES_REQUEST_PARENT_FIELD_NAME ?? ' ',
+    },
   },
 });

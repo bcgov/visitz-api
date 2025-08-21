@@ -27,6 +27,8 @@ const updatedByIdFieldName = 'Updated By Id';
 const updatedDateFieldName = 'Updated Date';
 const trustedIdirHeaderName = 'X-ICM-TrustedUsername';
 const idirJWTFieldName = 'idir_username';
+const entityNumberFieldName = 'entityNumber';
+const entityTypeFieldName = 'entityType';
 const pageSizeMin = 1;
 const pageSizeMax = 100;
 const pageSizeDefault = 10;
@@ -38,6 +40,8 @@ const attachmentFormDescriptionMax = 250;
 const attachmentCategoryMax = 30;
 const attachmentTemplateMax = 1000;
 const attachmentStatusMax = 30;
+const notesPeriodMax = 50;
+const notesMax = 16000;
 
 export {
   baseUrlEnvVarName,
@@ -69,6 +73,8 @@ export {
   updatedDateFieldName,
   trustedIdirHeaderName,
   idirJWTFieldName,
+  entityNumberFieldName,
+  entityTypeFieldName,
   pageSizeMin,
   pageSizeMax,
   pageSizeDefault,
@@ -80,4 +86,6 @@ export {
   attachmentCategoryMax,
   attachmentTemplateMax,
   attachmentStatusMax,
+  notesPeriodMax,
+  notesMax,
 };

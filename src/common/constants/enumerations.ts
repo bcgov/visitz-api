@@ -24,6 +24,12 @@ const RecordEntityMap = {
   [RecordType.SR]: EntityType.SR,
 } as const;
 
+const EntityRecordMap = {
+  [EntityType.Case]: RecordType.Case,
+  [EntityType.Incident]: RecordType.Incident,
+  [EntityType.SR]: RecordType.SR,
+} as const;
+
 enum VisitDetails {
   PrivateVisitZeroToFive = 'Private visit age 0-5',
   PrivateVisitInHome = 'Private visit in home',
@@ -98,6 +104,7 @@ export {
   RecordType,
   EntityType,
   RecordEntityMap,
+  EntityRecordMap,
   VisitDetails,
   RecordCountNeededEnum,
   RestrictedRecordEnum,

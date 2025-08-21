@@ -9,7 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   dateFormatError,
   emojiError,
@@ -156,6 +156,47 @@ export class UtilitiesService {
       }
     }
     return innerObject;
+  }
+
+  entityTypeCacheKeyPreparer(
+    idir: string,
+    entityType: EntityType,
+    entityNumber: string,
+    jti: string,
+  ): string {
+    return `${idir}|workflow|${entityType}|${entityNumber}|${jti}`;
+  }
+
+  findNestedValue(object, key) {
+    const value = object[key];
+    if (value !== undefined) {
+      return value;
+    } else {
+      for (const keyName of Object.keys(object)) {
+        if (object[keyName] !== null && typeof object[keyName] === 'object') {
+          const found = this.findNestedValue(object[keyName], key);
+          if (found) {
+            return found;
+          }
+        }
+      }
+    }
+  }
+
+  findEntityInfo(body: object): [EntityType, string] {
+    try {
+      const entityNumber = this.findNestedValue(body, 'entityNumber');
+      if (entityNumber !== undefined) {
+        return [
+          this.findNestedValue(body, 'entityType') as EntityType,
+          entityNumber,
+        ];
+      }
+      throw new Error('Entity number or type not found.');
+    } catch (error: any) {
+      this.logger.error({ error });
+      return [undefined, undefined];
+    }
   }
 }
 
