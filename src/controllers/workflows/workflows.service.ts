@@ -118,6 +118,11 @@ export class WorkflowsService {
     assessmentDto: SafetyAssessmentWorkflowDto,
     idir: string,
   ): Promise<SubmitSafetyAssessmentWorkflowEntity> {
+    /* 
+		NOTE: This is an in-place modification of the input object
+		to match upstream's messy structure, hence the delete statements 
+		to clean up the object.
+	*/
     for (const payloadObj of assessmentDto.Payload) {
       payloadObj['workerId'] = idir;
       payloadObj['operation'] = this.safetyAssesmentOperation;
