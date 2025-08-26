@@ -3,7 +3,7 @@ import {
   AttachmentParentIdFieldMap,
   EntityStatus,
   RecordType,
-  RestrictedRecordEnum,
+  YNEnum,
 } from '../../common/constants/enumerations';
 import {
   AttachmentIdPathParams,
@@ -271,7 +271,7 @@ export class AttachmentsService {
     const recordURL = this[`${recordType}URL`];
     const baseSearchSpec =
       `([Id]="${parentId}" AND ` +
-      `[${this[recordRestrictedFieldName]}]="${RestrictedRecordEnum.False}" ` +
+      `[${this[recordRestrictedFieldName]}]="${YNEnum.False}" ` +
       `AND [${this[recordStatusFieldName]}]="${EntityStatus.Open}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(

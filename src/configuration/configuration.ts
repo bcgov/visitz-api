@@ -80,6 +80,8 @@ export default () => ({
     caseNotes: process.env.CASE_NOTES_WORKSPACE ?? undefined,
     submitNotesWorkflow:
       process.env.SUBMIT_NOTES_WORKFLOW_WORKSPACE ?? undefined,
+    safetyAssessmentWorkflow:
+      process.env.SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -117,6 +119,8 @@ export default () => ({
     srResponseNarratives: process.env.SR_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',
     caseNotes: process.env.CASE_NOTES_ENDPOINT ?? ' ',
     submitNotesWorkflow: process.env.SUBMIT_NOTES_WORKFLOW_ENDPOINT ?? ' ',
+    safetyAssessmentWorkflow:
+      process.env.SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,
@@ -157,6 +161,19 @@ export default () => ({
       intObjectFormat: process.env.SUBMIT_NOTES_INT_OBJECT_FORMAT ?? ' ',
       requestParentFieldName:
         process.env.SUBMIT_NOTES_REQUEST_PARENT_FIELD_NAME ?? ' ',
+    },
+    safetyAssessment: {
+      operation: process.env.SUBMIT_SAFETY_ASSESSMENT_OPERATION ?? ' ',
+      messageType: process.env.SUBMIT_SAFETY_ASSESSMENT_MESSAGE_TYPE ?? ' ',
+      intObjectName:
+        process.env.SUBMIT_SAFETY_ASSESSMENT_INT_OBJECT_NAME ?? ' ',
+      intObjectFormat:
+        process.env.SUBMIT_SAFETY_ASSESSMENT_INT_OBJECT_FORMAT ?? ' ',
+      requestParentFieldListName:
+        process.env.SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_LIST_NAME ??
+        ' ',
+      requestParentFieldName:
+        process.env.SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_NAME ?? ' ',
     },
   },
 });

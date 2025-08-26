@@ -7,12 +7,12 @@ import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  BooleanStringEnum,
   CaseType,
   EntityStatus,
   IncidentType,
-  IncludeEntityEnum,
   RecordType,
-  RestrictedRecordEnum,
+  YNEnum,
 } from '../../common/constants/enumerations';
 import {
   FilterQueryParams,
@@ -224,7 +224,7 @@ export class CaseloadService {
       baseSearchSpec =
         baseSearchSpec +
         `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}")` +
-        ` AND ([${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
+        ` AND ([${this[restrictedFieldVarName]}]="${YNEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
@@ -321,7 +321,7 @@ export class CaseloadService {
         baseSearchSpec +
         `([${this[idirFieldVarName]}]="${idir}"))` +
         ` AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}") AND (` +
-        `[${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
+        `[${this[restrictedFieldVarName]}]="${YNEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
@@ -528,16 +528,16 @@ export class CaseloadService {
   createEntityTypeArray(filter?: CaseloadQueryParams): RecordType[] {
     if (filter) {
       const entityTypeArray: RecordType[] = [];
-      if (filter[caseIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[caseIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.Case);
       }
-      if (filter[incidentIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[incidentIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.Incident);
       }
-      if (filter[srIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[srIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.SR);
       }
-      if (filter[memoIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[memoIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.Memo);
       }
       if (entityTypeArray.length < 1) {

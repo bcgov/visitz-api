@@ -42,7 +42,7 @@ import {
 import {
   childVisitEntityIdFieldName,
   childVisitType,
-  upstreamVisitConstraintNull,
+  stringNull,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
 import { ContactsService } from '../../helpers/contacts/contacts.service';
@@ -138,7 +138,7 @@ export class CasesService {
     const { ['Visit Details Value']: visitDetailValue, ...baseObject } = {
       ...inPersonVisitsDto,
       [childVisitEntityIdFieldName]: id[idName],
-      Id: upstreamVisitConstraintNull,
+      Id: stringNull,
       Type: childVisitType,
       VisitDetails: new Array<VisitDetail>(),
     };

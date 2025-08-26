@@ -454,3 +454,43 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: WORKFLOW_BASE_URL
+  - name: SUBMIT_SAFETY_ASSESSMENT_OPERATION
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_OPERATION
+  - name: SUBMIT_SAFETY_ASSESSMENT_INT_OBJECT_NAME
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_INT_OBJECT_NAME
+  - name: SUBMIT_SAFETY_ASSESSMENT_INT_OBJECT_FORMAT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_INT_OBJECT_FORMAT
+  - name: SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_LIST_NAME
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_LIST_NAME
+  - name: SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_NAME
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_NAME
+  - name: SUBMIT_SAFETY_ASSESSMENT_MESSAGE_TYPE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_MESSAGE_TYPE
+  - name: SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_WORKSPACE
+  - name: SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_ENDPOINT

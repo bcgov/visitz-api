@@ -30,10 +30,7 @@ import {
   startRowNumParamName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
-import {
-  ExcludeEmptyFieldsEnum,
-  RecordCountNeededEnum,
-} from '../../common/constants/enumerations';
+import { YNEnum, BooleanStringEnum } from '../../common/constants/enumerations';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ParallelResponse } from '../../dto/parallel-response.dto';
 
@@ -92,7 +89,7 @@ export class RequestPreparerService {
       params['workspace'] = workspace;
     }
     if (filter !== undefined) {
-      if (filter[recordCountNeededParamName] === RecordCountNeededEnum.True) {
+      if (filter[recordCountNeededParamName] === BooleanStringEnum.True) {
         params[recordCountNeededParamName] = filter[recordCountNeededParamName];
       }
       if (typeof filter[pageSizeParamName] === 'number') {
@@ -101,7 +98,7 @@ export class RequestPreparerService {
       if (typeof filter[startRowNumParamName] === 'number') {
         params[startRowNumParamName] = filter[startRowNumParamName];
       }
-      if (filter[excludeEmptyFieldsParamName] === ExcludeEmptyFieldsEnum.True) {
+      if (filter[excludeEmptyFieldsParamName] === YNEnum.True) {
         params[excludeEmptyFieldsParamName] =
           filter[excludeEmptyFieldsParamName];
       }

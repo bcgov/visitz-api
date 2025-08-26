@@ -29,7 +29,7 @@ import {
   startRowNumParamName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
-import { RecordCountNeededEnum } from '../../common/constants/enumerations';
+import { BooleanStringEnum } from '../../common/constants/enumerations';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
@@ -118,7 +118,7 @@ describe('RequestPreparerService', () => {
         'workspace',
         {
           [pageSizeParamName]: 15,
-          [recordCountNeededParamName]: RecordCountNeededEnum.False,
+          [recordCountNeededParamName]: BooleanStringEnum.False,
         },
       ],
     ])(
@@ -145,8 +145,8 @@ describe('RequestPreparerService', () => {
           [pageSizeParamName]: filterQueryParams[pageSizeParamName],
           [recordCountNeededParamName]:
             filterQueryParams[recordCountNeededParamName] ===
-            RecordCountNeededEnum.True
-              ? RecordCountNeededEnum.True
+            BooleanStringEnum.True
+              ? BooleanStringEnum.True
               : undefined,
           [uniformResponseParamName]: UNIFORM_RESPONSE,
           [startRowNumParamName]: filterQueryParams[startRowNumParamName],
@@ -161,7 +161,7 @@ describe('RequestPreparerService', () => {
           [afterParamName]: '2024-02-20',
           [startRowNumParamName]: 2,
           [pageSizeParamName]: 15,
-          [recordCountNeededParamName]: RecordCountNeededEnum.True,
+          [recordCountNeededParamName]: BooleanStringEnum.True,
         } as FilterQueryParams,
         '02/20/2024 00:00:00',
       ],
@@ -188,8 +188,8 @@ describe('RequestPreparerService', () => {
           [pageSizeParamName]: filterQueryParams[pageSizeParamName],
           [recordCountNeededParamName]:
             filterQueryParams[recordCountNeededParamName] ===
-            RecordCountNeededEnum.True
-              ? RecordCountNeededEnum.True
+            BooleanStringEnum.True
+              ? BooleanStringEnum.True
               : undefined,
           [uniformResponseParamName]: UNIFORM_RESPONSE,
           [startRowNumParamName]: filterQueryParams[startRowNumParamName],
