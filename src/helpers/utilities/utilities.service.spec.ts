@@ -3,6 +3,7 @@ import {
   UtilitiesService,
   isPastISO8601Date,
   isNotEmoji,
+  isValidUpstreamFormatDate,
 } from './utilities.service';
 import { DateTime } from 'luxon';
 import { BadRequestException } from '@nestjs/common';
@@ -158,6 +159,24 @@ describe('UtilitiesService', () => {
       (input) => {
         expect(() => {
           isPastISO8601Date(input);
+        }).toThrow(BadRequestException);
+      },
+    );
+  });
+
+  describe('isValidUpstreamFormatDate tests', () => {
+    it.each([['02/25/2025']])(
+      `should return a string upon being given a past date`,
+      (input) => {
+        expect(typeof isValidUpstreamFormatDate(input)).toBe('string');
+      },
+    );
+
+    it.each([['25/02/2025'], ['abcdefgtlom']])(
+      `should throw BadRequestException on future date or unexpected input format`,
+      (input) => {
+        expect(() => {
+          isValidUpstreamFormatDate(input);
         }).toThrow(BadRequestException);
       },
     );

@@ -10,10 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { Request } from 'express';
-import {
-  RecordType,
-  RestrictedRecordEnum,
-} from '../../../common/constants/enumerations';
+import { RecordType, YNEnum } from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import {
@@ -290,7 +287,7 @@ export class AuthService {
     }
     searchspec =
       searchspec +
-      `([${idirFieldName}]='${idir}')) AND ([${restrictedFieldName}]='${RestrictedRecordEnum.False}')`;
+      `([${idirFieldName}]='${idir}')) AND ([${restrictedFieldName}]='${YNEnum.False}')`;
     if (isEntityNumber !== undefined && isEntityNumber === true) {
       const entityNumberFieldName = this.configService.get<string>(
         `upstreamAuth.${recordType}.entityNumberField`,

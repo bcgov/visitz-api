@@ -18,6 +18,10 @@ import {
   SubmitNotesWorkflowEntity,
 } from '../../entities/submit-notes-workflow.entity';
 import { EntityType } from '../../common/constants/enumerations';
+import {
+  SubmitSafetyAssessmentResponseExample,
+  SubmitSafetyAssessmentWorkflowEntity,
+} from '../../entities/submit-safety-assessment.entity';
 
 describe('WorkflowsController', () => {
   let controller: WorkflowsController;
@@ -55,7 +59,7 @@ describe('WorkflowsController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('postSingleCaseInPersonVisitRecord tests', () => {
+  describe('postWorkflowNotes tests', () => {
     it.each([
       [
         {
@@ -83,6 +87,134 @@ describe('WorkflowsController', () => {
         const result = await controller.postWorkflowNotes(req, body);
         expect(workflowServiceSpy).toHaveBeenCalledWith(body, idir);
         expect(result).toEqual(new SubmitNotesWorkflowEntity(data));
+      },
+    );
+  });
+
+  describe('postWorkflowSafetyAssessment tests', () => {
+    it.each([
+      [
+        {
+          Payload: [
+            {
+              incidentNumber: '123456',
+              dateOfAssessment: '08/20/2025',
+              familyName: 'Test',
+            },
+          ],
+          factorInfluence: [
+            {
+              ageUptoFive: 'N',
+              medicalMentalDisorder: 'N',
+              notReadilyAccessible: 'N',
+              diminishedMental: 'N',
+              diminishedPhysical: 'N',
+            },
+          ],
+          safetyFactors: [
+            {
+              physicalHarm: 'No',
+              seriousInjuryAbuse: 'N',
+              fearsMaltreatChild: 'N',
+              threatAgainstChild: 'N',
+              excessiveForce: 'N',
+              subsExposedInfant: 'N',
+              cmtClarification: 'test',
+              currentCircumstances: 'Yes',
+              cmtCircumstances: 'test',
+              sexAbuse: 'No',
+              cmtAbuse: 'test',
+              unableToProtect: 'No',
+              cmtProtect: 'test',
+              injuryExplanation: 'No',
+              cmtExplanation: 'test',
+              refuseAccess: 'No',
+              cmtAccess: 'test',
+              immediateNeeds: 'No',
+              cmtNeeds: 'test',
+              physicalCondition: 'No',
+              cmtCondition: 'test',
+              currentAbuse: 'No',
+              cmtCurrent: 'test',
+              partnerViolence: 'No',
+              cmtViolence: 'test',
+              predominantlyNegative: 'No',
+              cmtNegative: 'test',
+              emotionalStability: 'No',
+              cmtEmotional: 'test',
+              childFearful: 'No',
+              cmtFearful: 'test',
+              otherFactors: 'No',
+              cmtOtherFactors: 'test',
+            },
+          ],
+          protectiveCapacity: [
+            {
+              childCognitive: 'N',
+              parentCognitive: 'N',
+              parentWillingness: 'N',
+              parentResources: 'N',
+              parentSupportive: 'N',
+              parentProtect: 'N',
+              parentAccept: 'N',
+              parentRelationship: 'N',
+              parentAware: 'N',
+              parentProbSolving: 'N',
+              noProCapPresent: 'N',
+              capacitiesOther: 'N',
+              cmtProtectiveCapacity01: 'test',
+              cmtProtectiveCapacity02: 'test',
+            },
+          ],
+          safetyInterventions: [
+            {
+              directIntervention: 'N',
+              useOfIndividuals: 'N',
+              useCommAgencies: 'N',
+              protectVictim: 'N',
+              leaveHome: 'N',
+              nonOffendingParent: 'N',
+              legalIntPlanned: 'N',
+              otherSafetyInterventions: 'N',
+              childOutsideHome: 'N',
+              childRemoved: 'N',
+            },
+          ],
+          safetyDecisions: [
+            {
+              noSafetyFactors: 'N',
+              safeInterventions: 'N',
+              unsafeSafetyFactors: 'Y',
+              decisionUnsafe: 'Some children placed',
+              comments: 'test',
+              narrative: 'test',
+              readyFinalize: 'N',
+              readyFinalizeDate: '08/11/2025',
+              approvedFinalize: 'N',
+              approvedFinalizeDate: '08/11/2025',
+            },
+          ],
+          childsInOutCare: [
+            {
+              childContactId: '123456',
+            },
+          ],
+        },
+        'idir',
+        SubmitSafetyAssessmentResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idir, data) => {
+        const workflowServiceSpy = jest
+          .spyOn(workflowsService, 'submitSafetyAssessmentWorkflow')
+          .mockReturnValueOnce(
+            Promise.resolve(new SubmitSafetyAssessmentWorkflowEntity(data)),
+          );
+
+        const result = await controller.postWorkflowSafetyAssessment(req, body);
+        expect(workflowServiceSpy).toHaveBeenCalledWith(body, idir);
+        expect(result).toEqual(new SubmitSafetyAssessmentWorkflowEntity(data));
       },
     );
   });

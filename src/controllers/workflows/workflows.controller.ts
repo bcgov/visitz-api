@@ -35,6 +35,11 @@ import { ApiBadRequestErrorEntity } from '../../entities/api-bad-request-error.e
 import { ApiForbiddenErrorEntity } from '../../entities/api-forbidden-error.entity';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { ApiUnauthorizedErrorEntity } from '../../entities/api-unauthorized-error.entity';
+import { SafetyAssessmentWorkflowDto } from '../../dto/workflow-submit-safety-assessment.dto';
+import {
+  SubmitSafetyAssessmentResponseExample,
+  SubmitSafetyAssessmentWorkflowEntity,
+} from '../../entities/submit-safety-assessment.entity';
 
 @Controller('wf')
 @ApiParam(versionInfo)
@@ -80,6 +85,44 @@ export class WorkflowsController {
   ): Promise<SubmitNotesWorkflowEntity> {
     return await this.workflowsService.submitNotesWorkflow(
       notesDto,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`submit-safety-assessment`)
+  @ApiOperation({
+    description: 'Submit a safety assessment using workflow',
+  })
+  @ApiBody({
+    description: `Safety Assessment information.`,
+    type: SafetyAssessmentWorkflowDto,
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          SafetyAssessmentCreatedResponse: {
+            value: SubmitSafetyAssessmentResponseExample,
+          },
+        },
+      },
+    },
+  })
+  @ApiUnprocessableEntityResponse({ type: ApiUnprocessableEntityErrorEntity })
+  async postWorkflowSafetyAssessment(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    assessmentDto: SafetyAssessmentWorkflowDto,
+  ): Promise<SubmitSafetyAssessmentWorkflowEntity> {
+    return await this.workflowsService.submitSafetyAssessmentWorkflow(
+      assessmentDto,
       req.headers[idirUsernameHeaderField] as string,
     );
   }

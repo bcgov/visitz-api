@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   EntityStatus,
   RecordType,
-  RestrictedRecordEnum,
+  YNEnum,
 } from '../../common/constants/enumerations';
 import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
 import { VisitDetailsQueryParams } from '../../dto/filter-query-params.dto';
@@ -265,7 +265,7 @@ export class InPersonVisitsService {
   async isEligibleForPost(parentId: string, idir: string): Promise<boolean> {
     const baseSearchSpec =
       `([Id]="${parentId}" AND ` +
-      `[${this.restrictedFieldName}]="${RestrictedRecordEnum.False}" ` +
+      `[${this.restrictedFieldName}]="${YNEnum.False}" ` +
       `AND [${this.statusFieldName}]="${EntityStatus.Open}"`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(

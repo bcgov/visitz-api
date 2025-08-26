@@ -9,11 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import {
-  ExcludeEmptyFieldsEnum,
-  IncludeEntityEnum,
-  RecordCountNeededEnum,
-} from '../common/constants/enumerations';
+import { YNEnum, BooleanStringEnum } from '../common/constants/enumerations';
 import {
   pageSizeDefault,
   pageSizeMax,
@@ -49,17 +45,17 @@ export class FilterQueryParams {
   [afterParamName]?: string;
 
   @IsOptional()
-  @IsEnum(RecordCountNeededEnum)
+  @IsEnum(BooleanStringEnum)
   @Expose()
   @ApiProperty({
-    example: RecordCountNeededEnum.False,
-    default: RecordCountNeededEnum.False,
-    enum: RecordCountNeededEnum,
+    example: BooleanStringEnum.False,
+    default: BooleanStringEnum.False,
+    enum: BooleanStringEnum,
     description:
       `Whether or not a record count is needed. Set to` +
-      ` ${RecordCountNeededEnum.True} if you wish to use pagination.`,
+      ` ${BooleanStringEnum.True} if you wish to use pagination.`,
   })
-  [recordCountNeededParamName]?: string = RecordCountNeededEnum.False;
+  [recordCountNeededParamName]?: string = BooleanStringEnum.False;
 
   @IsOptional()
   @IsInt()
@@ -96,72 +92,72 @@ export class FilterQueryParams {
   [startRowNumParamName]?: number;
 
   @IsOptional()
-  @IsEnum(ExcludeEmptyFieldsEnum)
+  @IsEnum(YNEnum)
   @Expose()
   @ApiProperty({
-    example: ExcludeEmptyFieldsEnum.False,
-    default: ExcludeEmptyFieldsEnum.False,
-    enum: ExcludeEmptyFieldsEnum,
+    example: YNEnum.False,
+    default: YNEnum.False,
+    enum: YNEnum,
     description:
       `Whether or not empty fields should be removed from the response. Set to` +
-      ` ${ExcludeEmptyFieldsEnum.True} if you want these fields to be removed.`,
+      ` ${YNEnum.True} if you want these fields to be removed.`,
   })
-  [excludeEmptyFieldsParamName]?: string = ExcludeEmptyFieldsEnum.False;
+  [excludeEmptyFieldsParamName]?: string = YNEnum.False;
 }
 
 @Exclude()
 export class CaseloadQueryParams extends FilterQueryParams {
   @IsOptional()
-  @IsEnum(IncludeEntityEnum)
+  @IsEnum(BooleanStringEnum)
   @Expose()
   @ApiProperty({
-    example: IncludeEntityEnum.True,
-    default: IncludeEntityEnum.True,
-    enum: IncludeEntityEnum,
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
     description:
       `Whether or not to include cases in caseload return. Set to` +
-      ` ${IncludeEntityEnum.False} if you wish to exclude cases.`,
+      ` ${BooleanStringEnum.False} if you wish to exclude cases.`,
   })
-  [caseIncludeParam]?: string = IncludeEntityEnum.True;
+  [caseIncludeParam]?: string = BooleanStringEnum.True;
 
   @IsOptional()
-  @IsEnum(IncludeEntityEnum)
+  @IsEnum(BooleanStringEnum)
   @Expose()
   @ApiProperty({
-    example: IncludeEntityEnum.True,
-    default: IncludeEntityEnum.True,
-    enum: IncludeEntityEnum,
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
     description:
       `Whether or not to include incidents in caseload return. Set to` +
-      ` ${IncludeEntityEnum.False} if you wish to exclude incidents.`,
+      ` ${BooleanStringEnum.False} if you wish to exclude incidents.`,
   })
-  [incidentIncludeParam]?: string = IncludeEntityEnum.True;
+  [incidentIncludeParam]?: string = BooleanStringEnum.True;
 
   @IsOptional()
-  @IsEnum(IncludeEntityEnum)
+  @IsEnum(BooleanStringEnum)
   @Expose()
   @ApiProperty({
-    example: IncludeEntityEnum.True,
-    default: IncludeEntityEnum.True,
-    enum: IncludeEntityEnum,
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
     description:
       `Whether or not to include service requests in caseload return. Set to` +
-      ` ${IncludeEntityEnum.False} if you wish to exclude service requests.`,
+      ` ${BooleanStringEnum.False} if you wish to exclude service requests.`,
   })
-  [srIncludeParam]?: string = IncludeEntityEnum.True;
+  [srIncludeParam]?: string = BooleanStringEnum.True;
 
   @IsOptional()
-  @IsEnum(IncludeEntityEnum)
+  @IsEnum(BooleanStringEnum)
   @Expose()
   @ApiProperty({
-    example: IncludeEntityEnum.True,
-    default: IncludeEntityEnum.True,
-    enum: IncludeEntityEnum,
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
     description:
       `Whether or not to include memos in caseload return. Set to` +
-      ` ${IncludeEntityEnum.False} if you wish to exclude memos.`,
+      ` ${BooleanStringEnum.False} if you wish to exclude memos.`,
   })
-  [memoIncludeParam]?: string = IncludeEntityEnum.True;
+  [memoIncludeParam]?: string = BooleanStringEnum.True;
 }
 
 @Exclude()

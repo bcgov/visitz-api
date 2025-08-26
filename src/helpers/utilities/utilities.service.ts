@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import {
   idirJWTFieldName,
   upstreamDateFormat,
-  upstreamDateFormatDateOfVisit,
+  upstreamDateFormatNoTime,
 } from '../../common/constants/upstream-constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -13,6 +13,7 @@ import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   dateFormatError,
   emojiError,
+  upstreamDateFormatError,
 } from '../../common/constants/error-constants';
 import {
   emojiRegex,
@@ -192,6 +193,10 @@ export class UtilitiesService {
           entityNumber,
         ];
       }
+      const incidentNumber = this.findNestedValue(body, 'incidentNumber');
+      if (incidentNumber !== undefined) {
+        return [EntityType.Incident, incidentNumber];
+      }
       throw new Error('Entity number or type not found.');
     } catch (error: any) {
       this.logger.error({ error });
@@ -209,10 +214,24 @@ export function isPastISO8601Date(date: string): string {
     });
     const currentTimeUTC = DateTime.now().toUTC();
     if (dateObject <= currentTimeUTC) {
-      return dateObject.toFormat(upstreamDateFormatDateOfVisit);
+      return dateObject.toFormat(upstreamDateFormatNoTime);
     }
   }
   throw new BadRequestException([dateFormatError]);
+}
+
+export function isValidUpstreamFormatDate(date: string): string {
+  const dateObject = DateTime.fromFormat(date, upstreamDateFormatNoTime, {
+    zone: 'UTC',
+  });
+  if (dateObject.isValid === false) {
+    throw new BadRequestException([upstreamDateFormatError]);
+  }
+  const currentTimeUTC = DateTime.now().toUTC();
+  if (dateObject <= currentTimeUTC) {
+    return date;
+  }
+  throw new BadRequestException([upstreamDateFormatError]);
 }
 
 export function isNotEmoji(input: string): string {
