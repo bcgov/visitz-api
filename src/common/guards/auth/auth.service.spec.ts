@@ -521,7 +521,7 @@ describe('AuthService', () => {
       },
     );
 
-    it.each([[404], [500]])(`Should throw on axios error`, async (status) => {
+    it.each([[403], [500]])(`Should throw on axios error`, async (status) => {
       const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
       const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
         throw new AxiosError(
@@ -633,7 +633,7 @@ describe('AuthService', () => {
       },
     );
 
-    it.each([[404], [500]])(`Should throw on axios error`, async (status) => {
+    it.each([[403], [500]])(`Should throw on axios error`, async (status) => {
       const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
       const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
         throw new AxiosError(
