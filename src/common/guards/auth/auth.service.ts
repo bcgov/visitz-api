@@ -344,7 +344,7 @@ export class AuthService {
           function: this.getIsAssignedToOfficeUpstream.name,
         });
         if (error.status === 404) {
-          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
+          return [false, searchspec];
         }
         throw new HttpException(
           {
@@ -432,6 +432,9 @@ export class AuthService {
         });
         await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
+        if (error.status === 404) {
+          return [false, null];
+        }
         throw new HttpException(
           {
             status: error.status,

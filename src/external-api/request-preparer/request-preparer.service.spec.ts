@@ -315,28 +315,6 @@ describe('RequestPreparerService', () => {
       },
     );
 
-    it('Should return HttpException with status 204 on 404 from upstream', async () => {
-      const spy = jest.spyOn(httpService, 'post').mockImplementation(() => {
-        throw new AxiosError(
-          'Axios Error',
-          '404',
-          {} as InternalAxiosRequestConfig,
-          {},
-          {
-            data: {},
-            status: 404,
-            statusText: '',
-            headers: {} as RawAxiosRequestHeaders,
-            config: {} as InternalAxiosRequestConfig,
-          },
-        );
-      });
-      await expect(
-        service.sendPostRequest('url', {}, {}, {}),
-      ).rejects.toHaveProperty('status', 204);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
     it('Should return HttpException with status 500 on bearer token undefined', async () => {
       const spy = jest
         .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
@@ -388,28 +366,6 @@ describe('RequestPreparerService', () => {
         expect(spy).toHaveBeenCalledTimes(1);
       },
     );
-
-    it('Should return HttpException with status 204 on 404 from upstream', async () => {
-      const spy = jest.spyOn(httpService, 'put').mockImplementation(() => {
-        throw new AxiosError(
-          'Axios Error',
-          '404',
-          {} as InternalAxiosRequestConfig,
-          {},
-          {
-            data: {},
-            status: 404,
-            statusText: '',
-            headers: {} as RawAxiosRequestHeaders,
-            config: {} as InternalAxiosRequestConfig,
-          },
-        );
-      });
-      await expect(
-        service.sendPutRequest('url', {}, {}, {}),
-      ).rejects.toHaveProperty('status', 204);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
 
     it('Should return HttpException with status 500 on bearer token undefined', async () => {
       const spy = jest

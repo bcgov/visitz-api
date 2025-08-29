@@ -194,9 +194,6 @@ export class RequestPreparerService {
           cause: error.cause,
           buildNumber: this.buildNumber,
         });
-        if (error.status === 404) {
-          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
-        }
         throw new HttpException(
           {
             status: error.status,
@@ -247,9 +244,6 @@ export class RequestPreparerService {
           cause: error.cause,
           buildNumber: this.buildNumber,
         });
-        if (error.status === 404) {
-          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
-        }
         throw new HttpException(
           {
             status: error.status,
