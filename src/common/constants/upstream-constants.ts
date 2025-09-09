@@ -13,6 +13,7 @@ const caseChildServices = 'Child Services';
 const childVisitType = 'In Person Child Youth';
 const childVisitIdirFieldName = 'Login Name';
 const childVisitEntityIdFieldName = 'Parent Id';
+const attachmentTypeSafetyAssessment = 'Safety Assessment';
 const startRowNumParamName = 'StartRowNum';
 const recordCountNeededParamName = 'recordcountneeded';
 const pageSizeParamName = 'PageSize';
@@ -66,6 +67,7 @@ export {
   childVisitType,
   childVisitIdirFieldName,
   childVisitEntityIdFieldName,
+  attachmentTypeSafetyAssessment,
   startRowNumParamName,
   recordCountNeededParamName,
   pageSizeParamName,

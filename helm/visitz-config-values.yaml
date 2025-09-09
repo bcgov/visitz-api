@@ -494,3 +494,13 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_ENDPOINT
+  - name: ATTACHMENTS_FORM_DESCRIPTION_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_FORM_DESCRIPTION_FIELD
+  - name: ATTACHMENTS_STATUS_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ATTACHMENTS_STATUS_FIELD

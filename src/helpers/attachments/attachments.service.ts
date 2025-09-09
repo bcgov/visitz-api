@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   AttachmentParentIdFieldMap,
+  AttachmentStatusEnum,
   EntityStatus,
   RecordType,
   YNEnum,
@@ -37,6 +38,7 @@ import {
   PostAttachmentDtoUpstream,
 } from '../../dto/post-attachment.dto';
 import {
+  attachmentTypeSafetyAssessment,
   trustedIdirHeaderName,
   upstreamAttachmentConstraintNull,
 } from '../../common/constants/upstream-constants';
@@ -51,6 +53,8 @@ export class AttachmentsService {
   workspace: string | undefined;
   postWorkspace: string | undefined;
   afterFieldName: string | undefined;
+  formDescriptionFieldName: string;
+  attachmentStatusFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
   srRestrictedFieldName: string;
@@ -87,6 +91,12 @@ export class AttachmentsService {
     this.workspace = this.configService.get('workspaces.attachments');
     this.postWorkspace = this.configService.get('workspaces.postAttachments');
     this.afterFieldName = this.configService.get('afterFieldName.attachments');
+    this.formDescriptionFieldName = this.configService.get<string>(
+      'dataApiParameters.attachments.formDescriptionField',
+    );
+    this.attachmentStatusFieldName = this.configService.get<string>(
+      'dataApiParameters.attachments.statusField',
+    );
     this.caseRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.case.restrictedField`,
     );
@@ -149,7 +159,11 @@ export class AttachmentsService {
     idir: string,
     filter?: FilterQueryParams,
   ): Promise<NestedAttachmentsEntity> {
-    const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
+    const baseSearchSpec =
+      `([${typeFieldName}]="${id[idName]}" AND ` +
+      `([${this.formDescriptionFieldName}] IS NULL OR ` +
+      `( NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
+      `( NOT [${this.attachmentStatusFieldName}]="${AttachmentStatusEnum.Complete}"))))`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -176,7 +190,11 @@ export class AttachmentsService {
     idir: string,
     filter?: AttachmentDetailsQueryParams,
   ): Promise<AttachmentDetailsEntity> {
-    const baseSearchSpec = `([${typeFieldName}]="${id[idName]}"`;
+    const baseSearchSpec =
+      `([${typeFieldName}]="${id[idName]}" AND ` +
+      `([${this.formDescriptionFieldName}] IS NULL OR ` +
+      `( NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
+      `( NOT [${this.attachmentStatusFieldName}]="${AttachmentStatusEnum.Complete}"))))`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
