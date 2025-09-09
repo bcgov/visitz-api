@@ -176,4 +176,11 @@ export default () => ({
         process.env.SUBMIT_SAFETY_ASSESSMENT_REQUEST_PARENT_FIELD_NAME ?? ' ',
     },
   },
+  dataApiParameters: {
+    attachments: {
+      formDescriptionField:
+        process.env.ATTACHMENTS_FORM_DESCRIPTION_FIELD ?? ' ',
+      statusField: process.env.ATTACHMENTS_STATUS_FIELD ?? ' ',
+    },
+  },
 });
