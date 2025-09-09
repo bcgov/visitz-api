@@ -162,8 +162,8 @@ export class AttachmentsService {
     const baseSearchSpec =
       `([${typeFieldName}]="${id[idName]}" AND ` +
       `([${this.formDescriptionFieldName}] IS NULL OR ` +
-      `( NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
-      `( NOT [${this.attachmentStatusFieldName}]="${AttachmentStatusEnum.Complete}"))))`;
+      `NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}"))`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -193,8 +193,8 @@ export class AttachmentsService {
     const baseSearchSpec =
       `([${typeFieldName}]="${id[idName]}" AND ` +
       `([${this.formDescriptionFieldName}] IS NULL OR ` +
-      `( NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
-      `( NOT [${this.attachmentStatusFieldName}]="${AttachmentStatusEnum.Complete}"))))`;
+      `NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}"))`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
