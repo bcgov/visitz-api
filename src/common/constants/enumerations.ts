@@ -82,6 +82,8 @@ enum AttachmentStatusEnum {
 enum CaseType {
   ChildServices = 'Child Services',
   FamilyServices = 'Family Services',
+  CYSNFamilyServices = 'CYSN Family Services',
+  Resource = 'Resource',
   // There are additional types, but these are the only ones we want to show
 }
 
