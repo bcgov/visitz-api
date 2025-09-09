@@ -198,7 +198,9 @@ export class CaseloadService {
       params['searchspec'] =
         params['searchspec'] +
         ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
-        ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}")`;
+        ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}"` +
+        ` OR [${this.caseTypeFieldName}]="${CaseType.CYSNFamilyServices}"` +
+        ` OR [${this.caseTypeFieldName}]="${CaseType.Resource}")`;
     } else if (type == RecordType.Incident) {
       params['searchspec'] =
         params['searchspec'] +
@@ -217,13 +219,13 @@ export class CaseloadService {
       const idirFieldVarName = `${type}IdirFieldName`;
       const statusFieldVarName = `${type}StatusFieldName`;
       const restrictedFieldVarName = `${type}RestrictedFieldName`;
-      let baseSearchSpec = ``;
+      let baseSearchSpec = `(`;
       if (type === RecordType.Case || type == RecordType.Incident) {
-        baseSearchSpec = `EXISTS `;
+        baseSearchSpec = baseSearchSpec + `EXISTS `;
       }
       baseSearchSpec =
         baseSearchSpec +
-        `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}")` +
+        `([${this[idirFieldVarName]}]="${idir}")) AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}")` +
         ` AND ([${this[restrictedFieldVarName]}]="${YNEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
