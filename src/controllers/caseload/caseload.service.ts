@@ -7,12 +7,10 @@ import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
-  CaseType,
+  BooleanStringEnum,
   EntityStatus,
-  IncidentType,
-  IncludeEntityEnum,
   RecordType,
-  RestrictedRecordEnum,
+  YNEnum,
 } from '../../common/constants/enumerations';
 import {
   FilterQueryParams,
@@ -78,8 +76,6 @@ export class CaseloadService {
   incidentRestrictedFieldName: string;
   srRestrictedFieldName: string;
   memoRestrictedFieldName: string;
-  caseTypeFieldName: string;
-  incidentTypeFieldName: string;
   caseWorkspace: string;
   incidentWorkspace: string;
   srWorkspace: string;
@@ -159,12 +155,6 @@ export class CaseloadService {
     this.memoRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.memo.restrictedField`,
     );
-    this.caseTypeFieldName = this.configService.get<string>(
-      `upstreamAuth.case.typeField`,
-    );
-    this.incidentTypeFieldName = this.configService.get<string>(
-      `upstreamAuth.incident.typeField`,
-    );
     this.caseWorkspace = this.configService.get<string>(
       `upstreamAuth.case.workspace`,
     );
@@ -193,20 +183,6 @@ export class CaseloadService {
     this.baseUrl = this.configService.get<string>(`endpointUrls.baseUrl`);
   }
 
-  recordTypeSearchSpecAppend(params, type: RecordType) {
-    if (type === RecordType.Case) {
-      params['searchspec'] =
-        params['searchspec'] +
-        ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
-        ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}")`;
-    } else if (type == RecordType.Incident) {
-      params['searchspec'] =
-        params['searchspec'] +
-        ` AND ([${this.incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
-    }
-    return params;
-  }
-
   caseloadUpstreamRequestPreparer(
     idir: string,
     filter: FilterQueryParams,
@@ -217,14 +193,14 @@ export class CaseloadService {
       const idirFieldVarName = `${type}IdirFieldName`;
       const statusFieldVarName = `${type}StatusFieldName`;
       const restrictedFieldVarName = `${type}RestrictedFieldName`;
-      let baseSearchSpec = ``;
+      let baseSearchSpec = `(`;
       if (type === RecordType.Case || type == RecordType.Incident) {
-        baseSearchSpec = `EXISTS `;
+        baseSearchSpec = baseSearchSpec + `EXISTS `;
       }
       baseSearchSpec =
         baseSearchSpec +
-        `([${this[idirFieldVarName]}]="${idir}") AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}")` +
-        ` AND ([${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
+        `([${this[idirFieldVarName]}]="${idir}")) AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}")` +
+        ` AND ([${this[restrictedFieldVarName]}]="${YNEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
@@ -235,7 +211,7 @@ export class CaseloadService {
           idir,
           filter,
         );
-      params = this.recordTypeSearchSpecAppend(params, type as RecordType);
+      params = this.utilitiesService.recordTypeSearchSpecAppend(params, type);
       if (type === RecordType.Case) {
         params[queryHierarchyParamName] =
           this.utilitiesService.constructQueryHierarchy(
@@ -321,7 +297,7 @@ export class CaseloadService {
         baseSearchSpec +
         `([${this[idirFieldVarName]}]="${idir}"))` +
         ` AND ([${this[statusFieldVarName]}]="${EntityStatus.Open}") AND (` +
-        `[${this[restrictedFieldVarName]}]="${RestrictedRecordEnum.False}"`;
+        `[${this[restrictedFieldVarName]}]="${YNEnum.False}"`;
       // eslint-disable-next-line prefer-const
       let [headers, params] =
         this.requestPreparerService.prepareHeadersAndParams(
@@ -332,7 +308,7 @@ export class CaseloadService {
           idir,
           filter,
         );
-      params = this.recordTypeSearchSpecAppend(params, type as RecordType);
+      params = this.utilitiesService.recordTypeSearchSpecAppend(params, type);
       if (type === RecordType.Case) {
         params[queryHierarchyParamName] =
           this.utilitiesService.constructQueryHierarchy(
@@ -528,16 +504,16 @@ export class CaseloadService {
   createEntityTypeArray(filter?: CaseloadQueryParams): RecordType[] {
     if (filter) {
       const entityTypeArray: RecordType[] = [];
-      if (filter[caseIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[caseIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.Case);
       }
-      if (filter[incidentIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[incidentIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.Incident);
       }
-      if (filter[srIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[srIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.SR);
       }
-      if (filter[memoIncludeParam] !== IncludeEntityEnum.False) {
+      if (filter[memoIncludeParam] !== BooleanStringEnum.False) {
         entityTypeArray.push(RecordType.Memo);
       }
       if (entityTypeArray.length < 1) {

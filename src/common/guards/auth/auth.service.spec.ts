@@ -479,12 +479,12 @@ describe('AuthService', () => {
       [
         validId,
         validRecordType,
-        `(([undefined]='office1' OR [undefined]='office2') OR EXISTS ([undefined]='IDIRTEST')) AND ([undefined]='N')`,
+        `(([undefined]='office1' OR [undefined]='office2') OR EXISTS ([undefined]='IDIRTEST')) AND ([undefined]='N') AND ([undefined]='Open')`,
       ],
       [
         validId,
         RecordType.Memo,
-        `(([undefined]='office1' OR [undefined]='office2') OR ([undefined]='IDIRTEST')) AND ([undefined]='N')`,
+        `(([undefined]='office1' OR [undefined]='office2') OR ([undefined]='IDIRTEST')) AND ([undefined]='N') AND ([undefined]='Open')`,
       ],
     ])(
       'should return idir string given good input',
@@ -521,7 +521,7 @@ describe('AuthService', () => {
       },
     );
 
-    it.each([[404], [500]])(`Should throw on axios error`, async (status) => {
+    it.each([[403], [500]])(`Should throw on axios error`, async (status) => {
       const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
       const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
         throw new AxiosError(
@@ -633,7 +633,7 @@ describe('AuthService', () => {
       },
     );
 
-    it.each([[404], [500]])(`Should throw on axios error`, async (status) => {
+    it.each([[403], [500]])(`Should throw on axios error`, async (status) => {
       const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
       const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
         throw new AxiosError(

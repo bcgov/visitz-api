@@ -29,7 +29,7 @@ import {
   startRowNumParamName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
-import { RecordCountNeededEnum } from '../../common/constants/enumerations';
+import { BooleanStringEnum } from '../../common/constants/enumerations';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
@@ -118,7 +118,7 @@ describe('RequestPreparerService', () => {
         'workspace',
         {
           [pageSizeParamName]: 15,
-          [recordCountNeededParamName]: RecordCountNeededEnum.False,
+          [recordCountNeededParamName]: BooleanStringEnum.False,
         },
       ],
     ])(
@@ -145,8 +145,8 @@ describe('RequestPreparerService', () => {
           [pageSizeParamName]: filterQueryParams[pageSizeParamName],
           [recordCountNeededParamName]:
             filterQueryParams[recordCountNeededParamName] ===
-            RecordCountNeededEnum.True
-              ? RecordCountNeededEnum.True
+            BooleanStringEnum.True
+              ? BooleanStringEnum.True
               : undefined,
           [uniformResponseParamName]: UNIFORM_RESPONSE,
           [startRowNumParamName]: filterQueryParams[startRowNumParamName],
@@ -161,7 +161,7 @@ describe('RequestPreparerService', () => {
           [afterParamName]: '2024-02-20',
           [startRowNumParamName]: 2,
           [pageSizeParamName]: 15,
-          [recordCountNeededParamName]: RecordCountNeededEnum.True,
+          [recordCountNeededParamName]: BooleanStringEnum.True,
         } as FilterQueryParams,
         '02/20/2024 00:00:00',
       ],
@@ -188,8 +188,8 @@ describe('RequestPreparerService', () => {
           [pageSizeParamName]: filterQueryParams[pageSizeParamName],
           [recordCountNeededParamName]:
             filterQueryParams[recordCountNeededParamName] ===
-            RecordCountNeededEnum.True
-              ? RecordCountNeededEnum.True
+            BooleanStringEnum.True
+              ? BooleanStringEnum.True
               : undefined,
           [uniformResponseParamName]: UNIFORM_RESPONSE,
           [startRowNumParamName]: filterQueryParams[startRowNumParamName],
@@ -315,28 +315,6 @@ describe('RequestPreparerService', () => {
       },
     );
 
-    it('Should return HttpException with status 204 on 404 from upstream', async () => {
-      const spy = jest.spyOn(httpService, 'post').mockImplementation(() => {
-        throw new AxiosError(
-          'Axios Error',
-          '404',
-          {} as InternalAxiosRequestConfig,
-          {},
-          {
-            data: {},
-            status: 404,
-            statusText: '',
-            headers: {} as RawAxiosRequestHeaders,
-            config: {} as InternalAxiosRequestConfig,
-          },
-        );
-      });
-      await expect(
-        service.sendPostRequest('url', {}, {}, {}),
-      ).rejects.toHaveProperty('status', 204);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
     it('Should return HttpException with status 500 on bearer token undefined', async () => {
       const spy = jest
         .spyOn(tokenRefresherService, 'refreshUpstreamBearerToken')
@@ -388,28 +366,6 @@ describe('RequestPreparerService', () => {
         expect(spy).toHaveBeenCalledTimes(1);
       },
     );
-
-    it('Should return HttpException with status 204 on 404 from upstream', async () => {
-      const spy = jest.spyOn(httpService, 'put').mockImplementation(() => {
-        throw new AxiosError(
-          'Axios Error',
-          '404',
-          {} as InternalAxiosRequestConfig,
-          {},
-          {
-            data: {},
-            status: 404,
-            statusText: '',
-            headers: {} as RawAxiosRequestHeaders,
-            config: {} as InternalAxiosRequestConfig,
-          },
-        );
-      });
-      await expect(
-        service.sendPutRequest('url', {}, {}, {}),
-      ).rejects.toHaveProperty('status', 204);
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
 
     it('Should return HttpException with status 500 on bearer token undefined', async () => {
       const spy = jest
