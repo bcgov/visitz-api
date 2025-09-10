@@ -9,7 +9,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { EntityType, RecordType } from '../../common/constants/enumerations';
+import {
+  CaseType,
+  EntityType,
+  IncidentType,
+  RecordType,
+} from '../../common/constants/enumerations';
 import {
   dateFormatError,
   emojiError,
@@ -24,12 +29,21 @@ import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto
 
 @Injectable()
 export class UtilitiesService {
+  caseTypeFieldName: string;
+  incidentTypeFieldName: string;
   private readonly logger = new Logger(UtilitiesService.name);
 
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.caseTypeFieldName = this.configService.get<string>(
+      `upstreamAuth.case.typeField`,
+    );
+    this.incidentTypeFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.typeField`,
+    );
+  }
   /**
    * Converts an ISO 8601 formatted string to the MM/dd/yyyy HH:mm:ss format.
    * @param isoDate an ISO 8601 formatted string. Assumes the date given is provided in UTC
@@ -202,6 +216,22 @@ export class UtilitiesService {
       this.logger.error({ error });
       return [undefined, undefined];
     }
+  }
+
+  recordTypeSearchSpecAppend(params, type: RecordType) {
+    if (type === RecordType.Case) {
+      params['searchspec'] =
+        params['searchspec'] +
+        ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
+        ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}"` +
+        ` OR [${this.caseTypeFieldName}]="${CaseType.CYSNFamilyServices}"` +
+        ` OR [${this.caseTypeFieldName}]="${CaseType.Resource}")`;
+    } else if (type == RecordType.Incident) {
+      params['searchspec'] =
+        params['searchspec'] +
+        ` AND ([${this.incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
+    }
+    return params;
   }
 }
 
