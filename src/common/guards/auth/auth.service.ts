@@ -10,7 +10,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { Request } from 'express';
-import { RecordType, YNEnum } from '../../../common/constants/enumerations';
+import {
+  EntityStatus,
+  RecordType,
+  YNEnum,
+} from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import {
@@ -277,6 +281,9 @@ export class AuthService {
     const restrictedFieldName = this.configService.get<string>(
       `upstreamAuth.${recordType}.restrictedField`,
     );
+    const statusFieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.statusField`,
+    );
     let searchspec = this.utilitiesService.officeNamesStringToSearchSpec(
       officeNames,
       officeFieldName,
@@ -287,14 +294,15 @@ export class AuthService {
     }
     searchspec =
       searchspec +
-      `([${idirFieldName}]='${idir}')) AND ([${restrictedFieldName}]='${YNEnum.False}')`;
+      `([${idirFieldName}]='${idir}')) AND ([${restrictedFieldName}]='${YNEnum.False}') ` +
+      `AND ([${statusFieldName}]='${EntityStatus.Open}')`;
     if (isEntityNumber !== undefined && isEntityNumber === true) {
       const entityNumberFieldName = this.configService.get<string>(
         `upstreamAuth.${recordType}.entityNumberField`,
       );
       searchspec = searchspec + ` AND ([${entityNumberFieldName}]='${id}')`;
     }
-    const params = {
+    let params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
@@ -307,6 +315,10 @@ export class AuthService {
     ) {
       params['workspace'] = workspace;
     }
+    params = this.utilitiesService.recordTypeSearchSpecAppend(
+      params,
+      recordType,
+    );
     const headers = {
       Accept: CONTENT_TYPE,
       'Accept-Encoding': '*',
