@@ -31,7 +31,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.0.12",
     "@nestjs/swagger": "^11.1.0",
-    "axios": "^1.7.7",
+    "axios": "^1.12.1",
     "cache-manager": "^6.4.1",
     "clamscan": "^2.4.0",
     "class-transformer": "^0.5.1",
