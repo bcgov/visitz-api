@@ -200,7 +200,7 @@ describe('CaseloadService', () => {
           new QueryHierarchyComponent({
             classExample: CaseExample,
             name: queryHierarchyCaseParentClassName,
-            searchspec: `(EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}" OR [${caseTypeFieldName}]="${CaseType.Resource}")`,
+            searchspec: `(EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`,
             exclude: [queryHierarchyCaseChildClassName],
             childComponents: [
               new QueryHierarchyComponent({
@@ -363,7 +363,7 @@ describe('CaseloadService', () => {
           new QueryHierarchyComponent({
             classExample: CaseExample,
             name: queryHierarchyCaseParentClassName,
-            searchspec: `(([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}" OR [${caseTypeFieldName}]="${CaseType.Resource}")`,
+            searchspec: `(([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`,
             exclude: [queryHierarchyCaseChildClassName],
             childComponents: [
               new QueryHierarchyComponent({

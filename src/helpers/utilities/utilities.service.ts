@@ -224,8 +224,7 @@ export class UtilitiesService {
         params['searchspec'] +
         ` AND ([${this.caseTypeFieldName}]="${CaseType.ChildServices}"` +
         ` OR [${this.caseTypeFieldName}]="${CaseType.FamilyServices}"` +
-        ` OR [${this.caseTypeFieldName}]="${CaseType.CYSNFamilyServices}"` +
-        ` OR [${this.caseTypeFieldName}]="${CaseType.Resource}")`;
+        ` OR [${this.caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`;
     } else if (type == RecordType.Incident) {
       params['searchspec'] =
         params['searchspec'] +
