@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { RecordCountNeededEnum } from '../common/constants/enumerations';
+import { YNEnum, BooleanStringEnum } from '../common/constants/enumerations';
 import {
   pageSizeDefault,
   pageSizeMax,
@@ -23,10 +23,15 @@ import {
 import {
   inlineAttachmentParamName,
   afterParamName,
+  excludeEmptyFieldsParamName,
+  caseIncludeParam,
+  incidentIncludeParam,
+  srIncludeParam,
+  memoIncludeParam,
 } from '../common/constants/parameter-constants';
 
 @Exclude()
-export class AfterQueryParams {
+export class FilterQueryParams {
   @IsOptional()
   @IsISO8601({ strict: true })
   @Expose()
@@ -38,22 +43,19 @@ export class AfterQueryParams {
       ' Only results after the selected datetime will appear.',
   })
   [afterParamName]?: string;
-}
 
-@Exclude()
-export class FilterQueryParams extends AfterQueryParams {
   @IsOptional()
-  @IsEnum(RecordCountNeededEnum)
+  @IsEnum(BooleanStringEnum)
   @Expose()
   @ApiProperty({
-    example: RecordCountNeededEnum.False,
-    default: RecordCountNeededEnum.False,
-    enum: RecordCountNeededEnum,
+    example: BooleanStringEnum.False,
+    default: BooleanStringEnum.False,
+    enum: BooleanStringEnum,
     description:
       `Whether or not a record count is needed. Set to` +
-      ` ${RecordCountNeededEnum.True} if you wish to use pagination.`,
+      ` ${BooleanStringEnum.True} if you wish to use pagination.`,
   })
-  [recordCountNeededParamName]?: string = RecordCountNeededEnum.False;
+  [recordCountNeededParamName]?: string = BooleanStringEnum.False;
 
   @IsOptional()
   @IsInt()
@@ -88,6 +90,74 @@ export class FilterQueryParams extends AfterQueryParams {
       ` response header and PageSize parameter to enable pagination.`,
   })
   [startRowNumParamName]?: number;
+
+  @IsOptional()
+  @IsEnum(YNEnum)
+  @Expose()
+  @ApiProperty({
+    example: YNEnum.False,
+    default: YNEnum.False,
+    enum: YNEnum,
+    description:
+      `Whether or not empty fields should be removed from the response. Set to` +
+      ` ${YNEnum.True} if you want these fields to be removed.`,
+  })
+  [excludeEmptyFieldsParamName]?: string = YNEnum.False;
+}
+
+@Exclude()
+export class CaseloadQueryParams extends FilterQueryParams {
+  @IsOptional()
+  @IsEnum(BooleanStringEnum)
+  @Expose()
+  @ApiProperty({
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
+    description:
+      `Whether or not to include cases in caseload return. Set to` +
+      ` ${BooleanStringEnum.False} if you wish to exclude cases.`,
+  })
+  [caseIncludeParam]?: string = BooleanStringEnum.True;
+
+  @IsOptional()
+  @IsEnum(BooleanStringEnum)
+  @Expose()
+  @ApiProperty({
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
+    description:
+      `Whether or not to include incidents in caseload return. Set to` +
+      ` ${BooleanStringEnum.False} if you wish to exclude incidents.`,
+  })
+  [incidentIncludeParam]?: string = BooleanStringEnum.True;
+
+  @IsOptional()
+  @IsEnum(BooleanStringEnum)
+  @Expose()
+  @ApiProperty({
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
+    description:
+      `Whether or not to include service requests in caseload return. Set to` +
+      ` ${BooleanStringEnum.False} if you wish to exclude service requests.`,
+  })
+  [srIncludeParam]?: string = BooleanStringEnum.True;
+
+  @IsOptional()
+  @IsEnum(BooleanStringEnum)
+  @Expose()
+  @ApiProperty({
+    example: BooleanStringEnum.True,
+    default: BooleanStringEnum.True,
+    enum: BooleanStringEnum,
+    description:
+      `Whether or not to include memos in caseload return. Set to` +
+      ` ${BooleanStringEnum.False} if you wish to exclude memos.`,
+  })
+  [memoIncludeParam]?: string = BooleanStringEnum.True;
 }
 
 @Exclude()

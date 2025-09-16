@@ -7,11 +7,23 @@ const GET_CHILDREN = 'all';
 const uniformResponseParamName = 'uniformresponse';
 const recordCountHeaderName = 'total-record-count';
 const inlineAttachmentParamName = 'inlineattachment';
+const excludeEmptyFieldsParamName = 'excludeEmptyFieldsInResponse';
 const afterParamName = 'after';
+const caseIncludeParam = 'includeCase';
+const incidentIncludeParam = 'includeIncident';
+const srIncludeParam = 'includeSR';
+const memoIncludeParam = 'includeMemo';
 const queryHierarchyVisitParentClassName = 'ChildVisit';
 const queryHierarchyVisitChildClassName = 'VisitDetails';
 const queryHierarchyEmployeeParentClassName = 'Employee';
 const queryHierarchyEmployeeChildClassName = 'Position';
+const queryHierarchyCaseParentClassName = 'Case';
+const queryHierarchyCaseChildClassName = 'Position';
+const queryHierarchyIncidentParentClassName = 'Incident';
+const queryHierarchyIncidentChildAdditionalClassName =
+  'IncidentAdditionalInformation';
+const queryHierarchyIncidentChildCallClassName = 'IncidentCallInformation';
+const queryHierarchyIncidentChildConcernsClassName = 'IncidentConcerns';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -21,6 +33,7 @@ const emojiRegex =
 const mimeTypeRegex = /.(jpg|jpeg|png|pdf)/;
 const fileExtensionRegex =
   /(\.[pP][nN][gG]|\.[jJ][pP][eE]?[gG]|\.[pP][dD][fF])$/;
+const officeNamesSeparator = '{:|:}';
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
@@ -46,17 +59,29 @@ export {
   uniformResponseParamName,
   recordCountHeaderName,
   inlineAttachmentParamName,
+  excludeEmptyFieldsParamName,
   afterParamName,
+  caseIncludeParam,
+  incidentIncludeParam,
+  srIncludeParam,
+  memoIncludeParam,
   queryHierarchyVisitParentClassName,
   queryHierarchyVisitChildClassName,
   queryHierarchyEmployeeParentClassName,
   queryHierarchyEmployeeChildClassName,
+  queryHierarchyCaseParentClassName,
+  queryHierarchyCaseChildClassName,
+  queryHierarchyIncidentParentClassName,
+  queryHierarchyIncidentChildAdditionalClassName,
+  queryHierarchyIncidentChildCallClassName,
+  queryHierarchyIncidentChildConcernsClassName,
   idMaxLength,
   versionNumber,
   idRegex,
   emojiRegex,
   mimeTypeRegex,
   fileExtensionRegex,
+  officeNamesSeparator,
   idName,
   attachmentIdName,
   contactIdName,

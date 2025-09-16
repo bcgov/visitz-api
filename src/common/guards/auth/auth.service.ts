@@ -1,16 +1,27 @@
 import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cache } from 'cache-manager';
 import { Request } from 'express';
-import { RecordType } from '../../../common/constants/enumerations';
+import {
+  EntityStatus,
+  RecordType,
+  YNEnum,
+} from '../../../common/constants/enumerations';
 import { EnumTypeError } from '../../../common/errors/errors';
 import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
 import {
   CHILD_LINKS,
   CONTENT_TYPE,
   idName,
+  officeNamesSeparator,
   queryHierarchyEmployeeChildClassName,
   queryHierarchyEmployeeParentClassName,
   UNIFORM_RESPONSE,
@@ -87,41 +98,52 @@ export class AuthService {
       id,
       jti,
     );
+    const officeNamesKey =
+      this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
     let employeeActive: boolean | null = await this.cacheManager.get(idir);
+    let officeNames: string | null =
+      await this.cacheManager.get(officeNamesKey);
 
-    if (upstreamResult === null && employeeActive === null) {
+    if (employeeActive === null || officeNames === null) {
       this.logger.log(
         `Cache not hit for record type and active status, going upstream...`,
       );
-      let upstreamIdir: string | undefined, searchspec: string;
-      [[upstreamIdir, searchspec], employeeActive] = await Promise.all([
-        this.getAssignedIdirUpstream(id, recordType, idir),
-        this.getEmployeeActiveUpstream(idir),
-      ]);
+      let isAssignedToOffice: boolean = false,
+        searchspec: string = 'Not Set';
+      [employeeActive, officeNames] =
+        await this.getEmployeeActiveUpstream(idir);
+      if (employeeActive === true && officeNames !== null) {
+        [isAssignedToOffice, searchspec] =
+          await this.getIsAssignedToOfficeUpstream(
+            id,
+            recordType,
+            idir,
+            officeNames,
+          );
+      }
       upstreamResult = await this.evaluateUpstreamResult(
-        upstreamIdir,
+        isAssignedToOffice,
         idir,
         key,
         searchspec,
       );
     } else if (upstreamResult === null) {
       this.logger.log(`Cache not hit for record type, going upstream...`);
-      const [upstreamIdir, searchspec] = await this.getAssignedIdirUpstream(
-        id,
-        recordType,
-        idir,
-      );
+      const [upstreamIdir, searchspec] =
+        await this.getIsAssignedToOfficeUpstream(
+          id,
+          recordType,
+          idir,
+          officeNames,
+        );
       upstreamResult = await this.evaluateUpstreamResult(
         upstreamIdir,
         idir,
         key,
         searchspec,
       );
-    } else if (employeeActive === null) {
-      this.logger.log(`Cache not hit for active status, going upstream...`);
-      employeeActive = await this.getEmployeeActiveUpstream(idir);
     } else {
       this.logger.log(
         `Cache hit for record type! Key: ${key} Result: ${upstreamResult}`,
@@ -129,8 +151,19 @@ export class AuthService {
       this.logger.log(
         `Cache hit for employee status! Key: ${idir} Result: ${employeeActive}`,
       );
+      const readableOfficeNames =
+        typeof officeNames === 'string'
+          ? `["` + officeNames.replace(officeNamesSeparator, `","`) + `"]`
+          : officeNames;
+      this.logger.log(
+        `Cache hit for employee offices! Key: ${officeNamesKey} Result: ${readableOfficeNames}`,
+      );
     }
-    if (upstreamResult === 403 || employeeActive === false) {
+    if (
+      upstreamResult === 403 ||
+      employeeActive === false ||
+      officeNames === undefined
+    ) {
       return false;
     }
     return true;
@@ -150,27 +183,33 @@ export class AuthService {
   }
 
   async evaluateUpstreamResult(
-    upstreamIdir: string | undefined,
+    isAssignedToOffice: boolean,
     idir: string,
     key: string,
     searchspec: string,
   ) {
-    const authStatus = upstreamIdir === idir ? 200 : 403;
-    if (upstreamIdir !== undefined) {
+    const authStatus = isAssignedToOffice ? 200 : 403;
+    if (isAssignedToOffice === true) {
       await this.cacheManager.set(key, authStatus, this.cacheTime);
       this.logger.log(
-        `Assigned To check: user '${upstreamIdir}' is assigned to record`,
+        `Assigned To Office check: user '${idir}' is assigned to an office with this record`,
       );
     } else {
       this.logger.log(
-        `Assigned To check: failed with searchspec '${searchspec}'`,
+        `Assigned To Office check: failed with searchspec '${searchspec}'`,
       );
     }
     const upstreamResult = authStatus;
     return upstreamResult;
   }
 
-  async positionCheck(idir: string, response): Promise<boolean> {
+  async positionCheck(
+    idir: string,
+    response,
+  ): Promise<[boolean, string | null]> {
+    const officeNames = [];
+    const officeNamesKey =
+      this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     if (this.restrictToOrganization !== undefined) {
       const primaryOrganizationId =
         response.data['items'][0]['Primary Organization Id'];
@@ -182,45 +221,88 @@ export class AuthService {
           foundPositionOrganization = true;
           if (position['Organization'] !== this.restrictToOrganization) {
             this.logger.error({
-              msg: `Employees with primary organization '${position['Organization']}' are restricted from using this API`,
+              msg: `Employees with primary organization '${position['Organization']}' are restricted from using this API.`,
               buildNumber: this.buildNumber,
               function: this.getEmployeeActiveUpstream.name,
             });
+            await this.cacheManager.set(
+              officeNamesKey,
+              undefined,
+              this.cacheTime,
+            );
             await this.cacheManager.set(idir, false, this.cacheTime);
-            return false;
+            return [false, null];
           }
-          break;
         }
+        officeNames.push(position['Division']);
       }
       if (foundPositionOrganization === false) {
         this.logger.error({
-          msg: `Primary organization with id '${primaryOrganizationId}' not found in Employee Position array`,
+          msg: `Primary organization with id '${primaryOrganizationId}' not found in Employee Position array.`,
           buildNumber: this.buildNumber,
           function: this.getEmployeeActiveUpstream.name,
         });
+        await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
-        return false;
+        return [false, null];
+      }
+    } else {
+      for (const position of response.data['items'][0][
+        queryHierarchyEmployeeChildClassName
+      ]) {
+        officeNames.push(position['Division']);
       }
     }
+    const officeNamesSorted = officeNames.sort();
+    const officeNamesString = officeNamesSorted.join(officeNamesSeparator);
+    await this.cacheManager.set(
+      officeNamesKey,
+      officeNamesString,
+      this.cacheTime,
+    );
     await this.cacheManager.set(idir, true, this.cacheTime);
-    return true;
+    return [true, officeNamesString];
   }
 
-  async getAssignedIdirUpstream(
+  async getIsAssignedToOfficeUpstream(
     id: string,
     recordType: RecordType,
     idir: string,
-  ): Promise<[string | undefined, string]> {
+    officeNames: string,
+    isEntityNumber?: boolean,
+  ): Promise<[boolean | undefined, string]> {
     let workspace;
-    const fieldName = this.configService.get<string>(
+    const idirFieldName = this.configService.get<string>(
       `upstreamAuth.${recordType}.searchspecIdirField`,
     );
-    let searchspec = ``;
+    const officeFieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.officeField`,
+    );
+    const restrictedFieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.restrictedField`,
+    );
+    const statusFieldName = this.configService.get<string>(
+      `upstreamAuth.${recordType}.statusField`,
+    );
+    let searchspec = this.utilitiesService.officeNamesStringToSearchSpec(
+      officeNames,
+      officeFieldName,
+    );
+    searchspec = `(` + searchspec.substring(0, searchspec.length - 1) + `) OR `;
     if (recordType === RecordType.Case || recordType == RecordType.Incident) {
-      searchspec = `EXISTS `;
+      searchspec = searchspec + `EXISTS `;
     }
-    searchspec = searchspec + `([${fieldName}]='${idir}')`;
-    const params = {
+    searchspec =
+      searchspec +
+      `([${idirFieldName}]='${idir}')) AND ([${restrictedFieldName}]='${YNEnum.False}') ` +
+      `AND ([${statusFieldName}]='${EntityStatus.Open}')`;
+    if (isEntityNumber !== undefined && isEntityNumber === true) {
+      const entityNumberFieldName = this.configService.get<string>(
+        `upstreamAuth.${recordType}.entityNumberField`,
+      );
+      searchspec = searchspec + ` AND ([${entityNumberFieldName}]='${id}')`;
+    }
+    let params = {
       ViewMode: VIEW_MODE,
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
@@ -233,15 +315,22 @@ export class AuthService {
     ) {
       params['workspace'] = workspace;
     }
+    params = this.utilitiesService.recordTypeSearchSpecAppend(
+      params,
+      recordType,
+    );
     const headers = {
       Accept: CONTENT_TYPE,
       'Accept-Encoding': '*',
       [trustedIdirHeaderName]: idir,
     };
-    const url =
+    let url =
       this.baseUrl +
-      this.configService.get<string>(`upstreamAuth.${recordType}.endpoint`) +
-      id;
+      this.configService.get<string>(`upstreamAuth.${recordType}.endpoint`);
+
+    if (isEntityNumber === undefined || isEntityNumber === false) {
+      url = url + id;
+    }
 
     let response;
     try {
@@ -255,7 +344,7 @@ export class AuthService {
       response = await firstValueFrom(
         this.httpService.get(url, { params, headers }),
       );
-      return [idir, searchspec];
+      return [true, searchspec];
     } catch (error) {
       if (error instanceof AxiosError) {
         this.logger.error({
@@ -264,16 +353,44 @@ export class AuthService {
           stack: error.stack,
           cause: error.cause,
           buildNumber: this.buildNumber,
-          function: this.getAssignedIdirUpstream.name,
+          function: this.getIsAssignedToOfficeUpstream.name,
         });
+        if (error.status === 404) {
+          return [false, searchspec];
+        }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
     }
-    return [undefined, searchspec];
   }
 
-  async getEmployeeActiveUpstream(idir: string): Promise<boolean> {
+  async getEmployeeActiveUpstream(
+    idir: string,
+  ): Promise<[boolean, string | null]> {
+    const officeNamesKey =
+      this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     const params = {
       ViewMode: 'Catalog',
       ChildLinks: CHILD_LINKS,
@@ -325,11 +442,36 @@ export class AuthService {
           buildNumber: this.buildNumber,
           function: this.getEmployeeActiveUpstream.name,
         });
+        await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
+        if (error.status === 404) {
+          return [false, null];
+        }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
     }
-    return false;
   }
 }

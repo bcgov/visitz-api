@@ -22,9 +22,11 @@ import {
 } from '../../../common/constants/upstream-constants';
 import {
   idName,
+  officeNamesSeparator,
   queryHierarchyEmployeeChildClassName,
 } from '../../../common/constants/parameter-constants';
 import { JwtService } from '@nestjs/jwt';
+import { HttpException } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -39,6 +41,7 @@ describe('AuthService', () => {
   const testIdir = 'IDIRTEST';
   const testOrg = 'testorg';
   const testOrgId = 'testorgid';
+  const officeNames = `office1${officeNamesSeparator}office2`;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,6 +66,7 @@ describe('AuthService', () => {
                 [`upstreamAuth.employee.restrictToOrg`]: testOrg,
                 'recordCache.cacheTtlMs': 1000000,
                 skipJWTCache: true,
+                restrictToOrg: testOrg,
               };
               return lookup[key];
             }),
@@ -90,6 +94,7 @@ describe('AuthService', () => {
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce('')
         .mockResolvedValueOnce('');
       const spy = jest
@@ -99,9 +104,15 @@ describe('AuthService', () => {
             data: {
               items: [
                 {
-                  [configService.get(
-                    `upstreamAuth.${validRecordType}.idirField`,
-                  )]: testIdir,
+                  'Login Name': testIdir,
+                  'Employment Status': 'Active',
+                  'Primary Organization Id': testOrgId,
+                  [queryHierarchyEmployeeChildClassName]: [
+                    {
+                      'Organization Id': testOrgId,
+                      Organization: testOrg,
+                    },
+                  ],
                 },
               ],
             },
@@ -119,15 +130,9 @@ describe('AuthService', () => {
             data: {
               items: [
                 {
-                  'Login Name': testIdir,
-                  'Employment Status': 'Active',
-                  'Primary Organization Id': testOrgId,
-                  [queryHierarchyEmployeeChildClassName]: [
-                    {
-                      'Organization Id': testOrgId,
-                      Organization: testOrg,
-                    },
-                  ],
+                  [configService.get(
+                    `upstreamAuth.${validRecordType}.idirField`,
+                  )]: testIdir,
                 },
               ],
             },
@@ -161,27 +166,29 @@ describe('AuthService', () => {
         validRecordType,
       );
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(cacheSpy).toHaveBeenCalledTimes(4);
+      expect(cacheSpy).toHaveBeenCalledTimes(5);
       expect(isAuthed).toBe(true);
     });
 
     it.each([
-      [undefined, undefined, undefined, 0],
-      [testIdir, 403, true, 2],
-      [testIdir, 200, false, 2],
-      [testIdir, 403, false, 2],
+      [undefined, undefined, undefined, undefined, 0],
+      [testIdir, 403, true, officeNames, 3],
+      [testIdir, 200, false, undefined, 3],
+      [testIdir, 403, false, undefined, 3],
     ])(
       'should return false with invalid record in cache',
       async (
         idir,
         cacheReturnRecord,
         cacheReturnEmpStatus,
+        cacheReturnOfficeNames,
         cacheSpyCallTimes,
       ) => {
         const cacheSpy = jest
           .spyOn(cache, 'get')
           .mockResolvedValueOnce(cacheReturnRecord)
-          .mockResolvedValueOnce(cacheReturnEmpStatus);
+          .mockResolvedValueOnce(cacheReturnEmpStatus)
+          .mockResolvedValueOnce(cacheReturnOfficeNames);
         let jwt = 'invalidJwt';
         if (idir !== undefined) {
           jwt = jwtService.sign(
@@ -210,11 +217,12 @@ describe('AuthService', () => {
       },
     );
 
-    it('should return false with upstream invalid record for record type', async () => {
+    it('should throw with upstream invalid record for record type', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(officeNames)
         .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockImplementationOnce(() => {
         throw new AxiosError('not found', '404');
@@ -235,19 +243,18 @@ describe('AuthService', () => {
         }),
         params: { [idName]: 'id' },
       });
-      const isAuthed = await service.getRecordAndValidate(
-        mockRequest,
-        validRecordType,
-      );
+      await expect(
+        service.getRecordAndValidate(mockRequest, validRecordType),
+      ).rejects.toThrow(HttpException);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(cacheSpy).toHaveBeenCalledTimes(3);
-      expect(isAuthed).toBe(false);
+      expect(cacheSpy).toHaveBeenCalledTimes(4);
     });
 
-    it('should return false with upstream invalid record for employee', async () => {
+    it('should throw with upstream invalid record for employee', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(200)
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
@@ -280,13 +287,11 @@ describe('AuthService', () => {
         }),
         params: { [idName]: 'id' },
       });
-      const isAuthed = await service.getRecordAndValidate(
-        mockRequest,
-        validRecordType,
-      );
+      await expect(
+        service.getRecordAndValidate(mockRequest, validRecordType),
+      ).rejects.toThrow(HttpException);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(cacheSpy).toHaveBeenCalledTimes(3);
-      expect(isAuthed).toBe(false);
+      expect(cacheSpy).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -321,10 +326,10 @@ describe('AuthService', () => {
   });
 
   describe('evaluateUpstreamResult tests', () => {
-    it('should return 200 if given idir and upstream idir are equal', async () => {
+    it('should return 200 if is assigned to office', async () => {
       const cacheSpy = jest.spyOn(cache, 'set');
       const upstreamResult = await service.evaluateUpstreamResult(
-        testIdir,
+        true,
         testIdir,
         'cachetest1',
         'searchspec',
@@ -334,14 +339,14 @@ describe('AuthService', () => {
     });
 
     it.each([
-      [testIdir + 'abcd', 1],
+      [testIdir + 'abcd', 0],
       [undefined, 0],
     ])(
-      'should return 403 if given idir and upstream idir are not equal',
+      'should return 403 if not assigned to Office',
       async (upstreamIdir, cacheSpyCallTimes) => {
         const cacheSpy = jest.spyOn(cache, 'set');
         const upstreamResult = await service.evaluateUpstreamResult(
-          upstreamIdir,
+          false,
           testIdir,
           'cachetest2' + cacheSpyCallTimes,
           'searchspec',
@@ -375,8 +380,8 @@ describe('AuthService', () => {
         .spyOn(cache, 'set')
         .mockResolvedValueOnce(undefined);
       const result = await service.positionCheck(testIdir, response);
-      expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toBe(false);
+      expect(cacheSpy).toHaveBeenCalledTimes(2);
+      expect(result).toStrictEqual([false, null]);
     });
 
     it('should return false on primary organization not found', async () => {
@@ -401,8 +406,8 @@ describe('AuthService', () => {
         .spyOn(cache, 'set')
         .mockResolvedValueOnce(undefined);
       const result = await service.positionCheck(testIdir, response);
-      expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toBe(false);
+      expect(cacheSpy).toHaveBeenCalledTimes(2);
+      expect(result).toStrictEqual([false, null]);
     });
 
     it('should return true if restrict to org is undefined', async () => {
@@ -464,15 +469,23 @@ describe('AuthService', () => {
         .spyOn(cache, 'set')
         .mockResolvedValueOnce(undefined);
       const result = await service.positionCheck(testIdir, response);
-      expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toBe(true);
+      expect(cacheSpy).toHaveBeenCalledTimes(2);
+      expect(result).toStrictEqual([true, '']);
     });
   });
 
-  describe('getAssignedIdirUpstream tests', () => {
+  describe('getIsAssignedToOfficeUpstream tests', () => {
     it.each([
-      [validId, validRecordType, `EXISTS ([undefined]='IDIRTEST')`],
-      [validId, RecordType.Memo, `([undefined]='IDIRTEST')`],
+      [
+        validId,
+        validRecordType,
+        `(([undefined]='office1' OR [undefined]='office2') OR EXISTS ([undefined]='IDIRTEST')) AND ([undefined]='N') AND ([undefined]='Open')`,
+      ],
+      [
+        validId,
+        RecordType.Memo,
+        `(([undefined]='office1' OR [undefined]='office2') OR ([undefined]='IDIRTEST')) AND ([undefined]='N') AND ([undefined]='Open')`,
+      ],
     ])(
       'should return idir string given good input',
       async (id, recordType, searchspec) => {
@@ -496,64 +509,65 @@ describe('AuthService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>),
         );
-        const result = await service.getAssignedIdirUpstream(
+        const result = await service.getIsAssignedToOfficeUpstream(
           id,
           recordType,
           testIdir,
+          officeNames,
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual([testIdir, searchspec]);
+        expect(result).toEqual([true, searchspec]);
       },
     );
 
-    it.each([[404], [500]])(
-      `Should return undefined on axios error`,
-      async (status) => {
-        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
-        const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
-          throw new AxiosError(
-            'Axios Error',
-            status.toString(),
-            {} as InternalAxiosRequestConfig,
-            {},
-            {
-              data: {},
-              status: status,
-              statusText: '',
-              headers: {} as RawAxiosRequestHeaders,
-              config: {} as InternalAxiosRequestConfig,
-            },
-          );
-        });
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [idir, searchspec] = await service.getAssignedIdirUpstream(
+    it.each([[403], [500]])(`Should throw on axios error`, async (status) => {
+      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+      const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+        throw new AxiosError(
+          'Axios Error',
+          status.toString(),
+          {} as InternalAxiosRequestConfig,
+          {},
+          {
+            data: {},
+            status: status,
+            statusText: '',
+            headers: {} as RawAxiosRequestHeaders,
+            config: {} as InternalAxiosRequestConfig,
+          },
+        );
+      });
+
+      await expect(
+        service.getIsAssignedToOfficeUpstream(
           validId,
           RecordType.Case,
           'idir',
-        );
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(idir).toBe(undefined);
-      },
-    );
-
-    it('should return undefined on token refresh error', async () => {
-      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [result, searchspec] = await service.getAssignedIdirUpstream(
-        validId,
-        validRecordType,
-        'idir',
-      );
+          officeNames,
+        ),
+      ).rejects.toThrow(HttpException);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(undefined);
+    });
+
+    it('should throw on token refresh error', async () => {
+      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(null);
+      await expect(
+        service.getIsAssignedToOfficeUpstream(
+          validId,
+          validRecordType,
+          'idir',
+          officeNames,
+        ),
+      ).rejects.toThrow(HttpException);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('getEmployeeActiveUpstream test', () => {
     it.each([[testIdir], [testIdir + 'randomstring']])(
-      'should return idir string given good input',
+      'should return active offices given good input',
       async (idir) => {
         const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
@@ -568,6 +582,12 @@ describe('AuthService', () => {
                     {
                       'Organization Id': testOrgId,
                       Organization: testOrg,
+                      Division: 'office1',
+                    },
+                    {
+                      'Organization Id': testOrgId,
+                      Organization: testOrg,
+                      Division: 'office2',
                     },
                   ],
                 },
@@ -585,12 +605,12 @@ describe('AuthService', () => {
         const result = await service.getEmployeeActiveUpstream(testIdir);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(true);
+        expect(result).toEqual([true, officeNames]);
       },
     );
 
     it.each([[{}], [{ items: [{}] }]])(
-      'should return false when employee status not in response',
+      'should throw when employee status not in response',
       async (data) => {
         const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
         const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
@@ -605,46 +625,46 @@ describe('AuthService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>),
         );
-        const result = await service.getEmployeeActiveUpstream(testIdir);
+        await expect(
+          service.getEmployeeActiveUpstream(testIdir),
+        ).rejects.toThrow(HttpException);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(false);
       },
     );
 
-    it.each([[404], [500]])(
-      `Should return false on axios error`,
-      async (status) => {
-        const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
-        const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
-          throw new AxiosError(
-            'Axios Error',
-            status.toString(),
-            {} as InternalAxiosRequestConfig,
-            {},
-            {
-              data: {},
-              status: status,
-              statusText: '',
-              headers: {} as RawAxiosRequestHeaders,
-              config: {} as InternalAxiosRequestConfig,
-            },
-          );
-        });
-        const isActive = await service.getEmployeeActiveUpstream(testIdir);
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(cacheSpy).toHaveBeenCalledTimes(1);
-        expect(isActive).toBe(false);
-      },
-    );
+    it.each([[403], [500]])(`Should throw on axios error`, async (status) => {
+      const cacheSpy = jest.spyOn(cache, 'get').mockResolvedValueOnce(' ');
+      const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+        throw new AxiosError(
+          'Axios Error',
+          status.toString(),
+          {} as InternalAxiosRequestConfig,
+          {},
+          {
+            data: {},
+            status: status,
+            statusText: '',
+            headers: {} as RawAxiosRequestHeaders,
+            config: {} as InternalAxiosRequestConfig,
+          },
+        );
+      });
+      await expect(service.getEmployeeActiveUpstream(testIdir)).rejects.toThrow(
+        HttpException,
+      );
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(cacheSpy).toHaveBeenCalledTimes(1);
+    });
 
-    it('should return false on token refresh error', async () => {
+    it('should throw on token refresh error', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(undefined);
-      const result = await service.getEmployeeActiveUpstream(testIdir);
+      await expect(service.getEmployeeActiveUpstream(testIdir)).rejects.toThrow(
+        HttpException,
+      );
       expect(cacheSpy).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(false);
     });
   });
 });

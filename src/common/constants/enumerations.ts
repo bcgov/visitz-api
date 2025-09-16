@@ -24,6 +24,12 @@ const RecordEntityMap = {
   [RecordType.SR]: EntityType.SR,
 } as const;
 
+const EntityRecordMap = {
+  [EntityType.Case]: RecordType.Case,
+  [EntityType.Incident]: RecordType.Incident,
+  [EntityType.SR]: RecordType.SR,
+} as const;
+
 enum VisitDetails {
   PrivateVisitZeroToFive = 'Private visit age 0-5',
   PrivateVisitInHome = 'Private visit in home',
@@ -37,14 +43,19 @@ enum VisitDetails {
   NotPrivateCaregiver = 'Not private - Visit with caregiver',
 }
 
-enum RecordCountNeededEnum {
+enum BooleanStringEnum {
   True = 'true',
   False = 'false',
 }
 
-enum RestrictedRecordEnum {
+enum YNEnum {
   True = 'Y',
   False = 'N',
+}
+
+enum YesNoEnum {
+  True = 'Yes',
+  False = 'No',
 }
 
 const AttachmentParentIdFieldMap = {
@@ -71,6 +82,8 @@ enum AttachmentStatusEnum {
 enum CaseType {
   ChildServices = 'Child Services',
   FamilyServices = 'Family Services',
+  CYSNFamilyServices = 'CYSN Family Services',
+  Resource = 'Resource',
   // There are additional types, but these are the only ones we want to show
 }
 
@@ -84,16 +97,24 @@ enum EntityStatus {
   // We only want to show open cases
 }
 
+enum SafetyAssessmentDecisionUnsafe {
+  All = 'All children placed',
+  Some = 'Some children placed',
+}
+
 export {
   RecordType,
   EntityType,
   RecordEntityMap,
+  EntityRecordMap,
   VisitDetails,
-  RecordCountNeededEnum,
-  RestrictedRecordEnum,
+  BooleanStringEnum,
+  YNEnum,
+  YesNoEnum,
   AttachmentParentIdFieldMap,
   AttachmentStatusEnum,
   CaseType,
   IncidentType,
   EntityStatus,
+  SafetyAssessmentDecisionUnsafe,
 };

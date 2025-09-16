@@ -2,22 +2,23 @@ import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Controller, ExecutionContext, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { TestingModule, Test } from '@nestjs/testing';
-import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
-import { getMockReq } from '@jest-mock/express';
-import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import { JwtModule } from '@nestjs/jwt';
+import { TestingModule, Test } from '@nestjs/testing';
+import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
+import { UtilitiesService } from '../../../helpers/utilities/utilities.service';
+import { WorkflowAuthGuard } from './workflow-auth.guard';
+import { WorkflowAuthService } from './workflow-auth.service';
+import { getMockReq } from '@jest-mock/express';
+import { AuthService } from '../auth/auth.service';
 
-describe('AuthGuard', () => {
-  let service: AuthService;
+describe('WorkflowAuthGuard', () => {
+  let service: WorkflowAuthService;
   let configService: ConfigService;
   let guard;
 
   @Controller()
   class TestController {
-    @UseGuards(AuthGuard)
+    @UseGuards(WorkflowAuthGuard)
     async example() {
       return true;
     }
@@ -26,8 +27,9 @@ describe('AuthGuard', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        AuthService,
         {
-          provide: AuthService,
+          provide: WorkflowAuthService,
           useValue: { getRecordAndValidate: () => jest.fn() },
         },
         TokenRefresherService,
@@ -56,7 +58,7 @@ describe('AuthGuard', () => {
       controllers: [TestController],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    service = module.get<WorkflowAuthService>(WorkflowAuthService);
     configService = module.get<ConfigService>(ConfigService);
     const guards = Reflect.getMetadata(
       '__guards__',
@@ -67,7 +69,7 @@ describe('AuthGuard', () => {
   });
   it('should be defined', () => {
     expect(guard).toBeDefined();
-    expect(guard).toBeInstanceOf(AuthGuard);
+    expect(guard).toBeInstanceOf(WorkflowAuthGuard);
   });
 
   describe('canActivate tests', () => {
@@ -75,7 +77,7 @@ describe('AuthGuard', () => {
       const authSpy = jest
         .spyOn(service, 'getRecordAndValidate')
         .mockResolvedValueOnce(false);
-      const guardSpy = jest.spyOn(AuthGuard.prototype, 'canActivate');
+      const guardSpy = jest.spyOn(WorkflowAuthGuard.prototype, 'canActivate');
       const execContext = {
         switchToHttp: () => ({
           getRequest: () => getMockReq(),
@@ -96,6 +98,7 @@ describe('AuthGuard', () => {
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             AuthService,
+            WorkflowAuthService,
             TokenRefresherService,
             { provide: CACHE_MANAGER, useValue: {} },
             UtilitiesService,
@@ -115,7 +118,7 @@ describe('AuthGuard', () => {
           ],
           imports: [JwtModule.register({ global: true })],
         }).compile();
-        service = module.get<AuthService>(AuthService);
+        service = module.get<WorkflowAuthService>(WorkflowAuthService);
         configService = module.get<ConfigService>(ConfigService);
         const guards = Reflect.getMetadata(
           '__guards__',
@@ -126,7 +129,7 @@ describe('AuthGuard', () => {
         const authSpy = jest
           .spyOn(service, 'getRecordAndValidate')
           .mockResolvedValueOnce(result);
-        const guardSpy = jest.spyOn(AuthGuard.prototype, 'canActivate');
+        const guardSpy = jest.spyOn(WorkflowAuthGuard.prototype, 'canActivate');
         const execContext = {
           switchToHttp: () => ({
             getRequest: () => getMockReq(),

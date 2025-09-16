@@ -7,6 +7,7 @@ import {
   UNIFORM_RESPONSE,
   afterParamName,
   uniformResponseParamName,
+  excludeEmptyFieldsParamName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
@@ -29,7 +30,7 @@ import {
   startRowNumParamName,
   trustedIdirHeaderName,
 } from '../../common/constants/upstream-constants';
-import { RecordCountNeededEnum } from '../../common/constants/enumerations';
+import { YNEnum, BooleanStringEnum } from '../../common/constants/enumerations';
 import { GetRequestDetails } from '../../dto/get-request-details.dto';
 import { ParallelResponse } from '../../dto/parallel-response.dto';
 
@@ -88,7 +89,7 @@ export class RequestPreparerService {
       params['workspace'] = workspace;
     }
     if (filter !== undefined) {
-      if (filter[recordCountNeededParamName] === RecordCountNeededEnum.True) {
+      if (filter[recordCountNeededParamName] === BooleanStringEnum.True) {
         params[recordCountNeededParamName] = filter[recordCountNeededParamName];
       }
       if (typeof filter[pageSizeParamName] === 'number') {
@@ -96,6 +97,10 @@ export class RequestPreparerService {
       }
       if (typeof filter[startRowNumParamName] === 'number') {
         params[startRowNumParamName] = filter[startRowNumParamName];
+      }
+      if (filter[excludeEmptyFieldsParamName] === YNEnum.True) {
+        params[excludeEmptyFieldsParamName] =
+          filter[excludeEmptyFieldsParamName];
       }
     }
     const headers = {
@@ -130,20 +135,31 @@ export class RequestPreparerService {
         if (error.status === 404) {
           throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error:
-            error.response?.data !== undefined
-              ? error.response?.data
-              : error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { cause: error },
-      );
     }
     if (
       res !== undefined &&
@@ -178,23 +194,31 @@ export class RequestPreparerService {
           cause: error.cause,
           buildNumber: this.buildNumber,
         });
-        if (error.status === 404) {
-          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
-        }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error:
-            error.response?.data !== undefined
-              ? error.response?.data
-              : error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { cause: error },
-      );
     }
     return response;
   }
@@ -220,29 +244,38 @@ export class RequestPreparerService {
           cause: error.cause,
           buildNumber: this.buildNumber,
         });
-        if (error.status === 404) {
-          throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
-        }
+        throw new HttpException(
+          {
+            status: error.status,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          error.status,
+          { cause: error },
+        );
       } else {
         this.logger.error({ error, buildNumber: this.buildNumber });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error:
+              error.response?.data !== undefined
+                ? error.response?.data
+                : error.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          { cause: error },
+        );
       }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error:
-            error.response?.data !== undefined
-              ? error.response?.data
-              : error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        { cause: error },
-      );
     }
     return response;
   }
 
   async parallelGetRequest(
     requestSpecs: Array<GetRequestDetails>,
+    res?: Response,
   ): Promise<ParallelResponse> {
     let response: ParallelResponse;
     try {
@@ -270,6 +303,7 @@ export class RequestPreparerService {
     }
 
     const requestArray: Array<Observable<any>> = [];
+    const typeArray: Array<any> = [];
     for (const req of requestSpecs) {
       requestArray.push(
         this.httpService
@@ -279,9 +313,29 @@ export class RequestPreparerService {
           })
           .pipe(catchError((err) => of(err))),
       );
+      if (req.type) {
+        typeArray.push(req.type);
+      }
     }
     const parallelObservable = forkJoin(requestArray);
     const outputArray = await lastValueFrom(parallelObservable);
-    return new ParallelResponse({ responses: outputArray });
+    // Return largest record count in header
+    if (res !== undefined) {
+      const recordCountArray: number[] = [];
+      for (const responseObject of outputArray) {
+        if (responseObject?.headers?.hasOwnProperty(recordCountHeaderName)) {
+          recordCountArray.push(
+            parseInt(responseObject.headers[recordCountHeaderName]),
+          );
+        }
+      }
+      if (recordCountArray.length > 0) {
+        res.setHeader(recordCountHeaderName, Math.max(...recordCountArray));
+      }
+    }
+    return new ParallelResponse({
+      responses: outputArray,
+      orderedTypes: typeArray,
+    });
   }
 }
