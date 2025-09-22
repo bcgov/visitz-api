@@ -8,23 +8,28 @@ import {
   updatedByIdFieldName,
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
+import {
+  BaseAdditionalInformationValue,
+  IncidentAdditionalInformationExample,
+} from './additional-information.entity';
+import {
+  BaseCallInformationValue,
+  IncidentCallInformationExample,
+} from './call-information.entity';
+import {
+  ContactsEntity,
+  ContactsSingleResponseIncidentExample,
+} from './contacts.entity';
 
+/*
+ * Examples
+ */
 export const IncidentConcernsExample = {
   'Start Date': 'Start Date Here',
   Id: 'Id Here',
   Concern: 'Concern Here',
   'End Date': 'End Date Here',
   Original: 'Original Here',
-};
-
-export const IncidentCallInformationExample = {
-  Id: 'Id Here',
-  'Call Information': 'Call Information Here',
-};
-
-export const IncidentAdditionalInformationExample = {
-  Id: 'Id Here',
-  'Additional Information': 'Additional Information Here',
 };
 
 export const IncidentExample = {
@@ -84,46 +89,6 @@ export const IncidentExample = {
 /*
  * Model definitions
  */
-@Exclude()
-@ApiSchema({ name: 'IncidentAdditionalInformationValue' })
-export class IncidentAdditionalInformationValue {
-  @ApiProperty({
-    example: IncidentAdditionalInformationExample['Id'],
-  })
-  @Expose()
-  Id: string;
-
-  @ApiProperty({
-    example: IncidentAdditionalInformationExample['Additional Information'],
-  })
-  @Expose()
-  'Additional Information': string;
-
-  constructor(object) {
-    Object.assign(this, object);
-  }
-}
-
-@Exclude()
-@ApiSchema({ name: 'IncidentCallInformationValue' })
-export class IncidentCallInformationValue {
-  @ApiProperty({
-    example: IncidentCallInformationExample['Id'],
-  })
-  @Expose()
-  Id: string;
-
-  @ApiProperty({
-    example: IncidentCallInformationExample['Call Information'],
-  })
-  @Expose()
-  'Call Information': string;
-
-  constructor(object) {
-    Object.assign(this, object);
-  }
-}
-
 @Exclude()
 @ApiSchema({ name: 'IncidentConcernsValue' })
 export class IncidentConcernsValue {
@@ -255,6 +220,15 @@ export class IncidentEntity {
   @Expose()
   'Closed Date': string;
 
+  @Expose()
+  @ApiProperty({
+    example: ContactsSingleResponseIncidentExample,
+    type: ContactsEntity,
+    isArray: true,
+  })
+  @Type(() => ContactsEntity)
+  Contact: Array<ContactsEntity>;
+
   @ApiProperty({
     example: IncidentExample['Created By'],
   })
@@ -306,20 +280,20 @@ export class IncidentEntity {
   @Expose()
   @ApiProperty({
     example: IncidentAdditionalInformationExample,
-    type: IncidentAdditionalInformationValue,
+    type: BaseAdditionalInformationValue,
     isArray: true,
   })
-  @Type(() => IncidentAdditionalInformationValue)
-  IncidentAdditionalInformation: Array<IncidentAdditionalInformationValue>;
+  @Type(() => BaseAdditionalInformationValue)
+  IncidentAdditionalInformation: Array<BaseAdditionalInformationValue>;
 
   @Expose()
   @ApiProperty({
     example: IncidentCallInformationExample,
-    type: IncidentCallInformationValue,
+    type: BaseCallInformationValue,
     isArray: true,
   })
-  @Type(() => IncidentCallInformationValue)
-  IncidentCallInformation: Array<IncidentCallInformationValue>;
+  @Type(() => BaseCallInformationValue)
+  IncidentCallInformation: Array<BaseCallInformationValue>;
 
   @Expose()
   @ApiProperty({

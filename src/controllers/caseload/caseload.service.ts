@@ -21,9 +21,11 @@ import { DateTime } from 'luxon';
 import { ParallelResponse } from '../../dto/parallel-response.dto';
 import { plainToInstance } from 'class-transformer';
 import {
+  fieldsParamName,
   pageSizeMax,
   pageSizeParamName,
   queryHierarchyParamName,
+  recordCountNeededParamName,
 } from '../../common/constants/upstream-constants';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -34,23 +36,49 @@ import {
   incidentIncludeParam,
   memoIncludeParam,
   officeNamesSeparator,
-  queryHierarchyCaseChildClassName,
+  queryHierarchyCaseChildContactClassName,
+  queryHierarchyCaseChildPositionClassName,
   queryHierarchyCaseParentClassName,
   queryHierarchyIncidentChildAdditionalClassName,
   queryHierarchyIncidentChildCallClassName,
   queryHierarchyIncidentChildConcernsClassName,
+  queryHierarchyIncidentChildContactClassName,
   queryHierarchyIncidentParentClassName,
+  queryHierarchyMemoChildAdditionalClassName,
+  queryHierarchyMemoChildCallClassName,
+  queryHierarchyMemoChildContactClassName,
+  queryHierarchyMemoParentClassName,
+  queryHierarchySRChildAdditionalClassName,
+  queryHierarchySRChildCallClassName,
+  queryHierarchySRChildContactClassName,
+  queryHierarchySRParentClassName,
   srIncludeParam,
 } from '../../common/constants/parameter-constants';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 import { CaseExample, CasePositionExample } from '../../entities/case.entity';
 import { caseloadIncludeEntityError } from '../../common/constants/error-constants';
 import {
-  IncidentAdditionalInformationExample,
-  IncidentCallInformationExample,
   IncidentConcernsExample,
   IncidentExample,
 } from '../../entities/incident.entity';
+import {
+  IncidentCallInformationExample,
+  MemoCallInformationExample,
+  SRCallInformationExample,
+} from '../../entities/call-information.entity';
+import {
+  IncidentAdditionalInformationExample,
+  MemoAdditionalInformationExample,
+  SRAdditionalInformationExample,
+} from '../../entities/additional-information.entity';
+import { SRExample } from '../../entities/sr.entity';
+import { MemoExample } from '../../entities/memo.entity';
+import {
+  ContactsSingleResponseCaseExample,
+  ContactsSingleResponseIncidentExample,
+  ContactsSingleResponseMemoExample,
+  ContactsSingleResponseSRExample,
+} from '../../entities/contacts.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -183,12 +211,136 @@ export class CaseloadService {
     this.baseUrl = this.configService.get<string>(`endpointUrls.baseUrl`);
   }
 
+  queryHierarchyConstructor(params, type: RecordType) {
+    switch (type) {
+      case RecordType.Case:
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: CaseExample,
+              name: queryHierarchyCaseParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [
+                queryHierarchyCaseChildPositionClassName,
+                queryHierarchyCaseChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: CasePositionExample,
+                  name: queryHierarchyCaseChildPositionClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseCaseExample,
+                  name: queryHierarchyCaseChildContactClassName,
+                }),
+              ],
+            }),
+          );
+        break;
+      case RecordType.Incident:
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: IncidentExample,
+              name: queryHierarchyIncidentParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [
+                queryHierarchyIncidentChildAdditionalClassName,
+                queryHierarchyIncidentChildCallClassName,
+                queryHierarchyIncidentChildConcernsClassName,
+                queryHierarchyIncidentChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: IncidentAdditionalInformationExample,
+                  name: queryHierarchyIncidentChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentCallInformationExample,
+                  name: queryHierarchyIncidentChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentConcernsExample,
+                  name: queryHierarchyIncidentChildConcernsClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseIncidentExample,
+                  name: queryHierarchyIncidentChildContactClassName,
+                }),
+              ],
+            }),
+          );
+        break;
+      case RecordType.SR:
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: SRExample,
+              name: queryHierarchySRParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [
+                queryHierarchySRChildAdditionalClassName,
+                queryHierarchySRChildCallClassName,
+                queryHierarchySRChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: SRAdditionalInformationExample,
+                  name: queryHierarchySRChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: SRCallInformationExample,
+                  name: queryHierarchySRChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseSRExample,
+                  name: queryHierarchySRChildContactClassName,
+                }),
+              ],
+            }),
+          );
+        break;
+      case RecordType.Memo:
+        params[queryHierarchyParamName] =
+          this.utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: MemoExample,
+              name: queryHierarchyMemoParentClassName,
+              searchspec: params['searchspec'],
+              exclude: [
+                queryHierarchyMemoChildAdditionalClassName,
+                queryHierarchyMemoChildCallClassName,
+                queryHierarchyMemoChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: MemoAdditionalInformationExample,
+                  name: queryHierarchyMemoChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: MemoCallInformationExample,
+                  name: queryHierarchyMemoChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseMemoExample,
+                  name: queryHierarchyMemoChildContactClassName,
+                }),
+              ],
+            }),
+          );
+        break;
+    }
+    delete params['searchspec'];
+    return params;
+  }
+
   caseloadUpstreamRequestPreparer(
     idir: string,
     filter: FilterQueryParams,
     entityTypes: RecordType[],
   ): Array<GetRequestDetails> {
-    const getRequestSpecs: Array<GetRequestDetails> = [];
+    let getRequestSpecs: Array<GetRequestDetails> = [];
+    const recordCountRequests: Array<GetRequestDetails> = [];
     for (const type of entityTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
       const statusFieldVarName = `${type}StatusFieldName`;
@@ -212,53 +364,19 @@ export class CaseloadService {
           filter,
         );
       params = this.utilitiesService.recordTypeSearchSpecAppend(params, type);
-      if (type === RecordType.Case) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: CaseExample,
-              name: queryHierarchyCaseParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [queryHierarchyCaseChildClassName],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: CasePositionExample,
-                  name: queryHierarchyCaseChildClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
-      } else if (type === RecordType.Incident) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: IncidentExample,
-              name: queryHierarchyIncidentParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [
-                queryHierarchyIncidentChildAdditionalClassName,
-                queryHierarchyIncidentChildCallClassName,
-                queryHierarchyIncidentChildConcernsClassName,
-              ],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: IncidentAdditionalInformationExample,
-                  name: queryHierarchyIncidentChildAdditionalClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentCallInformationExample,
-                  name: queryHierarchyIncidentChildCallClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentConcernsExample,
-                  name: queryHierarchyIncidentChildConcernsClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
+      if (params[recordCountNeededParamName] === BooleanStringEnum.True) {
+        const recordCountParams = structuredClone(params);
+        recordCountParams[fieldsParamName] = 'Id';
+        recordCountRequests.push(
+          new GetRequestDetails({
+            url: this.baseUrl + this[`${type}Endpoint`],
+            headers: headers,
+            params: recordCountParams,
+          }),
+        );
+        delete params[recordCountNeededParamName];
       }
+      params = this.queryHierarchyConstructor(params, type);
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
@@ -268,6 +386,7 @@ export class CaseloadService {
         }),
       );
     }
+    getRequestSpecs = getRequestSpecs.concat(recordCountRequests);
     return getRequestSpecs;
   }
 
@@ -277,7 +396,8 @@ export class CaseloadService {
     officeNames: string,
     entityTypes: RecordType[],
   ): Array<GetRequestDetails> {
-    const getRequestSpecs: Array<GetRequestDetails> = [];
+    let getRequestSpecs: Array<GetRequestDetails> = [];
+    const recordCountRequests: Array<GetRequestDetails> = [];
     for (const type of entityTypes) {
       const idirFieldVarName = `${type}IdirFieldName`;
       const officeFieldVarName = `${type}OfficeFieldName`;
@@ -309,53 +429,19 @@ export class CaseloadService {
           filter,
         );
       params = this.utilitiesService.recordTypeSearchSpecAppend(params, type);
-      if (type === RecordType.Case) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: CaseExample,
-              name: queryHierarchyCaseParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [queryHierarchyCaseChildClassName],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: CasePositionExample,
-                  name: queryHierarchyCaseChildClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
-      } else if (type === RecordType.Incident) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: IncidentExample,
-              name: queryHierarchyIncidentParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [
-                queryHierarchyIncidentChildAdditionalClassName,
-                queryHierarchyIncidentChildCallClassName,
-                queryHierarchyIncidentChildConcernsClassName,
-              ],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: IncidentAdditionalInformationExample,
-                  name: queryHierarchyIncidentChildAdditionalClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentCallInformationExample,
-                  name: queryHierarchyIncidentChildCallClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentConcernsExample,
-                  name: queryHierarchyIncidentChildConcernsClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
+      if (params[recordCountNeededParamName] === BooleanStringEnum.True) {
+        const recordCountParams = structuredClone(params);
+        recordCountParams[fieldsParamName] = 'Id';
+        recordCountRequests.push(
+          new GetRequestDetails({
+            url: this.baseUrl + this[`${type}Endpoint`],
+            headers: headers,
+            params: recordCountParams,
+          }),
+        );
+        delete params[recordCountNeededParamName];
       }
+      params = this.queryHierarchyConstructor(params, type);
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
@@ -365,6 +451,7 @@ export class CaseloadService {
         }),
       );
     }
+    getRequestSpecs = getRequestSpecs.concat(recordCountRequests);
     return getRequestSpecs;
   }
 

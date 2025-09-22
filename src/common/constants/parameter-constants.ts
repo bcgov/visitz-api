@@ -18,12 +18,22 @@ const queryHierarchyVisitChildClassName = 'VisitDetails';
 const queryHierarchyEmployeeParentClassName = 'Employee';
 const queryHierarchyEmployeeChildClassName = 'Position';
 const queryHierarchyCaseParentClassName = 'Case';
-const queryHierarchyCaseChildClassName = 'Position';
+const queryHierarchyCaseChildPositionClassName = 'Position';
+const queryHierarchyCaseChildContactClassName = 'Contact';
 const queryHierarchyIncidentParentClassName = 'Incident';
 const queryHierarchyIncidentChildAdditionalClassName =
   'IncidentAdditionalInformation';
 const queryHierarchyIncidentChildCallClassName = 'IncidentCallInformation';
 const queryHierarchyIncidentChildConcernsClassName = 'IncidentConcerns';
+const queryHierarchyIncidentChildContactClassName = 'Contact';
+const queryHierarchySRParentClassName = 'ServiceRequest';
+const queryHierarchySRChildAdditionalClassName = 'SRAdditionalInformation';
+const queryHierarchySRChildCallClassName = 'SRCallInformation';
+const queryHierarchySRChildContactClassName = 'Contact';
+const queryHierarchyMemoParentClassName = 'Memo';
+const queryHierarchyMemoChildAdditionalClassName = 'MemoAdditionalInformation';
+const queryHierarchyMemoChildCallClassName = 'MemoCallInformation';
+const queryHierarchyMemoChildContactClassName = 'Contact';
 
 const idMaxLength = 100;
 const versionNumber = '2';
@@ -70,11 +80,21 @@ export {
   queryHierarchyEmployeeParentClassName,
   queryHierarchyEmployeeChildClassName,
   queryHierarchyCaseParentClassName,
-  queryHierarchyCaseChildClassName,
+  queryHierarchyCaseChildPositionClassName,
+  queryHierarchyCaseChildContactClassName,
   queryHierarchyIncidentParentClassName,
   queryHierarchyIncidentChildAdditionalClassName,
   queryHierarchyIncidentChildCallClassName,
   queryHierarchyIncidentChildConcernsClassName,
+  queryHierarchyIncidentChildContactClassName,
+  queryHierarchySRParentClassName,
+  queryHierarchySRChildAdditionalClassName,
+  queryHierarchySRChildCallClassName,
+  queryHierarchySRChildContactClassName,
+  queryHierarchyMemoParentClassName,
+  queryHierarchyMemoChildAdditionalClassName,
+  queryHierarchyMemoChildCallClassName,
+  queryHierarchyMemoChildContactClassName,
   idMaxLength,
   versionNumber,
   idRegex,
