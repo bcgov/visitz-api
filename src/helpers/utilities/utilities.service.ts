@@ -8,7 +8,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import {
   CaseType,
   EntityType,
@@ -18,10 +18,13 @@ import {
 import {
   dateFormatError,
   emojiError,
+  multiIdError,
   upstreamDateFormatError,
 } from '../../common/constants/error-constants';
 import {
+  checkIdsReturnHeaderName,
   emojiRegex,
+  multiIdRegex,
   officeNamesSeparator,
 } from '../../common/constants/parameter-constants';
 import { IdPathParams } from '../../dto/id-path-params.dto';
@@ -29,6 +32,7 @@ import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto
 
 @Injectable()
 export class UtilitiesService {
+  buildNumber: string;
   caseTypeFieldName: string;
   incidentTypeFieldName: string;
   private readonly logger = new Logger(UtilitiesService.name);
@@ -37,6 +41,7 @@ export class UtilitiesService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {
+    this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
     this.caseTypeFieldName = this.configService.get<string>(
       `upstreamAuth.case.typeField`,
     );
@@ -232,6 +237,37 @@ export class UtilitiesService {
     }
     return params;
   }
+
+  setCheckIdsHeader(res: Response, upstreamCallResponse) {
+    const availableIds = new Set<string>();
+    console.log(upstreamCallResponse);
+    if (upstreamCallResponse.status >= 400) {
+      this.logger.error({
+        msg: upstreamCallResponse.response?.data,
+        errorDetails: upstreamCallResponse.response?.data,
+        buildNumber: this.buildNumber,
+        function: this.setCheckIdsHeader.name,
+        status: upstreamCallResponse.status,
+      });
+      if (upstreamCallResponse.status === 404) {
+        res.setHeader(checkIdsReturnHeaderName, `[]`);
+        return;
+      }
+      res.setHeader(checkIdsReturnHeaderName, ``);
+      return;
+    }
+    for (const item of upstreamCallResponse.data.items) {
+      if (item[`Id`]) {
+        availableIds.add(item['Id']);
+      } else if (item[`Row Id`]) {
+        availableIds.add(item['Row Id']);
+      }
+    }
+    res.setHeader(
+      checkIdsReturnHeaderName,
+      `[` + [...availableIds].join(',') + `]`,
+    );
+  }
 }
 
 // NOTE: These functions are outside of an injectable class because they are meant to be used in a DTO
@@ -269,4 +305,14 @@ export function isNotEmoji(input: string): string {
     throw new BadRequestException([emojiError]);
   }
   return input;
+}
+
+export function isIdArray(input): Array<string> {
+  if (typeof input === 'string') {
+    const isIdArray = multiIdRegex.test(input);
+    if (isIdArray) {
+      return input.split(',');
+    }
+  }
+  throw new BadRequestException([multiIdError]);
 }

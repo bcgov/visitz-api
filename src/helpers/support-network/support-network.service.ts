@@ -12,7 +12,7 @@ import {
   IdPathParams,
   SupportNetworkIdPathParams,
 } from '../../dto/id-path-params.dto';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import { CheckIdQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   idName,
@@ -70,7 +70,7 @@ export class SupportNetworkService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ) {
     const baseSearchSpec = `([Entity Id]="${id[idName]}" AND [Entity Name]="${RecordEntityMap[type]}"`;
     const [headers, params] =
@@ -82,11 +82,15 @@ export class SupportNetworkService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
+    const response = await this.requestPreparerService.checkIdsGetRequest(
       this.url,
+      this.workspace,
       headers,
-      res,
       params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
     );
     return new NestedSupportNetworkEntity(response.data);
   }

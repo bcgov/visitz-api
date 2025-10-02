@@ -98,11 +98,15 @@ export class ResponseNarrativeService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
+    const response = await this.requestPreparerService.checkIdsGetRequest(
       upstreamUrl,
+      this.workspace,
       headers,
-      res,
       params,
+      baseSearchSpec,
+      'Id, Row Id',
+      res,
+      filter,
     );
     return new NestedResponseNarrativeEntity(response.data);
   }

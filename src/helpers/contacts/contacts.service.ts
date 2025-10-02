@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import { CheckIdQueryParams } from '../../dto/filter-query-params.dto';
 import {
   ContactIdPathParams,
   IdPathParams,
@@ -82,7 +82,7 @@ export class ContactsService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     const baseSearchSpec = ``;
     const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
@@ -100,11 +100,15 @@ export class ContactsService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
+    const response = await this.requestPreparerService.checkIdsGetRequest(
       upstreamUrl,
+      this.workspace,
       headers,
-      res,
       params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
     );
     return new NestedContactsEntity(response.data);
   }

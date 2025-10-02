@@ -8,7 +8,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   AttachmentDetailsEntity,
@@ -34,7 +34,7 @@ export class MemosService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Memo,
@@ -94,7 +94,7 @@ export class MemosService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
       RecordType.Memo,
