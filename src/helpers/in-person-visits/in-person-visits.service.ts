@@ -47,7 +47,6 @@ import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto
 
 @Injectable()
 export class InPersonVisitsService {
-  buildNumber: string;
   url: string;
   postUrl: string;
   caseUrl: string;
@@ -66,7 +65,6 @@ export class InPersonVisitsService {
     private readonly requestPreparerService: RequestPreparerService,
     private readonly utilitiesService: UtilitiesService,
   ) {
-    this.buildNumber = this.configService.get<string>('buildInfo.buildNumber');
     this.url = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
         this.configService.get<string>('endpointUrls.inPersonVisits'),

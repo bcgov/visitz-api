@@ -240,7 +240,6 @@ export class UtilitiesService {
 
   setCheckIdsHeader(res: Response, upstreamCallResponse) {
     const availableIds = new Set<string>();
-    console.log(upstreamCallResponse);
     if (upstreamCallResponse.status >= 400) {
       this.logger.error({
         msg: upstreamCallResponse.response?.data,
@@ -263,10 +262,7 @@ export class UtilitiesService {
         availableIds.add(item['Row Id']);
       }
     }
-    res.setHeader(
-      checkIdsReturnHeaderName,
-      `[` + [...availableIds].join(',') + `]`,
-    );
+    res.setHeader(checkIdsReturnHeaderName, JSON.stringify([...availableIds]));
   }
 }
 

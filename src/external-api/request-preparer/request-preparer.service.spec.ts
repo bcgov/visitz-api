@@ -488,7 +488,7 @@ describe('RequestPreparerService', () => {
         expect(result.data).toMatchObject({ items: [item] });
         expect(res.setHeader).toHaveBeenCalledWith(
           checkIdsReturnHeaderName,
-          `[abcd]`,
+          `["abcd"]`,
         );
       },
     );

@@ -22,7 +22,7 @@ const existingIdsRecordCountHeadersSwagger = {
     description:
       `If ${checkIdsParamName} is provided in the request, returns an array of the valid ids that exist for this user and parent entity. ` +
       `If there are no results, the header will be an empty array ([]). If there is an error with this check, the header will be an empty string.`,
-    example: `[Id-1,Id-2]`,
+    example: `["Id-1","Id-2"]`,
   },
 };
 
