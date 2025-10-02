@@ -504,3 +504,8 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: ATTACHMENTS_STATUS_FIELD
+  - name: SAFETY_ASSESSMENTS_CHECK_IDS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SAFETY_ASSESSMENTS_CHECK_IDS_ENDPOINT

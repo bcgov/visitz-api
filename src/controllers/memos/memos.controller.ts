@@ -41,6 +41,7 @@ import {
   inlineAttachmentParamName,
   attachmentIdFieldName,
   excludeEmptyFieldsParamName,
+  checkIdsParamName,
 } from '../../common/constants/parameter-constants';
 import {
   AttachmentIdPathParams,
@@ -49,7 +50,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   NestedAttachmentsEntity,
@@ -62,6 +63,7 @@ import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { Request, Response } from 'express';
 import {
+  existingIdsRecordCountHeadersSwagger,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
@@ -113,9 +115,10 @@ export class MemosController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -148,7 +151,7 @@ export class MemosController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.memosService.getSingleMemoAttachmentRecord(
       id,
@@ -281,9 +284,10 @@ export class MemosController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedContactsEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -316,7 +320,7 @@ export class MemosController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.memosService.getListMemoContactRecord(
       id,

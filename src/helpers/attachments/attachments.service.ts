@@ -12,7 +12,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
@@ -157,7 +157,7 @@ export class AttachmentsService {
     typeFieldName: string,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     const baseSearchSpec =
       `([${typeFieldName}]="${id[idName]}" AND ` +
@@ -173,11 +173,15 @@ export class AttachmentsService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
+    const response = await this.requestPreparerService.checkIdsGetRequest(
       this.url,
+      this.workspace,
       headers,
-      res,
       params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
     );
     return new NestedAttachmentsEntity(response.data);
   }

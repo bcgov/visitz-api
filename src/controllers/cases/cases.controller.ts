@@ -48,7 +48,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
   VisitDetailsQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
@@ -63,6 +63,7 @@ import {
   attachmentIdFieldName,
   caseNotesIdName,
   excludeEmptyFieldsParamName,
+  checkIdsParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -94,6 +95,7 @@ import {
 } from '../../common/constants/upstream-constants';
 import { Request, Response, Express } from 'express';
 import {
+  existingIdsRecordCountHeadersSwagger,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
@@ -143,10 +145,11 @@ export class CasesController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -179,7 +182,7 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.casesService.getListCaseSupportNetworkInformationRecord(
       id,
@@ -241,13 +244,14 @@ export class CasesController {
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
   @ApiQuery({ name: multivalueParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(
     NestedInPersonVisitsMultiValueEntity,
     NestedInPersonVisitsNoMultiValueEntity,
   )
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -424,10 +428,11 @@ export class CasesController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -460,7 +465,7 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.casesService.getSingleCaseAttachmentRecord(
       id,
@@ -594,10 +599,11 @@ export class CasesController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedContactsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -630,7 +636,7 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.casesService.getListCaseContactRecord(
       id,
@@ -691,10 +697,11 @@ export class CasesController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedCaseNotesEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -727,7 +734,7 @@ export class CasesController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedCaseNotesEntity> {
     return await this.casesService.getListCaseNotesRecord(
       id,

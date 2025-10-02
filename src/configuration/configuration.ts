@@ -114,6 +114,8 @@ export default () => ({
     srContacts: process.env.SR_CONTACTS_ENDPOINT ?? ' ',
     memoContacts: process.env.MEMO_CONTACTS_ENDPOINT ?? ' ',
     safetyAssessments: process.env.SAFETY_ASSESSMENTS_ENDPOINT ?? ' ',
+    safetyAssessmentsCheckIds:
+      process.env.SAFETY_ASSESSMENTS_CHECK_IDS_ENDPOINT ?? ' ',
     incidentResponseNarratives:
       process.env.INCIDENT_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',
     srResponseNarratives: process.env.SR_RESPONSE_NARRATIVES_ENDPOINT ?? ' ',

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import {
+  IsArray,
   IsBooleanString,
   IsEnum,
   IsInt,
@@ -28,7 +29,9 @@ import {
   incidentIncludeParam,
   srIncludeParam,
   memoIncludeParam,
+  checkIdsParamName,
 } from '../common/constants/parameter-constants';
+import { isIdArray } from '../helpers/utilities/utilities.service';
 
 @Exclude()
 export class FilterQueryParams {
@@ -161,7 +164,25 @@ export class CaseloadQueryParams extends FilterQueryParams {
 }
 
 @Exclude()
-export class AttachmentDetailsQueryParams extends FilterQueryParams {
+export class CheckIdQueryParams extends FilterQueryParams {
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === null || value === undefined) {
+      return value;
+    }
+    return isIdArray(value);
+  })
+  @IsArray()
+  @Expose()
+  @ApiProperty({
+    example: 'Id-1-Here,Id-2-Here',
+    description: `Ids of child objects to check for existence of. Note that they must be children of the parent entity id provided.`,
+  })
+  [checkIdsParamName]?: Array<string>;
+}
+
+@Exclude()
+export class AttachmentDetailsQueryParams extends CheckIdQueryParams {
   @IsOptional()
   @IsBooleanString()
   @Expose()
@@ -176,7 +197,7 @@ export class AttachmentDetailsQueryParams extends FilterQueryParams {
 }
 
 @Exclude()
-export class VisitDetailsQueryParams extends FilterQueryParams {
+export class VisitDetailsQueryParams extends CheckIdQueryParams {
   @IsOptional()
   @IsBooleanString()
   @Expose()

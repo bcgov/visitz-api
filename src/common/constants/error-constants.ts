@@ -1,3 +1,4 @@
+import { checkIdsParamName } from './parameter-constants';
 import { upstreamDateFormatNoTime } from './upstream-constants';
 
 export const childServicesTypeError =
@@ -25,3 +26,8 @@ export const restrictedNotOpenPostError =
 
 export const caseloadIncludeEntityError =
   'At least one entity type must be included in a caseload request.';
+
+export const multiIdError =
+  `The ` +
+  checkIdsParamName +
+  ` parameter must contain a comma-seperated list of ids.`;

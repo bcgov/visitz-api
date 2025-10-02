@@ -49,7 +49,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
@@ -63,6 +63,7 @@ import {
   attachmentIdFieldName,
   responseNarrativeIdName,
   excludeEmptyFieldsParamName,
+  checkIdsParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -75,6 +76,7 @@ import {
 } from '../../entities/attachments.entity';
 import { Request, Response } from 'express';
 import {
+  existingIdsRecordCountHeadersSwagger,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
@@ -137,9 +139,10 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -172,7 +175,7 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.incidentsService.getListIncidentSupportNetworkInformationRecord(
       id,
@@ -232,9 +235,10 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -267,7 +271,7 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.incidentsService.getSingleIncidentAttachmentRecord(
       id,
@@ -400,9 +404,10 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedContactsEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -435,7 +440,7 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.incidentsService.getListIncidentContactRecord(
       id,
@@ -495,9 +500,10 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedSafetyAssessmentEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -530,7 +536,7 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedSafetyAssessmentEntity> {
     return await this.incidentsService.getListIncidentSafetyAssessmentRecord(
       id,
@@ -589,9 +595,10 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedResponseNarrativeEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -624,7 +631,7 @@ export class IncidentsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedResponseNarrativeEntity> {
     return await this.incidentsService.getListIncidentResponseNarrativeRecord(
       id,
