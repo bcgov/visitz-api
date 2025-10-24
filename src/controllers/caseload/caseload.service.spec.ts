@@ -20,12 +20,22 @@ import {
   uniformResponseParamName,
   VIEW_MODE,
   officeNamesSeparator,
-  queryHierarchyCaseChildClassName,
+  queryHierarchyCaseChildPositionClassName,
   queryHierarchyCaseParentClassName,
   queryHierarchyIncidentChildAdditionalClassName,
   queryHierarchyIncidentChildCallClassName,
   queryHierarchyIncidentChildConcernsClassName,
   queryHierarchyIncidentParentClassName,
+  queryHierarchyCaseChildContactClassName,
+  queryHierarchyIncidentChildContactClassName,
+  queryHierarchySRChildAdditionalClassName,
+  queryHierarchySRChildCallClassName,
+  queryHierarchySRChildContactClassName,
+  queryHierarchySRParentClassName,
+  queryHierarchyMemoChildAdditionalClassName,
+  queryHierarchyMemoChildCallClassName,
+  queryHierarchyMemoChildContactClassName,
+  queryHierarchyMemoParentClassName,
 } from '../../common/constants/parameter-constants';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import {
@@ -37,6 +47,7 @@ import {
 } from '../../entities/caseload.entity';
 import { Cache } from 'cache-manager';
 import {
+  BooleanStringEnum,
   CaseType,
   EntityStatus,
   IncidentType,
@@ -50,17 +61,33 @@ import {
   trustedIdirHeaderName,
   idirJWTFieldName,
   queryHierarchyParamName,
+  recordCountNeededParamName,
+  fieldsParamName,
 } from '../../common/constants/upstream-constants';
 import { CaseExample, CasePositionExample } from '../../entities/case.entity';
 import {
-  IncidentAdditionalInformationExample,
-  IncidentCallInformationExample,
   IncidentConcernsExample,
   IncidentExample,
 } from '../../entities/incident.entity';
 import { MemoExample } from '../../entities/memo.entity';
 import { SRExample } from '../../entities/sr.entity';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
+import {
+  IncidentCallInformationExample,
+  MemoCallInformationExample,
+  SRCallInformationExample,
+} from '../../entities/call-information.entity';
+import {
+  IncidentAdditionalInformationExample,
+  MemoAdditionalInformationExample,
+  SRAdditionalInformationExample,
+} from '../../entities/additional-information.entity';
+import {
+  ContactsSingleResponseCaseExample,
+  ContactsSingleResponseIncidentExample,
+  ContactsSingleResponseMemoExample,
+  ContactsSingleResponseSRExample,
+} from '../../entities/contacts.entity';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
@@ -116,316 +143,541 @@ describe('CaseloadService', () => {
   });
 
   describe('caseloadUpstreamRequestPreparer tests', () => {
-    it(`prepares a request for upstream`, () => {
-      const idir = 'testIdir';
-      const filter = plainToInstance(
-        FilterQueryParams,
-        {
+    it.each([[BooleanStringEnum.False], [BooleanStringEnum.True]])(
+      `prepares a request for upstream`,
+      (recordCountNeeded) => {
+        const idir = 'testIdir';
+        const inputFilter = {
           [pageSizeParamName]: pageSizeMax,
-        },
-        { enableImplicitConversion: true },
-      );
-      const getRequestSpecs = service.caseloadUpstreamRequestPreparer(
-        idir,
-        filter,
-        service.recordTypes,
-      );
-      const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
-      const caseEndpoint = configService.get<string>(
-        `upstreamAuth.case.endpoint`,
-      );
-      const incidentEndpoint = configService.get<string>(
-        `upstreamAuth.incident.endpoint`,
-      );
-      const srEndpoint = configService.get<string>(`upstreamAuth.sr.endpoint`);
-      const memoEndpoint = configService.get<string>(
-        `upstreamAuth.memo.endpoint`,
-      );
-      const caseIdirFieldName = configService.get<string>(
-        `upstreamAuth.case.searchspecIdirField`,
-      );
-      const incidentIdirFieldName = configService.get<string>(
-        `upstreamAuth.incident.searchspecIdirField`,
-      );
-      const srIdirFieldName = configService.get<string>(
-        `upstreamAuth.sr.searchspecIdirField`,
-      );
-      const memoIdirFieldName = configService.get<string>(
-        `upstreamAuth.memo.searchspecIdirField`,
-      );
-      const caseTypeFieldName = configService.get<string>(
-        `upstreamAuth.case.typeField`,
-      );
-      const incidentTypeFieldName = configService.get<string>(
-        `upstreamAuth.incident.typeField`,
-      );
-      const caseStatusFieldName = configService.get<string>(
-        `upstreamAuth.case.statusField`,
-      );
-      const incidentStatusFieldName = configService.get<string>(
-        `upstreamAuth.incident.statusField`,
-      );
-      const srStatusFieldName = configService.get<string>(
-        `upstreamAuth.sr.statusField`,
-      );
-      const memoStatusFieldName = configService.get<string>(
-        `upstreamAuth.memo.statusField`,
-      );
-      const caseRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.case.restrictedField`,
-      );
-      const incidentRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.incident.restrictedField`,
-      );
-      const srRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.sr.restrictedField`,
-      );
-      const memoRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.memo.restrictedField`,
-      );
-      const headers = {
-        Accept: CONTENT_TYPE,
-        'Accept-Encoding': '*',
-        [trustedIdirHeaderName]: idir,
-      };
-      const params = {
-        ViewMode: VIEW_MODE,
-        ChildLinks: CHILD_LINKS,
-        [uniformResponseParamName]: UNIFORM_RESPONSE,
-        [pageSizeParamName]: pageSizeMax,
-      };
-      const caseParams = {
-        ...params,
-        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
-          new QueryHierarchyComponent({
-            classExample: CaseExample,
-            name: queryHierarchyCaseParentClassName,
-            searchspec: `(EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`,
-            exclude: [queryHierarchyCaseChildClassName],
-            childComponents: [
-              new QueryHierarchyComponent({
-                classExample: CasePositionExample,
-                name: queryHierarchyCaseChildClassName,
-              }),
-            ],
-          }),
-        ),
-      };
-      const incidentParams = {
-        ...params,
-        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
-          new QueryHierarchyComponent({
-            classExample: IncidentExample,
-            name: queryHierarchyIncidentParentClassName,
-            searchspec: `(EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${YNEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
-            exclude: [
-              queryHierarchyIncidentChildAdditionalClassName,
-              queryHierarchyIncidentChildCallClassName,
-              queryHierarchyIncidentChildConcernsClassName,
-            ],
-            childComponents: [
-              new QueryHierarchyComponent({
-                classExample: IncidentAdditionalInformationExample,
-                name: queryHierarchyIncidentChildAdditionalClassName,
-              }),
-              new QueryHierarchyComponent({
-                classExample: IncidentCallInformationExample,
-                name: queryHierarchyIncidentChildCallClassName,
-              }),
-              new QueryHierarchyComponent({
-                classExample: IncidentConcernsExample,
-                name: queryHierarchyIncidentChildConcernsClassName,
-              }),
-            ],
-          }),
-        ),
-      };
-      const srParams = {
-        ...params,
-        searchspec: `(([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${YNEnum.False}")`,
-      };
-      const memoParams = {
-        ...params,
-        searchspec: `(([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${YNEnum.False}")`,
-      };
+        };
+        if (recordCountNeeded === BooleanStringEnum.True) {
+          inputFilter[recordCountNeededParamName] = recordCountNeeded;
+        }
+        const filter = plainToInstance(FilterQueryParams, inputFilter, {
+          enableImplicitConversion: true,
+        });
+        const getRequestSpecs = service.caseloadUpstreamRequestPreparer(
+          idir,
+          filter,
+          service.recordTypes,
+        );
+        const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
+        const caseEndpoint = configService.get<string>(
+          `upstreamAuth.case.endpoint`,
+        );
+        const incidentEndpoint = configService.get<string>(
+          `upstreamAuth.incident.endpoint`,
+        );
+        const srEndpoint = configService.get<string>(
+          `upstreamAuth.sr.endpoint`,
+        );
+        const memoEndpoint = configService.get<string>(
+          `upstreamAuth.memo.endpoint`,
+        );
+        const caseIdirFieldName = configService.get<string>(
+          `upstreamAuth.case.searchspecIdirField`,
+        );
+        const incidentIdirFieldName = configService.get<string>(
+          `upstreamAuth.incident.searchspecIdirField`,
+        );
+        const srIdirFieldName = configService.get<string>(
+          `upstreamAuth.sr.searchspecIdirField`,
+        );
+        const memoIdirFieldName = configService.get<string>(
+          `upstreamAuth.memo.searchspecIdirField`,
+        );
+        const caseTypeFieldName = configService.get<string>(
+          `upstreamAuth.case.typeField`,
+        );
+        const incidentTypeFieldName = configService.get<string>(
+          `upstreamAuth.incident.typeField`,
+        );
+        const caseStatusFieldName = configService.get<string>(
+          `upstreamAuth.case.statusField`,
+        );
+        const incidentStatusFieldName = configService.get<string>(
+          `upstreamAuth.incident.statusField`,
+        );
+        const srStatusFieldName = configService.get<string>(
+          `upstreamAuth.sr.statusField`,
+        );
+        const memoStatusFieldName = configService.get<string>(
+          `upstreamAuth.memo.statusField`,
+        );
+        const caseRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.case.restrictedField`,
+        );
+        const incidentRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.incident.restrictedField`,
+        );
+        const srRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.sr.restrictedField`,
+        );
+        const memoRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.memo.restrictedField`,
+        );
+        const headers = {
+          Accept: CONTENT_TYPE,
+          'Accept-Encoding': '*',
+          [trustedIdirHeaderName]: idir,
+        };
+        const params = {
+          ViewMode: VIEW_MODE,
+          ChildLinks: CHILD_LINKS,
+          [uniformResponseParamName]: UNIFORM_RESPONSE,
+          [pageSizeParamName]: pageSizeMax,
+        };
+        const caseSearchSpec = `(EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`;
+        const incidentSearchSpec = `(EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${YNEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
+        const srSearchSpec = `(([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${YNEnum.False}")`;
+        const memoSearchSpec = `(([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${YNEnum.False}")`;
+        const caseParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: CaseExample,
+              name: queryHierarchyCaseParentClassName,
+              searchspec: caseSearchSpec,
+              exclude: [
+                queryHierarchyCaseChildPositionClassName,
+                queryHierarchyCaseChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: CasePositionExample,
+                  name: queryHierarchyCaseChildPositionClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseCaseExample,
+                  name: queryHierarchyCaseChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        const incidentParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: IncidentExample,
+              name: queryHierarchyIncidentParentClassName,
+              searchspec: incidentSearchSpec,
+              exclude: [
+                queryHierarchyIncidentChildAdditionalClassName,
+                queryHierarchyIncidentChildCallClassName,
+                queryHierarchyIncidentChildConcernsClassName,
+                queryHierarchyIncidentChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: IncidentAdditionalInformationExample,
+                  name: queryHierarchyIncidentChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentCallInformationExample,
+                  name: queryHierarchyIncidentChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentConcernsExample,
+                  name: queryHierarchyIncidentChildConcernsClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseIncidentExample,
+                  name: queryHierarchyIncidentChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        const srParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: SRExample,
+              name: queryHierarchySRParentClassName,
+              searchspec: srSearchSpec,
+              exclude: [
+                queryHierarchySRChildAdditionalClassName,
+                queryHierarchySRChildCallClassName,
+                queryHierarchySRChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: SRAdditionalInformationExample,
+                  name: queryHierarchySRChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: SRCallInformationExample,
+                  name: queryHierarchySRChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseSRExample,
+                  name: queryHierarchySRChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        const memoParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: MemoExample,
+              name: queryHierarchyMemoParentClassName,
+              searchspec: memoSearchSpec,
+              exclude: [
+                queryHierarchyMemoChildAdditionalClassName,
+                queryHierarchyMemoChildCallClassName,
+                queryHierarchyMemoChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: MemoAdditionalInformationExample,
+                  name: queryHierarchyMemoChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: MemoCallInformationExample,
+                  name: queryHierarchyMemoChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseMemoExample,
+                  name: queryHierarchyMemoChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        if (recordCountNeeded === BooleanStringEnum.False) {
+          expect(getRequestSpecs.length).toBe(4);
+        }
+        expect(getRequestSpecs[0].url).toBe(baseUrl + caseEndpoint);
+        expect(getRequestSpecs[0].headers).toMatchObject(headers);
+        expect(getRequestSpecs[0].params).toMatchObject(caseParams);
+        expect(getRequestSpecs[1].url).toBe(baseUrl + incidentEndpoint);
+        expect(getRequestSpecs[1].headers).toMatchObject(headers);
+        expect(getRequestSpecs[1].params).toMatchObject(incidentParams);
+        expect(getRequestSpecs[2].url).toBe(baseUrl + srEndpoint);
+        expect(getRequestSpecs[2].headers).toMatchObject(headers);
+        expect(getRequestSpecs[2].params).toMatchObject(srParams);
+        expect(getRequestSpecs[3].url).toBe(baseUrl + memoEndpoint);
+        expect(getRequestSpecs[3].headers).toMatchObject(headers);
+        expect(getRequestSpecs[3].params).toMatchObject(memoParams);
 
-      expect(getRequestSpecs.length).toBe(4);
-      expect(getRequestSpecs[0].url).toBe(baseUrl + caseEndpoint);
-      expect(getRequestSpecs[0].headers).toMatchObject(headers);
-      expect(getRequestSpecs[0].params).toMatchObject(caseParams);
-      expect(getRequestSpecs[1].url).toBe(baseUrl + incidentEndpoint);
-      expect(getRequestSpecs[1].headers).toMatchObject(headers);
-      expect(getRequestSpecs[1].params).toMatchObject(incidentParams);
-      expect(getRequestSpecs[2].url).toBe(baseUrl + srEndpoint);
-      expect(getRequestSpecs[2].headers).toMatchObject(headers);
-      expect(getRequestSpecs[2].params).toMatchObject(srParams);
-      expect(getRequestSpecs[3].url).toBe(baseUrl + memoEndpoint);
-      expect(getRequestSpecs[3].headers).toMatchObject(headers);
-      expect(getRequestSpecs[3].params).toMatchObject(memoParams);
-    });
+        if (recordCountNeeded === BooleanStringEnum.True) {
+          const countParams = {
+            ...params,
+            [recordCountNeededParamName]: BooleanStringEnum.True,
+            [fieldsParamName]: 'Id',
+          };
+          const caseCountParams = {
+            ...countParams,
+            searchspec: caseSearchSpec,
+          };
+          const incidentCountParams = {
+            ...countParams,
+            searchspec: incidentSearchSpec,
+          };
+          const srCountParams = {
+            ...countParams,
+            searchspec: srSearchSpec,
+          };
+          const memoCountParams = {
+            ...countParams,
+            searchspec: memoSearchSpec,
+          };
+
+          expect(getRequestSpecs.length).toBe(8);
+          expect(getRequestSpecs[4].url).toBe(baseUrl + caseEndpoint);
+          expect(getRequestSpecs[4].headers).toMatchObject(headers);
+          expect(getRequestSpecs[4].params).toMatchObject(caseCountParams);
+          expect(getRequestSpecs[5].url).toBe(baseUrl + incidentEndpoint);
+          expect(getRequestSpecs[5].headers).toMatchObject(headers);
+          expect(getRequestSpecs[5].params).toMatchObject(incidentCountParams);
+          expect(getRequestSpecs[6].url).toBe(baseUrl + srEndpoint);
+          expect(getRequestSpecs[6].headers).toMatchObject(headers);
+          expect(getRequestSpecs[6].params).toMatchObject(srCountParams);
+          expect(getRequestSpecs[7].url).toBe(baseUrl + memoEndpoint);
+          expect(getRequestSpecs[7].headers).toMatchObject(headers);
+          expect(getRequestSpecs[7].params).toMatchObject(memoCountParams);
+        }
+      },
+    );
   });
 
   describe('officeCaseloadUpstreamRequestPreparer tests', () => {
-    it(`prepares a request for upstream`, () => {
-      const idir = 'testIdir';
-      const filter = plainToInstance(
-        FilterQueryParams,
-        {
+    it.each([[BooleanStringEnum.False], [BooleanStringEnum.True]])(
+      `prepares a request for upstream`,
+      (recordCountNeeded) => {
+        const idir = 'testIdir';
+        const inputFilter = {
           [pageSizeParamName]: pageSizeMax,
-        },
-        { enableImplicitConversion: true },
-      );
-      const getRequestSpecs = service.officeCaseloadUpstreamRequestPreparer(
-        idir,
-        filter,
-        officeNames,
-        service.recordTypes,
-      );
-      const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
-      const caseEndpoint = configService.get<string>(
-        `upstreamAuth.case.endpoint`,
-      );
-      const incidentEndpoint = configService.get<string>(
-        `upstreamAuth.incident.endpoint`,
-      );
-      const srEndpoint = configService.get<string>(`upstreamAuth.sr.endpoint`);
-      const memoEndpoint = configService.get<string>(
-        `upstreamAuth.memo.endpoint`,
-      );
-      const caseIdirFieldName = configService.get<string>(
-        `upstreamAuth.case.searchspecIdirField`,
-      );
-      const incidentIdirFieldName = configService.get<string>(
-        `upstreamAuth.incident.searchspecIdirField`,
-      );
-      const srIdirFieldName = configService.get<string>(
-        `upstreamAuth.sr.searchspecIdirField`,
-      );
-      const memoIdirFieldName = configService.get<string>(
-        `upstreamAuth.memo.searchspecIdirField`,
-      );
-      const caseTypeFieldName = configService.get<string>(
-        `upstreamAuth.case.typeField`,
-      );
-      const incidentTypeFieldName = configService.get<string>(
-        `upstreamAuth.incident.typeField`,
-      );
-      const caseStatusFieldName = configService.get<string>(
-        `upstreamAuth.case.statusField`,
-      );
-      const incidentStatusFieldName = configService.get<string>(
-        `upstreamAuth.incident.statusField`,
-      );
-      const srStatusFieldName = configService.get<string>(
-        `upstreamAuth.sr.statusField`,
-      );
-      const memoStatusFieldName = configService.get<string>(
-        `upstreamAuth.memo.statusField`,
-      );
-      const caseOfficeFieldName = configService.get<string>(
-        `upstreamAuth.case.officeField`,
-      );
-      const incidentOfficeFieldName = configService.get<string>(
-        `upstreamAuth.incident.officeField`,
-      );
-      const srOfficeFieldName = configService.get<string>(
-        `upstreamAuth.sr.officeField`,
-      );
-      const memoOfficeFieldName = configService.get<string>(
-        `upstreamAuth.memo.officeField`,
-      );
-      const caseRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.case.restrictedField`,
-      );
-      const incidentRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.incident.restrictedField`,
-      );
-      const srRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.sr.restrictedField`,
-      );
-      const memoRestrictedFieldName = configService.get<string>(
-        `upstreamAuth.memo.restrictedField`,
-      );
-      const headers = {
-        Accept: CONTENT_TYPE,
-        'Accept-Encoding': '*',
-        [trustedIdirHeaderName]: idir,
-      };
-      const params = {
-        ViewMode: VIEW_MODE,
-        ChildLinks: CHILD_LINKS,
-        [uniformResponseParamName]: UNIFORM_RESPONSE,
-        [pageSizeParamName]: pageSizeMax,
-      };
-      const caseParams = {
-        ...params,
-        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
-          new QueryHierarchyComponent({
-            classExample: CaseExample,
-            name: queryHierarchyCaseParentClassName,
-            searchspec: `(([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`,
-            exclude: [queryHierarchyCaseChildClassName],
-            childComponents: [
-              new QueryHierarchyComponent({
-                classExample: CasePositionExample,
-                name: queryHierarchyCaseChildClassName,
-              }),
-            ],
-          }),
-        ),
-      };
-      const incidentParams = {
-        ...params,
-        [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
-          new QueryHierarchyComponent({
-            classExample: IncidentExample,
-            name: queryHierarchyIncidentParentClassName,
-            searchspec: `(([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${YNEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
-            exclude: [
-              queryHierarchyIncidentChildAdditionalClassName,
-              queryHierarchyIncidentChildCallClassName,
-              queryHierarchyIncidentChildConcernsClassName,
-            ],
-            childComponents: [
-              new QueryHierarchyComponent({
-                classExample: IncidentAdditionalInformationExample,
-                name: queryHierarchyIncidentChildAdditionalClassName,
-              }),
-              new QueryHierarchyComponent({
-                classExample: IncidentCallInformationExample,
-                name: queryHierarchyIncidentChildCallClassName,
-              }),
-              new QueryHierarchyComponent({
-                classExample: IncidentConcernsExample,
-                name: queryHierarchyIncidentChildConcernsClassName,
-              }),
-            ],
-          }),
-        ),
-      };
-      const srParams = {
-        ...params,
-        searchspec: `(([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${YNEnum.False}")`,
-      };
-      const memoParams = {
-        ...params,
-        searchspec: `(([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${YNEnum.False}")`,
-      };
+        };
+        if (recordCountNeeded === BooleanStringEnum.True) {
+          inputFilter[recordCountNeededParamName] = recordCountNeeded;
+        }
+        const filter = plainToInstance(FilterQueryParams, inputFilter, {
+          enableImplicitConversion: true,
+        });
+        const getRequestSpecs = service.officeCaseloadUpstreamRequestPreparer(
+          idir,
+          filter,
+          officeNames,
+          service.recordTypes,
+        );
+        const baseUrl = configService.get<string>(`endpointUrls.baseUrl`);
+        const caseEndpoint = configService.get<string>(
+          `upstreamAuth.case.endpoint`,
+        );
+        const incidentEndpoint = configService.get<string>(
+          `upstreamAuth.incident.endpoint`,
+        );
+        const srEndpoint = configService.get<string>(
+          `upstreamAuth.sr.endpoint`,
+        );
+        const memoEndpoint = configService.get<string>(
+          `upstreamAuth.memo.endpoint`,
+        );
+        const caseIdirFieldName = configService.get<string>(
+          `upstreamAuth.case.searchspecIdirField`,
+        );
+        const incidentIdirFieldName = configService.get<string>(
+          `upstreamAuth.incident.searchspecIdirField`,
+        );
+        const srIdirFieldName = configService.get<string>(
+          `upstreamAuth.sr.searchspecIdirField`,
+        );
+        const memoIdirFieldName = configService.get<string>(
+          `upstreamAuth.memo.searchspecIdirField`,
+        );
+        const caseTypeFieldName = configService.get<string>(
+          `upstreamAuth.case.typeField`,
+        );
+        const incidentTypeFieldName = configService.get<string>(
+          `upstreamAuth.incident.typeField`,
+        );
+        const caseStatusFieldName = configService.get<string>(
+          `upstreamAuth.case.statusField`,
+        );
+        const incidentStatusFieldName = configService.get<string>(
+          `upstreamAuth.incident.statusField`,
+        );
+        const srStatusFieldName = configService.get<string>(
+          `upstreamAuth.sr.statusField`,
+        );
+        const memoStatusFieldName = configService.get<string>(
+          `upstreamAuth.memo.statusField`,
+        );
+        const caseOfficeFieldName = configService.get<string>(
+          `upstreamAuth.case.officeField`,
+        );
+        const incidentOfficeFieldName = configService.get<string>(
+          `upstreamAuth.incident.officeField`,
+        );
+        const srOfficeFieldName = configService.get<string>(
+          `upstreamAuth.sr.officeField`,
+        );
+        const memoOfficeFieldName = configService.get<string>(
+          `upstreamAuth.memo.officeField`,
+        );
+        const caseRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.case.restrictedField`,
+        );
+        const incidentRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.incident.restrictedField`,
+        );
+        const srRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.sr.restrictedField`,
+        );
+        const memoRestrictedFieldName = configService.get<string>(
+          `upstreamAuth.memo.restrictedField`,
+        );
+        const headers = {
+          Accept: CONTENT_TYPE,
+          'Accept-Encoding': '*',
+          [trustedIdirHeaderName]: idir,
+        };
+        const params = {
+          ViewMode: VIEW_MODE,
+          ChildLinks: CHILD_LINKS,
+          [uniformResponseParamName]: UNIFORM_RESPONSE,
+          [pageSizeParamName]: pageSizeMax,
+        };
+        const caseSearchSpec = `(([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`;
+        const incidentSearchSpec = `(([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${YNEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`;
+        const srSearchSpec = `(([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${YNEnum.False}")`;
+        const memoSearchSpec = `(([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${YNEnum.False}")`;
+        const caseParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: CaseExample,
+              name: queryHierarchyCaseParentClassName,
+              searchspec: caseSearchSpec,
+              exclude: [
+                queryHierarchyCaseChildPositionClassName,
+                queryHierarchyCaseChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: CasePositionExample,
+                  name: queryHierarchyCaseChildPositionClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseCaseExample,
+                  name: queryHierarchyCaseChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        const incidentParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: IncidentExample,
+              name: queryHierarchyIncidentParentClassName,
+              searchspec: incidentSearchSpec,
+              exclude: [
+                queryHierarchyIncidentChildAdditionalClassName,
+                queryHierarchyIncidentChildCallClassName,
+                queryHierarchyIncidentChildConcernsClassName,
+                queryHierarchyIncidentChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: IncidentAdditionalInformationExample,
+                  name: queryHierarchyIncidentChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentCallInformationExample,
+                  name: queryHierarchyIncidentChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: IncidentConcernsExample,
+                  name: queryHierarchyIncidentChildConcernsClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseIncidentExample,
+                  name: queryHierarchyIncidentChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        const srParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: SRExample,
+              name: queryHierarchySRParentClassName,
+              searchspec: srSearchSpec,
+              exclude: [
+                queryHierarchySRChildAdditionalClassName,
+                queryHierarchySRChildCallClassName,
+                queryHierarchySRChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: SRAdditionalInformationExample,
+                  name: queryHierarchySRChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: SRCallInformationExample,
+                  name: queryHierarchySRChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseSRExample,
+                  name: queryHierarchySRChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
+        const memoParams = {
+          ...params,
+          [queryHierarchyParamName]: utilitiesService.constructQueryHierarchy(
+            new QueryHierarchyComponent({
+              classExample: MemoExample,
+              name: queryHierarchyMemoParentClassName,
+              searchspec: memoSearchSpec,
+              exclude: [
+                queryHierarchyMemoChildAdditionalClassName,
+                queryHierarchyMemoChildCallClassName,
+                queryHierarchyMemoChildContactClassName,
+              ],
+              childComponents: [
+                new QueryHierarchyComponent({
+                  classExample: MemoAdditionalInformationExample,
+                  name: queryHierarchyMemoChildAdditionalClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: MemoCallInformationExample,
+                  name: queryHierarchyMemoChildCallClassName,
+                }),
+                new QueryHierarchyComponent({
+                  classExample: ContactsSingleResponseMemoExample,
+                  name: queryHierarchyMemoChildContactClassName,
+                }),
+              ],
+            }),
+          ),
+        };
 
-      expect(getRequestSpecs.length).toBe(4);
-      expect(getRequestSpecs[0].url).toBe(baseUrl + caseEndpoint);
-      expect(getRequestSpecs[0].headers).toMatchObject(headers);
-      expect(getRequestSpecs[0].params).toMatchObject(caseParams);
-      expect(getRequestSpecs[1].url).toBe(baseUrl + incidentEndpoint);
-      expect(getRequestSpecs[1].headers).toMatchObject(headers);
-      expect(getRequestSpecs[1].params).toMatchObject(incidentParams);
-      expect(getRequestSpecs[2].url).toBe(baseUrl + srEndpoint);
-      expect(getRequestSpecs[2].headers).toMatchObject(headers);
-      expect(getRequestSpecs[2].params).toMatchObject(srParams);
-      expect(getRequestSpecs[3].url).toBe(baseUrl + memoEndpoint);
-      expect(getRequestSpecs[3].headers).toMatchObject(headers);
-      expect(getRequestSpecs[3].params).toMatchObject(memoParams);
-    });
+        if (recordCountNeeded === BooleanStringEnum.False) {
+          expect(getRequestSpecs.length).toBe(4);
+        }
+        expect(getRequestSpecs[0].url).toBe(baseUrl + caseEndpoint);
+        expect(getRequestSpecs[0].headers).toMatchObject(headers);
+        expect(getRequestSpecs[0].params).toMatchObject(caseParams);
+        expect(getRequestSpecs[1].url).toBe(baseUrl + incidentEndpoint);
+        expect(getRequestSpecs[1].headers).toMatchObject(headers);
+        expect(getRequestSpecs[1].params).toMatchObject(incidentParams);
+        expect(getRequestSpecs[2].url).toBe(baseUrl + srEndpoint);
+        expect(getRequestSpecs[2].headers).toMatchObject(headers);
+        expect(getRequestSpecs[2].params).toMatchObject(srParams);
+        expect(getRequestSpecs[3].url).toBe(baseUrl + memoEndpoint);
+        expect(getRequestSpecs[3].headers).toMatchObject(headers);
+        expect(getRequestSpecs[3].params).toMatchObject(memoParams);
+
+        if (recordCountNeeded === BooleanStringEnum.True) {
+          const countParams = {
+            ...params,
+            [recordCountNeededParamName]: BooleanStringEnum.True,
+            [fieldsParamName]: 'Id',
+          };
+          const caseCountParams = {
+            ...countParams,
+            searchspec: caseSearchSpec,
+          };
+          const incidentCountParams = {
+            ...countParams,
+            searchspec: incidentSearchSpec,
+          };
+          const srCountParams = {
+            ...countParams,
+            searchspec: srSearchSpec,
+          };
+          const memoCountParams = {
+            ...countParams,
+            searchspec: memoSearchSpec,
+          };
+
+          expect(getRequestSpecs.length).toBe(8);
+          expect(getRequestSpecs[4].url).toBe(baseUrl + caseEndpoint);
+          expect(getRequestSpecs[4].headers).toMatchObject(headers);
+          expect(getRequestSpecs[4].params).toMatchObject(caseCountParams);
+          expect(getRequestSpecs[5].url).toBe(baseUrl + incidentEndpoint);
+          expect(getRequestSpecs[5].headers).toMatchObject(headers);
+          expect(getRequestSpecs[5].params).toMatchObject(incidentCountParams);
+          expect(getRequestSpecs[6].url).toBe(baseUrl + srEndpoint);
+          expect(getRequestSpecs[6].headers).toMatchObject(headers);
+          expect(getRequestSpecs[6].params).toMatchObject(srCountParams);
+          expect(getRequestSpecs[7].url).toBe(baseUrl + memoEndpoint);
+          expect(getRequestSpecs[7].headers).toMatchObject(headers);
+          expect(getRequestSpecs[7].params).toMatchObject(memoCountParams);
+        }
+      },
+    );
   });
 
   describe('caseloadMapResponse tests', () => {

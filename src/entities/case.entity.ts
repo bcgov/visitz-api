@@ -8,7 +8,14 @@ import {
   updatedByIdFieldName,
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
+import {
+  ContactsSingleResponseCaseExample,
+  ContactsEntity,
+} from './contacts.entity';
 
+/*
+ * Examples
+ */
 export const CasePositionExample = {
   IsPrimaryMVG: 'Y',
   Id: 'Id-Here',
@@ -52,6 +59,9 @@ export const CaseExample = {
   [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
+/*
+ * Model definitions
+ */
 @Exclude()
 @ApiSchema({ name: 'CasePosition' })
 export class CasePositionEntity {
@@ -230,6 +240,15 @@ export class CaseEntity {
   })
   @Expose()
   'Closed Date': string;
+
+  @Expose()
+  @ApiProperty({
+    example: ContactsSingleResponseCaseExample,
+    type: ContactsEntity,
+    isArray: true,
+  })
+  @Type(() => ContactsEntity)
+  Contact: Array<ContactsEntity>;
 
   @ApiProperty({
     example: CaseExample['Reopened Date'],

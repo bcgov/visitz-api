@@ -1,5 +1,5 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
   createdByIdFieldName,
@@ -8,7 +8,22 @@ import {
   updatedByIdFieldName,
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
+import {
+  SRAdditionalInformationExample,
+  BaseAdditionalInformationValue,
+} from './additional-information.entity';
+import {
+  SRCallInformationExample,
+  BaseCallInformationValue,
+} from './call-information.entity';
+import {
+  ContactsSingleResponseSRExample,
+  ContactsEntity,
+} from './contacts.entity';
 
+/*
+ * Examples
+ */
 export const SRExample = {
   'Acceptance Date': '01/01/1970 00:00:00',
   'Additional Information': '',
@@ -54,6 +69,9 @@ export const SRExample = {
   [updatedDateFieldName]: '01/01/1970 00:00:00',
 };
 
+/*
+ * Model definitions
+ */
 @Exclude()
 @ApiSchema({ name: 'SR' })
 export class SREntity {
@@ -146,6 +164,15 @@ export class SREntity {
   })
   @Expose()
   'Closed Date': string;
+
+  @Expose()
+  @ApiProperty({
+    example: ContactsSingleResponseSRExample,
+    type: ContactsEntity,
+    isArray: true,
+  })
+  @Type(() => ContactsEntity)
+  Contact: Array<ContactsEntity>;
 
   @ApiProperty({
     example: SRExample['Created By'],
@@ -272,6 +299,24 @@ export class SREntity {
   })
   @Expose()
   'Service Request Number': string;
+
+  @Expose()
+  @ApiProperty({
+    example: SRAdditionalInformationExample,
+    type: BaseAdditionalInformationValue,
+    isArray: true,
+  })
+  @Type(() => BaseAdditionalInformationValue)
+  SRAdditionalInformation: Array<BaseAdditionalInformationValue>;
+
+  @Expose()
+  @ApiProperty({
+    example: SRCallInformationExample,
+    type: BaseCallInformationValue,
+    isArray: true,
+  })
+  @Type(() => BaseCallInformationValue)
+  SRCallInformation: Array<BaseCallInformationValue>;
 
   @ApiProperty({
     example: SRExample['Status'],

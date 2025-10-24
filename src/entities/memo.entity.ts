@@ -1,5 +1,5 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
   createdByIdFieldName,
@@ -8,7 +8,22 @@ import {
   updatedByIdFieldName,
   updatedDateFieldName,
 } from '../common/constants/upstream-constants';
+import {
+  MemoAdditionalInformationExample,
+  BaseAdditionalInformationValue,
+} from './additional-information.entity';
+import {
+  MemoCallInformationExample,
+  MemoCallInformationValue,
+} from './call-information.entity';
+import {
+  ContactsSingleResponseMemoExample,
+  ContactsEntity,
+} from './contacts.entity';
 
+/*
+ * Examples
+ */
 export const MemoExample = {
   'Additional Information': '',
   Address: 'Address Here',
@@ -59,6 +74,9 @@ export const MemoExample = {
   Urgent: 'N',
 };
 
+/*
+ * Model definitions
+ */
 @Exclude()
 @ApiSchema({ name: 'Memo' })
 export class MemoEntity {
@@ -152,6 +170,15 @@ export class MemoEntity {
   @Expose()
   'Closed Date': string;
 
+  @Expose()
+  @ApiProperty({
+    example: ContactsSingleResponseMemoExample,
+    type: ContactsEntity,
+    isArray: true,
+  })
+  @Type(() => ContactsEntity)
+  Contact: Array<ContactsEntity>;
+
   @ApiProperty({
     example: MemoExample['Created By'],
   })
@@ -205,6 +232,24 @@ export class MemoEntity {
   })
   @Expose()
   'Medical Exam Required': string;
+
+  @Expose()
+  @ApiProperty({
+    example: MemoAdditionalInformationExample,
+    type: BaseAdditionalInformationValue,
+    isArray: true,
+  })
+  @Type(() => BaseAdditionalInformationValue)
+  MemoAdditionalInformation: Array<BaseAdditionalInformationValue>;
+
+  @Expose()
+  @ApiProperty({
+    example: MemoCallInformationExample,
+    type: MemoCallInformationValue,
+    isArray: true,
+  })
+  @Type(() => MemoCallInformationValue)
+  MemoCallInformation: Array<MemoCallInformationValue>;
 
   @ApiProperty({
     example: MemoExample['Memo Number'],
