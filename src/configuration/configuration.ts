@@ -180,6 +180,7 @@ export default () => ({
   },
   dataApiParameters: {
     attachments: {
+      fileExtensionField: process.env.ATTACHMENTS_FILE_EXTENSION_FIELD ?? ' ',
       formDescriptionField:
         process.env.ATTACHMENTS_FORM_DESCRIPTION_FIELD ?? ' ',
       statusField: process.env.ATTACHMENTS_STATUS_FIELD ?? ' ',
