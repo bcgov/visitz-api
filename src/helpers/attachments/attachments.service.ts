@@ -54,6 +54,7 @@ export class AttachmentsService {
   postWorkspace: string | undefined;
   afterFieldName: string | undefined;
   formDescriptionFieldName: string;
+  fileExtensionFieldName: string;
   attachmentStatusFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
@@ -91,6 +92,9 @@ export class AttachmentsService {
     this.workspace = this.configService.get('workspaces.attachments');
     this.postWorkspace = this.configService.get('workspaces.postAttachments');
     this.afterFieldName = this.configService.get('afterFieldName.attachments');
+    this.fileExtensionFieldName = this.configService.get<string>(
+      'dataApiParameters.attachments.fileExtensionField',
+    );
     this.formDescriptionFieldName = this.configService.get<string>(
       'dataApiParameters.attachments.formDescriptionField',
     );
@@ -161,6 +165,7 @@ export class AttachmentsService {
   ): Promise<NestedAttachmentsEntity> {
     const baseSearchSpec =
       `([${typeFieldName}]="${id[idName]}" AND ` +
+      `[${this.fileExtensionFieldName}] IS NOT NULL AND ` +
       `([${this.formDescriptionFieldName}] IS NULL OR ` +
       `NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
       `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}"))`;
