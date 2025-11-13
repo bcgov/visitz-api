@@ -14,7 +14,6 @@ import { EntityType } from '../common/constants/enumerations';
 import {
   entityNumberFieldName,
   entityTypeFieldName,
-  notesMax,
   notesPeriodMax,
 } from '../common/constants/upstream-constants';
 import { idMaxLength, idRegex } from '../common/constants/parameter-constants';
@@ -57,7 +56,6 @@ export class SubmitNotesItem {
   @Transform(({ value }) => {
     return isNotEmoji(value);
   })
-  @MaxLength(notesMax)
   @Expose()
   @ApiProperty({
     example: 'Notes',
