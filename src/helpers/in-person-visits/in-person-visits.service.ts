@@ -190,7 +190,6 @@ export class InPersonVisitsService {
     // union type from the prepareHeadersAndParams function return
     if ('searchspec' in baseParams) {
       const { searchspec, ...params } = baseParams;
-      params[getChildrenParamName] = GET_CHILDREN;
       params[queryHierarchyParamName] =
         this.utilitiesService.constructQueryHierarchy(
           new QueryHierarchyComponent({
@@ -213,11 +212,15 @@ export class InPersonVisitsService {
             ],
           }),
         );
-      response = await this.requestPreparerService.sendGetRequest(
+      response = await this.requestPreparerService.checkIdsGetRequest(
         this.url,
+        this.workspace,
         headers,
-        res,
         params,
+        baseSearchSpec,
+        'Parent Id,Id',
+        res,
+        filter,
       );
     }
     const itemsArray = response.data.items;

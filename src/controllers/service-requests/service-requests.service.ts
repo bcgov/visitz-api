@@ -14,7 +14,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import { srAttachmentsFieldName } from '../../common/constants/parameter-constants';
@@ -61,7 +61,7 @@ export class ServiceRequestsService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getListSupportNetworkInformationRecord(
       RecordType.SR,
@@ -76,7 +76,7 @@ export class ServiceRequestsService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.SR,
@@ -136,7 +136,7 @@ export class ServiceRequestsService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
       RecordType.SR,
@@ -164,7 +164,7 @@ export class ServiceRequestsService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedResponseNarrativeEntity> {
     return await this.responseNarrativesService.getListResponseNarrativeRecord(
       RecordType.SR,

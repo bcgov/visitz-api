@@ -8,8 +8,12 @@ import {
   afterParamName,
   uniformResponseParamName,
   excludeEmptyFieldsParamName,
+  checkIdsParamName,
 } from '../../common/constants/parameter-constants';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  CheckIdQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
 import { HttpService } from '@nestjs/axios';
@@ -276,6 +280,7 @@ export class RequestPreparerService {
   async parallelGetRequest(
     requestSpecs: Array<GetRequestDetails>,
     res?: Response,
+    throwOnError?: boolean,
   ): Promise<ParallelResponse> {
     let response: ParallelResponse;
     try {
@@ -305,14 +310,23 @@ export class RequestPreparerService {
     const requestArray: Array<Observable<any>> = [];
     const typeArray: Array<any> = [];
     for (const req of requestSpecs) {
-      requestArray.push(
-        this.httpService
-          .get(req.url, {
+      if (throwOnError === true) {
+        requestArray.push(
+          this.httpService.get(req.url, {
             params: req.params,
             headers: req.headers,
-          })
-          .pipe(catchError((err) => of(err))),
-      );
+          }),
+        );
+      } else {
+        requestArray.push(
+          this.httpService
+            .get(req.url, {
+              params: req.params,
+              headers: req.headers,
+            })
+            .pipe(catchError((err) => of(err))),
+        );
+      }
       if (req.type) {
         typeArray.push(req.type);
       }
@@ -337,5 +351,80 @@ export class RequestPreparerService {
       responses: outputArray,
       orderedTypes: typeArray,
     });
+  }
+
+  async checkIdsGetRequest(
+    url,
+    workspace,
+    headers,
+    params,
+    baseSearchSpec,
+    fields,
+    res: Response,
+    filter?: CheckIdQueryParams,
+    altUrl?: string,
+  ) {
+    let response;
+    if (filter && typeof filter[checkIdsParamName] != 'undefined') {
+      let idSearchSpec =
+        baseSearchSpec.length === 0 ? `(` : baseSearchSpec + ') AND (';
+      for (const childId of filter[checkIdsParamName]) {
+        idSearchSpec = idSearchSpec + `[Id]="${childId}" OR`;
+      }
+      idSearchSpec = idSearchSpec.substring(0, idSearchSpec.length - 3) + ')';
+      const idParams = {
+        ViewMode: VIEW_MODE,
+        ChildLinks: CHILD_LINKS,
+        [uniformResponseParamName]: UNIFORM_RESPONSE,
+        fields: fields,
+        searchspec: idSearchSpec,
+      };
+      if (workspace != undefined) {
+        idParams['workspace'] = workspace;
+      }
+      const requestDetailsArray = new Array<GetRequestDetails>(
+        new GetRequestDetails({
+          url: url,
+          headers: headers,
+          params: params,
+        }),
+        new GetRequestDetails({
+          url: altUrl || url,
+          headers: headers,
+          params: idParams,
+        }),
+      );
+
+      const multiResponse = await this.parallelGetRequest(
+        requestDetailsArray,
+        res,
+      );
+      response = multiResponse.responses[0];
+      if (response.status >= 400) {
+        this.logger.error({
+          msg: response.response?.data,
+          errorDetails: response.response?.data,
+          buildNumber: this.buildNumber,
+          status: response.status,
+        });
+        if (response.status === 404) {
+          throw new HttpException({}, HttpStatus.NO_CONTENT);
+        }
+        throw new HttpException(
+          {
+            status: response.status,
+            error:
+              response.response?.data !== undefined
+                ? response.response?.data
+                : response.message,
+          },
+          response.status,
+        );
+      }
+      this.utilitiesService.setCheckIdsHeader(res, multiResponse.responses[1]);
+    } else {
+      response = await this.sendGetRequest(url, headers, res, params);
+    }
+    return response;
   }
 }

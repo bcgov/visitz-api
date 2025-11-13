@@ -10,6 +10,9 @@
 
 - pino-pretty
 - EditorConfig ([VSCode Extension link](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig))
+- A way to make JWTs locally and pass in Authorization header when making requests ([insomnia-plugin-jwtcreator](https://insomnia.rest/plugins/insomnia-plugin-jwtcreator))
+- Create local self-signed certs and set them in node environment variables or disable httpsOptions for local work
+- (Windows only) Install [win-node-env](https://www.npmjs.com/package/win-node-env/v/0.6.0) globally to run node aliases without needing to edit project.json ([stackoverflow info](https://stackoverflow.com/a/68426866))
 
 ### Installing the project
 
@@ -59,4 +62,3 @@ $ npm run test:e2e
 # unit tests with coverage information
 $ npm run test:cov
 ```
-

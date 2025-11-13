@@ -47,7 +47,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
   attachmentIdName,
@@ -60,6 +60,7 @@ import {
   attachmentIdFieldName,
   responseNarrativeIdName,
   excludeEmptyFieldsParamName,
+  checkIdsParamName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -72,6 +73,7 @@ import {
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import { Request, Response } from 'express';
 import {
+  existingIdsRecordCountHeadersSwagger,
   noContentResponseSwagger,
   totalRecordCountHeadersSwagger,
   versionInfo,
@@ -128,9 +130,10 @@ export class ServiceRequestsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedSupportNetworkEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -163,7 +166,7 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.serviceRequestService.getListSRSupportNetworkInformationRecord(
       id,
@@ -223,9 +226,10 @@ export class ServiceRequestsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedAttachmentsEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -258,7 +262,7 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.serviceRequestService.getSingleSRAttachmentRecord(
       id,
@@ -272,7 +276,7 @@ export class ServiceRequestsController {
   @Get(`:${idName}/attachments/:${attachmentIdName}`)
   @ApiOperation({
     description:
-      'Download an Attachment or retreive metadata related to a given Service Request Id by its Attachment Id.',
+      'Download an Attachment or retrieve metadata related to a given Service Request Id by its Attachment Id.',
   })
   @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: recordCountNeededParamName, required: false })
@@ -391,9 +395,10 @@ export class ServiceRequestsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedContactsEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -426,7 +431,7 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.serviceRequestService.getListSRContactRecord(
       id,
@@ -485,9 +490,10 @@ export class ServiceRequestsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedResponseNarrativeEntity)
   @ApiOkResponse({
-    headers: totalRecordCountHeadersSwagger,
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {
@@ -520,7 +526,7 @@ export class ServiceRequestsController {
         skipMissingProperties: true,
       }),
     )
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedResponseNarrativeEntity> {
     return await this.serviceRequestService.getListSRResponseNarrativeRecord(
       id,

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { RecordType } from '../../common/constants/enumerations';
 import { caseNotesIdName } from '../../common/constants/parameter-constants';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import { CheckIdQueryParams } from '../../dto/filter-query-params.dto';
 import {
   CaseNotesIdPathParams,
   IdPathParams,
@@ -73,7 +73,7 @@ export class CaseNotesService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedCaseNotesEntity> {
     const baseSearchSpec = ``;
     const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
@@ -91,11 +91,15 @@ export class CaseNotesService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
+    const response = await this.requestPreparerService.checkIdsGetRequest(
       upstreamUrl,
+      this.workspace,
       headers,
-      res,
       params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
     );
     return new NestedCaseNotesEntity(response.data);
   }

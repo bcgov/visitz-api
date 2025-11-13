@@ -9,6 +9,8 @@ import {
   UNIFORM_RESPONSE,
   uniformResponseParamName,
   VIEW_MODE,
+  checkIdsParamName,
+  checkIdsReturnHeaderName,
 } from '../../common/constants/parameter-constants';
 import { TokenRefresherService } from '../token-refresher/token-refresher.service';
 import { HttpService } from '@nestjs/axios';
@@ -22,7 +24,10 @@ import {
   RawAxiosRequestHeaders,
 } from 'axios';
 import { getMockRes } from '@jest-mock/express';
-import { FilterQueryParams } from '../../dto/filter-query-params.dto';
+import {
+  CheckIdQueryParams,
+  FilterQueryParams,
+} from '../../dto/filter-query-params.dto';
 import {
   pageSizeParamName,
   recordCountNeededParamName,
@@ -444,5 +449,132 @@ describe('RequestPreparerService', () => {
       expect(spy).toHaveBeenCalledTimes(1);
       expect(result.overallError).toBeInstanceOf(HttpException);
     });
+  });
+
+  describe('checkIdsGetRequest tests', () => {
+    it.each([
+      [``, undefined, { 'Row Id': 'abcd' }],
+      [`(stuff here`, `anotherurl`, { Id: 'abcd' }],
+    ])(
+      'provides a response on both sucessful http service calls',
+      async (baseSearchSpec, altUrl, item) => {
+        const url = 'url';
+        const workspace = 'workspace';
+        const checkIdQueryParams = {
+          [checkIdsParamName]: [`abcd`],
+        } as CheckIdQueryParams;
+        const responseObservable = of({
+          data: { items: [item] },
+          headers: {} as RawAxiosRequestHeaders,
+          status: 200,
+          statusText: 'OK',
+        } as AxiosResponse<any, any>);
+        const spy = jest
+          .spyOn(httpService, 'get')
+          .mockReturnValueOnce(responseObservable)
+          .mockReturnValueOnce(responseObservable);
+        const result = await service.checkIdsGetRequest(
+          url,
+          workspace,
+          {},
+          {},
+          baseSearchSpec,
+          'Id',
+          res,
+          checkIdQueryParams,
+          altUrl,
+        );
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(result.data).toMatchObject({ items: [item] });
+        expect(res.setHeader).toHaveBeenCalledWith(
+          checkIdsReturnHeaderName,
+          `["abcd"]`,
+        );
+      },
+    );
+
+    it.each([
+      [404, `[]`],
+      [500, ``],
+    ])(
+      'provides a response on overall success but header check failure',
+      async (code, expectedHeader) => {
+        const checkIdQueryParams = {
+          [checkIdsParamName]: [`abcd`],
+        } as CheckIdQueryParams;
+        const responseObservable = of({
+          data: { items: 'test' },
+          headers: {} as RawAxiosRequestHeaders,
+          status: 200,
+          statusText: 'OK',
+        } as AxiosResponse<any, any>);
+        const spy = jest
+          .spyOn(httpService, 'get')
+          .mockReturnValueOnce(responseObservable)
+          .mockReturnValueOnce(
+            of({
+              data: { items: [{ Id: 'abcd' }] },
+              headers: {} as RawAxiosRequestHeaders,
+              status: code,
+              statusText: 'OK',
+            } as AxiosResponse<any, any>),
+          );
+        const result = await service.checkIdsGetRequest(
+          'url',
+          'workspace',
+          {},
+          {},
+          'baseSearchSpec',
+          'Id',
+          res,
+          checkIdQueryParams,
+        );
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(result.data).toMatchObject({ items: 'test' });
+        expect(res.setHeader).toHaveBeenCalledWith(
+          checkIdsReturnHeaderName,
+          expectedHeader,
+        );
+      },
+    );
+
+    it.each([[404], [500]])(
+      'provides an overall error on base request failure',
+      async (code) => {
+        const checkIdQueryParams = {
+          [checkIdsParamName]: [`abcd`],
+        } as CheckIdQueryParams;
+        const responseObservable = of({
+          data: { items: 'test' },
+          headers: {} as RawAxiosRequestHeaders,
+          status: 200,
+          statusText: 'OK',
+        } as AxiosResponse<any, any>);
+        const spy = jest
+          .spyOn(httpService, 'get')
+          .mockReturnValueOnce(
+            of({
+              data: { items: [{ Id: 'abcd' }] },
+              headers: {} as RawAxiosRequestHeaders,
+              status: code,
+              statusText: 'OK',
+            } as AxiosResponse<any, any>),
+          )
+          .mockReturnValueOnce(responseObservable);
+        await expect(
+          service.checkIdsGetRequest(
+            'url',
+            'workspace',
+            {},
+            {},
+            'baseSearchSpec',
+            'Id',
+            res,
+            checkIdQueryParams,
+          ),
+        ).rejects.toThrow(HttpException);
+        expect(spy).toHaveBeenCalledTimes(2);
+      },
+    );
   });
 });

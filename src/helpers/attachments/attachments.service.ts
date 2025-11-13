@@ -12,7 +12,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
-  FilterQueryParams,
+  CheckIdQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
@@ -54,6 +54,7 @@ export class AttachmentsService {
   postWorkspace: string | undefined;
   afterFieldName: string | undefined;
   formDescriptionFieldName: string;
+  fileExtensionFieldName: string;
   attachmentStatusFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
@@ -91,6 +92,9 @@ export class AttachmentsService {
     this.workspace = this.configService.get('workspaces.attachments');
     this.postWorkspace = this.configService.get('workspaces.postAttachments');
     this.afterFieldName = this.configService.get('afterFieldName.attachments');
+    this.fileExtensionFieldName = this.configService.get<string>(
+      'dataApiParameters.attachments.fileExtensionField',
+    );
     this.formDescriptionFieldName = this.configService.get<string>(
       'dataApiParameters.attachments.formDescriptionField',
     );
@@ -157,10 +161,11 @@ export class AttachmentsService {
     typeFieldName: string,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     const baseSearchSpec =
       `([${typeFieldName}]="${id[idName]}" AND ` +
+      `[${this.fileExtensionFieldName}] IS NOT NULL AND ` +
       `([${this.formDescriptionFieldName}] IS NULL OR ` +
       `NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
       `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}"))`;
@@ -173,11 +178,15 @@ export class AttachmentsService {
         idir,
         filter,
       );
-    const response = await this.requestPreparerService.sendGetRequest(
+    const response = await this.requestPreparerService.checkIdsGetRequest(
       this.url,
+      this.workspace,
       headers,
-      res,
       params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
     );
     return new NestedAttachmentsEntity(response.data);
   }
