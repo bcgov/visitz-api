@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@jest-mock/express": "^3.0.0",
-    "@nestjs/cli": "^11.0.0",
+    "@nestjs/cli": "^11.0.11",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.12",
     "@types/clamscan": "^2.4.0",
