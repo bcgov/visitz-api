@@ -86,9 +86,9 @@ describe('WorkflowAuthService', () => {
     it('should return true with valid record', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce('')
         .mockResolvedValueOnce('');
       const spy = jest
@@ -166,10 +166,10 @@ describe('WorkflowAuthService', () => {
     });
 
     it.each([
-      [undefined, undefined, undefined, undefined, 0],
+      [undefined, null, null, null, 0],
       [testIdir, 403, true, officeNames, 3],
-      [testIdir, 200, false, undefined, 3],
-      [testIdir, 403, false, undefined, 3],
+      [testIdir, 200, false, null, 3],
+      [testIdir, 403, false, null, 3],
     ])(
       'should return false with invalid record in cache',
       async (
@@ -218,7 +218,7 @@ describe('WorkflowAuthService', () => {
     it('should throw with upstream invalid record for record type', async () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
-        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(officeNames)
         .mockResolvedValueOnce('');
@@ -256,8 +256,8 @@ describe('WorkflowAuthService', () => {
       const cacheSpy = jest
         .spyOn(cache, 'get')
         .mockResolvedValueOnce(200)
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce('');
       const spy = jest.spyOn(httpService, 'get').mockReturnValueOnce(
         of({
