@@ -119,7 +119,7 @@ describe('TokenRefresherService', () => {
       expect(typeof ttlMs).toBe('number');
     });
 
-    it('should return [null, undefined] on axios error', async () => {
+    it('should return [undefined, undefined] on axios error', async () => {
       const spy = jest.spyOn(httpService, 'post').mockImplementation(() => {
         throw new AxiosError(
           'Axios Error',
@@ -137,12 +137,12 @@ describe('TokenRefresherService', () => {
       });
       const [token, ttlMs] = await service.authenticateUpstream();
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(token).toBe(null);
+      expect(token).toBe(undefined);
       expect(ttlMs).toBe(undefined);
     });
 
     it.each([[undefined], [{}]])(
-      'should return [null, undefined] on generic error',
+      'should return [undefined, undefined] on generic error',
       async (data) => {
         const spy = jest.spyOn(httpService, 'post').mockReturnValueOnce(
           of({
@@ -155,7 +155,7 @@ describe('TokenRefresherService', () => {
         );
         const [token, ttlMs] = await service.authenticateUpstream();
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(token).toBe(null);
+        expect(token).toBe(undefined);
         expect(ttlMs).toBe(undefined);
       },
     );

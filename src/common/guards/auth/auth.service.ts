@@ -102,11 +102,11 @@ export class AuthService {
       this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
-    let employeeActive: boolean | null = await this.cacheManager.get(idir);
-    let officeNames: string | null =
+    let employeeActive: boolean | undefined = await this.cacheManager.get(idir);
+    let officeNames: string | undefined =
       await this.cacheManager.get(officeNamesKey);
 
-    if (employeeActive === null || officeNames === null) {
+    if (employeeActive === undefined || officeNames === undefined) {
       this.logger.log(
         `Cache not hit for record type and active status, going upstream...`,
       );
@@ -114,7 +114,7 @@ export class AuthService {
         searchspec: string = 'Not Set';
       [employeeActive, officeNames] =
         await this.getEmployeeActiveUpstream(idir);
-      if (employeeActive === true && officeNames !== null) {
+      if (employeeActive === true && officeNames !== undefined) {
         [isAssignedToOffice, searchspec] =
           await this.getIsAssignedToOfficeUpstream(
             id,
@@ -129,7 +129,7 @@ export class AuthService {
         key,
         searchspec,
       );
-    } else if (upstreamResult === null) {
+    } else if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit for record type, going upstream...`);
       const [upstreamIdir, searchspec] =
         await this.getIsAssignedToOfficeUpstream(
@@ -153,7 +153,7 @@ export class AuthService {
       );
       const readableOfficeNames =
         typeof officeNames === 'string'
-          ? `["` + officeNames.replace(officeNamesSeparator, `","`) + `"]`
+          ? `["` + officeNames.replaceAll(officeNamesSeparator, `","`) + `"]`
           : officeNames;
       this.logger.log(
         `Cache hit for employee offices! Key: ${officeNamesKey} Result: ${readableOfficeNames}`,
@@ -162,7 +162,7 @@ export class AuthService {
     if (
       upstreamResult === 403 ||
       employeeActive === false ||
-      officeNames === undefined
+      officeNames === null
     ) {
       return false;
     }
@@ -206,7 +206,7 @@ export class AuthService {
   async positionCheck(
     idir: string,
     response,
-  ): Promise<[boolean, string | null]> {
+  ): Promise<[boolean, string | undefined]> {
     const officeNames = [];
     const officeNamesKey =
       this.utilitiesService.officeNamesCacheKeyPreparer(idir);
@@ -225,13 +225,9 @@ export class AuthService {
               buildNumber: this.buildNumber,
               function: this.getEmployeeActiveUpstream.name,
             });
-            await this.cacheManager.set(
-              officeNamesKey,
-              undefined,
-              this.cacheTime,
-            );
+            await this.cacheManager.set(officeNamesKey, null, this.cacheTime);
             await this.cacheManager.set(idir, false, this.cacheTime);
-            return [false, null];
+            return [false, undefined];
           }
         }
         officeNames.push(position['Division']);
@@ -242,9 +238,9 @@ export class AuthService {
           buildNumber: this.buildNumber,
           function: this.getEmployeeActiveUpstream.name,
         });
-        await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
+        await this.cacheManager.set(officeNamesKey, null, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
-        return [false, null];
+        return [false, undefined];
       }
     } else {
       for (const position of response.data['items'][0][
@@ -388,7 +384,7 @@ export class AuthService {
 
   async getEmployeeActiveUpstream(
     idir: string,
-  ): Promise<[boolean, string | null]> {
+  ): Promise<[boolean, string | undefined]> {
     const officeNamesKey =
       this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     const params = {
@@ -442,7 +438,7 @@ export class AuthService {
           buildNumber: this.buildNumber,
           function: this.getEmployeeActiveUpstream.name,
         });
-        await this.cacheManager.set(officeNamesKey, undefined, this.cacheTime);
+        await this.cacheManager.set(officeNamesKey, null, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
         if (error.status === 404) {
           return [false, null];

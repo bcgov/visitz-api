@@ -15,6 +15,7 @@ import {
 } from '../../dto/id-path-params.dto';
 import {
   AttachmentDetailsQueryParams,
+  CheckIdQueryParams,
   FilterQueryParams,
   VisitDetailsQueryParams,
 } from '../../dto/filter-query-params.dto';
@@ -84,7 +85,7 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedSupportNetworkEntity> {
     return await this.supportNetworkService.getListSupportNetworkInformationRecord(
       RecordType.Case,
@@ -169,7 +170,7 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedAttachmentsEntity> {
     return await this.attachmentsService.getSingleAttachmentRecord(
       RecordType.Case,
@@ -229,7 +230,7 @@ export class CasesService {
     id: IdPathParams,
     res: Response,
     idir: string,
-    filter?: FilterQueryParams,
+    filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
       RecordType.Case,

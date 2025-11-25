@@ -31,7 +31,7 @@ export class ExternalAuthService {
     }
     const [status, officeNames] =
       await this.authService.getEmployeeActiveUpstream(idir);
-    if (status === false || officeNames === null) {
+    if (status === false || officeNames === undefined) {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
