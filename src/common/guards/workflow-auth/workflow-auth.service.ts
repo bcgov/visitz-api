@@ -61,11 +61,11 @@ export class WorkflowAuthService {
       this.utilitiesService.officeNamesCacheKeyPreparer(idir);
     let upstreamResult: number | null | undefined =
       await this.cacheManager.get(key);
-    let employeeActive: boolean | null = await this.cacheManager.get(idir);
-    let officeNames: string | null =
+    let employeeActive: boolean | undefined = await this.cacheManager.get(idir);
+    let officeNames: string | undefined =
       await this.cacheManager.get(officeNamesKey);
 
-    if (employeeActive === null || officeNames === null) {
+    if (employeeActive === undefined || officeNames === undefined) {
       this.logger.log(
         `Cache not hit for record type and active status, going upstream...`,
       );
@@ -73,7 +73,7 @@ export class WorkflowAuthService {
         searchspec: string = 'Not Set';
       [employeeActive, officeNames] =
         await this.authService.getEmployeeActiveUpstream(idir);
-      if (employeeActive === true && officeNames !== null) {
+      if (employeeActive === true && officeNames !== undefined) {
         [isAssignedToOffice, searchspec] =
           await this.authService.getIsAssignedToOfficeUpstream(
             entityNumber,
@@ -89,7 +89,7 @@ export class WorkflowAuthService {
         key,
         searchspec,
       );
-    } else if (upstreamResult === null) {
+    } else if (upstreamResult === undefined) {
       this.logger.log(`Cache not hit for record type, going upstream...`);
       const [upstreamIdir, searchspec] =
         await this.authService.getIsAssignedToOfficeUpstream(
@@ -114,7 +114,7 @@ export class WorkflowAuthService {
       );
       const readableOfficeNames =
         typeof officeNames === 'string'
-          ? `["` + officeNames.replace(officeNamesSeparator, `","`) + `"]`
+          ? `["` + officeNames.replaceAll(officeNamesSeparator, `","`) + `"]`
           : officeNames;
       this.logger.log(
         `Cache hit for employee offices! Key: ${officeNamesKey} Result: ${readableOfficeNames}`,

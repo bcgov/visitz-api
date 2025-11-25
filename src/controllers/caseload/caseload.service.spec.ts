@@ -672,10 +672,10 @@ describe('CaseloadService', () => {
       );
       expect(cacheSpy).toHaveBeenCalledTimes(5);
 
-      await expect(cacheManager.get(caseKey)).resolves.toBe(null);
-      await expect(cacheManager.get(incidentKey)).resolves.toBe(null);
-      await expect(cacheManager.get(srKey)).resolves.toBe(null);
-      await expect(cacheManager.get(memoKey)).resolves.toBe(null);
+      await expect(cacheManager.get(caseKey)).resolves.toBe(undefined);
+      await expect(cacheManager.get(incidentKey)).resolves.toBe(undefined);
+      await expect(cacheManager.get(srKey)).resolves.toBe(undefined);
+      await expect(cacheManager.get(memoKey)).resolves.toBe(undefined);
     });
   });
 

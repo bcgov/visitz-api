@@ -82,7 +82,7 @@ describe('ExternalAuthService', () => {
       });
       const authSpy = jest
         .spyOn(authService, 'getEmployeeActiveUpstream')
-        .mockReturnValueOnce(Promise.resolve([false, null]));
+        .mockReturnValueOnce(Promise.resolve([false, undefined]));
 
       await expect(service.checkEmployeeStatusUpstream(req)).rejects.toThrow(
         HttpException,
