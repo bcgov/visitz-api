@@ -3,8 +3,8 @@
 
 # Upstream Caching
 
-* status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
-* date: 2025-03-03 <!-- YYYY-MM-DD when the decision was last updated -->
+* status: accepted <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
+* date: 2025-12-02 <!-- YYYY-MM-DD when the decision was last updated -->
 * decision-makers: Hannah MacDonald, Todd Scharien <!-- list everyone involved in the decision -->
 * consulted: Karim Gillani, Sagar Shah <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
 * informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->

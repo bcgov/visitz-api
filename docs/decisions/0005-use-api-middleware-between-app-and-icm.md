@@ -3,8 +3,8 @@
 
 # Use API middleware between app and ICM
 
-* status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
-* date: 2024-09-23 <!-- YYYY-MM-DD when the decision was last updated -->
+* status: accepted <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
+* date: 2025-12-02 <!-- YYYY-MM-DD when the decision was last updated -->
 * decision-makers: Leo Lou (ARB), Keith Parkin (ARB), Sagar Shah, Todd Scharien, Fred Wen (ARB) <!-- list everyone involved in the decision -->
 * consulted: Leo Lou (ARB), Fred Wen (ARB) <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
 
