@@ -32,6 +32,8 @@ import { AxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import {
   idirUsernameHeaderField,
+  pageSizeMax,
+  pageSizeParamName,
   queryHierarchyParamName,
   trustedIdirHeaderName,
 } from '../../../common/constants/upstream-constants';
@@ -392,6 +394,7 @@ export class AuthService {
       ChildLinks: CHILD_LINKS,
       [uniformResponseParamName]: UNIFORM_RESPONSE,
       excludeEmptyFieldsInResponse: 'true',
+      [pageSizeParamName]: pageSizeMax,
       [queryHierarchyParamName]: this.utilitiesService.constructQueryHierarchy(
         new QueryHierarchyComponent({
           classExample: EmployeeExample,

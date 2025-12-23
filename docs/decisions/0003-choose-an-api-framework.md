@@ -3,8 +3,8 @@
 
 # Choose an API framework
 
-* status: proposed <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
-* date: 2024-10-21 <!-- YYYY-MM-DD when the decision was last updated -->
+* status: accepted <!-- proposed | rejected | accepted | deprecated | ... | superseded by ADR-0123 -->
+* date: 2025-12-02 <!-- YYYY-MM-DD when the decision was last updated -->
 * decision-makers: Leo Lou (ARB), Keith Parkin (ARB), Todd Scharien, Fred Wen (ARB), Hannah MacDonald <!-- list everyone involved in the decision -->
 * consulted: Leo Lou (ARB) <!-- list everyone whose opinions are sought (typically subject-matter experts); and with whom there is a two-way communication --> <!-- OPTIONAL -->
 * informed: <!-- list everyone who is kept up-to-date on progress; and with whom there is a one-way communication} --> <!-- OPTIONAL -->
