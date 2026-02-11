@@ -16,6 +16,7 @@ const childVisitEntityIdFieldName = 'Parent Id';
 const attachmentTypeSafetyAssessment = 'Safety Assessment';
 const startRowNumParamName = 'StartRowNum';
 const recordCountNeededParamName = 'recordcountneeded';
+const fieldsParamName = 'fields';
 const pageSizeParamName = 'PageSize';
 const getChildrenParamName = 'getChildren';
 const queryHierarchyParamName = 'QueryHierarchy';
@@ -70,6 +71,7 @@ export {
   attachmentTypeSafetyAssessment,
   startRowNumParamName,
   recordCountNeededParamName,
+  fieldsParamName,
   pageSizeParamName,
   getChildrenParamName,
   queryHierarchyParamName,
