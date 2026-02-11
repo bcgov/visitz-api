@@ -22,24 +22,27 @@ import {
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         pinoHttp: {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          customProps(req, res) {
+            return {
+              buildNumber: configService.get('buildInfo.buildNumber'),
+            };
+          },
           customSuccessObject: (req, res, loggableObject) => {
             return {
               ...loggableObject,
               res,
-              buildNumber: configService.get('buildInfo.buildNumber'),
             };
           },
           customErrorObject: (req, res, loggableObject) => {
             return {
               ...loggableObject,
               res,
-              buildNumber: configService.get('buildInfo.buildNumber'),
             };
           },
           customReceivedObject: (req, res, loggableObject) => {
             return {
               ...loggableObject,
-              buildNumber: configService.get('buildInfo.buildNumber'),
               msg: 'Request received',
             };
           },

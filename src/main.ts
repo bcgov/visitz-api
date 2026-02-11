@@ -36,8 +36,9 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT ?? 3000;
+  const buildNumber = process.env.VPI_APP_LABEL ?? 'localBuild';
   await app.listen(port);
   const logger = new NestJSLogger();
-  logger.log(`API is running on port: ${port}`, { port });
+  logger.log(`API is running on port: ${port}`, { port, buildNumber });
 }
 bootstrap();

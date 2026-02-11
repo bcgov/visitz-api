@@ -181,7 +181,7 @@ export class AuthService {
       this.logger.error(error);
       throw new Error(error);
     }
-    return [rowId, controllerPath as RecordType];
+    return [rowId as string, controllerPath as RecordType];
   }
 
   async evaluateUpstreamResult(
