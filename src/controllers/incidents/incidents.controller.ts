@@ -43,6 +43,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  IncidentConcernIdPathParams,
   ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
@@ -64,6 +65,7 @@ import {
   responseNarrativeIdName,
   excludeEmptyFieldsParamName,
   checkIdsParamName,
+  incidentConcernIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -116,6 +118,12 @@ import {
   ResponseNarrativeListResponseIncidentExample,
   ResponseNarrativeSingleResponseIncidentExample,
 } from '../../entities/response-narrative.entity';
+import {
+  IncidentConcernEntity,
+  IncidentConcernListResponseExample,
+  IncidentConcernSingleExample,
+  NestedIncidentConcernEntity,
+} from '../../entities/incident-concern.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -292,6 +300,7 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
@@ -674,6 +683,101 @@ export class IncidentsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseNarrativeEntity> {
     return await this.incidentsService.getSingleIncidentResponseNarrativeRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/concerns`)
+  @ApiOperation({
+    description: `Find all Incident Concern entries related to a given Incident entity by Incident id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedIncidentConcernEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedIncidentConcernEntity),
+        },
+        examples: {
+          IncidentConcernListResponse: {
+            value: IncidentConcernListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentConcernRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedIncidentConcernEntity> {
+    return await this.incidentsService.getListIncidentConcernRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/concerns/:${incidentConcernIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${incidentConcernIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(IncidentConcernEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(IncidentConcernEntity),
+        },
+        examples: {
+          IncidentConcernSingleResponse: {
+            value: IncidentConcernSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentConcernRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IncidentConcernIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<IncidentConcernEntity> {
+    return await this.incidentsService.getSingleIncidentConcernRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

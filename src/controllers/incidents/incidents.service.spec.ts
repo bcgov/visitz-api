@@ -19,6 +19,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  IncidentConcernIdPathParams,
   ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
@@ -39,6 +40,7 @@ import {
   safetyAssessmentIdName,
   supportNetworkIdName,
   responseNarrativeIdName,
+  incidentConcernIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -76,6 +78,13 @@ import {
   ResponseNarrativeSingleResponseIncidentExample,
   ResponseNarrativeEntity,
 } from '../../entities/response-narrative.entity';
+import { IncidentConcernService } from '../../helpers/incident-concern/incident-concern.service';
+import {
+  IncidentConcernEntity,
+  IncidentConcernListResponseExample,
+  IncidentConcernSingleExample,
+  NestedIncidentConcernEntity,
+} from '../../entities/incident-concern.entity';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -84,6 +93,7 @@ describe('IncidentsService', () => {
   let contactsService: ContactsService;
   let safetyAssessmentsService: SafetyAssessmentService;
   let responseNarrativeService: ResponseNarrativeService;
+  let incidentConcernService: IncidentConcernService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -97,6 +107,7 @@ describe('IncidentsService', () => {
         VirusScanService,
         SafetyAssessmentService,
         ResponseNarrativeService,
+        IncidentConcernService,
         UtilitiesService,
         TokenRefresherService,
         JwtService,
@@ -122,6 +133,9 @@ describe('IncidentsService', () => {
     );
     responseNarrativeService = module.get<ResponseNarrativeService>(
       ResponseNarrativeService,
+    );
+    incidentConcernService = module.get<IncidentConcernService>(
+      IncidentConcernService,
     );
     mockClear();
   });
@@ -545,6 +559,77 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new ResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentConcernRecord tests', () => {
+    it.each([
+      [
+        IncidentConcernListResponseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const incidentConcernSpy = jest
+          .spyOn(incidentConcernService, 'getListIncidentConcernRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedIncidentConcernEntity(data)),
+          );
+
+        const result = await service.getListIncidentConcernRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(incidentConcernSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedIncidentConcernEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentConcernRecord tests', () => {
+    it.each([
+      [
+        IncidentConcernSingleExample,
+        {
+          [idName]: 'test',
+          [incidentConcernIdName]: 'test2',
+        } as IncidentConcernIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentConcernSpy = jest
+          .spyOn(incidentConcernService, 'getSingleIncidentConcernRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new IncidentConcernEntity(data)),
+          );
+
+        const result = await service.getSingleIncidentConcernRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(incidentConcernSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new IncidentConcernEntity(data));
       },
     );
   });

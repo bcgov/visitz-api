@@ -514,3 +514,18 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: SAFETY_ASSESSMENTS_CHECK_IDS_ENDPOINT
+  - name: INCIDENT_CONCERN_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONCERN_ENDPOINT
+  - name: INCIDENT_CONCERN_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONCERN_WORKSPACE
+  - name: INCIDENT_CONCERN_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONCERN_AFTER_FIELD

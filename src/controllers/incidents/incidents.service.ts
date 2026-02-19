@@ -9,6 +9,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  IncidentConcernIdPathParams,
   ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
@@ -40,6 +41,11 @@ import {
   NestedResponseNarrativeEntity,
 } from '../../entities/response-narrative.entity';
 import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
+import { IncidentConcernService } from '../../helpers/incident-concern/incident-concern.service';
+import {
+  IncidentConcernEntity,
+  NestedIncidentConcernEntity,
+} from '../../entities/incident-concern.entity';
 
 @Injectable()
 export class IncidentsService {
@@ -49,6 +55,7 @@ export class IncidentsService {
     private readonly contactsService: ContactsService,
     private readonly safetyAssessmentsService: SafetyAssessmentService,
     private readonly responseNarrativesService: ResponseNarrativeService,
+    private readonly incidentConcernService: IncidentConcernService,
   ) {}
 
   async getSingleIncidentSupportNetworkInformationRecord(
@@ -202,6 +209,34 @@ export class IncidentsService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedResponseNarrativeEntity> {
     return await this.responseNarrativesService.getListResponseNarrativeRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleIncidentConcernRecord(
+    id: IncidentConcernIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<IncidentConcernEntity> {
+    return await this.incidentConcernService.getSingleIncidentConcernRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListIncidentConcernRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedIncidentConcernEntity> {
+    return await this.incidentConcernService.getListIncidentConcernRecord(
       RecordType.Incident,
       id,
       res,
