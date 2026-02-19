@@ -18,6 +18,7 @@ import {
   AttachmentIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  IncidentConcernIdPathParams,
   ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
@@ -36,6 +37,7 @@ import {
   safetyAssessmentIdName,
   supportNetworkIdName,
   responseNarrativeIdName,
+  incidentConcernIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -77,6 +79,13 @@ import {
   ResponseNarrativeSingleResponseIncidentExample,
   ResponseNarrativeEntity,
 } from '../../entities/response-narrative.entity';
+import { IncidentConcernService } from '../../helpers/incident-concern/incident-concern.service';
+import {
+  IncidentConcernEntity,
+  IncidentConcernListResponseExample,
+  IncidentConcernSingleExample,
+  NestedIncidentConcernEntity,
+} from '../../entities/incident-concern.entity';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -98,6 +107,7 @@ describe('IncidentsController', () => {
         VirusScanService,
         SafetyAssessmentService,
         ResponseNarrativeService,
+        IncidentConcernService,
         AuthService,
         TokenRefresherService,
         RequestPreparerService,
@@ -534,6 +544,79 @@ describe('IncidentsController', () => {
           'idir',
         );
         expect(result).toEqual(new ResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentConcernRecord tests', () => {
+    it.each([
+      [
+        IncidentConcernListResponseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getListIncidentConcernRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedIncidentConcernEntity(data)),
+          );
+
+        const result = await controller.getListIncidentConcernRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedIncidentConcernEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentConcernRecord tests', () => {
+    it.each([
+      [
+        IncidentConcernSingleExample,
+        {
+          [idName]: 'test',
+          [incidentConcernIdName]: 'test2',
+        } as IncidentConcernIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getSingleIncidentConcernRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new IncidentConcernEntity(data)),
+          );
+
+        const result = await controller.getSingleIncidentConcernRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new IncidentConcernEntity(data));
       },
     );
   });

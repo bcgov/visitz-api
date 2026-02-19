@@ -11,6 +11,7 @@ import {
   safetyAssessmentIdName,
   supportNetworkIdName,
   visitIdName,
+  incidentConcernIdName,
 } from '../common/constants/parameter-constants';
 
 export class IdPathParams {
@@ -99,4 +100,15 @@ export class CaseNotesIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [caseNotesIdName]: string;
+}
+
+export class IncidentConcernIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Incident-Concern-Id-Here',
+    description: 'The Id of the incident concern you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [incidentConcernIdName]: string;
 }

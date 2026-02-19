@@ -82,6 +82,7 @@ export default () => ({
       process.env.SUBMIT_NOTES_WORKFLOW_WORKSPACE ?? undefined,
     safetyAssessmentWorkflow:
       process.env.SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_WORKSPACE ?? undefined,
+    incidentConcern: process.env.INCIDENT_CONCERN_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -96,6 +97,7 @@ export default () => ({
     responseNarratives:
       process.env.RESPONSE_NARRATIVES_AFTER_FIELD ?? undefined,
     caseNotes: process.env.CASE_NOTES_AFTER_FIELD ?? undefined,
+    incidentConcern: process.env.INCIDENT_CONCERN_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -123,6 +125,7 @@ export default () => ({
     submitNotesWorkflow: process.env.SUBMIT_NOTES_WORKFLOW_ENDPOINT ?? ' ',
     safetyAssessmentWorkflow:
       process.env.SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_ENDPOINT ?? ' ',
+    incidentConcern: process.env.INCIDENT_CONCERN_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

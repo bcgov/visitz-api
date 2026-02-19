@@ -317,6 +317,7 @@ export class CasesController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiQuery({ name: multivalueParamName, required: false })
   @ApiExtraModels(
     InPersonVisitsEntityMultiValue,
@@ -486,6 +487,7 @@ export class CasesController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
