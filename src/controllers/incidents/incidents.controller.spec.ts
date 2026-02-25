@@ -15,7 +15,9 @@ import {
   FilterQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   IncidentConcernIdPathParams,
@@ -38,6 +40,8 @@ import {
   supportNetworkIdName,
   responseNarrativeIdName,
   incidentConcernIdName,
+  callInformationIdName,
+  additionalInformationIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -86,6 +90,20 @@ import {
   IncidentConcernSingleExample,
   NestedIncidentConcernEntity,
 } from '../../entities/incident-concern.entity';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import {
+  CallInformationListResponseIncidentExample,
+  NestedCallInformationEntity,
+  CallInformationSingleResponseIncidentExample,
+  CallInformationEntity,
+} from '../../entities/call-information.entity';
+import {
+  AdditionalInformationListResponseIncidentExample,
+  NestedAdditionalInformationEntity,
+  AdditionalInformationSingleResponseIncidentExample,
+  AdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
 
 describe('IncidentsController', () => {
   let controller: IncidentsController;
@@ -107,6 +125,8 @@ describe('IncidentsController', () => {
         VirusScanService,
         SafetyAssessmentService,
         ResponseNarrativeService,
+        CallInformationService,
+        AdditionalInformationService,
         IncidentConcernService,
         AuthService,
         TokenRefresherService,
@@ -617,6 +637,157 @@ describe('IncidentsController', () => {
           'idir',
         );
         expect(result).toEqual(new IncidentConcernEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getListIncidentCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCallInformationEntity(data)),
+          );
+
+        const result = await controller.getListIncidentCallInformationRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [callInformationIdName]: 'test2',
+        } as CallInformationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getSingleIncidentCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new CallInformationEntity(data)),
+          );
+
+        const result = await controller.getSingleIncidentCallInformationRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new CallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'getListIncidentAdditionalInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAdditionalInformationEntity(data)),
+          );
+
+        const result =
+          await controller.getListIncidentAdditionalInformationRecord(
+            req,
+            idPathParams,
+            res,
+            filterQueryParams,
+          );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedAdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationSingleResponseIncidentExample,
+        {
+          [idName]: 'test',
+          [additionalInformationIdName]: 'test2',
+        } as AdditionalInformationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const incidentsServiceSpy = jest
+          .spyOn(
+            incidentsService,
+            'getSingleIncidentAdditionalInformationRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new AdditionalInformationEntity(data)),
+          );
+
+        const result =
+          await controller.getSingleIncidentAdditionalInformationRecord(
+            req,
+            idPathParams,
+            res,
+          );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new AdditionalInformationEntity(data));
       },
     );
   });

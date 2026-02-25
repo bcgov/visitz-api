@@ -39,7 +39,9 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
@@ -61,6 +63,8 @@ import {
   responseNarrativeIdName,
   excludeEmptyFieldsParamName,
   checkIdsParamName,
+  additionalInformationIdName,
+  callInformationIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -107,6 +111,18 @@ import {
   ResponseNarrativeListResponseSRExample,
   ResponseNarrativeSingleResponseSRExample,
 } from '../../entities/response-narrative.entity';
+import {
+  NestedAdditionalInformationEntity,
+  AdditionalInformationListResponseSRExample,
+  AdditionalInformationEntity,
+  AdditionalInformationSingleResponseSRExample,
+} from '../../entities/additional-information.entity';
+import {
+  NestedCallInformationEntity,
+  CallInformationListResponseSRExample,
+  CallInformationEntity,
+  CallInformationSingleResponseSRExample,
+} from '../../entities/call-information.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -570,6 +586,196 @@ export class ServiceRequestsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseNarrativeEntity> {
     return await this.serviceRequestService.getSingleSRResponseNarrativeRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/call-information`)
+  @ApiOperation({
+    description: `Find all call information entries related to a given Service Request entity by Service Request id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedCallInformationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedCallInformationEntity),
+        },
+        examples: {
+          CallInformationListResponse: {
+            value: CallInformationListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRCallInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedCallInformationEntity> {
+    return await this.serviceRequestService.getListSRCallInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/call-information/:${callInformationIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${callInformationIdName} result if it is related to the given Service Request id.`,
+  })
+  @ApiExtraModels(CallInformationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(CallInformationEntity),
+        },
+        examples: {
+          CallInformationSingleResponse: {
+            value: CallInformationSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRCallInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: CallInformationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<CallInformationEntity> {
+    return await this.serviceRequestService.getSingleSRCallInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/additional-information`)
+  @ApiOperation({
+    description: `Find all additional information entries related to a given Service Request entity by Service Request id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedAdditionalInformationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedAdditionalInformationEntity),
+        },
+        examples: {
+          AdditionalInformationListResponse: {
+            value: AdditionalInformationListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRAdditionalInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedAdditionalInformationEntity> {
+    return await this.serviceRequestService.getListSRAdditionalInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/additional-information/:${additionalInformationIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${additionalInformationIdName} result if it is related to the given Service Request id.`,
+  })
+  @ApiExtraModels(AdditionalInformationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(AdditionalInformationEntity),
+        },
+        examples: {
+          AdditionalInformationSingleResponse: {
+            value: AdditionalInformationSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRAdditionalInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: AdditionalInformationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AdditionalInformationEntity> {
+    return await this.serviceRequestService.getSingleSRAdditionalInformationRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

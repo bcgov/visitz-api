@@ -16,7 +16,9 @@ import {
   RecordType,
 } from '../../common/constants/enumerations';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
@@ -37,6 +39,8 @@ import {
   srAttachmentsFieldName,
   supportNetworkIdName,
   responseNarrativeIdName,
+  additionalInformationIdName,
+  callInformationIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -67,6 +71,20 @@ import {
   ResponseNarrativeListResponseSRExample,
   ResponseNarrativeSingleResponseSRExample,
 } from '../../entities/response-narrative.entity';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
+import {
+  AdditionalInformationListResponseSRExample,
+  NestedAdditionalInformationEntity,
+  AdditionalInformationSingleResponseSRExample,
+  AdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
+import {
+  CallInformationListResponseSRExample,
+  NestedCallInformationEntity,
+  CallInformationSingleResponseSRExample,
+  CallInformationEntity,
+} from '../../entities/call-information.entity';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -74,6 +92,8 @@ describe('ServiceRequestsService', () => {
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
   let responseNarrativeService: ResponseNarrativeService;
+  let callInformationService: CallInformationService;
+  let additionalInformationService: AdditionalInformationService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -86,6 +106,8 @@ describe('ServiceRequestsService', () => {
         AttachmentsService,
         VirusScanService,
         ResponseNarrativeService,
+        CallInformationService,
+        AdditionalInformationService,
         UtilitiesService,
         JwtService,
         TokenRefresherService,
@@ -109,6 +131,12 @@ describe('ServiceRequestsService', () => {
     contactsService = module.get<ContactsService>(ContactsService);
     responseNarrativeService = module.get<ResponseNarrativeService>(
       ResponseNarrativeService,
+    );
+    callInformationService = module.get<CallInformationService>(
+      CallInformationService,
+    );
+    additionalInformationService = module.get<AdditionalInformationService>(
+      AdditionalInformationService,
     );
     mockClear();
   });
@@ -459,6 +487,154 @@ describe('ServiceRequestsService', () => {
           'idir',
         );
         expect(result).toEqual(new ResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const callInformationSpy = jest
+          .spyOn(callInformationService, 'getListCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCallInformationEntity(data)),
+          );
+
+        const result = await service.getListSRCallInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(callInformationSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [callInformationIdName]: 'test2',
+        } as CallInformationIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const callInformationSpy = jest
+          .spyOn(callInformationService, 'getSingleCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new CallInformationEntity(data)),
+          );
+
+        const result = await service.getSingleSRCallInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(callInformationSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new CallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const additionalInformationSpy = jest
+          .spyOn(
+            additionalInformationService,
+            'getListAdditionalInformationRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAdditionalInformationEntity(data)),
+          );
+
+        const result = await service.getListSRAdditionalInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(additionalInformationSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedAdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [additionalInformationIdName]: 'test2',
+        } as AdditionalInformationIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const additionalInformationSpy = jest
+          .spyOn(
+            additionalInformationService,
+            'getSingleAdditionalInformationRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new AdditionalInformationEntity(data)),
+          );
+
+        const result = await service.getSingleSRAdditionalInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(additionalInformationSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new AdditionalInformationEntity(data));
       },
     );
   });
