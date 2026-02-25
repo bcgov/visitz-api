@@ -25,9 +25,13 @@ import {
   inlineAttachmentParamName,
   memoAttachmentsFieldName,
   afterParamName,
+  additionalInformationIdName,
+  callInformationIdName,
 } from '../../common/constants/parameter-constants';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -49,11 +53,27 @@ import { JwtService } from '@nestjs/jwt';
 import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { PostAttachmentsMemoReturnExample } from '../../dto/post-attachment.dto';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import {
+  AdditionalInformationListResponseMemoExample,
+  NestedAdditionalInformationEntity,
+  AdditionalInformationSingleResponseMemoExample,
+  AdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
+import {
+  CallInformationListResponseMemoExample,
+  NestedCallInformationEntity,
+  CallInformationSingleResponseMemoExample,
+  CallInformationEntity,
+} from '../../entities/call-information.entity';
 
 describe('MemosService', () => {
   let service: MemosService;
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
+  let callInformationService: CallInformationService;
+  let additionalInformationService: AdditionalInformationService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -63,6 +83,8 @@ describe('MemosService', () => {
         MemosService,
         ContactsService,
         AttachmentsService,
+        CallInformationService,
+        AdditionalInformationService,
         VirusScanService,
         UtilitiesService,
         JwtService,
@@ -82,6 +104,12 @@ describe('MemosService', () => {
     service = module.get<MemosService>(MemosService);
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
     contactsService = module.get<ContactsService>(ContactsService);
+    callInformationService = module.get<CallInformationService>(
+      CallInformationService,
+    );
+    additionalInformationService = module.get<AdditionalInformationService>(
+      AdditionalInformationService,
+    );
     mockClear();
   });
 
@@ -285,6 +313,154 @@ describe('MemosService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const callInformationSpy = jest
+          .spyOn(callInformationService, 'getListCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCallInformationEntity(data)),
+          );
+
+        const result = await service.getListMemoCallInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(callInformationSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [callInformationIdName]: 'test2',
+        } as CallInformationIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const callInformationSpy = jest
+          .spyOn(callInformationService, 'getSingleCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new CallInformationEntity(data)),
+          );
+
+        const result = await service.getSingleMemoCallInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(callInformationSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new CallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const additionalInformationSpy = jest
+          .spyOn(
+            additionalInformationService,
+            'getListAdditionalInformationRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAdditionalInformationEntity(data)),
+          );
+
+        const result = await service.getListMemoAdditionalInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(additionalInformationSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedAdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [additionalInformationIdName]: 'test2',
+        } as AdditionalInformationIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const additionalInformationSpy = jest
+          .spyOn(
+            additionalInformationService,
+            'getSingleAdditionalInformationRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new AdditionalInformationEntity(data)),
+          );
+
+        const result = await service.getSingleMemoAdditionalInformationRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(additionalInformationSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new AdditionalInformationEntity(data));
       },
     );
   });

@@ -15,9 +15,13 @@ import {
   idName,
   inlineAttachmentParamName,
   afterParamName,
+  additionalInformationIdName,
+  callInformationIdName,
 } from '../../common/constants/parameter-constants';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -49,6 +53,20 @@ import { VirusScanService } from '../../helpers/virus-scan/virus-scan.service';
 import { Readable } from 'stream';
 import { AttachmentStatusEnum } from '../../common/constants/enumerations';
 import { PostAttachmentsMemoReturnExample } from '../../dto/post-attachment.dto';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
+import {
+  AdditionalInformationListResponseMemoExample,
+  NestedAdditionalInformationEntity,
+  AdditionalInformationSingleResponseMemoExample,
+  AdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
+import {
+  CallInformationListResponseMemoExample,
+  NestedCallInformationEntity,
+  CallInformationSingleResponseMemoExample,
+  CallInformationEntity,
+} from '../../entities/call-information.entity';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -64,6 +82,8 @@ describe('MemosController', () => {
         AuthService,
         ContactsService,
         AttachmentsService,
+        CallInformationService,
+        AdditionalInformationService,
         VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
@@ -277,6 +297,145 @@ describe('MemosController', () => {
         );
         expect(memoServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactsEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getListMemoCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCallInformationEntity(data)),
+          );
+
+        const result = await controller.getListMemoCallInformationRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [callInformationIdName]: 'test2',
+        } as CallInformationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new CallInformationEntity(data)),
+          );
+
+        const result = await controller.getSingleMemoCallInformationRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new CallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getListMemoAdditionalInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAdditionalInformationEntity(data)),
+          );
+
+        const result = await controller.getListMemoAdditionalInformationRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedAdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [additionalInformationIdName]: 'test2',
+        } as AdditionalInformationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoAdditionalInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new AdditionalInformationEntity(data)),
+          );
+
+        const result =
+          await controller.getSingleMemoAdditionalInformationRecord(
+            req,
+            idPathParams,
+            res,
+          );
+        expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new AdditionalInformationEntity(data));
       },
     );
   });

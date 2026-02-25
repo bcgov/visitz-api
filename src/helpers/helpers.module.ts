@@ -24,6 +24,10 @@ import { CaseNotesModule } from './case-notes/case-notes.module';
 import { CaseNotesService } from './case-notes/case-notes.service';
 import { IncidentConcernModule } from './incident-concern/incident-concern.module';
 import { IncidentConcernService } from './incident-concern/incident-concern.service';
+import { CallInformationModule } from './call-information/call-information.module';
+import { AdditionalInformationService } from './additional-information/additional-information.service';
+import { AdditionalInformationModule } from './additional-information/additional-information.module';
+import { CallInformationService } from './call-information/call-information.service';
 
 @Module({
   imports: [
@@ -41,6 +45,8 @@ import { IncidentConcernService } from './incident-concern/incident-concern.serv
     ResponseNarrativeModule,
     CaseNotesModule,
     IncidentConcernModule,
+    CallInformationModule,
+    AdditionalInformationModule,
   ],
   providers: [
     SupportNetworkService,
@@ -54,6 +60,8 @@ import { IncidentConcernService } from './incident-concern/incident-concern.serv
     ResponseNarrativeService,
     CaseNotesService,
     IncidentConcernService,
+    CallInformationService,
+    AdditionalInformationService,
   ],
   exports: [
     SupportNetworkService,
@@ -65,6 +73,8 @@ import { IncidentConcernService } from './incident-concern/incident-concern.serv
     ResponseNarrativeService,
     CaseNotesService,
     IncidentConcernService,
+    CallInformationService,
+    AdditionalInformationService,
   ],
 })
 export class HelpersModule {}

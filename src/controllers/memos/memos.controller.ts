@@ -42,9 +42,13 @@ import {
   attachmentIdFieldName,
   excludeEmptyFieldsParamName,
   checkIdsParamName,
+  additionalInformationIdName,
+  callInformationIdName,
 } from '../../common/constants/parameter-constants';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -91,6 +95,18 @@ import {
 } from '../../dto/post-attachment.dto';
 import { ApiUnprocessableEntityErrorEntity } from '../../entities/api-unprocessable-entity-error.entity';
 import { FileTypeMagicNumberValidator } from '../../helpers/file-validators/file-validators';
+import {
+  NestedAdditionalInformationEntity,
+  AdditionalInformationListResponseMemoExample,
+  AdditionalInformationEntity,
+  AdditionalInformationSingleResponseMemoExample,
+} from '../../entities/additional-information.entity';
+import {
+  NestedCallInformationEntity,
+  CallInformationListResponseMemoExample,
+  CallInformationEntity,
+  CallInformationSingleResponseMemoExample,
+} from '../../entities/call-information.entity';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
@@ -364,6 +380,196 @@ export class MemosController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactsEntity> {
     return await this.memosService.getSingleMemoContactRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/call-information`)
+  @ApiOperation({
+    description: `Find all call information entries related to a given Memo entity by Memo id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedCallInformationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedCallInformationEntity),
+        },
+        examples: {
+          CallInformationListResponse: {
+            value: CallInformationListResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getListMemoCallInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedCallInformationEntity> {
+    return await this.memosService.getListMemoCallInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/call-information/:${callInformationIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${callInformationIdName} result if it is related to the given Memo id.`,
+  })
+  @ApiExtraModels(CallInformationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(CallInformationEntity),
+        },
+        examples: {
+          CallInformationSingleResponse: {
+            value: CallInformationSingleResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoCallInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: CallInformationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<CallInformationEntity> {
+    return await this.memosService.getSingleMemoCallInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/additional-information`)
+  @ApiOperation({
+    description: `Find all additional information entries related to a given Memo entity by Memo id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedAdditionalInformationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedAdditionalInformationEntity),
+        },
+        examples: {
+          AdditionalInformationListResponse: {
+            value: AdditionalInformationListResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getListMemoAdditionalInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedAdditionalInformationEntity> {
+    return await this.memosService.getListMemoAdditionalInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/additional-information/:${additionalInformationIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${additionalInformationIdName} result if it is related to the given Memo id.`,
+  })
+  @ApiExtraModels(AdditionalInformationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(AdditionalInformationEntity),
+        },
+        examples: {
+          AdditionalInformationSingleResponse: {
+            value: AdditionalInformationSingleResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoAdditionalInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: AdditionalInformationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AdditionalInformationEntity> {
+    return await this.memosService.getSingleMemoAdditionalInformationRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

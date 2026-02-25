@@ -6,7 +6,9 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
@@ -34,6 +36,16 @@ import {
   NestedResponseNarrativeEntity,
 } from '../../entities/response-narrative.entity';
 import { ResponseNarrativeService } from '../../helpers/response-narrative/response-narrative.service';
+import {
+  CallInformationEntity,
+  NestedCallInformationEntity,
+} from '../../entities/call-information.entity';
+import {
+  AdditionalInformationEntity,
+  NestedAdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -42,6 +54,8 @@ export class ServiceRequestsService {
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
     private readonly responseNarrativesService: ResponseNarrativeService,
+    private readonly callInformationService: CallInformationService,
+    private readonly additionalInformationService: AdditionalInformationService,
   ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
@@ -167,6 +181,62 @@ export class ServiceRequestsService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedResponseNarrativeEntity> {
     return await this.responseNarrativesService.getListResponseNarrativeRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleSRCallInformationRecord(
+    id: CallInformationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<CallInformationEntity> {
+    return await this.callInformationService.getSingleCallInformationRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRCallInformationRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedCallInformationEntity> {
+    return await this.callInformationService.getListCallInformationRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleSRAdditionalInformationRecord(
+    id: AdditionalInformationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<AdditionalInformationEntity> {
+    return await this.additionalInformationService.getSingleAdditionalInformationRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRAdditionalInformationRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedAdditionalInformationEntity> {
+    return await this.additionalInformationService.getListAdditionalInformationRecord(
       RecordType.SR,
       id,
       res,
