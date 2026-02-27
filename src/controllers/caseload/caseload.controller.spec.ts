@@ -86,11 +86,16 @@ describe('CaseloadController', () => {
             ),
           );
 
-        const result = await controller.getCaseload(req, filterQueryParams);
+        const result = await controller.getCaseload(
+          req,
+          res,
+          filterQueryParams,
+        );
         expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
         expect(caseloadServiceSpy).toHaveBeenCalledWith(
           'idir',
           req,
+          res,
           filterQueryParams,
         );
         expect(result).toEqual(
