@@ -23,34 +23,18 @@ import { plainToInstance } from 'class-transformer';
 import {
   pageSizeMax,
   pageSizeParamName,
-  queryHierarchyParamName,
 } from '../../common/constants/upstream-constants';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Request, Response } from 'express';
 import {
   caseIncludeParam,
-  excludeEmptyFieldsParamName,
   incidentIncludeParam,
   memoIncludeParam,
   officeNamesSeparator,
-  queryHierarchyCaseChildClassName,
-  queryHierarchyCaseParentClassName,
-  queryHierarchyIncidentChildAdditionalClassName,
-  queryHierarchyIncidentChildCallClassName,
-  queryHierarchyIncidentChildConcernsClassName,
-  queryHierarchyIncidentParentClassName,
   srIncludeParam,
 } from '../../common/constants/parameter-constants';
-import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
-import { CaseExample, CasePositionExample } from '../../entities/case.entity';
 import { caseloadIncludeEntityError } from '../../common/constants/error-constants';
-import {
-  IncidentAdditionalInformationExample,
-  IncidentCallInformationExample,
-  IncidentConcernsExample,
-  IncidentExample,
-} from '../../entities/incident.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -212,53 +196,6 @@ export class CaseloadService {
           filter,
         );
       params = this.utilitiesService.recordTypeSearchSpecAppend(params, type);
-      if (type === RecordType.Case) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: CaseExample,
-              name: queryHierarchyCaseParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [queryHierarchyCaseChildClassName],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: CasePositionExample,
-                  name: queryHierarchyCaseChildClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
-      } else if (type === RecordType.Incident) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: IncidentExample,
-              name: queryHierarchyIncidentParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [
-                queryHierarchyIncidentChildAdditionalClassName,
-                queryHierarchyIncidentChildCallClassName,
-                queryHierarchyIncidentChildConcernsClassName,
-              ],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: IncidentAdditionalInformationExample,
-                  name: queryHierarchyIncidentChildAdditionalClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentCallInformationExample,
-                  name: queryHierarchyIncidentChildCallClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentConcernsExample,
-                  name: queryHierarchyIncidentChildConcernsClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
-      }
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
@@ -309,53 +246,6 @@ export class CaseloadService {
           filter,
         );
       params = this.utilitiesService.recordTypeSearchSpecAppend(params, type);
-      if (type === RecordType.Case) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: CaseExample,
-              name: queryHierarchyCaseParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [queryHierarchyCaseChildClassName],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: CasePositionExample,
-                  name: queryHierarchyCaseChildClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
-      } else if (type === RecordType.Incident) {
-        params[queryHierarchyParamName] =
-          this.utilitiesService.constructQueryHierarchy(
-            new QueryHierarchyComponent({
-              classExample: IncidentExample,
-              name: queryHierarchyIncidentParentClassName,
-              searchspec: params['searchspec'],
-              exclude: [
-                queryHierarchyIncidentChildAdditionalClassName,
-                queryHierarchyIncidentChildCallClassName,
-                queryHierarchyIncidentChildConcernsClassName,
-              ],
-              childComponents: [
-                new QueryHierarchyComponent({
-                  classExample: IncidentAdditionalInformationExample,
-                  name: queryHierarchyIncidentChildAdditionalClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentCallInformationExample,
-                  name: queryHierarchyIncidentChildCallClassName,
-                }),
-                new QueryHierarchyComponent({
-                  classExample: IncidentConcernsExample,
-                  name: queryHierarchyIncidentChildConcernsClassName,
-                }),
-              ],
-            }),
-          );
-        delete params['searchspec'];
-      }
       getRequestSpecs.push(
         new GetRequestDetails({
           url: this.baseUrl + this[`${type}Endpoint`],
@@ -558,22 +448,16 @@ export class CaseloadService {
   async getCaseload(
     idir: string,
     req: Request,
+    res: Response,
     filter?: CaseloadQueryParams,
   ): Promise<CaseloadEntity> {
     const entityTypes = this.createEntityTypeArray(filter);
-    const filterObject = {
-      [pageSizeParamName]: pageSizeMax,
-    };
-    if (filter && filter[excludeEmptyFieldsParamName] !== undefined) {
-      filterObject[excludeEmptyFieldsParamName] =
-        filter[excludeEmptyFieldsParamName];
+    if (filter) {
+      filter[pageSizeParamName] = pageSizeMax;
     }
-    const initialFilter = plainToInstance(FilterQueryParams, filterObject, {
-      enableImplicitConversion: true,
-    });
     const getRequestSpecs = this.caseloadUpstreamRequestPreparer(
       idir,
-      initialFilter,
+      filter,
       entityTypes,
     );
     const response = await this.getMapAndFilterCaseload(
@@ -582,6 +466,7 @@ export class CaseloadService {
       req,
       entityTypes,
       filter,
+      res,
     );
     return plainToInstance(CaseloadEntity, response, {
       enableImplicitConversion: true,
@@ -596,6 +481,7 @@ export class CaseloadService {
     filter?: CaseloadQueryParams,
   ) {
     const entityTypes = this.createEntityTypeArray(filter);
+
     const getRequestSpecs = this.officeCaseloadUpstreamRequestPreparer(
       idir,
       filter,

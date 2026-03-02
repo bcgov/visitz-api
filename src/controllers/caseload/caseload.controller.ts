@@ -107,6 +107,7 @@ export class CaseloadController {
   })
   async getCaseload(
     @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -121,6 +122,7 @@ export class CaseloadController {
     return await this.caseloadService.getCaseload(
       req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
       req,
+      res,
       filter,
     );
   }
