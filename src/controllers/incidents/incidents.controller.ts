@@ -40,9 +40,12 @@ import {
   SupportNetworkSingleResponseIncidentExample,
 } from '../../entities/support-network.entity';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
+  IncidentConcernIdPathParams,
   ResponseNarrativeIdPathParams,
   SafetyAssessmentIdPathParams,
   SupportNetworkIdPathParams,
@@ -64,6 +67,9 @@ import {
   responseNarrativeIdName,
   excludeEmptyFieldsParamName,
   checkIdsParamName,
+  incidentConcernIdName,
+  callInformationIdName,
+  additionalInformationIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -116,6 +122,24 @@ import {
   ResponseNarrativeListResponseIncidentExample,
   ResponseNarrativeSingleResponseIncidentExample,
 } from '../../entities/response-narrative.entity';
+import {
+  IncidentConcernEntity,
+  IncidentConcernListResponseExample,
+  IncidentConcernSingleExample,
+  NestedIncidentConcernEntity,
+} from '../../entities/incident-concern.entity';
+import {
+  NestedCallInformationEntity,
+  CallInformationListResponseIncidentExample,
+  CallInformationEntity,
+  CallInformationSingleResponseIncidentExample,
+} from '../../entities/call-information.entity';
+import {
+  NestedAdditionalInformationEntity,
+  AdditionalInformationListResponseIncidentExample,
+  AdditionalInformationEntity,
+  AdditionalInformationSingleResponseIncidentExample,
+} from '../../entities/additional-information.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -292,6 +316,7 @@ export class IncidentsController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiQuery({ name: inlineAttachmentParamName, required: false })
   @ApiExtraModels(AttachmentDetailsEntity)
   @ApiOkResponse({
@@ -674,6 +699,291 @@ export class IncidentsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ResponseNarrativeEntity> {
     return await this.incidentsService.getSingleIncidentResponseNarrativeRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/concerns`)
+  @ApiOperation({
+    description: `Find all Incident Concern entries related to a given Incident entity by Incident id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedIncidentConcernEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedIncidentConcernEntity),
+        },
+        examples: {
+          IncidentConcernListResponse: {
+            value: IncidentConcernListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentConcernRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedIncidentConcernEntity> {
+    return await this.incidentsService.getListIncidentConcernRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/concerns/:${incidentConcernIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${incidentConcernIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(IncidentConcernEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(IncidentConcernEntity),
+        },
+        examples: {
+          IncidentConcernSingleResponse: {
+            value: IncidentConcernSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentConcernRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IncidentConcernIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<IncidentConcernEntity> {
+    return await this.incidentsService.getSingleIncidentConcernRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/call-information`)
+  @ApiOperation({
+    description: `Find all call information entries related to a given Incident entity by Incident id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedCallInformationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedCallInformationEntity),
+        },
+        examples: {
+          CallInformationListResponse: {
+            value: CallInformationListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentCallInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedCallInformationEntity> {
+    return await this.incidentsService.getListIncidentCallInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/call-information/:${callInformationIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${callInformationIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(CallInformationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(CallInformationEntity),
+        },
+        examples: {
+          CallInformationSingleResponse: {
+            value: CallInformationSingleResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentCallInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: CallInformationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<CallInformationEntity> {
+    return await this.incidentsService.getSingleIncidentCallInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/additional-information`)
+  @ApiOperation({
+    description: `Find all additional information entries related to a given Incident entity by Incident id.`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedAdditionalInformationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedAdditionalInformationEntity),
+        },
+        examples: {
+          AdditionalInformationListResponse: {
+            value: AdditionalInformationListResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentAdditionalInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedAdditionalInformationEntity> {
+    return await this.incidentsService.getListIncidentAdditionalInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/additional-information/:${additionalInformationIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${additionalInformationIdName} result if it is related to the given Incident id.`,
+  })
+  @ApiExtraModels(AdditionalInformationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(AdditionalInformationEntity),
+        },
+        examples: {
+          AdditionalInformationSingleResponse: {
+            value: AdditionalInformationSingleResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentAdditionalInformationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: AdditionalInformationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AdditionalInformationEntity> {
+    return await this.incidentsService.getSingleIncidentAdditionalInformationRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

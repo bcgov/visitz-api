@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { memoAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -22,12 +24,24 @@ import {
   NestedContactsEntity,
 } from '../../entities/contacts.entity';
 import { PostAttachmentDto } from '../../dto/post-attachment.dto';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
+import {
+  CallInformationEntity,
+  NestedCallInformationEntity,
+} from '../../entities/call-information.entity';
+import {
+  AdditionalInformationEntity,
+  NestedAdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
 
 @Injectable()
 export class MemosService {
   constructor(
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
+    private readonly callInformationService: CallInformationService,
+    private readonly additionalInformationService: AdditionalInformationService,
   ) {}
 
   async getSingleMemoAttachmentRecord(
@@ -97,6 +111,62 @@ export class MemosService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedContactsEntity> {
     return await this.contactsService.getListContactRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleMemoCallInformationRecord(
+    id: CallInformationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<CallInformationEntity> {
+    return await this.callInformationService.getSingleCallInformationRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoCallInformationRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedCallInformationEntity> {
+    return await this.callInformationService.getListCallInformationRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleMemoAdditionalInformationRecord(
+    id: AdditionalInformationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<AdditionalInformationEntity> {
+    return await this.additionalInformationService.getSingleAdditionalInformationRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoAdditionalInformationRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedAdditionalInformationEntity> {
+    return await this.additionalInformationService.getListAdditionalInformationRecord(
       RecordType.Memo,
       id,
       res,

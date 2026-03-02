@@ -11,7 +11,9 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
+  AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
+  CallInformationIdPathParams,
   ContactIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
@@ -33,6 +35,8 @@ import {
   afterParamName,
   supportNetworkIdName,
   responseNarrativeIdName,
+  additionalInformationIdName,
+  callInformationIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -68,6 +72,20 @@ import {
   ResponseNarrativeSingleResponseSRExample,
   ResponseNarrativeEntity,
 } from '../../entities/response-narrative.entity';
+import {
+  AdditionalInformationListResponseSRExample,
+  NestedAdditionalInformationEntity,
+  AdditionalInformationSingleResponseSRExample,
+  AdditionalInformationEntity,
+} from '../../entities/additional-information.entity';
+import {
+  CallInformationListResponseSRExample,
+  NestedCallInformationEntity,
+  CallInformationSingleResponseSRExample,
+  CallInformationEntity,
+} from '../../entities/call-information.entity';
+import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
+import { CallInformationService } from '../../helpers/call-information/call-information.service';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -88,6 +106,8 @@ describe('ServiceRequestsController', () => {
         SupportNetworkService,
         AttachmentsService,
         ResponseNarrativeService,
+        CallInformationService,
+        AdditionalInformationService,
         VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
@@ -448,6 +468,147 @@ describe('ServiceRequestsController', () => {
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ResponseNarrativeEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedCallInformationEntity(data)),
+          );
+
+        const result = await controller.getListSRCallInformationRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedCallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRCallInformationRecord tests', () => {
+    it.each([
+      [
+        CallInformationSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [callInformationIdName]: 'test2',
+        } as CallInformationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRCallInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new CallInformationEntity(data)),
+          );
+
+        const result = await controller.getSingleSRCallInformationRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new CallInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRAdditionalInformationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedAdditionalInformationEntity(data)),
+          );
+
+        const result = await controller.getListSRAdditionalInformationRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedAdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRAdditionalInformationRecord tests', () => {
+    it.each([
+      [
+        AdditionalInformationSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [additionalInformationIdName]: 'test2',
+        } as AdditionalInformationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const SRsServiceSpy = jest
+          .spyOn(
+            serviceRequestsService,
+            'getSingleSRAdditionalInformationRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new AdditionalInformationEntity(data)),
+          );
+
+        const result = await controller.getSingleSRAdditionalInformationRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new AdditionalInformationEntity(data));
       },
     );
   });

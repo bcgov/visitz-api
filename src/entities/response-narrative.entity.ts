@@ -116,7 +116,7 @@ export class ResponseNarrativeEntity {
   'Incident Id': string;
 
   @ApiProperty({
-    example: ResponseNarrativeSingleResponseIncidentExample['SR Id'],
+    example: ResponseNarrativeSingleResponseSRExample['SR Id'],
   })
   @Expose()
   'SR Id': string;

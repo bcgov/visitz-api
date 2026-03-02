@@ -79,6 +79,9 @@ export class CaseloadController {
   })
   @ApiQuery({ name: afterParamName, required: false })
   @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: caseIncludeParam, required: false })
   @ApiQuery({ name: incidentIncludeParam, required: false })
   @ApiQuery({ name: srIncludeParam, required: false })
@@ -104,6 +107,7 @@ export class CaseloadController {
   })
   async getCaseload(
     @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -118,6 +122,7 @@ export class CaseloadController {
     return await this.caseloadService.getCaseload(
       req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
       req,
+      res,
       filter,
     );
   }

@@ -82,6 +82,10 @@ export default () => ({
       process.env.SUBMIT_NOTES_WORKFLOW_WORKSPACE ?? undefined,
     safetyAssessmentWorkflow:
       process.env.SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_WORKSPACE ?? undefined,
+    incidentConcern: process.env.INCIDENT_CONCERN_WORKSPACE ?? undefined,
+    additionalInformation:
+      process.env.ADDITIONAL_INFORMATION_WORKSPACE ?? undefined,
+    callInformation: process.env.CALL_INFORMATION_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -96,6 +100,10 @@ export default () => ({
     responseNarratives:
       process.env.RESPONSE_NARRATIVES_AFTER_FIELD ?? undefined,
     caseNotes: process.env.CASE_NOTES_AFTER_FIELD ?? undefined,
+    incidentConcern: process.env.INCIDENT_CONCERN_AFTER_FIELD ?? undefined,
+    additionalInformation:
+      process.env.ADDITIONAL_INFORMATION_AFTER_FIELD ?? undefined,
+    callInformation: process.env.CALL_INFORMATION_WORKSPACE ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -123,6 +131,17 @@ export default () => ({
     submitNotesWorkflow: process.env.SUBMIT_NOTES_WORKFLOW_ENDPOINT ?? ' ',
     safetyAssessmentWorkflow:
       process.env.SUBMIT_SAFETY_ASSESSMENT_WORKFLOW_ENDPOINT ?? ' ',
+    incidentConcern: process.env.INCIDENT_CONCERN_ENDPOINT ?? ' ',
+    srAdditionalInformation:
+      process.env.SR_ADDITIONAL_INFORMATION_ENDPOINT ?? ' ',
+    incidentAdditionalInformation:
+      process.env.INCIDENT_ADDITIONAL_INFORMATION_ENDPOINT ?? ' ',
+    memoAdditionalInformation:
+      process.env.MEMO_ADDITIONAL_INFORMATION_ENDPOINT ?? ' ',
+    srCallInformation: process.env.SR_CALL_INFORMATION_ENDPOINT ?? ' ',
+    incidentCallInformation:
+      process.env.INCIDENT_CALL_INFORMATION_ENDPOINT ?? ' ',
+    memoCallInformation: process.env.MEMO_CALL_INFORMATION_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

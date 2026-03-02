@@ -33,6 +33,9 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`v${versionNumber}/api-spec`, app, documentFactory, {
     jsonDocumentUrl: `v${versionNumber}/api-spec/json`,
+    swaggerOptions: {
+      supportedSubmitMethods: [],
+    },
   });
 
   const port = process.env.PORT ?? 3000;
