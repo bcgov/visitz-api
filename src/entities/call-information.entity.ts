@@ -27,8 +27,15 @@ export const CallInformationSingleResponseSRExample = {
   'SR Id': 'Parent Id Here',
 };
 
+const {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ['Call Information']: callInfo,
+  ...CallInformationSingleResponseMemo
+} = CallInformationSingleResponse;
+
 export const CallInformationSingleResponseMemoExample = {
-  ...CallInformationSingleResponse,
+  ...CallInformationSingleResponseMemo,
+  Note: 'Call Information Here',
   'Memo Id': 'Parent Id Here',
 };
 
@@ -79,6 +86,12 @@ export class CallInformationEntity {
   })
   @Expose()
   'Call Information': string;
+
+  @ApiProperty({
+    example: CallInformationSingleResponseMemoExample['Note'],
+  })
+  @Expose()
+  Note: string;
 
   @ApiProperty({
     example: CallInformationSingleResponseIncidentExample['Created'],
