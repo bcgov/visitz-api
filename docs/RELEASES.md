@@ -32,6 +32,10 @@ For every deployment into dev, test or prod OpenShift environments:
 9. Open a PR from test to main, titled with the version number of the release. Note that this PR and deployment will each require approval.
 10. Tag the merge commit into main with the version number of the form v\<version number\> 
 	> ex: v1.0
+	```bash
+		git tag <tag name>
+		git push origin tag <tag name>
+	```
 11. After merge to main, create a GitHub release with an auto-generated changelog. Do not create artifacts for it.
 12. Inform project team that deployment is complete.
 
