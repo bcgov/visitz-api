@@ -1,6 +1,6 @@
 {
   "name": "visitz-api",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Middleware API for the MCFD Mobility app.",
   "scripts": {
     "build": "nest build",
@@ -35,8 +35,9 @@
     "cache-manager": "^7.0.0",
     "clamscan": "^2.4.0",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
+    "class-validator": "^0.14.0",
     "file-type": "^21.0.0",
+    "globals": "^17.4.0",
     "load-esm": "^1.0.2",
     "luxon": "^3.5.0",
     "multer": "^2.0.0",
@@ -48,6 +49,8 @@
     "save": "^2.9.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/js": "^10.0.1",
     "@jest-mock/express": "^3.0.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
@@ -58,13 +61,13 @@
     "@types/luxon": "^3.4.2",
     "@types/multer": "^2.0.0",
     "@types/node": "^22.3.1",
-    "@types/supertest": "^6.0.0",
+    "@types/supertest": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "cypress": "^15.0.0",
     "cypress-plugin-api": "^2.11.2",
     "dotenv": "^17.0.0",
-    "eslint": "^9.0.0",
+    "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^9.1.6",
