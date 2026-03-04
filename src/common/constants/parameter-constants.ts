@@ -45,7 +45,10 @@ const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
 const responseNarrativeIdName = 'responseNarrativeId';
+const callInformationIdName = 'callInformationId';
+const additionalInformationIdName = 'additionalInformationId';
 const caseNotesIdName = 'caseNoteId';
+const incidentConcernIdName = 'incidentConcernId';
 
 const casesAttachmentsFieldName = 'Case Id';
 const incidentsAttachmentsFieldName = 'Incident Id';
@@ -96,7 +99,10 @@ export {
   visitIdName,
   safetyAssessmentIdName,
   responseNarrativeIdName,
+  callInformationIdName,
+  additionalInformationIdName,
   caseNotesIdName,
+  incidentConcernIdName,
   casesAttachmentsFieldName,
   incidentsAttachmentsFieldName,
   srAttachmentsFieldName,

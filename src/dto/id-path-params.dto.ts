@@ -11,6 +11,9 @@ import {
   safetyAssessmentIdName,
   supportNetworkIdName,
   visitIdName,
+  incidentConcernIdName,
+  callInformationIdName,
+  additionalInformationIdName,
 } from '../common/constants/parameter-constants';
 
 export class IdPathParams {
@@ -99,4 +102,37 @@ export class CaseNotesIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [caseNotesIdName]: string;
+}
+
+export class IncidentConcernIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Incident-Concern-Id-Here',
+    description: 'The Id of the incident concern you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [incidentConcernIdName]: string;
+}
+
+export class CallInformationIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Call-Information-Id-Here',
+    description: 'The Id of the call information you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [callInformationIdName]: string;
+}
+
+export class AdditionalInformationIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Additional-Information-Id-Here',
+    description: 'The Id of the additional information you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [additionalInformationIdName]: string;
 }

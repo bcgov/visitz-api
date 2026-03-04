@@ -514,3 +514,68 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: SAFETY_ASSESSMENTS_CHECK_IDS_ENDPOINT
+  - name: INCIDENT_CONCERN_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONCERN_ENDPOINT
+  - name: INCIDENT_CONCERN_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONCERN_WORKSPACE
+  - name: INCIDENT_CONCERN_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CONCERN_AFTER_FIELD
+  - name: INCIDENT_CALL_INFORMATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_CALL_INFORMATION_ENDPOINT
+  - name: SR_CALL_INFORMATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_CALL_INFORMATION_ENDPOINT
+  - name: MEMO_CALL_INFORMATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_CALL_INFORMATION_ENDPOINT
+  - name: CALL_INFORMATION_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CALL_INFORMATION_WORKSPACE
+  - name: CALL_INFORMATION_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CALL_INFORMATION_AFTER_FIELD
+  - name: INCIDENT_ADDITIONAL_INFORMATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_ADDITIONAL_INFORMATION_ENDPOINT
+  - name: SR_ADDITIONAL_INFORMATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_ADDITIONAL_INFORMATION_ENDPOINT
+  - name: MEMO_ADDITIONAL_INFORMATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_ADDITIONAL_INFORMATION_ENDPOINT
+  - name: ADDITIONAL_INFORMATION_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ADDITIONAL_INFORMATION_WORKSPACE
+  - name: ADDITIONAL_INFORMATION_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ADDITIONAL_INFORMATION_AFTER_FIELD

@@ -1,39 +1,38 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import {
-  createdByFieldName,
-  createdByIdFieldName,
-  createdDateFieldName,
-  updatedByFieldName,
-  updatedByIdFieldName,
-  updatedDateFieldName,
-} from '../common/constants/upstream-constants';
 
 /*
  * Examples
  */
 export const ResponseNarrativeSingleResponseIncidentExample = {
   Response: 'Response Here',
-  'Row Id': 'Id Here',
-  [createdByFieldName]: 'Creator IDIR Here',
-  [createdByIdFieldName]: 'Creator Row Id Here',
+  Id: 'Id Here',
+  'Created By Name': 'Creator IDIR Here',
+  'Created By': 'Creator Row Id Here',
   'Created By Office': 'Office Name Here',
-  [createdDateFieldName]: '01/01/1970 00:00:00',
-  [updatedByFieldName]: 'Updater IDIR Here',
-  [updatedByIdFieldName]: 'Updater Row Id Here',
-  [updatedDateFieldName]: '01/01/1970 00:00:00',
-  'Last Updated': '01/01/1970 00:00:00',
+  Created: '01/01/1970 00:00:00',
+  'Updated By Name': 'Updater IDIR Here',
+  'Updated By': 'Updater Row Id Here',
+  Updated: '01/01/1970 00:00:00',
+  'Incident Id': 'Parent Id Here',
 };
 
+const {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ['Incident Id']: incidentId,
+  ...ResponseNarrativeSingleResponseSR
+} = ResponseNarrativeSingleResponseIncidentExample;
+
 export const ResponseNarrativeSingleResponseSRExample = {
-  ...ResponseNarrativeSingleResponseIncidentExample,
+  ...ResponseNarrativeSingleResponseSR,
+  'SR Id': 'Parent Id Here',
 };
 
 export const ResponseNarrativeListResponseIncidentExample = {
   items: [
     {
       ...ResponseNarrativeSingleResponseIncidentExample,
-      [updatedDateFieldName]: '12/25/2024 00:33:37',
+      Updated: '12/25/2024 00:33:37',
     },
     ResponseNarrativeSingleResponseIncidentExample,
   ],
@@ -43,7 +42,7 @@ export const ResponseNarrativeListResponseSRExample = {
   items: [
     {
       ...ResponseNarrativeSingleResponseSRExample,
-      [updatedDateFieldName]: '12/25/2024 00:33:37',
+      Updated: '12/25/2024 00:33:37',
     },
     ResponseNarrativeSingleResponseSRExample,
   ],
@@ -62,23 +61,22 @@ export class ResponseNarrativeEntity {
   Response: string;
 
   @ApiProperty({
-    example: ResponseNarrativeSingleResponseIncidentExample['Row Id'],
+    example: ResponseNarrativeSingleResponseIncidentExample['Id'],
   })
   @Expose()
-  'Row Id': string;
+  'Id': string;
 
   @ApiProperty({
-    example: ResponseNarrativeSingleResponseIncidentExample[createdByFieldName],
+    example: ResponseNarrativeSingleResponseIncidentExample['Created By Name'],
   })
   @Expose()
-  [createdByFieldName]: string;
+  'Created By Name': string;
 
   @ApiProperty({
-    example:
-      ResponseNarrativeSingleResponseIncidentExample[createdByIdFieldName],
+    example: ResponseNarrativeSingleResponseIncidentExample['Created By'],
   })
   @Expose()
-  [createdByIdFieldName]: string;
+  'Created By': string;
 
   @ApiProperty({
     example:
@@ -88,37 +86,40 @@ export class ResponseNarrativeEntity {
   'Created By Office': string;
 
   @ApiProperty({
-    example:
-      ResponseNarrativeSingleResponseIncidentExample[createdDateFieldName],
+    example: ResponseNarrativeSingleResponseIncidentExample['Created'],
   })
   @Expose()
-  [createdDateFieldName]: string;
+  'Created': string;
 
   @ApiProperty({
-    example: ResponseNarrativeSingleResponseIncidentExample[updatedByFieldName],
+    example: ResponseNarrativeSingleResponseIncidentExample['Updated By Name'],
   })
   @Expose()
-  [updatedByFieldName]: string;
+  'Updated By Name': string;
 
   @ApiProperty({
-    example:
-      ResponseNarrativeSingleResponseIncidentExample[updatedByIdFieldName],
+    example: ResponseNarrativeSingleResponseIncidentExample['Updated By'],
   })
   @Expose()
-  [updatedByIdFieldName]: string;
+  'Updated By': string;
 
   @ApiProperty({
-    example:
-      ResponseNarrativeSingleResponseIncidentExample[updatedDateFieldName],
+    example: ResponseNarrativeSingleResponseIncidentExample['Updated'],
   })
   @Expose()
-  [updatedDateFieldName]: string;
+  'Updated': string;
 
   @ApiProperty({
-    example: ResponseNarrativeSingleResponseIncidentExample['Last Updated'],
+    example: ResponseNarrativeSingleResponseIncidentExample['Incident Id'],
   })
   @Expose()
-  'Last Updated': string;
+  'Incident Id': string;
+
+  @ApiProperty({
+    example: ResponseNarrativeSingleResponseSRExample['SR Id'],
+  })
+  @Expose()
+  'SR Id': string;
 
   constructor(partial: Partial<ResponseNarrativeEntity>) {
     Object.assign(this, partial);

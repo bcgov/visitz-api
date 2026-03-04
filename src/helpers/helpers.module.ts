@@ -22,6 +22,12 @@ import { ResponseNarrativeModule } from './response-narrative/response-narrative
 import { ResponseNarrativeService } from './response-narrative/response-narrative.service';
 import { CaseNotesModule } from './case-notes/case-notes.module';
 import { CaseNotesService } from './case-notes/case-notes.service';
+import { IncidentConcernModule } from './incident-concern/incident-concern.module';
+import { IncidentConcernService } from './incident-concern/incident-concern.service';
+import { CallInformationModule } from './call-information/call-information.module';
+import { AdditionalInformationService } from './additional-information/additional-information.service';
+import { AdditionalInformationModule } from './additional-information/additional-information.module';
+import { CallInformationService } from './call-information/call-information.service';
 
 @Module({
   imports: [
@@ -38,6 +44,9 @@ import { CaseNotesService } from './case-notes/case-notes.service';
     VirusScanModule,
     ResponseNarrativeModule,
     CaseNotesModule,
+    IncidentConcernModule,
+    CallInformationModule,
+    AdditionalInformationModule,
   ],
   providers: [
     SupportNetworkService,
@@ -50,6 +59,9 @@ import { CaseNotesService } from './case-notes/case-notes.service';
     SafetyAssessmentService,
     ResponseNarrativeService,
     CaseNotesService,
+    IncidentConcernService,
+    CallInformationService,
+    AdditionalInformationService,
   ],
   exports: [
     SupportNetworkService,
@@ -60,6 +72,9 @@ import { CaseNotesService } from './case-notes/case-notes.service';
     SafetyAssessmentService,
     ResponseNarrativeService,
     CaseNotesService,
+    IncidentConcernService,
+    CallInformationService,
+    AdditionalInformationService,
   ],
 })
 export class HelpersModule {}

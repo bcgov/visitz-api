@@ -1,13 +1,5 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import {
-  createdByFieldName,
-  createdByIdFieldName,
-  createdDateFieldName,
-  updatedByFieldName,
-  updatedByIdFieldName,
-  updatedDateFieldName,
-} from '../common/constants/upstream-constants';
 
 /*
  * Examples
@@ -16,23 +8,22 @@ export const CaseNotesSingleExample = {
   Note: 'Note Here',
   'Note Period': 'Note Period Here',
   Keywords: 'Keywords Here',
-  'Row Id': 'Id Here',
   Id: 'Id Here',
-  'Actual Date Created': '01/01/1970 00:00:00',
-  [createdByFieldName]: 'Creator IDIR Here',
-  [createdByIdFieldName]: 'Creator Row Id Here',
-  'Created By Office': 'Office Name Here',
-  [createdDateFieldName]: '01/01/1970 00:00:00',
-  [updatedByFieldName]: 'Updater IDIR Here',
-  [updatedByIdFieldName]: 'Updater Row Id Here',
-  [updatedDateFieldName]: '01/01/1970 00:00:00',
+  'Actual Date Noted': '01/01/1970 00:00:00',
+  'Created By Name': 'Creator IDIR Here',
+  'Created By': 'Creator Row Id Here',
+  'Created By Office Name': 'Office Name Here',
+  Created: '01/01/1970 00:00:00',
+  'Last Updated By Name': 'Updater IDIR Here',
+  'Updated By': 'Updater Row Id Here',
+  Updated: '01/01/1970 00:00:00',
 };
 
 export const CaseNotesListResponseExample = {
   items: [
     {
       ...CaseNotesSingleExample,
-      [updatedDateFieldName]: '12/25/2024 00:33:37',
+      Updated: '12/25/2024 00:33:37',
     },
     CaseNotesSingleExample,
   ],
@@ -63,64 +54,58 @@ export class CaseNotesEntity {
   Keywords: string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample['Row Id'],
-  })
-  @Expose()
-  'Row Id': string;
-
-  @ApiProperty({
     example: CaseNotesSingleExample['Id'],
   })
   @Expose()
   Id: string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample['Actual Date Created'],
+    example: CaseNotesSingleExample['Actual Date Noted'],
   })
   @Expose()
-  'Actual Date Created': string;
+  'Actual Date Noted': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample[createdByFieldName],
+    example: CaseNotesSingleExample['Created By Name'],
   })
   @Expose()
-  [createdByFieldName]: string;
+  'Created By Name': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample[createdByIdFieldName],
+    example: CaseNotesSingleExample['Created By'],
   })
   @Expose()
-  [createdByIdFieldName]: string;
+  'Created By': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample['Created By Office'],
+    example: CaseNotesSingleExample['Created By Office Name'],
   })
   @Expose()
-  'Created By Office': string;
+  'Created By Office Name': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample[createdDateFieldName],
+    example: CaseNotesSingleExample['Created'],
   })
   @Expose()
-  [createdDateFieldName]: string;
+  'Created': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample[updatedByFieldName],
+    example: CaseNotesSingleExample['Last Updated By Name'],
   })
   @Expose()
-  [updatedByFieldName]: string;
+  'Last Updated By Name': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample[updatedByIdFieldName],
+    example: CaseNotesSingleExample['Updated By'],
   })
   @Expose()
-  [updatedByIdFieldName]: string;
+  'Updated By': string;
 
   @ApiProperty({
-    example: CaseNotesSingleExample[updatedDateFieldName],
+    example: CaseNotesSingleExample['Updated'],
   })
   @Expose()
-  [updatedDateFieldName]: string;
+  'Updated': string;
 
   constructor(partial: Partial<CaseNotesEntity>) {
     Object.assign(this, partial);
