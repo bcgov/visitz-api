@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
@@ -58,6 +58,11 @@ import {
   AdditionalInformationEntity,
   NestedAdditionalInformationEntity,
 } from '../../entities/additional-information.entity';
+import { stringNull } from '../../common/constants/upstream-constants';
+import {
+  PostSupportNetworkDto,
+  PostSupportNetworkDtoUpstream,
+} from '../../dto/post-support-network.dto';
 
 @Injectable()
 export class IncidentsService {
@@ -312,6 +317,25 @@ export class IncidentsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleIncidentSupportNetworkRecord(
+    supportNetworkDto: PostSupportNetworkDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    const baseObject = {
+      ...supportNetworkDto,
+      Id: stringNull,
+      'Entity Id': id.rowId,
+      'Entity Name': EntityType.Incident,
+    };
+    const body = new PostSupportNetworkDtoUpstream(baseObject);
+    return await this.supportNetworkService.postSingleSupportNetworkRecord(
+      RecordType.Incident,
+      body,
+      idir,
     );
   }
 }

@@ -4,10 +4,13 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { UtilitiesService } from '../utilities/utilities.service';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import { SupportNetworkService } from './support-network.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkCaseResponseExample,
+  PostSupportNetworkIncidentResponseExample,
+  PostSupportNetworkSRResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
   SupportNetworkListResponseSRExample,
@@ -28,6 +31,8 @@ import {
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
+import { PostSupportNetworkDtoUpstream } from '../../dto/post-support-network.dto';
+import { stringNull } from '../../common/constants/upstream-constants';
 
 describe('SupportNetworkService', () => {
   let service: SupportNetworkService;
@@ -135,6 +140,82 @@ describe('SupportNetworkService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new SupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        PostSupportNetworkCaseResponseExample,
+        RecordType.Case,
+        new PostSupportNetworkDtoUpstream({
+          Name: 'Test',
+          Phone: '1234567890',
+          Cell: '1234567890123456789012345678901234567890',
+          Address: '1234-5678 A street, Vancouver',
+          Relationship: 'Relationship',
+          'Agency Name': 'Test Agency',
+          Comments: 'Comments',
+          Active: 'Yes',
+          'Entity Name': EntityType.Case,
+          'Entity Id': 'idhere',
+          Id: stringNull,
+        }),
+      ],
+      [
+        PostSupportNetworkIncidentResponseExample,
+        RecordType.Incident,
+        new PostSupportNetworkDtoUpstream({
+          Name: 'Test',
+          Phone: '1234567890',
+          Cell: '1234567890123456789012345678901234567890',
+          Address: '1234-5678 A street, Vancouver',
+          Relationship: 'Relationship',
+          'Agency Name': 'Test Agency',
+          Comments: 'Comments',
+          Active: 'Yes',
+          'Entity Name': EntityType.Incident,
+          'Entity Id': 'idhere',
+          Id: stringNull,
+        }),
+      ],
+      [
+        PostSupportNetworkSRResponseExample,
+        RecordType.SR,
+        new PostSupportNetworkDtoUpstream({
+          Name: 'Test',
+          Phone: '1234567890',
+          Cell: '1234567890123456789012345678901234567890',
+          Address: '1234-5678 A street, Vancouver',
+          Relationship: 'Relationship',
+          'Agency Name': 'Test Agency',
+          Comments: 'Comments',
+          Active: 'Yes',
+          'Entity Name': EntityType.SR,
+          'Entity Id': 'idhere',
+          Id: stringNull,
+        }),
+      ],
+    ])(
+      'should return post values given good input',
+      async (data, recordType, body) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendPutRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.postSingleSupportNetworkRecord(
+          recordType,
+          body,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });

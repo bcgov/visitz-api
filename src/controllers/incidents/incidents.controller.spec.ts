@@ -6,6 +6,7 @@ import { IncidentsController } from './incidents.controller';
 import { IncidentsService } from './incidents.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkIncidentResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
   SupportNetworkSingleResponseIncidentExample,
@@ -788,6 +789,40 @@ describe('IncidentsController', () => {
           'idir',
         );
         expect(result).toEqual(new AdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        {
+          Name: 'Test',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostSupportNetworkIncidentResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'postSingleIncidentSupportNetworkRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
+
+        const result = await controller.postSingleIncidentSupportNetworkRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });

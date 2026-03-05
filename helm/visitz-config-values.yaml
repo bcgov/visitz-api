@@ -579,3 +579,13 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: ADDITIONAL_INFORMATION_AFTER_FIELD
+  - name: POST_SUPPORT_NETWORK_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_SUPPORT_NETWORK_ENDPOINT
+  - name: POST_SUPPORT_NETWORK_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_SUPPORT_NETWORK_WORKSPACE

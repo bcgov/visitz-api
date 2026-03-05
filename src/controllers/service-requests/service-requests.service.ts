@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
@@ -46,6 +46,11 @@ import {
 } from '../../entities/additional-information.entity';
 import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
 import { CallInformationService } from '../../helpers/call-information/call-information.service';
+import { stringNull } from '../../common/constants/upstream-constants';
+import {
+  PostSupportNetworkDto,
+  PostSupportNetworkDtoUpstream,
+} from '../../dto/post-support-network.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -242,6 +247,25 @@ export class ServiceRequestsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleSRSupportNetworkRecord(
+    supportNetworkDto: PostSupportNetworkDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    const baseObject = {
+      ...supportNetworkDto,
+      Id: stringNull,
+      'Entity Id': id.rowId,
+      'Entity Name': EntityType.SR,
+    };
+    const body = new PostSupportNetworkDtoUpstream(baseObject);
+    return await this.supportNetworkService.postSingleSupportNetworkRecord(
+      RecordType.SR,
+      body,
+      idir,
     );
   }
 }

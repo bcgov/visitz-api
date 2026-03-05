@@ -20,6 +20,7 @@ export const SupportNetworkSingleResponseCaseExample = {
   Comments: 'Comments Here',
   'Entity Id': 'Entity Id Here',
   Agency: 'Agency Here',
+  'Agency Name': 'Agency Here',
   Phone: '12345678910',
   Relationship: 'Relationship Here',
   Id: 'Id Here',
@@ -73,6 +74,18 @@ export const SupportNetworkListResponseIncidentExample = {
   ],
 };
 
+export const PostSupportNetworkCaseResponseExample = {
+  items: [SupportNetworkSingleResponseCaseExample],
+};
+
+export const PostSupportNetworkIncidentResponseExample = {
+  items: [SupportNetworkSingleResponseIncidentExample],
+};
+
+export const PostSupportNetworkSRResponseExample = {
+  items: [SupportNetworkSingleResponseSRExample],
+};
+
 /*
  * Model definitions
  */
@@ -111,6 +124,12 @@ export class SupportNetworkEntity {
   })
   @Expose()
   'Agency': string;
+
+  @ApiProperty({
+    example: SupportNetworkSingleResponseCaseExample['Agency Name'],
+  })
+  @Expose()
+  'Agency Name': string;
 
   @ApiProperty({ example: SupportNetworkSingleResponseCaseExample['Phone'] })
   @Expose()

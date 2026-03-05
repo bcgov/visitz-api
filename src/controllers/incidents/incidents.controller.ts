@@ -35,6 +35,7 @@ import {
 import { IncidentsService } from './incidents.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkIncidentResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
   SupportNetworkSingleResponseIncidentExample,
@@ -140,6 +141,7 @@ import {
   AdditionalInformationEntity,
   AdditionalInformationSingleResponseIncidentExample,
 } from '../../entities/additional-information.entity';
+import { PostSupportNetworkDto } from '../../dto/post-support-network.dto';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -987,6 +989,49 @@ export class IncidentsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/support-network`)
+  @ApiOperation({
+    description:
+      'Create a support network record related to the given incident id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          SupportNetworkCreatedResponse: {
+            value: PostSupportNetworkIncidentResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleIncidentSupportNetworkRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    supportNetworkDto: PostSupportNetworkDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    return await this.incidentsService.postSingleIncidentSupportNetworkRecord(
+      supportNetworkDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

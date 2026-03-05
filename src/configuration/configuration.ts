@@ -69,6 +69,7 @@ export default () => ({
   },
   workspaces: {
     supportNetwork: process.env.SUPPORT_NETWORK_WORKSPACE ?? undefined,
+    postSupportNetwork: process.env.POST_SUPPORT_NETWORK_WORKSPACE ?? undefined,
     inPersonVisits: process.env.IN_PERSON_VISITS_WORKSPACE ?? undefined,
     attachments: process.env.ATTACHMENTS_WORKSPACE ?? undefined,
     postAttachments: process.env.ATTACHMENTS_POST_WORKSPACE ?? undefined,
@@ -113,6 +114,7 @@ export default () => ({
     baseUrl: process.env.UPSTREAM_BASE_URL ?? ' ',
     workflowBaseUrl: process.env.WORKFLOW_BASE_URL ?? ' ',
     supportNetwork: process.env.SUPPORT_NETWORK_ENDPOINT ?? ' ',
+    postSupportNetwork: process.env.POST_SUPPORT_NETWORK_ENDPOINT ?? ' ',
     inPersonVisits: process.env.IN_PERSON_VISITS_ENDPOINT ?? ' ',
     postInPersonVisits: process.env.IN_PERSON_VISITS_POST_ENDPOINT ?? ' ',
     attachments: process.env.ATTACHMENTS_ENDPOINT ?? ' ',
