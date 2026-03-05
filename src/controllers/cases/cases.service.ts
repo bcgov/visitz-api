@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
@@ -57,6 +57,10 @@ import {
   CaseNotesEntity,
   NestedCaseNotesEntity,
 } from '../../entities/case-notes.entity';
+import {
+  PostSupportNetworkDto,
+  PostSupportNetworkDtoUpstream,
+} from '../../dto/post-support-network.dto';
 
 @Injectable()
 export class CasesService {
@@ -266,6 +270,25 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleCaseSupportNetworkRecord(
+    supportNetworkDto: PostSupportNetworkDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    const baseObject = {
+      ...supportNetworkDto,
+      Id: stringNull,
+      'Entity Id': id.rowId,
+      'Entity Name': EntityType.Case,
+    };
+    const body = new PostSupportNetworkDtoUpstream(baseObject);
+    return await this.supportNetworkService.postSingleSupportNetworkRecord(
+      RecordType.Case,
+      body,
+      idir,
     );
   }
 }

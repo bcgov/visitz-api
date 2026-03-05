@@ -34,6 +34,7 @@ import {
 import { ServiceRequestsService } from './service-requests.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkSRResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
   SupportNetworkSingleResponseSRExample,
@@ -123,6 +124,7 @@ import {
   CallInformationEntity,
   CallInformationSingleResponseSRExample,
 } from '../../entities/call-information.entity';
+import { PostSupportNetworkDto } from '../../dto/post-support-network.dto';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -779,6 +781,49 @@ export class ServiceRequestsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/support-network`)
+  @ApiOperation({
+    description:
+      'Create a support network record related to the given Service Request id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          SupportNetworkCreatedResponse: {
+            value: PostSupportNetworkSRResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRSupportNetworkRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    supportNetworkDto: PostSupportNetworkDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    return await this.serviceRequestService.postSingleSRSupportNetworkRecord(
+      supportNetworkDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

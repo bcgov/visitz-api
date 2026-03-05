@@ -50,6 +50,12 @@ const safetyAssessmentPayloadFamilyNameMax = 250;
 const safetyDecisionsDecisionUnsafeMax = 255;
 const safetyDecisionsCommentsMax = 8000;
 const safetyDecisionsNarrativeMax = 8000;
+const supportNetworkNameMax = 100;
+const supportNetworkCellMax = 40;
+const supportNetworkCommentsMax = 500;
+const supportNetworkRelationshipMax = 30;
+const supportNetworkAgencyMax = 100;
+const supportNetworkAddressMax = 250;
 
 export {
   baseUrlEnvVarName,
@@ -104,4 +110,10 @@ export {
   safetyDecisionsDecisionUnsafeMax,
   safetyDecisionsCommentsMax,
   safetyDecisionsNarrativeMax,
+  supportNetworkNameMax,
+  supportNetworkCellMax,
+  supportNetworkCommentsMax,
+  supportNetworkRelationshipMax,
+  supportNetworkAgencyMax,
+  supportNetworkAddressMax,
 };
