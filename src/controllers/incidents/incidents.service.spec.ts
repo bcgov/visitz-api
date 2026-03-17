@@ -7,6 +7,7 @@ import { SupportNetworkService } from '../../helpers/support-network/support-net
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkIncidentResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseIncidentExample,
   SupportNetworkSingleResponseIncidentExample,
@@ -807,6 +808,36 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new AdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        {
+          Name: 'Test',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostSupportNetworkIncidentResponseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const SupportNetworksSpy = jest
+          .spyOn(supportNetworkService, 'postSingleSupportNetworkRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
+
+        const result = await service.postSingleIncidentSupportNetworkRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(SupportNetworksSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });

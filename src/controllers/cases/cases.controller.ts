@@ -34,6 +34,7 @@ import {
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkCaseResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
   SupportNetworkSingleResponseCaseExample,
@@ -123,6 +124,7 @@ import {
   CaseNotesSingleExample,
   CaseNotesListResponseExample,
 } from '../../entities/case-notes.entity';
+import { PostSupportNetworkDto } from '../../dto/post-support-network.dto';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -783,6 +785,49 @@ export class CasesController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/support-network`)
+  @ApiOperation({
+    description:
+      'Create a support network record related to the given case id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          SupportNetworkCreatedResponse: {
+            value: PostSupportNetworkCaseResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseSupportNetworkRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    supportNetworkDto: PostSupportNetworkDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    return await this.casesService.postSingleCaseSupportNetworkRecord(
+      supportNetworkDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

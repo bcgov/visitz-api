@@ -6,6 +6,7 @@ import { ServiceRequestsController } from './service-requests.controller';
 import { ServiceRequestsService } from './service-requests.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkSRResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
   SupportNetworkSingleResponseSRExample,
@@ -609,6 +610,36 @@ describe('ServiceRequestsController', () => {
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new AdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        {
+          Name: 'Test',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostSupportNetworkSRResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const SRsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRSupportNetworkRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
+
+        const result = await controller.postSingleSRSupportNetworkRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(SRsServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });

@@ -6,6 +6,7 @@ import { CasesController } from './cases.controller';
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkCaseResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
   SupportNetworkSingleResponseCaseExample,
@@ -544,6 +545,36 @@ describe('CasesController', () => {
         );
         expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new CaseNotesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        {
+          Name: 'Test',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostSupportNetworkCaseResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'postSingleCaseSupportNetworkRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
+
+        const result = await controller.postSingleCaseSupportNetworkRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
       },
     );
   });
