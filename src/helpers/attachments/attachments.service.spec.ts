@@ -49,7 +49,7 @@ describe('AttachmentsService', () => {
         TokenRefresherService,
         RequestPreparerService,
         VirusScanService,
-        { provide: HttpService, useValue: { get: jest.fn() } },
+        { provide: HttpService, useValue: { get: jest.fn(), put: jest.fn() } },
         {
           provide: CACHE_MANAGER,
           useValue: {
@@ -196,7 +196,7 @@ describe('AttachmentsService', () => {
             statusText: 'OK',
           } as AxiosResponse<any, any>);
         const spy = jest
-          .spyOn(requestPreparerService, 'sendPostRequest')
+          .spyOn(requestPreparerService, 'sendPutRequest')
           .mockResolvedValueOnce({
             data: data,
             headers: {},
