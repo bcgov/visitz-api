@@ -39,6 +39,7 @@ import {
 } from '../../dto/post-attachment.dto';
 import {
   attachmentTypeSafetyAssessment,
+  stringNull,
   trustedIdirHeaderName,
   upstreamAttachmentConstraintNull,
 } from '../../common/constants/upstream-constants';
@@ -242,7 +243,7 @@ export class AttachmentsService {
     }
     const upstreamBody = {
       ...dto,
-      Id: '',
+      Id: stringNull,
       FileExt: file.mimetype.split('/').slice(-1)[0], // grabs last element
       FileName: filename,
       [AttachmentParentIdFieldMap[type]]: id[idName],
