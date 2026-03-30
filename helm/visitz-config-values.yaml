@@ -589,3 +589,18 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: POST_SUPPORT_NETWORK_WORKSPACE
+  - name: CONTACT_LANGUAGES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_LANGUAGES_ENDPOINT
+  - name: CONTACT_LANGUAGES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_LANGUAGES_WORKSPACE
+  - name: CONTACT_LANGUAGES_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_LANGUAGES_AFTER_FIELD

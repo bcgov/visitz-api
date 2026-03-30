@@ -9,6 +9,7 @@ import {
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
   VisitIdPathParams,
@@ -61,6 +62,10 @@ import {
   PostSupportNetworkDto,
   PostSupportNetworkDtoUpstream,
 } from '../../dto/post-support-network.dto';
+import {
+  ContactLanguagesEntity,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
 
 @Injectable()
 export class CasesService {
@@ -289,6 +294,34 @@ export class CasesService {
       RecordType.Case,
       body,
       idir,
+    );
+  }
+
+  async getSingleCaseContactLanguagesRecord(
+    id: ContactLanguagesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.contactsService.getSingleContactLanguagesRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactLanguagesRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.contactsService.getListContactLanguagesRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

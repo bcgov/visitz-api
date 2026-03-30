@@ -44,6 +44,7 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -66,6 +67,7 @@ import {
   checkIdsParamName,
   additionalInformationIdName,
   callInformationIdName,
+  contactLanguageIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -125,6 +127,12 @@ import {
   CallInformationSingleResponseSRExample,
 } from '../../entities/call-information.entity';
 import { PostSupportNetworkDto } from '../../dto/post-support-network.dto';
+import {
+  ContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesSingleExample,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -824,6 +832,104 @@ export class ServiceRequestsController {
       supportNetworkDto,
       req.headers[idirUsernameHeaderField] as string,
       id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Find all Contact Language entries related to a given Service Request and contact entity by Service Request and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactLanguagesEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesListResponse: {
+            value: ContactLanguagesListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.serviceRequestService.getListSRContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/languages/:${contactLanguageIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactLanguageIdName} result if it is related to the given Service Request and contact id.`,
+  })
+  @ApiExtraModels(ContactLanguagesEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesSingleResponse: {
+            value: ContactLanguagesSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactLanguagesIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.serviceRequestService.getSingleSRContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 }

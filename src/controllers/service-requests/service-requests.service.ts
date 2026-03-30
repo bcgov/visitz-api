@@ -10,6 +10,7 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -51,6 +52,10 @@ import {
   PostSupportNetworkDto,
   PostSupportNetworkDtoUpstream,
 } from '../../dto/post-support-network.dto';
+import {
+  ContactLanguagesEntity,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -266,6 +271,34 @@ export class ServiceRequestsService {
       RecordType.SR,
       body,
       idir,
+    );
+  }
+
+  async getSingleSRContactLanguagesRecord(
+    id: ContactLanguagesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.contactsService.getSingleContactLanguagesRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRContactLanguagesRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.contactsService.getListContactLanguagesRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

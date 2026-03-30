@@ -44,12 +44,14 @@ import {
   checkIdsParamName,
   additionalInformationIdName,
   callInformationIdName,
+  contactLanguageIdName,
 } from '../../common/constants/parameter-constants';
 import {
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -107,6 +109,12 @@ import {
   CallInformationEntity,
   CallInformationSingleResponseMemoExample,
 } from '../../entities/call-information.entity';
+import {
+  NestedContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesEntity,
+  ContactLanguagesSingleExample,
+} from '../../entities/contact-languages.entity';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
@@ -570,6 +578,104 @@ export class MemosController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<AdditionalInformationEntity> {
     return await this.memosService.getSingleMemoAdditionalInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Find all Contact Language entries related to a given Memo and contact entity by Memo and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactLanguagesEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesListResponse: {
+            value: ContactLanguagesListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListMemoContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.memosService.getListMemoContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/languages/:${contactLanguageIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactLanguageIdName} result if it is related to the given Memo and contact id.`,
+  })
+  @ApiExtraModels(ContactLanguagesEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesSingleResponse: {
+            value: ContactLanguagesSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactLanguagesIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.memosService.getSingleMemoContactLanguagesRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

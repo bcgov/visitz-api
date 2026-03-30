@@ -19,6 +19,7 @@ import {
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
   VisitIdPathParams,
@@ -46,6 +47,7 @@ import {
   supportNetworkIdName,
   visitIdName,
   caseNotesIdName,
+  contactLanguageIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -82,6 +84,12 @@ import {
   CaseNotesSingleExample,
   NestedCaseNotesEntity,
 } from '../../entities/case-notes.entity';
+import {
+  ContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesSingleExample,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -575,6 +583,76 @@ describe('CasesController', () => {
         );
         expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
         expect(result).toEqual(new NestedSupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getListCaseContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.getListCaseContactLanguagesRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLanguageIdName]: 'test3',
+        } as ContactLanguagesIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.getSingleCaseContactLanguagesRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ContactLanguagesEntity(data));
       },
     );
   });

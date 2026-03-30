@@ -17,12 +17,14 @@ import {
   afterParamName,
   additionalInformationIdName,
   callInformationIdName,
+  contactLanguageIdName,
 } from '../../common/constants/parameter-constants';
 import {
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -67,6 +69,12 @@ import {
   CallInformationSingleResponseMemoExample,
   CallInformationEntity,
 } from '../../entities/call-information.entity';
+import {
+  ContactLanguagesListResponseExample,
+  NestedContactLanguagesEntity,
+  ContactLanguagesSingleExample,
+  ContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -436,6 +444,76 @@ describe('MemosController', () => {
           );
         expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new AdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getListMemoContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.getListMemoContactLanguagesRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLanguageIdName]: 'test3',
+        } as ContactLanguagesIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.getSingleMemoContactLanguagesRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ContactLanguagesEntity(data));
       },
     );
   });
