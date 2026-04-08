@@ -94,6 +94,7 @@ import {
   ContactLanguagesListResponseExample,
   ContactLanguagesSingleExample,
   NestedContactLanguagesEntity,
+  PostContactLanguagesResponseExample,
 } from '../../entities/contact-languages.entity';
 
 describe('ServiceRequestsController', () => {
@@ -718,6 +719,40 @@ describe('ServiceRequestsController', () => {
         );
         expect(SRsServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        {
+          'Language Name': 'English',
+        },
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        'idir',
+        PostContactLanguagesResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.postSingleSRContactLanguagesRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
       },
     );
   });

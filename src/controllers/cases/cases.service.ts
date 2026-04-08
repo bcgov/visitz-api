@@ -44,6 +44,7 @@ import {
 import {
   childVisitEntityIdFieldName,
   childVisitType,
+  contactLanguagesType,
   stringNull,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
@@ -66,6 +67,10 @@ import {
   ContactLanguagesEntity,
   NestedContactLanguagesEntity,
 } from '../../entities/contact-languages.entity';
+import {
+  PostContactLanguagesDto,
+  PostContactLanguagesDtoUpstream,
+} from '../../dto/post-contact-languages.dto';
 
 @Injectable()
 export class CasesService {
@@ -322,6 +327,25 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleCaseContactLanguagesRecord(
+    contactLanguagesDto: PostContactLanguagesDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    const baseObject = {
+      ...contactLanguagesDto,
+      Id: stringNull,
+      Type: contactLanguagesType,
+    };
+    const body = new PostContactLanguagesDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactLanguagesRecord(
+      RecordType.Case,
+      body,
+      idir,
+      id,
     );
   }
 }

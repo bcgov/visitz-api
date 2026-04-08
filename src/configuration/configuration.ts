@@ -88,6 +88,8 @@ export default () => ({
       process.env.ADDITIONAL_INFORMATION_WORKSPACE ?? undefined,
     callInformation: process.env.CALL_INFORMATION_WORKSPACE ?? undefined,
     contactLanguages: process.env.CONTACT_LANGUAGES_WORKSPACE ?? undefined,
+    postContactLanguages:
+      process.env.POST_CONTACT_LANGUAGES_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -147,6 +149,7 @@ export default () => ({
       process.env.INCIDENT_CALL_INFORMATION_ENDPOINT ?? ' ',
     memoCallInformation: process.env.MEMO_CALL_INFORMATION_ENDPOINT ?? ' ',
     contactLanguages: process.env.CONTACT_LANGUAGES_ENDPOINT ?? ' ',
+    postContactLanguages: process.env.POST_CONTACT_LANGUAGES_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

@@ -111,6 +111,7 @@ import {
   NestedContactLanguagesEntity,
   ContactLanguagesSingleExample,
   ContactLanguagesEntity,
+  PostContactLanguagesResponseExample,
 } from '../../entities/contact-languages.entity';
 
 describe('IncidentsService', () => {
@@ -918,6 +919,36 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        {
+          'Language Name': 'English',
+        },
+        'idir',
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        PostContactLanguagesResponseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const contactLanguagesSpy = jest
+          .spyOn(contactsService, 'postSingleContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await service.postSingleIncidentContactLanguagesRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(contactLanguagesSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
       },
     );
   });

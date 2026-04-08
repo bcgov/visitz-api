@@ -604,3 +604,13 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: CONTACT_LANGUAGES_AFTER_FIELD
+  - name: POST_CONTACT_LANGUAGES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_CONTACT_LANGUAGES_ENDPOINT
+  - name: POST_CONTACT_LANGUAGES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_CONTACT_LANGUAGES_WORKSPACE

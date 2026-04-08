@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { RecordType } from '../../common/constants/enumerations';
+import { RecordType, YNEnum } from '../../common/constants/enumerations';
 import { CheckIdQueryParams } from '../../dto/filter-query-params.dto';
 import {
   ContactIdPathParams,
@@ -16,20 +16,27 @@ import {
 import {
   contactIdName,
   contactLanguageIdName,
+  CONTENT_TYPE,
+  UNIFORM_RESPONSE,
+  uniformResponseParamName,
 } from '../../common/constants/parameter-constants';
 import { UtilitiesService } from '../utilities/utilities.service';
 import {
   ContactLanguagesEntity,
   NestedContactLanguagesEntity,
 } from '../../entities/contact-languages.entity';
+import { PostContactLanguagesDtoUpstream } from '../../dto/post-contact-languages.dto';
+import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class ContactsService {
   baseUrl: string;
   endpointUrls: object;
   contactLanguagesUrl: string;
+  postContactLanguagesUrl: string;
   workspace: string | undefined;
   contactLanguagesWorkspace: string | undefined;
+  postContactLanguagesWorkspace: string | undefined;
   afterFieldName: string | undefined;
   contactLanguagesAfterFieldName: string | undefined;
   constructor(
@@ -57,9 +64,15 @@ export class ContactsService {
     this.contactLanguagesUrl = encodeURI(
       this.configService.get<string>('endpointUrls.contactLanguages'),
     );
+    this.postContactLanguagesUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.postContactLanguages'),
+    );
     this.workspace = this.configService.get('workspaces.contacts');
     this.contactLanguagesWorkspace = this.configService.get(
       'workspaces.contactLanguages',
+    );
+    this.postContactLanguagesWorkspace = this.configService.get(
+      'workspaces.postContactLanguages',
     );
     this.afterFieldName = this.configService.get('afterFieldName.contacts');
     this.contactLanguagesAfterFieldName = this.configService.get(
@@ -197,5 +210,88 @@ export class ContactsService {
       filter,
     );
     return new NestedContactLanguagesEntity(response.data);
+  }
+
+  async checkExistingLanguages(
+    id: ContactIdPathParams,
+    idir: string,
+    body: PostContactLanguagesDtoUpstream,
+  ) {
+    const baseSearchSpec = ``;
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.contactLanguagesUrl,
+      );
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.contactLanguagesWorkspace,
+        this.contactLanguagesAfterFieldName,
+        true,
+        idir,
+      );
+    try {
+      await this.requestPreparerService.sendGetRequest(
+        upstreamUrl,
+        headers,
+        undefined,
+        params,
+      );
+    } catch (error) {
+      if (
+        error instanceof HttpException &&
+        error.getStatus() == HttpStatus.NO_CONTENT
+      ) {
+        // must set as primary
+        body['SSA Primary Field'] = YNEnum.True;
+        return;
+      } else {
+        throw error; // throws a HTTP Exception from request
+      }
+    }
+    body['SSA Primary Field'] = YNEnum.False;
+  }
+
+  async postSingleContactLanguagesRecord(
+    _type: RecordType,
+    body: PostContactLanguagesDtoUpstream,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    await this.checkExistingLanguages(id, idir, body);
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.postContactLanguagesUrl,
+      );
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
+    if (this.postContactLanguagesWorkspace !== undefined) {
+      params['workspace'] = this.postContactLanguagesWorkspace;
+    }
+    const response = await this.requestPreparerService.sendPutRequest(
+      upstreamUrl,
+      body,
+      headers,
+      params,
+    );
+    const responseBody = {
+      items: [
+        new ContactLanguagesEntity({
+          Id: response.data?.items[0]?.Id,
+        }),
+      ],
+    };
+    return new NestedContactLanguagesEntity(responseBody);
   }
 }

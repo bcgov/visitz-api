@@ -74,6 +74,7 @@ import {
   NestedContactLanguagesEntity,
   ContactLanguagesSingleExample,
   ContactLanguagesEntity,
+  PostContactLanguagesResponseExample,
 } from '../../entities/contact-languages.entity';
 
 describe('MemosController', () => {
@@ -514,6 +515,36 @@ describe('MemosController', () => {
         );
         expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleMemoContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        {
+          'Language Name': 'English',
+        },
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        'idir',
+        PostContactLanguagesResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'postSingleMemoContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.postSingleMemoContactLanguagesRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(memosServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
       },
     );
   });

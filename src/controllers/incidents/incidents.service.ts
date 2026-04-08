@@ -59,7 +59,10 @@ import {
   AdditionalInformationEntity,
   NestedAdditionalInformationEntity,
 } from '../../entities/additional-information.entity';
-import { stringNull } from '../../common/constants/upstream-constants';
+import {
+  contactLanguagesType,
+  stringNull,
+} from '../../common/constants/upstream-constants';
 import {
   PostSupportNetworkDto,
   PostSupportNetworkDtoUpstream,
@@ -68,6 +71,10 @@ import {
   ContactLanguagesEntity,
   NestedContactLanguagesEntity,
 } from '../../entities/contact-languages.entity';
+import {
+  PostContactLanguagesDto,
+  PostContactLanguagesDtoUpstream,
+} from '../../dto/post-contact-languages.dto';
 
 @Injectable()
 export class IncidentsService {
@@ -369,6 +376,25 @@ export class IncidentsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleIncidentContactLanguagesRecord(
+    contactLanguagesDto: PostContactLanguagesDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    const baseObject = {
+      ...contactLanguagesDto,
+      Id: stringNull,
+      Type: contactLanguagesType,
+    };
+    const body = new PostContactLanguagesDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactLanguagesRecord(
+      RecordType.Incident,
+      body,
+      idir,
+      id,
     );
   }
 }

@@ -33,6 +33,10 @@ export const ContactLanguagesListResponseExample = {
   ],
 };
 
+export const PostContactLanguagesResponseExample = {
+  items: [ContactLanguagesSingleExample],
+};
+
 /*
  * Model definitions
  */

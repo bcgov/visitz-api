@@ -149,7 +149,9 @@ import {
   ContactLanguagesListResponseExample,
   ContactLanguagesEntity,
   ContactLanguagesSingleExample,
+  PostContactLanguagesResponseExample,
 } from '../../entities/contact-languages.entity';
+import { PostContactLanguagesDto } from '../../dto/post-contact-languages.dto';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -1138,6 +1140,49 @@ export class IncidentsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Create a contact language record related to the given incident and contact id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ContactLanguagesCreatedResponse: {
+            value: PostContactLanguagesResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleIncidentContactLanguagesRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    contactLanguagesDto: PostContactLanguagesDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.incidentsService.postSingleIncidentContactLanguagesRecord(
+      contactLanguagesDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }
