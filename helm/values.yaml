@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 2
  
 image:
   repository: ghcr.io/bcgov/visitz-api
@@ -9,6 +9,11 @@ service:
   type: ClusterIP
   port: 443
   containerPort: 3000
+
+minReplicas: 2
+maxReplicas: 3
+targetUtilizationType: cpu
+targetAverageUtilization: 50
  
 resources: {}
  
