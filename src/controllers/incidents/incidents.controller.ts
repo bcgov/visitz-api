@@ -45,6 +45,7 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
   IncidentConcernIdPathParams,
   ResponseNarrativeIdPathParams,
@@ -71,6 +72,7 @@ import {
   incidentConcernIdName,
   callInformationIdName,
   additionalInformationIdName,
+  contactLanguageIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -142,6 +144,14 @@ import {
   AdditionalInformationSingleResponseIncidentExample,
 } from '../../entities/additional-information.entity';
 import { PostSupportNetworkDto } from '../../dto/post-support-network.dto';
+import {
+  NestedContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesEntity,
+  ContactLanguagesSingleExample,
+  PostContactLanguagesResponseExample,
+} from '../../entities/contact-languages.entity';
+import { PostContactLanguagesDto } from '../../dto/post-contact-languages.dto';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -1030,6 +1040,147 @@ export class IncidentsController {
   ): Promise<NestedSupportNetworkEntity> {
     return await this.incidentsService.postSingleIncidentSupportNetworkRecord(
       supportNetworkDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Find all Contact Language entries related to a given Incident and contact entity by Incident and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactLanguagesEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesListResponse: {
+            value: ContactLanguagesListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.incidentsService.getListIncidentContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/languages/:${contactLanguageIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactLanguageIdName} result if it is related to the given Incident and contact id.`,
+  })
+  @ApiExtraModels(ContactLanguagesEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesSingleResponse: {
+            value: ContactLanguagesSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactLanguagesIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.incidentsService.getSingleIncidentContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Create a contact language record related to the given incident and contact id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ContactLanguagesCreatedResponse: {
+            value: PostContactLanguagesResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleIncidentContactLanguagesRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    contactLanguagesDto: PostContactLanguagesDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.incidentsService.postSingleIncidentContactLanguagesRecord(
+      contactLanguagesDto,
       req.headers[idirUsernameHeaderField] as string,
       id,
     );

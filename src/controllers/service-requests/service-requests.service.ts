@@ -10,6 +10,7 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -46,11 +47,22 @@ import {
 } from '../../entities/additional-information.entity';
 import { AdditionalInformationService } from '../../helpers/additional-information/additional-information.service';
 import { CallInformationService } from '../../helpers/call-information/call-information.service';
-import { stringNull } from '../../common/constants/upstream-constants';
+import {
+  contactLanguagesType,
+  stringNull,
+} from '../../common/constants/upstream-constants';
 import {
   PostSupportNetworkDto,
   PostSupportNetworkDtoUpstream,
 } from '../../dto/post-support-network.dto';
+import {
+  ContactLanguagesEntity,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
+import {
+  PostContactLanguagesDto,
+  PostContactLanguagesDtoUpstream,
+} from '../../dto/post-contact-languages.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -266,6 +278,53 @@ export class ServiceRequestsService {
       RecordType.SR,
       body,
       idir,
+    );
+  }
+
+  async getSingleSRContactLanguagesRecord(
+    id: ContactLanguagesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.contactsService.getSingleContactLanguagesRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRContactLanguagesRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.contactsService.getListContactLanguagesRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleSRContactLanguagesRecord(
+    contactLanguagesDto: PostContactLanguagesDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    const baseObject = {
+      ...contactLanguagesDto,
+      Id: stringNull,
+      Type: contactLanguagesType,
+    };
+    const body = new PostContactLanguagesDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactLanguagesRecord(
+      RecordType.SR,
+      body,
+      idir,
+      id,
     );
   }
 }

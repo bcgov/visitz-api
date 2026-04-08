@@ -27,7 +27,10 @@ import {
   multiIdRegex,
   officeNamesSeparator,
 } from '../../common/constants/parameter-constants';
-import { IdPathParams } from '../../dto/id-path-params.dto';
+import {
+  ContactIdPathParams,
+  IdPathParams,
+} from '../../dto/id-path-params.dto';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
 @Injectable()
@@ -149,6 +152,14 @@ export class UtilitiesService {
     endpointUrls: object,
   ): string {
     return baseUrl + endpointUrls[type].replace('rowId', id.rowId);
+  }
+
+  constructContactSubtypeUpstreamUrl(
+    id: ContactIdPathParams,
+    baseUrl: string,
+    endpointUrl: string,
+  ): string {
+    return baseUrl + endpointUrl.replace('rowId', id.contactId);
   }
 
   constructQueryHierarchy(parentComponent: QueryHierarchyComponent): string {

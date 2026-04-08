@@ -42,6 +42,7 @@ const officeNamesSeparator = '{:|:}';
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
+const contactLanguageIdName = 'contactLanguageId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
@@ -97,6 +98,7 @@ export {
   idName,
   attachmentIdName,
   contactIdName,
+  contactLanguageIdName,
   supportNetworkIdName,
   visitIdName,
   safetyAssessmentIdName,

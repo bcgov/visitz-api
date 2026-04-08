@@ -18,7 +18,8 @@
     "test:cov": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test:debug": "NODE_OPTIONS=--experimental-vm-modules node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+	"update": "npm update --allow-git=none"
   },
   "author": "MCFD Mobility",
   "license": "MIT License",
