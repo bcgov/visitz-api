@@ -11,6 +11,7 @@ const upstreamDateFormatNoTime = 'MM/dd/yyyy';
 const dummyCreatedDate = '01/01/1970 00:00:00';
 const caseChildServices = 'Child Services';
 const childVisitType = 'In Person Child Youth';
+const contactLanguagesType = 'Language';
 const childVisitIdirFieldName = 'Login Name';
 const childVisitEntityIdFieldName = 'Parent Id';
 const attachmentTypeSafetyAssessment = 'Safety Assessment';
@@ -56,6 +57,8 @@ const supportNetworkCommentsMax = 500;
 const supportNetworkRelationshipMax = 30;
 const supportNetworkAgencyMax = 100;
 const supportNetworkAddressMax = 250;
+const contactLanguagesOtherLanguageMax = 30;
+const contactLanguagesCommentsMax = 255;
 
 export {
   baseUrlEnvVarName,
@@ -71,6 +74,7 @@ export {
   dummyCreatedDate,
   caseChildServices,
   childVisitType,
+  contactLanguagesType,
   childVisitIdirFieldName,
   childVisitEntityIdFieldName,
   attachmentTypeSafetyAssessment,
@@ -116,4 +120,6 @@ export {
   supportNetworkRelationshipMax,
   supportNetworkAgencyMax,
   supportNetworkAddressMax,
+  contactLanguagesOtherLanguageMax,
+  contactLanguagesCommentsMax,
 };

@@ -6,6 +6,7 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -34,6 +35,18 @@ import {
   AdditionalInformationEntity,
   NestedAdditionalInformationEntity,
 } from '../../entities/additional-information.entity';
+import {
+  ContactLanguagesEntity,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
+import {
+  stringNull,
+  contactLanguagesType,
+} from '../../common/constants/upstream-constants';
+import {
+  PostContactLanguagesDto,
+  PostContactLanguagesDtoUpstream,
+} from '../../dto/post-contact-languages.dto';
 
 @Injectable()
 export class MemosService {
@@ -172,6 +185,53 @@ export class MemosService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async getSingleMemoContactLanguagesRecord(
+    id: ContactLanguagesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.contactsService.getSingleContactLanguagesRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoContactLanguagesRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.contactsService.getListContactLanguagesRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleMemoContactLanguagesRecord(
+    contactLanguagesDto: PostContactLanguagesDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    const baseObject = {
+      ...contactLanguagesDto,
+      Id: stringNull,
+      Type: contactLanguagesType,
+    };
+    const body = new PostContactLanguagesDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactLanguagesRecord(
+      RecordType.Memo,
+      body,
+      idir,
+      id,
     );
   }
 }
