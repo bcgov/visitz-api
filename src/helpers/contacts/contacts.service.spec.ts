@@ -425,7 +425,7 @@ describe('ContactsService', () => {
         new PostContactMedicalBehavioralDtoUpstream({
           Id: stringNull,
           Category: 'Allergy',
-          Type: contactMedicalBehavioralType,
+          [`${typeFieldName}`]: contactMedicalBehavioralType,
         }),
         { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
       ],
@@ -443,7 +443,7 @@ describe('ContactsService', () => {
         const checkSpy = jest
           .spyOn(requestPreparerService, 'sendGetRequest')
           .mockResolvedValueOnce({
-            data: { items: [{ Type: 'Child Services' }] },
+            data: { items: [{ [`${typeFieldName}`]: 'Child Services' }] },
             headers: {},
             status: 200,
             statusText: 'OK',
@@ -467,7 +467,7 @@ describe('ContactsService', () => {
         new PostContactMedicalBehavioralDtoUpstream({
           Id: stringNull,
           Category: 'Allergy',
-          Type: contactMedicalBehavioralType,
+          [`${typeFieldName}`]: contactMedicalBehavioralType,
         }),
         { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
       ],
@@ -500,7 +500,7 @@ describe('ContactsService', () => {
         new PostContactMedicalBehavioralDtoUpstream({
           Id: stringNull,
           Category: 'Allergy',
-          Type: contactMedicalBehavioralType,
+          [`${typeFieldName}`]: contactMedicalBehavioralType,
         }),
         { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
       ],
