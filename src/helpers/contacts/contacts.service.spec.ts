@@ -55,6 +55,9 @@ import { PostContactMedicalBehavioralDtoUpstream } from '../../dto/post-contact-
 describe('ContactsService', () => {
   let service: ContactsService;
   let requestPreparerService: RequestPreparerService;
+  let typeFieldName: string | undefined;
+  let configService: ConfigService;
+
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -82,6 +85,8 @@ describe('ContactsService', () => {
     requestPreparerService = module.get<RequestPreparerService>(
       RequestPreparerService,
     );
+    configService = module.get<ConfigService>(ConfigService);
+    typeFieldName = configService.get('upstreamAuth.case.typeField');
     mockClear();
   });
 
@@ -241,7 +246,7 @@ describe('ContactsService', () => {
         new PostContactLanguagesDtoUpstream({
           Id: stringNull,
           'Language Name': 'English',
-          Type: contactLanguagesType,
+          [`${typeFieldName}`]: contactLanguagesType,
         }),
         { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
       ],
@@ -419,7 +424,7 @@ describe('ContactsService', () => {
         RecordType.Case,
         new PostContactMedicalBehavioralDtoUpstream({
           Id: stringNull,
-          Category: 'Allergys',
+          Category: 'Allergy',
           Type: contactMedicalBehavioralType,
         }),
         { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
