@@ -15,6 +15,7 @@ import {
   callInformationIdName,
   additionalInformationIdName,
   contactLanguageIdName,
+  contactMedicalBehavioralIdName,
 } from '../common/constants/parameter-constants';
 
 export class IdPathParams {
@@ -59,6 +60,18 @@ export class ContactLanguagesIdPathParams extends ContactIdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [contactLanguageIdName]: string;
+}
+
+export class ContactMedicalBehavioralIdPathParams extends ContactIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Contact-Medical-Behavioral-Id-Here',
+    description:
+      'The Id of the contact medical behavioral info you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [contactMedicalBehavioralIdName]: string;
 }
 
 export class SupportNetworkIdPathParams extends IdPathParams {

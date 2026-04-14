@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { isISO8601 } from 'class-validator';
+import { isEnum, isISO8601 } from 'class-validator';
 import { DateTime } from 'luxon';
 import {
   idirJWTFieldName,
@@ -11,12 +11,16 @@ import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import {
   CaseType,
+  ContactMedicalBehavioralCategory,
+  ContactMedicalBehavioralCategoryConditionMap,
   EntityType,
   IncidentType,
   RecordType,
 } from '../../common/constants/enumerations';
 import {
+  contactMedicalBehavioralConditionEnumError,
   dateFormatError,
+  dateRangeFormatError,
   emojiError,
   multiIdError,
   upstreamDateFormatError,
@@ -293,6 +297,41 @@ export function isPastISO8601Date(date: string): string {
   throw new BadRequestException([dateFormatError]);
 }
 
+export function isISO8601DateUpstreamFormatter(date: string): string {
+  if (isISO8601(date, { strict: true })) {
+    const dateObject = DateTime.fromISO(date.trim(), {
+      zone: 'UTC',
+    });
+    return dateObject.toFormat(upstreamDateFormat);
+  }
+  throw new BadRequestException([dateFormatError]);
+}
+
+export function isValidISO8601StartDateRange(
+  startDate: string | undefined,
+  endDate: string | undefined,
+): string {
+  if (isISO8601(startDate, { strict: true })) {
+    const startDateObject = DateTime.fromISO(startDate.trim(), {
+      zone: 'UTC',
+    });
+    if (typeof endDate == 'undefined') {
+      return startDateObject.toFormat(upstreamDateFormat);
+    }
+    if (isISO8601(endDate, { strict: true })) {
+      const endDateObject = DateTime.fromISO(endDate.trim(), {
+        zone: 'UTC',
+      });
+      if (endDateObject >= startDateObject) {
+        return startDateObject.toFormat(upstreamDateFormat);
+      }
+    }
+  } else if (typeof startDate == 'undefined' && typeof endDate == 'undefined') {
+    return startDate;
+  }
+  throw new BadRequestException([dateRangeFormatError]);
+}
+
 export function isValidUpstreamFormatDate(date: string): string {
   const dateObject = DateTime.fromFormat(date, upstreamDateFormatNoTime, {
     zone: 'UTC',
@@ -313,6 +352,30 @@ export function isNotEmoji(input: string): string {
     throw new BadRequestException([emojiError]);
   }
   return input;
+}
+
+export function isMedicalConditionValidForCategory(
+  input: string,
+  baseObject: object,
+) {
+  if (
+    baseObject['Category'] &&
+    isEnum(baseObject['Category'], ContactMedicalBehavioralCategory)
+  ) {
+    const baseCategory = baseObject[
+      'Category'
+    ] as ContactMedicalBehavioralCategory;
+    const enumReference =
+      ContactMedicalBehavioralCategoryConditionMap[baseCategory];
+    if (isEnum(input, enumReference)) {
+      return input as unknown as typeof enumReference;
+    }
+    const errorMessage = contactMedicalBehavioralConditionEnumError
+      .replace('${category}', baseCategory)
+      .replace('${enum}', Object.values(enumReference).toString());
+    throw new BadRequestException([errorMessage]);
+  }
+  return input; // don't validate, it will fail based on Category anyway
 }
 
 export function isIdArray(input): Array<string> {
