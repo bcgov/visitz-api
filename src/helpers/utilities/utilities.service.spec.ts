@@ -4,6 +4,9 @@ import {
   isPastISO8601Date,
   isNotEmoji,
   isValidUpstreamFormatDate,
+  isISO8601DateUpstreamFormatter,
+  isValidISO8601StartDateRange,
+  isMedicalConditionValidForCategory,
 } from './utilities.service';
 import { DateTime } from 'luxon';
 import { BadRequestException } from '@nestjs/common';
@@ -22,6 +25,10 @@ import {
   updatedByFieldName,
 } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
+import {
+  ContactMedicalBehavioralAllergyCondition,
+  ContactMedicalBehavioralOtherCondition,
+} from '../../common/constants/enumerations';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -164,6 +171,69 @@ describe('UtilitiesService', () => {
     );
   });
 
+  describe('isISO8601DateUpstreamFormatter tests', () => {
+    it.each([[DateTime.now().toUTC().minus(60000).toJSDate().toISOString()]])(
+      `should return a string upon being given a ISO-8601 date`,
+      (input) => {
+        expect(typeof isISO8601DateUpstreamFormatter(input)).toBe('string');
+      },
+    );
+
+    it.each([['abcdefgtlom']])(
+      `should throw BadRequestException on unexpected input format`,
+      (input) => {
+        expect(() => {
+          isISO8601DateUpstreamFormatter(input);
+        }).toThrow(BadRequestException);
+      },
+    );
+  });
+
+  describe('isValidISO8601StartDateRange tests', () => {
+    it.each([
+      [
+        DateTime.now().toUTC().minus(60000).toJSDate().toISOString(),
+        DateTime.now().toUTC().toJSDate().toISOString(),
+      ],
+      [DateTime.now().toUTC().minus(60000).toJSDate().toISOString(), undefined],
+    ])(
+      `should return a string upon being given a valid ISO-8601 date range`,
+      (startDate, endDate) => {
+        expect(typeof isValidISO8601StartDateRange(startDate, endDate)).toBe(
+          'string',
+        );
+      },
+    );
+
+    it.each([[undefined, undefined]])(
+      `should return undefined upon being given two undefined values`,
+      (startDate, endDate) => {
+        expect(typeof isValidISO8601StartDateRange(startDate, endDate)).toBe(
+          'undefined',
+        );
+      },
+    );
+
+    it.each([
+      [
+        DateTime.now().toUTC().toJSDate().toISOString(),
+        DateTime.now().toUTC().minus(600000).toJSDate().toISOString(),
+      ],
+      [undefined, DateTime.now().toUTC().plus(600000).toJSDate().toISOString()],
+      [
+        'abcdefgtlom',
+        DateTime.now().toUTC().plus(600000).toJSDate().toISOString(),
+      ],
+    ])(
+      `should throw BadRequestException on invalid range or unexpected input format`,
+      (startDate, endDate) => {
+        expect(() => {
+          isValidISO8601StartDateRange(startDate, endDate);
+        }).toThrow(BadRequestException);
+      },
+    );
+  });
+
   describe('isValidUpstreamFormatDate tests', () => {
     it.each([['02/25/2025']])(
       `should return a string upon being given a past date`,
@@ -229,6 +299,46 @@ describe('UtilitiesService', () => {
       (input) => {
         expect(() => {
           isNotEmoji(input);
+        }).toThrow(BadRequestException);
+      },
+    );
+  });
+
+  describe('isMedicalConditionValidForCategory tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralAllergyCondition.SpecialDiet,
+        { Category: 'Allergy' },
+      ],
+    ])(
+      `should return input if value is part of the correct condition enum`,
+      (input, baseObject) => {
+        expect(isMedicalConditionValidForCategory(input, baseObject)).toBe(
+          input,
+        );
+      },
+    );
+
+    it.each([
+      [
+        ContactMedicalBehavioralAllergyCondition.SpecialDiet,
+        { Category: 'blahblahblah' },
+      ],
+    ])(`should return input if category is invalid`, (input, baseObject) => {
+      expect(isMedicalConditionValidForCategory(input, baseObject)).toBe(input);
+    });
+
+    it.each([
+      [
+        ContactMedicalBehavioralOtherCondition.Insomnia,
+        { Category: 'Allergy' },
+      ],
+      ['blahblahblah', { Category: 'Allergy' }],
+    ])(
+      `should throw BadRequestException on enum for wrong category or non enum values`,
+      (input, baseObject) => {
+        expect(() => {
+          isMedicalConditionValidForCategory(input, baseObject);
         }).toThrow(BadRequestException);
       },
     );

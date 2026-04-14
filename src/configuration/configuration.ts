@@ -90,6 +90,10 @@ export default () => ({
     contactLanguages: process.env.CONTACT_LANGUAGES_WORKSPACE ?? undefined,
     postContactLanguages:
       process.env.POST_CONTACT_LANGUAGES_WORKSPACE ?? undefined,
+    contactMedicalBehavioral:
+      process.env.CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
+    postContactMedicalBehavioral:
+      process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -109,6 +113,8 @@ export default () => ({
       process.env.ADDITIONAL_INFORMATION_AFTER_FIELD ?? undefined,
     callInformation: process.env.CALL_INFORMATION_WORKSPACE ?? undefined,
     contactLanguages: process.env.CONTACT_LANGUAGES_AFTER_FIELD ?? undefined,
+    contactMedicalBehavioral:
+      process.env.CONTACT_MEDICAL_BEHAVIORAL_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -150,6 +156,10 @@ export default () => ({
     memoCallInformation: process.env.MEMO_CALL_INFORMATION_ENDPOINT ?? ' ',
     contactLanguages: process.env.CONTACT_LANGUAGES_ENDPOINT ?? ' ',
     postContactLanguages: process.env.POST_CONTACT_LANGUAGES_ENDPOINT ?? ' ',
+    contactMedicalBehavioral:
+      process.env.CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
+    postContactMedicalBehavioral:
+      process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

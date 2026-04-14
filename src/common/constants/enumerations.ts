@@ -167,6 +167,264 @@ enum ContactLanguageType {
   AssistiveTechnology = 'Assistive Technology',
 }
 
+enum ContactMedicalBehavioralCategory {
+  Allergy = 'Allergy',
+  Behavioural = 'Behavioural',
+  Circulatory = 'Circulatory',
+  CognitiveLearning = 'Cognitive/Learning',
+  Communicable = 'Communicable',
+  CongenitalAnomalies = 'Congenital Anomalies',
+  Developmental = 'Developmental',
+  DigestiveEndocrineDisorders = 'Digestive/Endocrine Disorders',
+  MentalHealth = 'Mental Health',
+  Musculoskeletal = 'Musculoskeletal',
+  Neoplasms = 'Neoplasms',
+  Neurological = 'Neurological',
+  Other = 'Other',
+  Respiratory = 'Respiratory',
+  Sensory = 'Sensory',
+  Skin = 'Skin',
+  SkinAndSubcutaneous = 'Skin and subcutaneous',
+}
+
+enum ContactMedicalBehavioralAllergyCondition {
+  EnvironmentalSensitivities = 'Environmental sensitivities',
+  LifeThreatening = 'Life Threatening',
+  NonLifeThreatening = 'Non - Life Threatening',
+  SpecialDiet = 'Special Diet',
+}
+
+enum ContactMedicalBehavioralBehaviouralCondition {
+  Abilities = 'Abilities',
+  Aggression = 'Aggression',
+  CriminalJusticeActivity = 'Criminal/Justice activity',
+  DangerToOthersSelf = 'Danger to others/self',
+  DegreeOfIndependence = 'Degree of Independence',
+  Firesetting = 'Firesetting',
+  Interests = 'Interests',
+  Other = 'Other',
+  SelfAbusive = 'Self-abusive',
+  SexualActingOut = 'Sexual acting out',
+  SexuallyIntrusive = 'Sexually intrusive',
+}
+
+enum ContactMedicalBehavioralCirculatoryCondition {
+  Anaemia = 'Anaemia',
+  Cardiomyopathy = 'Cardiomyopathy',
+  CerebralVascularAccident = 'Cerebral vascular accident',
+  CongenitalHeartDisease = 'Congenital heart disease',
+  CoronaryArteryDisease = 'Coronary Artery Disease',
+  HeartAttackCardiacArrest = 'Heart attack/cardiac arrest',
+  Other = 'Other',
+  PeripheralArterialDisease = 'Peripheral arterial disease',
+  PulmonaryHypertension = 'Pulmonary Hypertension',
+  Stroke = 'Stroke',
+}
+
+enum ContactMedicalBehavioralCognitiveLearningCondition {
+  ADD = 'ADD',
+  ADDADHD = 'ADD / ADHD',
+  ADHD = 'ADHD',
+  LearningDisability = 'Learning Disability',
+}
+
+enum ContactMedicalBehavioralCommunicableCondition {
+  AIDS = 'AIDS',
+  HIV = 'HIV',
+  Hepatitis = 'Hepatitis',
+  HepatitisC = 'Hepatitis C',
+  Tuberculosis = 'Tuberculosis',
+}
+
+enum ContactMedicalBehavioralCongenitalAnomaliesCondition {
+  CleftPalate = 'Cleft Palate',
+  SpinaBifida = 'Spina Bifida',
+  ThalidomideSyndrome = 'Thalidomide syndrome',
+}
+
+enum ContactMedicalBehavioralDevelopmentalCondition {
+  AlternativeCommunication = 'Alternative Communication',
+  AutismSpectrumDisorder = 'Autism Spectrum Disorder',
+  AutisticDisorder = 'Autistic Disorder',
+  Delays = 'Delays',
+  DownSyndrome = 'Down Syndrome',
+  FASD = 'FASD',
+  FailureToThrive = 'Failure to Thrive',
+  NAS = 'NAS',
+}
+
+enum ContactMedicalBehavioralDigestiveEndocrineDisordersCondition {
+  ChronicLiverDisease = 'Chronic liver disease',
+  Cirrhosis = 'Cirrhosis',
+  Colitis = 'Colitis',
+  CrohnsDisease = "Crohn's disease",
+  DiabetesTypeOne = 'Diabetes - type 1',
+  DiabetesTypeTwo = 'Diabetes - type 2',
+  DiabetesTypeUnspecified = 'Diabetes - Type Unspecified',
+  Dysphagia = 'Dysphagia',
+  FecalIncontinence = 'Fecal incontinence',
+  GERD = 'GERD',
+  IBS = 'IBS',
+  Malnutrition = 'Malnutrition',
+  MorbidObesity = 'Morbid Obesity',
+  Pancreatitis = 'Pancreatitis',
+  PepticUlcer = 'Peptic Ulcer',
+  PituitaryDisorders = 'Pituitary Disorders',
+  RenalFailure = 'Renal failure',
+  ThyroidDisorders = 'Thyroid Disorders',
+  TubeFeed = 'Tube Feed',
+  WeightRelated = 'Weight Related',
+}
+
+enum ContactMedicalBehavioralMentalHealthCondition {
+  AdjustmentDisorder = 'Adjustment Disorder',
+  AnxietyDisorders = 'Anxiety Disorders',
+  BipolarDisorder = 'Bipolar Disorder',
+  Depression = 'Depression',
+  DissociativeDisorders = 'Dissociative Disorders',
+  Dysthymia = 'Dysthymia',
+  EatingDisorder = 'Eating Disorder',
+  ImpulseControlDisorder = 'Impulse Control Disorder',
+  MoodDisorders = 'Mood Disorders',
+  OppositionalDefiantDisorder = 'Oppositional Defiant Disorder',
+  PTSD = 'PTSD',
+  PersonalityDisorders = 'Personality Disorders',
+  PsychoticDisorders = 'Psychotic Disorders',
+  Schizophrenia = 'Schizophrenia',
+  SexualDisorder = 'Sexual Disorder',
+  SomatoformDisorders = 'Somatoform Disorders',
+  SubstanceRelatedDisorders = 'Substance-related Disorders',
+  SuicideIdeation = 'Suicide ideation',
+}
+
+enum ContactMedicalBehavioralMusculoskeletalCondition {
+  Arthritis = 'Arthritis',
+  CarpalTunnelSyndrome = 'Carpal Tunnel Syndrome',
+  DegenerativeDiscDisease = 'Degenerative Disc Disease',
+  HalluxValgus = 'Hallux Valgus',
+  Lupus = 'Lupus',
+  Metatarsalgia = 'Metatarsalgia',
+  Osteoarthritis = 'Osteoarthritis',
+  Osteopenia = 'Osteopenia',
+  Osteoporosis = 'Osteoporosis',
+  PesPlanus = 'Pes Planus',
+  PlantarFasciitis = 'Plantar fasciitis',
+  RheumatoidArthritis = 'Rheumatoid arthritis',
+  Scleroderma = 'Scleroderma',
+  Scoliosis = 'Scoliosis',
+  SpinalStenosis = 'Spinal Stenosis',
+}
+
+enum ContactMedicalBehavioralNeoplasmsCondition {
+  Benign = 'Benign',
+  DigestiveOrgans = 'Digestive organs',
+  GenitourinaryOrgans = 'Genitourinary organs',
+  InSitu = 'In Situ',
+  Leukemia = 'Leukemia',
+  LipOralCavityAndPharynx = 'Lip, oral cavity & pharynx',
+  Malignant = 'Malignant',
+  NeoplasticDisordersOther = 'Neoplastic disorders - other',
+  Other = 'Other',
+  RespiratoryIntrathoracic = 'Respiratory/Intrathoracic',
+  SkinOrBreast = 'Skin or Breast',
+}
+
+enum ContactMedicalBehavioralNeurologicalCondition {
+  ALS = 'ALS',
+  AlzheimersDisease = "Alzheimer's disease",
+  BrainInjury = 'Brain Injury',
+  CerebralPalsy = 'Cerebral palsy',
+  Dementia = 'Dementia',
+  Fibromyalgia = 'Fibromyalgia',
+  HydroMicrocephalus = 'Hydro/Microcephalus',
+  Migraine = 'Migraine',
+  MultipleSclerosis = 'Multiple sclerosis',
+  MuscularDystrophy = 'Muscular dystrophy',
+  Paraplegia = 'Paraplegia',
+  ParkinsonsDisease = "Parkinson's disease",
+  Quadriplegia = 'Quadriplegia',
+  RettSyndrome = 'Rett Syndrome',
+  SeizureDisorder = 'Seizure Disorder',
+  SpasticQuadraplegia = 'Spastic Quadraplegia',
+  SpinalCordInjury = 'Spinal Cord Injury',
+  SpinalMuscularAtrophy = 'Spinal Muscular Atrophy',
+  TouretteSyndrome = 'Tourette Syndrome',
+}
+
+enum ContactMedicalBehavioralOtherCondition {
+  Amputations = 'Amputations',
+  ChronicHealthCondition = 'Chronic Health Condition',
+  ChronicFatigue = 'Chronic fatigue',
+  ChronicPainGeneralized = 'Chronic pain (generalized)',
+  Fractures = 'Fractures',
+  Incontinence = 'Incontinence',
+  Insomnia = 'Insomnia',
+  OtherInjuries = 'Other injuries',
+}
+
+enum ContactMedicalBehavioralRespiratoryCondition {
+  Asthma = 'Asthma',
+  COPD = 'COPD',
+  ChronicLungDisorder = 'Chronic lung disorder',
+  CysticFibrosis = 'Cystic fibrosis',
+  Emphysemia = 'Emphysemia',
+  SleepApnea = 'Sleep Apnea',
+}
+
+enum ContactMedicalBehavioralSensoryCondition {
+  ADD = 'ADD',
+  HearingImpaired = 'Hearing Impaired',
+  OrganicSpeechLoss = 'Organic speech loss',
+  VisuallyImpaired = 'Visually Impaired',
+}
+
+enum ContactMedicalBehavioralSkinCondition {
+  Eczema = 'Eczema',
+  Psoriasis = 'Psoriasis',
+}
+
+enum ContactMedicalBehavioralSkinAndSubcutaneousCondition {
+  Psoriasis = 'Psoriasis',
+  SkinDisordersOther = 'Skin Disorders - other',
+}
+
+const ContactMedicalBehavioralCategoryConditionMap = {
+  [ContactMedicalBehavioralCategory.Allergy]:
+    ContactMedicalBehavioralAllergyCondition,
+  [ContactMedicalBehavioralCategory.Behavioural]:
+    ContactMedicalBehavioralBehaviouralCondition,
+  [ContactMedicalBehavioralCategory.Circulatory]:
+    ContactMedicalBehavioralCirculatoryCondition,
+  [ContactMedicalBehavioralCategory.CognitiveLearning]:
+    ContactMedicalBehavioralCognitiveLearningCondition,
+  [ContactMedicalBehavioralCategory.Communicable]:
+    ContactMedicalBehavioralCommunicableCondition,
+  [ContactMedicalBehavioralCategory.CongenitalAnomalies]:
+    ContactMedicalBehavioralCongenitalAnomaliesCondition,
+  [ContactMedicalBehavioralCategory.Developmental]:
+    ContactMedicalBehavioralDevelopmentalCondition,
+  [ContactMedicalBehavioralCategory.DigestiveEndocrineDisorders]:
+    ContactMedicalBehavioralDigestiveEndocrineDisordersCondition,
+  [ContactMedicalBehavioralCategory.MentalHealth]:
+    ContactMedicalBehavioralMentalHealthCondition,
+  [ContactMedicalBehavioralCategory.Musculoskeletal]:
+    ContactMedicalBehavioralMusculoskeletalCondition,
+  [ContactMedicalBehavioralCategory.Neoplasms]:
+    ContactMedicalBehavioralNeoplasmsCondition,
+  [ContactMedicalBehavioralCategory.Neurological]:
+    ContactMedicalBehavioralNeurologicalCondition,
+  [ContactMedicalBehavioralCategory.Other]:
+    ContactMedicalBehavioralOtherCondition,
+  [ContactMedicalBehavioralCategory.Respiratory]:
+    ContactMedicalBehavioralRespiratoryCondition,
+  [ContactMedicalBehavioralCategory.Sensory]:
+    ContactMedicalBehavioralSensoryCondition,
+  [ContactMedicalBehavioralCategory.Skin]:
+    ContactMedicalBehavioralSkinCondition,
+  [ContactMedicalBehavioralCategory.SkinAndSubcutaneous]:
+    ContactMedicalBehavioralSkinAndSubcutaneousCondition,
+} as const;
+
 export {
   RecordType,
   EntityType,
@@ -184,4 +442,23 @@ export {
   SafetyAssessmentDecisionUnsafe,
   ContactLanguage,
   ContactLanguageType,
+  ContactMedicalBehavioralCategory,
+  ContactMedicalBehavioralAllergyCondition,
+  ContactMedicalBehavioralBehaviouralCondition,
+  ContactMedicalBehavioralCirculatoryCondition,
+  ContactMedicalBehavioralCognitiveLearningCondition,
+  ContactMedicalBehavioralCommunicableCondition,
+  ContactMedicalBehavioralCongenitalAnomaliesCondition,
+  ContactMedicalBehavioralDevelopmentalCondition,
+  ContactMedicalBehavioralDigestiveEndocrineDisordersCondition,
+  ContactMedicalBehavioralMentalHealthCondition,
+  ContactMedicalBehavioralMusculoskeletalCondition,
+  ContactMedicalBehavioralNeoplasmsCondition,
+  ContactMedicalBehavioralNeurologicalCondition,
+  ContactMedicalBehavioralOtherCondition,
+  ContactMedicalBehavioralRespiratoryCondition,
+  ContactMedicalBehavioralSensoryCondition,
+  ContactMedicalBehavioralSkinAndSubcutaneousCondition,
+  ContactMedicalBehavioralSkinCondition,
+  ContactMedicalBehavioralCategoryConditionMap,
 };

@@ -45,6 +45,7 @@ import {
   CallInformationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -68,6 +69,7 @@ import {
   additionalInformationIdName,
   callInformationIdName,
   contactLanguageIdName,
+  contactMedicalBehavioralIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -135,6 +137,12 @@ import {
   PostContactLanguagesResponseExample,
 } from '../../entities/contact-languages.entity';
 import { PostContactLanguagesDto } from '../../dto/post-contact-languages.dto';
+import {
+  NestedContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralListResponseExample,
+  ContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralSingleExample,
+} from '../../entities/contact-medical-behavioral.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -975,6 +983,104 @@ export class ServiceRequestsController {
       contactLanguagesDto,
       req.headers[idirUsernameHeaderField] as string,
       id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/medical-behavioral`)
+  @ApiOperation({
+    description:
+      'Find all Contact Medical Behavioral entries related to a given Service Request and contact entity by Service Request and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactMedicalBehavioralEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactMedicalBehavioralEntity),
+        },
+        examples: {
+          ContactMedicalBehavioralListResponse: {
+            value: ContactMedicalBehavioralListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRContactMedicalBehavioralRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    return await this.serviceRequestService.getListSRContactMedicalBehavioralRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/medical-behavioral/:${contactMedicalBehavioralIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactMedicalBehavioralIdName} result if it is related to the given Service Request and contact id.`,
+  })
+  @ApiExtraModels(ContactMedicalBehavioralEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactMedicalBehavioralEntity),
+        },
+        examples: {
+          ContactMedicalBehavioralSingleResponse: {
+            value: ContactMedicalBehavioralSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRContactMedicalBehavioralRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactMedicalBehavioralIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactMedicalBehavioralEntity> {
+    return await this.serviceRequestService.getSingleSRContactMedicalBehavioralRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 }
