@@ -4,8 +4,17 @@ import { upstreamDateFormatNoTime } from './upstream-constants';
 export const childServicesTypeError =
   'Given case is not a Child Services case and cannot have Child/Youth visits.';
 
+export const childServicesMedBehavTypeError =
+  'Given contact cannot have Medical/Behvioral information.';
+
 export const dateFormatError =
-  'Date / time must met the ISO-8601 standard, and cannot be in the future.';
+  'Date / time must meet the ISO-8601 standard, and cannot be in the future.';
+
+export const dateFormatErrorAnyTime =
+  'Date / time must meet the ISO-8601 standard.';
+
+export const dateRangeFormatError =
+  'Dates / times must meet the ISO-8601 standard, and end date must be greater than or equal to start date.';
 
 export const upstreamDateFormatError =
   'Date must be valid, not in the future and in the ' +
@@ -31,3 +40,6 @@ export const multiIdError =
   `The ` +
   checkIdsParamName +
   ` parameter must contain a comma-seperated list of ids.`;
+
+export const contactMedicalBehavioralConditionEnumError =
+  'Condition must be one of the following values when Category is ${category}: ${enum}';

@@ -11,6 +11,7 @@ import {
   CallInformationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -63,6 +64,10 @@ import {
   PostContactLanguagesDto,
   PostContactLanguagesDtoUpstream,
 } from '../../dto/post-contact-languages.dto';
+import {
+  ContactMedicalBehavioralEntity,
+  NestedContactMedicalBehavioralEntity,
+} from '../../entities/contact-medical-behavioral.entity';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -325,6 +330,34 @@ export class ServiceRequestsService {
       body,
       idir,
       id,
+    );
+  }
+
+  async getSingleSRContactMedicalBehavioralRecord(
+    id: ContactMedicalBehavioralIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactMedicalBehavioralEntity> {
+    return await this.contactsService.getSingleContactMedicalBehavioralRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRContactMedicalBehavioralRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    return await this.contactsService.getListContactMedicalBehavioralRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

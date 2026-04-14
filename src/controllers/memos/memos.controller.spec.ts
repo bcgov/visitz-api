@@ -18,6 +18,7 @@ import {
   additionalInformationIdName,
   callInformationIdName,
   contactLanguageIdName,
+  contactMedicalBehavioralIdName,
 } from '../../common/constants/parameter-constants';
 import {
   AdditionalInformationIdPathParams,
@@ -25,6 +26,7 @@ import {
   CallInformationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -76,6 +78,12 @@ import {
   ContactLanguagesEntity,
   PostContactLanguagesResponseExample,
 } from '../../entities/contact-languages.entity';
+import {
+  ContactMedicalBehavioralListResponseExample,
+  NestedContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralSingleExample,
+  ContactMedicalBehavioralEntity,
+} from '../../entities/contact-medical-behavioral.entity';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -545,6 +553,78 @@ describe('MemosController', () => {
         );
         expect(memosServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
         expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getListMemoContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactMedicalBehavioralEntity(data)),
+          );
+
+        const result =
+          await controller.getListMemoContactMedicalBehavioralRecord(
+            req,
+            idPathParams,
+            res,
+            filterQueryParams,
+          );
+        expect(memosServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactMedicalBehavioralEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactMedicalBehavioralIdName]: 'test3',
+        } as ContactMedicalBehavioralIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const memosServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactMedicalBehavioralEntity(data)),
+          );
+
+        const result =
+          await controller.getSingleMemoContactMedicalBehavioralRecord(
+            req,
+            idPathParams,
+            res,
+          );
+        expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ContactMedicalBehavioralEntity(data));
       },
     );
   });

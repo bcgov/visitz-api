@@ -12,6 +12,7 @@ const dummyCreatedDate = '01/01/1970 00:00:00';
 const caseChildServices = 'Child Services';
 const childVisitType = 'In Person Child Youth';
 const contactLanguagesType = 'Language';
+const contactMedicalBehavioralType = "'Medical/Behavioural'";
 const childVisitIdirFieldName = 'Login Name';
 const childVisitEntityIdFieldName = 'Parent Id';
 const attachmentTypeSafetyAssessment = 'Safety Assessment';
@@ -59,6 +60,9 @@ const supportNetworkAgencyMax = 100;
 const supportNetworkAddressMax = 250;
 const contactLanguagesOtherLanguageMax = 30;
 const contactLanguagesCommentsMax = 255;
+const contactMedicalBehavioralCommentsMax = 200;
+const contactMedicalBehavioralDiagnosedByMax = 100;
+const contactMedicalBehavioralTreatmentPlanMax = 100;
 
 export {
   baseUrlEnvVarName,
@@ -75,6 +79,7 @@ export {
   caseChildServices,
   childVisitType,
   contactLanguagesType,
+  contactMedicalBehavioralType,
   childVisitIdirFieldName,
   childVisitEntityIdFieldName,
   attachmentTypeSafetyAssessment,
@@ -122,4 +127,7 @@ export {
   supportNetworkAddressMax,
   contactLanguagesOtherLanguageMax,
   contactLanguagesCommentsMax,
+  contactMedicalBehavioralCommentsMax,
+  contactMedicalBehavioralDiagnosedByMax,
+  contactMedicalBehavioralTreatmentPlanMax,
 };

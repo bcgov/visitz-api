@@ -7,6 +7,7 @@ import {
   CallInformationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -47,6 +48,10 @@ import {
   PostContactLanguagesDto,
   PostContactLanguagesDtoUpstream,
 } from '../../dto/post-contact-languages.dto';
+import {
+  ContactMedicalBehavioralEntity,
+  NestedContactMedicalBehavioralEntity,
+} from '../../entities/contact-medical-behavioral.entity';
 
 @Injectable()
 export class MemosService {
@@ -232,6 +237,34 @@ export class MemosService {
       body,
       idir,
       id,
+    );
+  }
+
+  async getSingleMemoContactMedicalBehavioralRecord(
+    id: ContactMedicalBehavioralIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactMedicalBehavioralEntity> {
+    return await this.contactsService.getSingleContactMedicalBehavioralRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoContactMedicalBehavioralRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    return await this.contactsService.getListContactMedicalBehavioralRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

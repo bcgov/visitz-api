@@ -43,6 +43,7 @@ const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
 const contactLanguageIdName = 'contactLanguageId';
+const contactMedicalBehavioralIdName = 'contactMedicalBehavioralId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
@@ -99,6 +100,7 @@ export {
   attachmentIdName,
   contactIdName,
   contactLanguageIdName,
+  contactMedicalBehavioralIdName,
   supportNetworkIdName,
   visitIdName,
   safetyAssessmentIdName,

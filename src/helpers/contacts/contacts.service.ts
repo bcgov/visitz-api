@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { RecordType, YNEnum } from '../../common/constants/enumerations';
@@ -6,6 +12,7 @@ import { CheckIdQueryParams } from '../../dto/filter-query-params.dto';
 import {
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
@@ -16,6 +23,7 @@ import {
 import {
   contactIdName,
   contactLanguageIdName,
+  contactMedicalBehavioralIdName,
   CONTENT_TYPE,
   UNIFORM_RESPONSE,
   uniformResponseParamName,
@@ -26,19 +34,39 @@ import {
   NestedContactLanguagesEntity,
 } from '../../entities/contact-languages.entity';
 import { PostContactLanguagesDtoUpstream } from '../../dto/post-contact-languages.dto';
-import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
+import {
+  caseChildServices,
+  trustedIdirHeaderName,
+} from '../../common/constants/upstream-constants';
+import {
+  ContactMedicalBehavioralEntity,
+  NestedContactMedicalBehavioralEntity,
+} from '../../entities/contact-medical-behavioral.entity';
+import { PostContactMedicalBehavioralDtoUpstream } from '../../dto/post-contact-medical-behavioral.dto';
+import { childServicesMedBehavTypeError } from '../../common/constants/error-constants';
 
 @Injectable()
 export class ContactsService {
   baseUrl: string;
+  caseUrl: string;
   endpointUrls: object;
   contactLanguagesUrl: string;
+  contactMedicalBehavioralUrl: string;
   postContactLanguagesUrl: string;
+  postContactMedicalBehavioralUrl: string;
   workspace: string | undefined;
+  caseWorkspace: string | undefined;
   contactLanguagesWorkspace: string | undefined;
+  contactMedicalBehavioralWorkspace: string | undefined;
   postContactLanguagesWorkspace: string | undefined;
+  postContactMedicalBehavioralWorkspace: string | undefined;
   afterFieldName: string | undefined;
   contactLanguagesAfterFieldName: string | undefined;
+  contactMedicalBehavioralAfterFieldName: string | undefined;
+  caseTypeFieldName: string | undefined;
+
+  private readonly logger = new Logger(ContactsService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly requestPreparerService: RequestPreparerService,
@@ -46,6 +74,10 @@ export class ContactsService {
   ) {
     this.baseUrl = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl'),
+    );
+    this.caseUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.baseUrl') +
+        this.configService.get<string>('upstreamAuth.case.endpoint'),
     );
     this.endpointUrls = {
       [RecordType.Case]: encodeURI(
@@ -64,19 +96,41 @@ export class ContactsService {
     this.contactLanguagesUrl = encodeURI(
       this.configService.get<string>('endpointUrls.contactLanguages'),
     );
+    this.contactMedicalBehavioralUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.contactMedicalBehavioral'),
+    );
     this.postContactLanguagesUrl = encodeURI(
       this.configService.get<string>('endpointUrls.postContactLanguages'),
     );
+    this.postContactMedicalBehavioralUrl = encodeURI(
+      this.configService.get<string>(
+        'endpointUrls.postContactMedicalBehavioral',
+      ),
+    );
     this.workspace = this.configService.get('workspaces.contacts');
+    this.caseWorkspace = this.configService.get('upstreamAuth.case.workspace');
+
     this.contactLanguagesWorkspace = this.configService.get(
       'workspaces.contactLanguages',
+    );
+    this.contactMedicalBehavioralWorkspace = this.configService.get(
+      'workspaces.contactMedicalBehavioral',
     );
     this.postContactLanguagesWorkspace = this.configService.get(
       'workspaces.postContactLanguages',
     );
+    this.postContactMedicalBehavioralWorkspace = this.configService.get(
+      'workspaces.postContactMedicalBehavioral',
+    );
     this.afterFieldName = this.configService.get('afterFieldName.contacts');
     this.contactLanguagesAfterFieldName = this.configService.get(
       'afterFieldName.contactLanguages',
+    );
+    this.contactMedicalBehavioralAfterFieldName = this.configService.get(
+      'afterFieldName.contactMedicalBehavioral',
+    );
+    this.caseTypeFieldName = this.configService.get(
+      'upstreamAuth.case.typeField',
     );
   }
 
@@ -293,5 +347,142 @@ export class ContactsService {
       ],
     };
     return new NestedContactLanguagesEntity(responseBody);
+  }
+
+  async getSingleContactMedicalBehavioralRecord(
+    type: RecordType,
+    id: ContactMedicalBehavioralIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactMedicalBehavioralEntity> {
+    const baseSearchSpec = `([Case Id]="${id.rowId}" AND [Id]="${id[contactMedicalBehavioralIdName]}"`;
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.contactMedicalBehavioralUrl,
+      );
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.contactMedicalBehavioralWorkspace,
+        this.contactMedicalBehavioralAfterFieldName,
+        true,
+        idir,
+      );
+    const response = await this.requestPreparerService.sendGetRequest(
+      upstreamUrl,
+      headers,
+      res,
+      params,
+    );
+    return new ContactMedicalBehavioralEntity(response.data);
+  }
+
+  async getListContactMedicalBehavioralRecord(
+    type: RecordType,
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    const baseSearchSpec = `([Case Id]="${id.rowId}"`;
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.contactMedicalBehavioralUrl,
+      );
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.contactMedicalBehavioralWorkspace,
+        this.contactMedicalBehavioralAfterFieldName,
+        true,
+        idir,
+        filter,
+      );
+    const response = await this.requestPreparerService.checkIdsGetRequest(
+      upstreamUrl,
+      this.contactMedicalBehavioralWorkspace,
+      headers,
+      params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
+    );
+    return new NestedContactMedicalBehavioralEntity(response.data);
+  }
+
+  async isChildCaseType(caseId: string, idir: string): Promise<boolean> {
+    const baseSearchSpec = `([Id]="${caseId}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.caseWorkspace,
+        undefined,
+        true,
+        idir,
+      );
+    let response;
+    try {
+      response = await this.requestPreparerService.sendGetRequest(
+        this.caseUrl,
+        headers,
+        undefined,
+        params,
+      );
+    } catch {
+      return false;
+    }
+    return this.childCaseTypeCheck(response);
+  }
+
+  private childCaseTypeCheck(response): boolean {
+    const type = response.data['items'][0][`${this.caseTypeFieldName}`];
+    if (type === undefined) {
+      this.logger.error(`${this.caseTypeFieldName} field not found in request`);
+      return false;
+    }
+    return type === caseChildServices;
+  }
+
+  async postSingleContactMedicalBehavioralRecord(
+    _type: RecordType,
+    body: PostContactMedicalBehavioralDtoUpstream,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    const parentId = id.rowId;
+    const isValidChildCase = await this.isChildCaseType(parentId, idir);
+    if (!isValidChildCase) {
+      throw new BadRequestException([childServicesMedBehavTypeError]);
+    }
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.postContactMedicalBehavioralUrl,
+      );
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
+    if (this.postContactMedicalBehavioralWorkspace !== undefined) {
+      params['workspace'] = this.postContactMedicalBehavioralWorkspace;
+    }
+    const response = await this.requestPreparerService.sendPutRequest(
+      upstreamUrl,
+      body,
+      headers,
+      params,
+    );
+    return new NestedContactMedicalBehavioralEntity(response.data);
   }
 }
