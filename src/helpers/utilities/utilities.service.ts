@@ -128,7 +128,11 @@ export class UtilitiesService {
     const officeNamesArray: Array<string> =
       officeNames.split(officeNamesSeparator);
     for (const officeName of officeNamesArray) {
-      searchspec = searchspec + `[${officeFieldName}]='${officeName}' OR `;
+      if (officeName.includes(`"`)) {
+        searchspec = searchspec + `[${officeFieldName}]='${officeName}' OR `;
+      } else {
+        searchspec = searchspec + `[${officeFieldName}]="${officeName}" OR `;
+      }
     }
     searchspec = searchspec.substring(0, searchspec.length - 4) + `)`;
     return searchspec;
