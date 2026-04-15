@@ -181,7 +181,7 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `(EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`,
+        searchspec: `(EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}" OR [${caseTypeFieldName}]="${CaseType.Resource}")`,
       };
       const incidentParams = {
         ...params,
@@ -306,7 +306,7 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `(([${caseOfficeFieldName}]="Office Name 1" OR [${caseOfficeFieldName}]="Office Name 2") OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}")`,
+        searchspec: `(([${caseOfficeFieldName}]="Office Name 1" OR [${caseOfficeFieldName}]="Office Name 2") OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}" OR [${caseTypeFieldName}]="${CaseType.Resource}")`,
       };
       const incidentParams = {
         ...params,

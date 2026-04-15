@@ -34,6 +34,7 @@ import {
 import { ServiceRequestsService } from './service-requests.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkSRResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
   SupportNetworkSingleResponseSRExample,
@@ -43,6 +44,8 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -65,6 +68,8 @@ import {
   checkIdsParamName,
   additionalInformationIdName,
   callInformationIdName,
+  contactLanguageIdName,
+  contactMedicalBehavioralIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -123,6 +128,21 @@ import {
   CallInformationEntity,
   CallInformationSingleResponseSRExample,
 } from '../../entities/call-information.entity';
+import { PostSupportNetworkDto } from '../../dto/post-support-network.dto';
+import {
+  ContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesSingleExample,
+  NestedContactLanguagesEntity,
+  PostContactLanguagesResponseExample,
+} from '../../entities/contact-languages.entity';
+import { PostContactLanguagesDto } from '../../dto/post-contact-languages.dto';
+import {
+  NestedContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralListResponseExample,
+  ContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralSingleExample,
+} from '../../entities/contact-medical-behavioral.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -776,6 +796,288 @@ export class ServiceRequestsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<AdditionalInformationEntity> {
     return await this.serviceRequestService.getSingleSRAdditionalInformationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/support-network`)
+  @ApiOperation({
+    description:
+      'Create a support network record related to the given Service Request id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          SupportNetworkCreatedResponse: {
+            value: PostSupportNetworkSRResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRSupportNetworkRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    supportNetworkDto: PostSupportNetworkDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    return await this.serviceRequestService.postSingleSRSupportNetworkRecord(
+      supportNetworkDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Find all Contact Language entries related to a given Service Request and contact entity by Service Request and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactLanguagesEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesListResponse: {
+            value: ContactLanguagesListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.serviceRequestService.getListSRContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/languages/:${contactLanguageIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactLanguageIdName} result if it is related to the given Service Request and contact id.`,
+  })
+  @ApiExtraModels(ContactLanguagesEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactLanguagesEntity),
+        },
+        examples: {
+          ContactLanguagesSingleResponse: {
+            value: ContactLanguagesSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRContactLanguagesRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactLanguagesIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.serviceRequestService.getSingleSRContactLanguagesRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/contacts/:${contactIdName}/languages`)
+  @ApiOperation({
+    description:
+      'Create a contact language record related to the given service request and contact id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ContactLanguagesCreatedResponse: {
+            value: PostContactLanguagesResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRContactLanguagesRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    contactLanguagesDto: PostContactLanguagesDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.serviceRequestService.postSingleSRContactLanguagesRecord(
+      contactLanguagesDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/medical-behavioral`)
+  @ApiOperation({
+    description:
+      'Find all Contact Medical Behavioral entries related to a given Service Request and contact entity by Service Request and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactMedicalBehavioralEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactMedicalBehavioralEntity),
+        },
+        examples: {
+          ContactMedicalBehavioralListResponse: {
+            value: ContactMedicalBehavioralListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRContactMedicalBehavioralRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    return await this.serviceRequestService.getListSRContactMedicalBehavioralRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/medical-behavioral/:${contactMedicalBehavioralIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactMedicalBehavioralIdName} result if it is related to the given Service Request and contact id.`,
+  })
+  @ApiExtraModels(ContactMedicalBehavioralEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactMedicalBehavioralEntity),
+        },
+        examples: {
+          ContactMedicalBehavioralSingleResponse: {
+            value: ContactMedicalBehavioralSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRContactMedicalBehavioralRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactMedicalBehavioralIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactMedicalBehavioralEntity> {
+    return await this.serviceRequestService.getSingleSRContactMedicalBehavioralRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

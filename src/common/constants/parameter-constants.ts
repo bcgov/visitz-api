@@ -37,10 +37,13 @@ const emojiRegex =
 const mimeTypeRegex = /.(jpg|jpeg|png|pdf)/;
 const fileExtensionRegex =
   /(\.[pP][nN][gG]|\.[jJ][pP][eE]?[gG]|\.[pP][dD][fF])$/;
+const phoneNumberRegex = /^[0-9]{10,40}$/;
 const officeNamesSeparator = '{:|:}';
 const idName = 'rowId';
 const attachmentIdName = 'attachmentId';
 const contactIdName = 'contactId';
+const contactLanguageIdName = 'contactLanguageId';
+const contactMedicalBehavioralIdName = 'contactMedicalBehavioralId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
@@ -91,10 +94,13 @@ export {
   emojiRegex,
   mimeTypeRegex,
   fileExtensionRegex,
+  phoneNumberRegex,
   officeNamesSeparator,
   idName,
   attachmentIdName,
   contactIdName,
+  contactLanguageIdName,
+  contactMedicalBehavioralIdName,
   supportNetworkIdName,
   visitIdName,
   safetyAssessmentIdName,

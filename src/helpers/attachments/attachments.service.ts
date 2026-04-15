@@ -242,6 +242,7 @@ export class AttachmentsService {
     }
     const upstreamBody = {
       ...dto,
+      Id: '',
       FileExt: file.mimetype.split('/').slice(-1)[0], // grabs last element
       FileName: filename,
       [AttachmentParentIdFieldMap[type]]: id[idName],
@@ -278,7 +279,7 @@ export class AttachmentsService {
     if (this.postWorkspace !== undefined) {
       params['workspace'] = this.postWorkspace;
     }
-    const response = await this.requestPreparerService.sendPostRequest(
+    const response = await this.requestPreparerService.sendPutRequest(
       this.postUrl,
       body,
       headers,

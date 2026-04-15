@@ -6,6 +6,7 @@ import { CasesController } from './cases.controller';
 import { CasesService } from './cases.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkCaseResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseCaseExample,
   SupportNetworkSingleResponseCaseExample,
@@ -18,6 +19,8 @@ import {
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
   VisitIdPathParams,
@@ -45,6 +48,8 @@ import {
   supportNetworkIdName,
   visitIdName,
   caseNotesIdName,
+  contactLanguageIdName,
+  contactMedicalBehavioralIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -81,6 +86,20 @@ import {
   CaseNotesSingleExample,
   NestedCaseNotesEntity,
 } from '../../entities/case-notes.entity';
+import {
+  ContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesSingleExample,
+  NestedContactLanguagesEntity,
+  PostContactLanguagesResponseExample,
+} from '../../entities/contact-languages.entity';
+import {
+  ContactMedicalBehavioralListResponseExample,
+  NestedContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralSingleExample,
+  ContactMedicalBehavioralEntity,
+  PostContactMedicalBehavioralResponseExample,
+} from '../../entities/contact-medical-behavioral.entity';
 
 describe('CasesController', () => {
   let controller: CasesController;
@@ -544,6 +563,239 @@ describe('CasesController', () => {
         );
         expect(caseServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new CaseNotesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        {
+          Name: 'Test',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostSupportNetworkCaseResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'postSingleCaseSupportNetworkRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
+
+        const result = await controller.postSingleCaseSupportNetworkRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getListCaseContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.getListCaseContactLanguagesRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLanguageIdName]: 'test3',
+        } as ContactLanguagesIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.getSingleCaseContactLanguagesRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        {
+          'Language Name': 'English',
+        },
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        'idir',
+        PostContactLanguagesResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'postSingleCaseContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await controller.postSingleCaseContactLanguagesRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getListCaseContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactMedicalBehavioralEntity(data)),
+          );
+
+        const result =
+          await controller.getListCaseContactMedicalBehavioralRecord(
+            req,
+            idPathParams,
+            res,
+            filterQueryParams,
+          );
+        expect(casesServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactMedicalBehavioralEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactMedicalBehavioralIdName]: 'test3',
+        } as ContactMedicalBehavioralIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactMedicalBehavioralEntity(data)),
+          );
+
+        const result =
+          await controller.getSingleCaseContactMedicalBehavioralRecord(
+            req,
+            idPathParams,
+            res,
+          );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ContactMedicalBehavioralEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        {
+          Category: 'Allergy',
+        },
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        'idir',
+        PostContactMedicalBehavioralResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'postSingleCaseContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactMedicalBehavioralEntity(data)),
+          );
+
+        const result =
+          await controller.postSingleCaseContactMedicalBehavioralRecord(
+            getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+            body,
+            idPathParams,
+          );
+        expect(casesServiceSpy).toHaveBeenCalledWith(body, idir, idPathParams);
+        expect(result).toEqual(new NestedContactMedicalBehavioralEntity(data));
       },
     );
   });
