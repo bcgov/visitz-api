@@ -150,6 +150,23 @@ describe('UtilitiesService', () => {
     });
   });
 
+  describe('officeNamesStringToSearchSpec tests', () => {
+    it.each([
+      [
+        `"CoolOffice"{:|:}'otherOffice'`,
+        'office',
+        `([office]='"CoolOffice"' OR [office]="'otherOffice'")`,
+      ],
+    ])(
+      'should use different quotes in office names when creating search spec',
+      (officeNames, officeFieldName, expected) => {
+        expect(
+          service.officeNamesStringToSearchSpec(officeNames, officeFieldName),
+        ).toBe(expected);
+      },
+    );
+  });
+
   describe('isPastISO8601Date tests', () => {
     it.each([[DateTime.now().toUTC().minus(60000).toJSDate().toISOString()]])(
       `should return a string upon being given a past ISO-8601 date`,
