@@ -582,12 +582,12 @@ describe('AuthService', () => {
                     {
                       'Organization Id': testOrgId,
                       Organization: testOrg,
-                      Division: "office1",
+                      Division: 'office1',
                     },
                     {
                       'Organization Id': testOrgId,
                       Organization: testOrg,
-                      Division: "office2",
+                      Division: 'office2',
                     },
                   ],
                 },
