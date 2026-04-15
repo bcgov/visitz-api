@@ -306,19 +306,19 @@ describe('CaseloadService', () => {
       };
       const caseParams = {
         ...params,
-        searchspec: `(([${caseOfficeFieldName}]='Office Name 1' OR [${caseOfficeFieldName}]='Office Name 2') OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}" OR [${caseTypeFieldName}]="${CaseType.Resource}")`,
+        searchspec: `(([${caseOfficeFieldName}]="Office Name 1" OR [${caseOfficeFieldName}]="Office Name 2") OR EXISTS ([${caseIdirFieldName}]="${idir}")) AND ([${caseStatusFieldName}]="${EntityStatus.Open}") AND ([${caseRestrictedFieldName}]="${YNEnum.False}") AND ([${caseTypeFieldName}]="${CaseType.ChildServices}" OR [${caseTypeFieldName}]="${CaseType.FamilyServices}" OR [${caseTypeFieldName}]="${CaseType.CYSNFamilyServices}" OR [${caseTypeFieldName}]="${CaseType.Resource}")`,
       };
       const incidentParams = {
         ...params,
-        searchspec: `(([${incidentOfficeFieldName}]='Office Name 1' OR [${incidentOfficeFieldName}]='Office Name 2') OR EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${YNEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
+        searchspec: `(([${incidentOfficeFieldName}]="Office Name 1" OR [${incidentOfficeFieldName}]="Office Name 2") OR EXISTS ([${incidentIdirFieldName}]="${idir}")) AND ([${incidentStatusFieldName}]="${EntityStatus.Open}") AND ([${incidentRestrictedFieldName}]="${YNEnum.False}") AND ([${incidentTypeFieldName}]="${IncidentType.ChildProtection}")`,
       };
       const srParams = {
         ...params,
-        searchspec: `(([${srOfficeFieldName}]='Office Name 1' OR [${srOfficeFieldName}]='Office Name 2') OR ([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${YNEnum.False}")`,
+        searchspec: `(([${srOfficeFieldName}]="Office Name 1" OR [${srOfficeFieldName}]="Office Name 2") OR ([${srIdirFieldName}]="${idir}")) AND ([${srStatusFieldName}]="${EntityStatus.Open}") AND ([${srRestrictedFieldName}]="${YNEnum.False}")`,
       };
       const memoParams = {
         ...params,
-        searchspec: `(([${memoOfficeFieldName}]='Office Name 1' OR [${memoOfficeFieldName}]='Office Name 2') OR ([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${YNEnum.False}")`,
+        searchspec: `(([${memoOfficeFieldName}]="Office Name 1" OR [${memoOfficeFieldName}]="Office Name 2") OR ([${memoIdirFieldName}]="${idir}")) AND ([${memoStatusFieldName}]="${EntityStatus.Open}") AND ([${memoRestrictedFieldName}]="${YNEnum.False}")`,
       };
 
       expect(getRequestSpecs.length).toBe(4);
