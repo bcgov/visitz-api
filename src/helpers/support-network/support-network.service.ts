@@ -15,15 +15,22 @@ import {
 import { CheckIdQueryParams } from '../../dto/filter-query-params.dto';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  CONTENT_TYPE,
   idName,
   supportNetworkIdName,
+  UNIFORM_RESPONSE,
+  uniformResponseParamName,
 } from '../../common/constants/parameter-constants';
 import { Response } from 'express';
+import { PostSupportNetworkDtoUpstream } from '../../dto/post-support-network.dto';
+import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
 
 @Injectable()
 export class SupportNetworkService {
   url: string;
+  postUrl: string;
   workspace: string | undefined;
+  postWorkspace: string | undefined;
   afterFieldName: string | undefined;
   constructor(
     private readonly configService: ConfigService,
@@ -33,7 +40,14 @@ export class SupportNetworkService {
       this.configService.get<string>('endpointUrls.baseUrl') +
         this.configService.get<string>('endpointUrls.supportNetwork'),
     );
+    this.postUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.baseUrl') +
+        this.configService.get<string>('endpointUrls.postSupportNetwork'),
+    );
     this.workspace = this.configService.get('workspaces.supportNetwork');
+    this.postWorkspace = this.configService.get(
+      'workspaces.postSupportNetwork',
+    );
     this.afterFieldName = this.configService.get(
       'afterFieldName.supportNetwork',
     );
@@ -91,6 +105,32 @@ export class SupportNetworkService {
       'Id',
       res,
       filter,
+    );
+    return new NestedSupportNetworkEntity(response.data);
+  }
+
+  async postSingleSupportNetworkRecord(
+    _type: RecordType,
+    body: PostSupportNetworkDtoUpstream,
+    idir: string,
+  ): Promise<NestedSupportNetworkEntity> {
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
+    if (this.postWorkspace !== undefined) {
+      params['workspace'] = this.postWorkspace;
+    }
+    const response = await this.requestPreparerService.sendPutRequest(
+      this.postUrl,
+      body,
+      headers,
+      params,
     );
     return new NestedSupportNetworkEntity(response.data);
   }

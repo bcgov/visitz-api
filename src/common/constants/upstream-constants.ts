@@ -11,6 +11,8 @@ const upstreamDateFormatNoTime = 'MM/dd/yyyy';
 const dummyCreatedDate = '01/01/1970 00:00:00';
 const caseChildServices = 'Child Services';
 const childVisitType = 'In Person Child Youth';
+const contactLanguagesType = 'Language';
+const contactMedicalBehavioralType = "'Medical/Behavioural'";
 const childVisitIdirFieldName = 'Login Name';
 const childVisitEntityIdFieldName = 'Parent Id';
 const attachmentTypeSafetyAssessment = 'Safety Assessment';
@@ -50,6 +52,17 @@ const safetyAssessmentPayloadFamilyNameMax = 250;
 const safetyDecisionsDecisionUnsafeMax = 255;
 const safetyDecisionsCommentsMax = 8000;
 const safetyDecisionsNarrativeMax = 8000;
+const supportNetworkNameMax = 100;
+const supportNetworkCellMax = 40;
+const supportNetworkCommentsMax = 500;
+const supportNetworkRelationshipMax = 30;
+const supportNetworkAgencyMax = 100;
+const supportNetworkAddressMax = 250;
+const contactLanguagesOtherLanguageMax = 30;
+const contactLanguagesCommentsMax = 255;
+const contactMedicalBehavioralCommentsMax = 200;
+const contactMedicalBehavioralDiagnosedByMax = 100;
+const contactMedicalBehavioralTreatmentPlanMax = 100;
 
 export {
   baseUrlEnvVarName,
@@ -65,6 +78,8 @@ export {
   dummyCreatedDate,
   caseChildServices,
   childVisitType,
+  contactLanguagesType,
+  contactMedicalBehavioralType,
   childVisitIdirFieldName,
   childVisitEntityIdFieldName,
   attachmentTypeSafetyAssessment,
@@ -104,4 +119,15 @@ export {
   safetyDecisionsDecisionUnsafeMax,
   safetyDecisionsCommentsMax,
   safetyDecisionsNarrativeMax,
+  supportNetworkNameMax,
+  supportNetworkCellMax,
+  supportNetworkCommentsMax,
+  supportNetworkRelationshipMax,
+  supportNetworkAgencyMax,
+  supportNetworkAddressMax,
+  contactLanguagesOtherLanguageMax,
+  contactLanguagesCommentsMax,
+  contactMedicalBehavioralCommentsMax,
+  contactMedicalBehavioralDiagnosedByMax,
+  contactMedicalBehavioralTreatmentPlanMax,
 };

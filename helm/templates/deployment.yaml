@@ -27,3 +27,8 @@ spec:
             - name: VPI_APP_ENV
               value: {{ .Values.vpiAppEnv }}
       restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%

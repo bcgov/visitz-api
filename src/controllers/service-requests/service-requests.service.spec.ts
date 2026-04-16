@@ -7,6 +7,7 @@ import { SupportNetworkService } from '../../helpers/support-network/support-net
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import {
   NestedSupportNetworkEntity,
+  PostSupportNetworkSRResponseExample,
   SupportNetworkEntity,
   SupportNetworkListResponseSRExample,
   SupportNetworkSingleResponseSRExample,
@@ -20,6 +21,8 @@ import {
   AttachmentIdPathParams,
   CallInformationIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
   SupportNetworkIdPathParams,
@@ -41,6 +44,8 @@ import {
   responseNarrativeIdName,
   additionalInformationIdName,
   callInformationIdName,
+  contactLanguageIdName,
+  contactMedicalBehavioralIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -85,6 +90,19 @@ import {
   CallInformationSingleResponseSRExample,
   CallInformationEntity,
 } from '../../entities/call-information.entity';
+import {
+  ContactLanguagesEntity,
+  ContactLanguagesListResponseExample,
+  ContactLanguagesSingleExample,
+  NestedContactLanguagesEntity,
+  PostContactLanguagesResponseExample,
+} from '../../entities/contact-languages.entity';
+import {
+  ContactMedicalBehavioralListResponseExample,
+  NestedContactMedicalBehavioralEntity,
+  ContactMedicalBehavioralSingleExample,
+  ContactMedicalBehavioralEntity,
+} from '../../entities/contact-medical-behavioral.entity';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -635,6 +653,210 @@ describe('ServiceRequestsService', () => {
           'idir',
         );
         expect(result).toEqual(new AdditionalInformationEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRSupportNetworkRecord tests', () => {
+    it.each([
+      [
+        {
+          Name: 'Test',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostSupportNetworkSRResponseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const SupportNetworksSpy = jest
+          .spyOn(supportNetworkService, 'postSingleSupportNetworkRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedSupportNetworkEntity(data)),
+          );
+
+        const result = await service.postSingleSRSupportNetworkRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(SupportNetworksSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedSupportNetworkEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getListContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await service.getListSRContactLanguagesRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        ContactLanguagesSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLanguageIdName]: 'test3',
+        } as ContactLanguagesIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactLanguagesEntity(data)),
+          );
+
+        const result = await service.getSingleSRContactLanguagesRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRContactLanguagesRecord tests', () => {
+    it.each([
+      [
+        {
+          'Language Name': 'English',
+        },
+        'idir',
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        PostContactLanguagesResponseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const contactLanguagesSpy = jest
+          .spyOn(contactsService, 'postSingleContactLanguagesRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLanguagesEntity(data)),
+          );
+
+        const result = await service.postSingleSRContactLanguagesRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(contactLanguagesSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedContactLanguagesEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getListContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactMedicalBehavioralEntity(data)),
+          );
+
+        const result = await service.getListSRContactMedicalBehavioralRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactMedicalBehavioralEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRContactMedicalBehavioralRecord tests', () => {
+    it.each([
+      [
+        ContactMedicalBehavioralSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactMedicalBehavioralIdName]: 'test3',
+        } as ContactMedicalBehavioralIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactMedicalBehavioralRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactMedicalBehavioralEntity(data)),
+          );
+
+        const result = await service.getSingleSRContactMedicalBehavioralRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ContactMedicalBehavioralEntity(data));
       },
     );
   });

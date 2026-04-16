@@ -69,6 +69,7 @@ export default () => ({
   },
   workspaces: {
     supportNetwork: process.env.SUPPORT_NETWORK_WORKSPACE ?? undefined,
+    postSupportNetwork: process.env.POST_SUPPORT_NETWORK_WORKSPACE ?? undefined,
     inPersonVisits: process.env.IN_PERSON_VISITS_WORKSPACE ?? undefined,
     attachments: process.env.ATTACHMENTS_WORKSPACE ?? undefined,
     postAttachments: process.env.ATTACHMENTS_POST_WORKSPACE ?? undefined,
@@ -86,6 +87,13 @@ export default () => ({
     additionalInformation:
       process.env.ADDITIONAL_INFORMATION_WORKSPACE ?? undefined,
     callInformation: process.env.CALL_INFORMATION_WORKSPACE ?? undefined,
+    contactLanguages: process.env.CONTACT_LANGUAGES_WORKSPACE ?? undefined,
+    postContactLanguages:
+      process.env.POST_CONTACT_LANGUAGES_WORKSPACE ?? undefined,
+    contactMedicalBehavioral:
+      process.env.CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
+    postContactMedicalBehavioral:
+      process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -104,6 +112,9 @@ export default () => ({
     additionalInformation:
       process.env.ADDITIONAL_INFORMATION_AFTER_FIELD ?? undefined,
     callInformation: process.env.CALL_INFORMATION_WORKSPACE ?? undefined,
+    contactLanguages: process.env.CONTACT_LANGUAGES_AFTER_FIELD ?? undefined,
+    contactMedicalBehavioral:
+      process.env.CONTACT_MEDICAL_BEHAVIORAL_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -113,6 +124,7 @@ export default () => ({
     baseUrl: process.env.UPSTREAM_BASE_URL ?? ' ',
     workflowBaseUrl: process.env.WORKFLOW_BASE_URL ?? ' ',
     supportNetwork: process.env.SUPPORT_NETWORK_ENDPOINT ?? ' ',
+    postSupportNetwork: process.env.POST_SUPPORT_NETWORK_ENDPOINT ?? ' ',
     inPersonVisits: process.env.IN_PERSON_VISITS_ENDPOINT ?? ' ',
     postInPersonVisits: process.env.IN_PERSON_VISITS_POST_ENDPOINT ?? ' ',
     attachments: process.env.ATTACHMENTS_ENDPOINT ?? ' ',
@@ -142,6 +154,12 @@ export default () => ({
     incidentCallInformation:
       process.env.INCIDENT_CALL_INFORMATION_ENDPOINT ?? ' ',
     memoCallInformation: process.env.MEMO_CALL_INFORMATION_ENDPOINT ?? ' ',
+    contactLanguages: process.env.CONTACT_LANGUAGES_ENDPOINT ?? ' ',
+    postContactLanguages: process.env.POST_CONTACT_LANGUAGES_ENDPOINT ?? ' ',
+    contactMedicalBehavioral:
+      process.env.CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
+    postContactMedicalBehavioral:
+      process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

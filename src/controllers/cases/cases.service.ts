@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupportNetworkService } from '../../helpers/support-network/support-network.service';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   NestedSupportNetworkEntity,
   SupportNetworkEntity,
@@ -9,6 +9,8 @@ import {
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactIdPathParams,
+  ContactLanguagesIdPathParams,
+  ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
   VisitIdPathParams,
@@ -43,6 +45,8 @@ import {
 import {
   childVisitEntityIdFieldName,
   childVisitType,
+  contactLanguagesType,
+  contactMedicalBehavioralType,
   stringNull,
 } from '../../common/constants/upstream-constants';
 import { Response } from 'express';
@@ -57,6 +61,26 @@ import {
   CaseNotesEntity,
   NestedCaseNotesEntity,
 } from '../../entities/case-notes.entity';
+import {
+  PostSupportNetworkDto,
+  PostSupportNetworkDtoUpstream,
+} from '../../dto/post-support-network.dto';
+import {
+  ContactLanguagesEntity,
+  NestedContactLanguagesEntity,
+} from '../../entities/contact-languages.entity';
+import {
+  PostContactLanguagesDto,
+  PostContactLanguagesDtoUpstream,
+} from '../../dto/post-contact-languages.dto';
+import {
+  ContactMedicalBehavioralEntity,
+  NestedContactMedicalBehavioralEntity,
+} from '../../entities/contact-medical-behavioral.entity';
+import {
+  PostContactMedicalBehavioralDto,
+  PostContactMedicalBehavioralDtoUpstream,
+} from '../../dto/post-contact-medical-behavioral.dto';
 
 @Injectable()
 export class CasesService {
@@ -266,6 +290,120 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleCaseSupportNetworkRecord(
+    supportNetworkDto: PostSupportNetworkDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<NestedSupportNetworkEntity> {
+    const baseObject = {
+      ...supportNetworkDto,
+      Id: stringNull,
+      'Entity Id': id.rowId,
+      'Entity Name': EntityType.Case,
+    };
+    const body = new PostSupportNetworkDtoUpstream(baseObject);
+    return await this.supportNetworkService.postSingleSupportNetworkRecord(
+      RecordType.Case,
+      body,
+      idir,
+    );
+  }
+
+  async getSingleCaseContactLanguagesRecord(
+    id: ContactLanguagesIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLanguagesEntity> {
+    return await this.contactsService.getSingleContactLanguagesRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactLanguagesRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    return await this.contactsService.getListContactLanguagesRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleCaseContactLanguagesRecord(
+    contactLanguagesDto: PostContactLanguagesDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactLanguagesEntity> {
+    const baseObject = {
+      ...contactLanguagesDto,
+      Id: stringNull,
+      Type: contactLanguagesType,
+    };
+    const body = new PostContactLanguagesDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactLanguagesRecord(
+      RecordType.Case,
+      body,
+      idir,
+      id,
+    );
+  }
+
+  async getSingleCaseContactMedicalBehavioralRecord(
+    id: ContactMedicalBehavioralIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactMedicalBehavioralEntity> {
+    return await this.contactsService.getSingleContactMedicalBehavioralRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactMedicalBehavioralRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    return await this.contactsService.getListContactMedicalBehavioralRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleCaseContactMedicalBehavioralRecord(
+    contactMedicalBehavioralDto: PostContactMedicalBehavioralDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<NestedContactMedicalBehavioralEntity> {
+    const baseObject = {
+      ...contactMedicalBehavioralDto,
+      Id: stringNull,
+      Type: contactMedicalBehavioralType,
+      'Case Id': id.rowId,
+    };
+    const body = new PostContactMedicalBehavioralDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactMedicalBehavioralRecord(
+      RecordType.Case,
+      body,
+      idir,
+      id,
     );
   }
 }
