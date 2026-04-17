@@ -557,9 +557,6 @@ export class ContactsService {
         idir,
         filter,
       );
-    console.log(upstreamUrl);
-    console.log(headers);
-    console.log(params);
     const response = await this.requestPreparerService.checkIdsGetRequest(
       upstreamUrl,
       this.contactEducationWorkspace,
