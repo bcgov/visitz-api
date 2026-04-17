@@ -43,6 +43,7 @@ import {
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
   ContactMedicalBehavioralIdPathParams,
@@ -70,6 +71,7 @@ import {
   callInformationIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -143,6 +145,12 @@ import {
   ContactMedicalBehavioralEntity,
   ContactMedicalBehavioralSingleExample,
 } from '../../entities/contact-medical-behavioral.entity';
+import {
+  NestedContactEducationEntity,
+  ContactEducationListResponseExample,
+  ContactEducationEntity,
+  ContactEducationSingleExample,
+} from '../../entities/contact-education.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -1078,6 +1086,103 @@ export class ServiceRequestsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactMedicalBehavioralEntity> {
     return await this.serviceRequestService.getSingleSRContactMedicalBehavioralRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/education`)
+  @ApiOperation({
+    description:
+      'Find all Contact Education entries related to a given Service Request and contact entity by Service Request and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactEducationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactEducationEntity),
+        },
+        examples: {
+          ContactEducationListResponse: {
+            value: ContactEducationListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRContactEducationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactEducationEntity> {
+    return await this.serviceRequestService.getListSRContactEducationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/education/:${contactEducationIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactEducationIdName} result if it is related to the given Service Request and contact id.`,
+  })
+  @ApiExtraModels(ContactEducationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactEducationEntity),
+        },
+        examples: {
+          ContactEducationSingleResponse: {
+            value: ContactEducationSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRContactEducationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactEducationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactEducationEntity> {
+    return await this.serviceRequestService.getSingleSRContactEducationRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

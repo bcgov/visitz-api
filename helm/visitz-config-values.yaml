@@ -639,3 +639,18 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: POST_CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE
+  - name: CONTACT_EDUCATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_EDUCATION_ENDPOINT
+  - name: CONTACT_EDUCATION_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_EDUCATION_WORKSPACE
+  - name: CONTACT_EDUCATION_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_EDUCATION_AFTER_FIELD
