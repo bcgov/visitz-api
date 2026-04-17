@@ -44,6 +44,7 @@ import {
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
   ContactMedicalBehavioralIdPathParams,
@@ -75,6 +76,7 @@ import {
   additionalInformationIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -160,6 +162,12 @@ import {
   ContactMedicalBehavioralEntity,
   ContactMedicalBehavioralSingleExample,
 } from '../../entities/contact-medical-behavioral.entity';
+import {
+  NestedContactEducationEntity,
+  ContactEducationListResponseExample,
+  ContactEducationEntity,
+  ContactEducationSingleExample,
+} from '../../entities/contact-education.entity';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -1286,6 +1294,104 @@ export class IncidentsController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactMedicalBehavioralEntity> {
     return await this.incidentsService.getSingleIncidentContactMedicalBehavioralRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/education`)
+  @ApiOperation({
+    description:
+      'Find all Contact Education entries related to a given Incident and contact entity by Incident and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactEducationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactEducationEntity),
+        },
+        examples: {
+          ContactEducationListResponse: {
+            value: ContactEducationListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListIncidentContactEducationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactEducationEntity> {
+    return await this.incidentsService.getListIncidentContactEducationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/education/:${contactEducationIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactEducationIdName} result if it is related to the given Incident and contact id.`,
+  })
+  @ApiExtraModels(ContactEducationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactEducationEntity),
+        },
+        examples: {
+          ContactEducationSingleResponse: {
+            value: ContactEducationSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleIncidentContactEducationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactEducationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactEducationEntity> {
+    return await this.incidentsService.getSingleIncidentContactEducationRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
