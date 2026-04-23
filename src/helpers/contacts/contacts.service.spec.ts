@@ -16,12 +16,14 @@ import {
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
   contactEducationIdName,
+  contactLegalAuthorityIdName,
 } from '../../common/constants/parameter-constants';
 import { FilterQueryParams } from '../../dto/filter-query-params.dto';
 import {
   ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -59,6 +61,12 @@ import {
   ContactEducationSingleExample,
   ContactEducationEntity,
 } from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityListResponseExample,
+  NestedContactLegalAuthorityEntity,
+  ContactLegalAuthoritySingleExample,
+  ContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
 
 describe('ContactsService', () => {
   let service: ContactsService;
@@ -600,6 +608,80 @@ describe('ContactsService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('getListContactLegalAuthorityRecord tests', () => {
+    it.each([
+      [
+        ContactLegalAuthorityListResponseExample,
+        RecordType.Case,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        undefined,
+      ],
+      [
+        ContactLegalAuthorityListResponseExample,
+        RecordType.Case,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        { [afterParamName]: '2020-12-24' } as FilterQueryParams,
+      ],
+    ])(
+      'should return list values given good input',
+      async (data, recordType, idPathParams, filterQueryParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getListContactLegalAuthorityRecord(
+          recordType,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new NestedContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleContactLegalAuthorityRecord tests', () => {
+    it.each([
+      [
+        ContactLegalAuthoritySingleExample,
+        RecordType.Case,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLegalAuthorityIdName]: 'test3',
+        } as ContactLegalAuthorityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, recordType, idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getSingleContactLegalAuthorityRecord(
+          recordType,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new ContactLegalAuthorityEntity(data));
       },
     );
   });

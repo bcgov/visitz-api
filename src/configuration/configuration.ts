@@ -95,6 +95,8 @@ export default () => ({
     postContactMedicalBehavioral:
       process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
     contactEducation: process.env.CONTACT_EDUCATION_WORKSPACE ?? undefined,
+    contactLegalAuthority:
+      process.env.CONTACT_LEGAL_AUTHORITY_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -121,6 +123,8 @@ export default () => ({
       process.env.CONTACT_EDUCATION_AFTER_FIELD == ''
         ? undefined
         : process.env.CONTACT_EDUCATION_AFTER_FIELD,
+    contactLegalAuthority:
+      process.env.CONTACT_LEGAL_AUTHORITY_AFTER_FIELD ?? undefined,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -167,6 +171,7 @@ export default () => ({
     postContactMedicalBehavioral:
       process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
     contactEducation: process.env.CONTACT_EDUCATION_ENDPOINT ?? ' ',
+    contactLegalAuthority: process.env.CONTACT_LEGAL_AUTHORITY_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

@@ -47,6 +47,7 @@ import {
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
   contactEducationIdName,
+  contactLegalAuthorityIdName,
 } from '../../common/constants/parameter-constants';
 import {
   AdditionalInformationIdPathParams,
@@ -55,6 +56,7 @@ import {
   ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -133,6 +135,12 @@ import {
   ContactEducationEntity,
   ContactEducationSingleExample,
 } from '../../entities/contact-education.entity';
+import {
+  NestedContactLegalAuthorityEntity,
+  ContactLegalAuthorityListResponseExample,
+  ContactLegalAuthorityEntity,
+  ContactLegalAuthoritySingleExample,
+} from '../../entities/contact-legals.entity';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
@@ -933,6 +941,104 @@ export class MemosController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactEducationEntity> {
     return await this.memosService.getSingleMemoContactEducationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/legal-authorities`)
+  @ApiOperation({
+    description:
+      'Find all Contact Legal Authority entries related to a given Memo and contact entity by Memo and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactLegalAuthorityEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactLegalAuthorityEntity),
+        },
+        examples: {
+          ContactLegalAuthorityListResponse: {
+            value: ContactLegalAuthorityListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListMemoContactLegalAuthorityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.memosService.getListMemoContactLegalAuthorityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/legal-authorities/:${contactLegalAuthorityIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactLegalAuthorityIdName} result if it is related to the given Memo and contact id.`,
+  })
+  @ApiExtraModels(ContactLegalAuthorityEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactLegalAuthorityEntity),
+        },
+        examples: {
+          ContactLegalAuthoritySingleResponse: {
+            value: ContactLegalAuthoritySingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoContactLegalAuthorityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactLegalAuthorityIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.memosService.getSingleMemoContactLegalAuthorityRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

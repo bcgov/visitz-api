@@ -11,6 +11,7 @@ import {
   ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -86,6 +87,10 @@ import {
   ContactEducationEntity,
   NestedContactEducationEntity,
 } from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
 
 @Injectable()
 export class CasesService {
@@ -432,6 +437,34 @@ export class CasesService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedContactEducationEntity> {
     return await this.contactsService.getListContactEducationRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleCaseContactLegalAuthorityRecord(
+    id: ContactLegalAuthorityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.contactsService.getSingleContactLegalAuthorityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactLegalAuthorityRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.contactsService.getListContactLegalAuthorityRecord(
       RecordType.Case,
       id,
       res,

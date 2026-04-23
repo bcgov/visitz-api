@@ -654,3 +654,18 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: CONTACT_EDUCATION_AFTER_FIELD
+  - name: CONTACT_LEGAL_AUTHORITY_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_LEGAL_AUTHORITY_ENDPOINT
+  - name: CONTACT_LEGAL_AUTHORITY_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_LEGAL_AUTHORITY_WORKSPACE
+  - name: CONTACT_LEGAL_AUTHORITY_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CONTACT_LEGAL_AUTHORITY_AFTER_FIELD
