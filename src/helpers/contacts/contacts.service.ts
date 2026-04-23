@@ -13,6 +13,7 @@ import {
   ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -25,6 +26,7 @@ import {
   contactEducationIdName,
   contactIdName,
   contactLanguageIdName,
+  contactLegalAuthorityIdName,
   contactMedicalBehavioralIdName,
   CONTENT_TYPE,
   UNIFORM_RESPONSE,
@@ -50,6 +52,10 @@ import {
   ContactEducationEntity,
   NestedContactEducationEntity,
 } from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
 
 @Injectable()
 export class ContactsService {
@@ -59,6 +65,7 @@ export class ContactsService {
   contactLanguagesUrl: string;
   contactMedicalBehavioralUrl: string;
   contactEducationUrl: string;
+  contactLegalAuthorityUrl: string;
   postContactLanguagesUrl: string;
   postContactMedicalBehavioralUrl: string;
   workspace: string | undefined;
@@ -66,12 +73,14 @@ export class ContactsService {
   contactLanguagesWorkspace: string | undefined;
   contactMedicalBehavioralWorkspace: string | undefined;
   contactEducationWorkspace: string | undefined;
+  contactLegalAuthorityWorkspace: string | undefined;
   postContactLanguagesWorkspace: string | undefined;
   postContactMedicalBehavioralWorkspace: string | undefined;
   afterFieldName: string | undefined;
   contactLanguagesAfterFieldName: string | undefined;
   contactMedicalBehavioralAfterFieldName: string | undefined;
   contactEducationAfterFieldName: string | undefined;
+  contactLegalAuthorityAfterFieldName: string | undefined;
   caseTypeFieldName: string | undefined;
 
   private readonly logger = new Logger(ContactsService.name);
@@ -111,6 +120,9 @@ export class ContactsService {
     this.contactEducationUrl = encodeURI(
       this.configService.get<string>('endpointUrls.contactEducation'),
     );
+    this.contactLegalAuthorityUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.contactLegalAuthority'),
+    );
     this.postContactLanguagesUrl = encodeURI(
       this.configService.get<string>('endpointUrls.postContactLanguages'),
     );
@@ -131,6 +143,9 @@ export class ContactsService {
     this.contactEducationWorkspace = this.configService.get(
       'workspaces.contactEducation',
     );
+    this.contactLegalAuthorityWorkspace = this.configService.get(
+      'workspaces.contactLegalAuthority',
+    );
     this.postContactLanguagesWorkspace = this.configService.get(
       'workspaces.postContactLanguages',
     );
@@ -146,6 +161,9 @@ export class ContactsService {
     );
     this.contactEducationAfterFieldName = this.configService.get(
       'afterFieldName.contactEducation',
+    );
+    this.contactLegalAuthorityAfterFieldName = this.configService.get(
+      'afterFieldName.contactLegalAuthority',
     );
     this.caseTypeFieldName = this.configService.get(
       'upstreamAuth.case.typeField',
@@ -568,5 +586,71 @@ export class ContactsService {
       filter,
     );
     return new NestedContactEducationEntity(response.data);
+  }
+
+  async getSingleContactLegalAuthorityRecord(
+    type: RecordType,
+    id: ContactLegalAuthorityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLegalAuthorityEntity> {
+    const baseSearchSpec = `([Id]="${id[contactLegalAuthorityIdName]}"`;
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.contactLegalAuthorityUrl,
+      );
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.contactLegalAuthorityWorkspace,
+        this.contactLegalAuthorityAfterFieldName,
+        true,
+        idir,
+      );
+    const response = await this.requestPreparerService.sendGetRequest(
+      upstreamUrl,
+      headers,
+      res,
+      params,
+    );
+    return new ContactLegalAuthorityEntity(response.data);
+  }
+
+  async getListContactLegalAuthorityRecord(
+    type: RecordType,
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    const baseSearchSpec = ``;
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.contactLegalAuthorityUrl,
+      );
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.contactLegalAuthorityWorkspace,
+        this.contactLegalAuthorityAfterFieldName,
+        true,
+        idir,
+        filter,
+      );
+    const response = await this.requestPreparerService.checkIdsGetRequest(
+      upstreamUrl,
+      this.contactLegalAuthorityWorkspace,
+      headers,
+      params,
+      baseSearchSpec,
+      'Id',
+      res,
+      filter,
+    );
+    return new NestedContactLegalAuthorityEntity(response.data);
   }
 }

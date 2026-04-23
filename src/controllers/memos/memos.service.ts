@@ -8,6 +8,7 @@ import {
   ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
 } from '../../dto/id-path-params.dto';
@@ -57,6 +58,10 @@ import {
   ContactEducationEntity,
   NestedContactEducationEntity,
 } from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
 
 @Injectable()
 export class MemosService {
@@ -293,6 +298,34 @@ export class MemosService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedContactEducationEntity> {
     return await this.contactsService.getListContactEducationRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleMemoContactLegalAuthorityRecord(
+    id: ContactLegalAuthorityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.contactsService.getSingleContactLegalAuthorityRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoContactLegalAuthorityRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.contactsService.getListContactLegalAuthorityRecord(
       RecordType.Memo,
       id,
       res,
