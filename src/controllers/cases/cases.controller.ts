@@ -42,8 +42,10 @@ import {
 import {
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -69,6 +71,8 @@ import {
   checkIdsParamName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
+  contactLegalAuthorityIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -145,6 +149,18 @@ import {
   PostContactMedicalBehavioralResponseExample,
 } from '../../entities/contact-medical-behavioral.entity';
 import { PostContactMedicalBehavioralDto } from '../../dto/post-contact-medical-behavioral.dto';
+import {
+  NestedContactEducationEntity,
+  ContactEducationListResponseExample,
+  ContactEducationEntity,
+  ContactEducationSingleExample,
+} from '../../entities/contact-education.entity';
+import {
+  NestedContactLegalAuthorityEntity,
+  ContactLegalAuthorityListResponseExample,
+  ContactLegalAuthorityEntity,
+  ContactLegalAuthoritySingleExample,
+} from '../../entities/contact-legals.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -1130,6 +1146,202 @@ export class CasesController {
       contactMedicalBehavioralDto,
       req.headers[idirUsernameHeaderField] as string,
       id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/education`)
+  @ApiOperation({
+    description:
+      'Find all Contact Education entries related to a given Case and contact entity by Case and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactEducationEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactEducationEntity),
+        },
+        examples: {
+          ContactEducationListResponse: {
+            value: ContactEducationListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseContactEducationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactEducationEntity> {
+    return await this.casesService.getListCaseContactEducationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/education/:${contactEducationIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactEducationIdName} result if it is related to the given Case and contact id.`,
+  })
+  @ApiExtraModels(ContactEducationEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactEducationEntity),
+        },
+        examples: {
+          ContactEducationSingleResponse: {
+            value: ContactEducationSingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseContactEducationRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactEducationIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactEducationEntity> {
+    return await this.casesService.getSingleCaseContactEducationRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/contacts/:${contactIdName}/legal-authorities`)
+  @ApiOperation({
+    description:
+      'Find all Contact Legal Authority entries related to a given Case and contact entity by Case and contact id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedContactLegalAuthorityEntity)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedContactLegalAuthorityEntity),
+        },
+        examples: {
+          ContactLegalAuthorityListResponse: {
+            value: ContactLegalAuthorityListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseContactLegalAuthorityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.casesService.getListCaseContactLegalAuthorityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(
+    `:${idName}/contacts/:${contactIdName}/legal-authorities/:${contactLegalAuthorityIdName}`,
+  )
+  @ApiOperation({
+    description: `Displays the single ${contactLegalAuthorityIdName} result if it is related to the given Case and contact id.`,
+  })
+  @ApiExtraModels(ContactLegalAuthorityEntity)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ContactLegalAuthorityEntity),
+        },
+        examples: {
+          ContactLegalAuthoritySingleResponse: {
+            value: ContactLegalAuthoritySingleExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseContactLegalAuthorityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactLegalAuthorityIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.casesService.getSingleCaseContactLegalAuthorityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 }

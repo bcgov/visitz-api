@@ -16,6 +16,8 @@ import {
   additionalInformationIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
+  contactLegalAuthorityIdName,
 } from '../common/constants/parameter-constants';
 
 export class IdPathParams {
@@ -72,6 +74,29 @@ export class ContactMedicalBehavioralIdPathParams extends ContactIdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [contactMedicalBehavioralIdName]: string;
+}
+
+export class ContactEducationIdPathParams extends ContactIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Contact-Education-Id-Here',
+    description: 'The Id of the contact education entry you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [contactEducationIdName]: string;
+}
+
+export class ContactLegalAuthorityIdPathParams extends ContactIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Contact-Legal-Authority-Id-Here',
+    description:
+      'The Id of the contact legal authority entry you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [contactLegalAuthorityIdName]: string;
 }
 
 export class SupportNetworkIdPathParams extends IdPathParams {

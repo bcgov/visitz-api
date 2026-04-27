@@ -8,8 +8,10 @@ import {
 import {
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
@@ -81,6 +83,14 @@ import {
   PostContactMedicalBehavioralDto,
   PostContactMedicalBehavioralDtoUpstream,
 } from '../../dto/post-contact-medical-behavioral.dto';
+import {
+  ContactEducationEntity,
+  NestedContactEducationEntity,
+} from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
 
 @Injectable()
 export class CasesService {
@@ -404,6 +414,62 @@ export class CasesService {
       body,
       idir,
       id,
+    );
+  }
+
+  async getSingleCaseContactEducationRecord(
+    id: ContactEducationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactEducationEntity> {
+    return await this.contactsService.getSingleContactEducationRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactEducationRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactEducationEntity> {
+    return await this.contactsService.getListContactEducationRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleCaseContactLegalAuthorityRecord(
+    id: ContactLegalAuthorityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.contactsService.getSingleContactLegalAuthorityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactLegalAuthorityRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.contactsService.getListContactLegalAuthorityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

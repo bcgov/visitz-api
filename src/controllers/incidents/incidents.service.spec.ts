@@ -20,8 +20,10 @@ import {
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   IncidentConcernIdPathParams,
@@ -50,6 +52,8 @@ import {
   additionalInformationIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
+  contactLegalAuthorityIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -121,6 +125,18 @@ import {
   ContactMedicalBehavioralSingleExample,
   ContactMedicalBehavioralEntity,
 } from '../../entities/contact-medical-behavioral.entity';
+import {
+  ContactEducationListResponseExample,
+  NestedContactEducationEntity,
+  ContactEducationSingleExample,
+  ContactEducationEntity,
+} from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  ContactLegalAuthorityListResponseExample,
+  ContactLegalAuthoritySingleExample,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -1031,6 +1047,151 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactMedicalBehavioralEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentContactEducationRecord tests', () => {
+    it.each([
+      [
+        ContactEducationListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getListContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactEducationEntity(data)),
+          );
+
+        const result = await service.getListIncidentContactEducationRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentContactEducationRecord tests', () => {
+    it.each([
+      [
+        ContactEducationSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactEducationIdName]: 'test3',
+        } as ContactEducationIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactEducationEntity(data)),
+          );
+
+        const result = await service.getSingleIncidentContactEducationRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentContactLegalAuthorityRecord tests', () => {
+    it.each([
+      [
+        ContactLegalAuthorityListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getListContactLegalAuthorityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLegalAuthorityEntity(data)),
+          );
+
+        const result = await service.getListIncidentContactLegalAuthorityRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentContactLegalAuthorityRecord tests', () => {
+    it.each([
+      [
+        ContactLegalAuthoritySingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLegalAuthorityIdName]: 'test3',
+        } as ContactLegalAuthorityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const contactsSpy = jest
+          .spyOn(contactsService, 'getSingleContactLegalAuthorityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactLegalAuthorityEntity(data)),
+          );
+
+        const result =
+          await service.getSingleIncidentContactLegalAuthorityRecord(
+            idPathParams,
+            res,
+            'idir',
+          );
+        expect(contactsSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ContactLegalAuthorityEntity(data));
       },
     );
   });
