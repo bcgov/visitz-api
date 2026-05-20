@@ -48,8 +48,10 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -141,6 +143,12 @@ import {
   ContactLegalAuthorityEntity,
   ContactLegalAuthoritySingleExample,
 } from '../../entities/contact-legals.entity';
+import {
+  NestedActivitiesEntity,
+  ActivitiesListResponseMemoExample,
+  ActivitiesEntity,
+  ActivitiesSingleResponseMemoExample,
+} from '../../entities/activities.entity';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
@@ -1039,6 +1047,104 @@ export class MemosController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactLegalAuthorityEntity> {
     return await this.memosService.getSingleMemoContactLegalAuthorityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities`)
+  @ApiOperation({
+    description:
+      'Find all Activity entries related to a given Memo entity by Memo id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivitiesEntity),
+        },
+        examples: {
+          ActivitiesListResponse: {
+            value: ActivitiesListResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getListMemoActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.memosService.getListMemoActivityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities/:${activityIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityIdName} result if it is related to the given Memo id.`,
+  })
+  @ApiExtraModels(ActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivitiesEntity),
+        },
+        examples: {
+          ActivitiesSingleResponse: {
+            value: ActivitiesSingleResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleMemoActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivitiesEntity> {
+    return await this.memosService.getSingleMemoActivityRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

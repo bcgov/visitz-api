@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { memoAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -62,6 +63,11 @@ import {
   ContactLegalAuthorityEntity,
   NestedContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import {
+  ActivitiesEntity,
+  NestedActivitiesEntity,
+} from '../../entities/activities.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
 
 @Injectable()
 export class MemosService {
@@ -70,6 +76,7 @@ export class MemosService {
     private readonly contactsService: ContactsService,
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
+    private readonly activitiesService: ActivitiesService,
   ) {}
 
   async getSingleMemoAttachmentRecord(
@@ -326,6 +333,34 @@ export class MemosService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedContactLegalAuthorityEntity> {
     return await this.contactsService.getListContactLegalAuthorityRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleMemoActivityRecord(
+    id: ActivityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    return await this.activitiesService.getSingleActivityRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoActivityRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.activitiesService.getListActivityRecord(
       RecordType.Memo,
       id,
       res,

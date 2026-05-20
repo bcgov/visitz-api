@@ -40,6 +40,7 @@ import {
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -73,6 +74,7 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -161,6 +163,12 @@ import {
   ContactLegalAuthorityEntity,
   ContactLegalAuthoritySingleExample,
 } from '../../entities/contact-legals.entity';
+import {
+  NestedActivitiesEntity,
+  ActivitiesListResponseCaseExample,
+  ActivitiesEntity,
+  ActivitiesSingleResponseCaseExample,
+} from '../../entities/activities.entity';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -1339,6 +1347,104 @@ export class CasesController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<ContactLegalAuthorityEntity> {
     return await this.casesService.getSingleCaseContactLegalAuthorityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities`)
+  @ApiOperation({
+    description:
+      'Find all Activity entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivitiesEntity),
+        },
+        examples: {
+          ActivitiesListResponse: {
+            value: ActivitiesListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.casesService.getListCaseActivityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities/:${activityIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(ActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivitiesEntity),
+        },
+        examples: {
+          ActivitiesSingleResponse: {
+            value: ActivitiesSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivitiesEntity> {
+    return await this.casesService.getSingleCaseActivityRecord(
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,

@@ -12,6 +12,7 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -46,6 +47,7 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -120,6 +122,13 @@ import {
   ContactLegalAuthoritySingleExample,
   ContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesListResponseSRExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseSRExample,
+  ActivitiesEntity,
+} from '../../entities/activities.entity';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -142,6 +151,7 @@ describe('ServiceRequestsController', () => {
         ResponseNarrativeService,
         CallInformationService,
         AdditionalInformationService,
+        ActivitiesService,
         VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
@@ -1009,6 +1019,70 @@ describe('ServiceRequestsController', () => {
           'idir',
         );
         expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const serviceRequestServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await controller.getListSRActivityRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(serviceRequestServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseSRExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const serviceRequestServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await controller.getSingleSRActivityRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(serviceRequestServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
       },
     );
   });

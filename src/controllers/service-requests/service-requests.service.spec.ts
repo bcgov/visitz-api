@@ -17,6 +17,7 @@ import {
   RecordType,
 } from '../../common/constants/enumerations';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -50,6 +51,7 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -119,6 +121,13 @@ import {
   ContactLegalAuthoritySingleExample,
   ContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesListResponseSRExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseSRExample,
+  ActivitiesEntity,
+} from '../../entities/activities.entity';
 
 describe('ServiceRequestsService', () => {
   let service: ServiceRequestsService;
@@ -128,6 +137,7 @@ describe('ServiceRequestsService', () => {
   let responseNarrativeService: ResponseNarrativeService;
   let callInformationService: CallInformationService;
   let additionalInformationService: AdditionalInformationService;
+  let activitiesService: ActivitiesService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -142,6 +152,7 @@ describe('ServiceRequestsService', () => {
         ResponseNarrativeService,
         CallInformationService,
         AdditionalInformationService,
+        ActivitiesService,
         UtilitiesService,
         JwtService,
         TokenRefresherService,
@@ -172,6 +183,7 @@ describe('ServiceRequestsService', () => {
     additionalInformationService = module.get<AdditionalInformationService>(
       AdditionalInformationService,
     );
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
     mockClear();
   });
 
@@ -1017,6 +1029,72 @@ describe('ServiceRequestsService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getListActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await service.getListSRActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseSRExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getSingleActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await service.getSingleSRActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.SR,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
       },
     );
   });
