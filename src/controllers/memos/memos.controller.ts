@@ -48,6 +48,7 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import {
   ActivityIdPathParams,
@@ -1111,9 +1112,9 @@ export class MemosController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(`:${idName}/activities/:${contactIdName}`)
+  @Get(`:${idName}/activities/:${activityIdName}`)
   @ApiOperation({
-    description: `Displays the single ${contactIdName} result if it is related to the given Memo id.`,
+    description: `Displays the single ${activityIdName} result if it is related to the given Memo id.`,
   })
   @ApiExtraModels(ActivitiesEntity)
   @ApiNoContentResponse(noContentResponseSwagger)

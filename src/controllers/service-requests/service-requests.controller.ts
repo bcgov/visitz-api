@@ -75,6 +75,7 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -1361,9 +1362,9 @@ export class ServiceRequestsController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get(`:${idName}/activities/:${contactIdName}`)
+  @Get(`:${idName}/activities/:${activityIdName}`)
   @ApiOperation({
-    description: `Displays the single ${contactIdName} result if it is related to the given SR id.`,
+    description: `Displays the single ${activityIdName} result if it is related to the given SR id.`,
   })
   @ApiExtraModels(ActivitiesEntity)
   @ApiNoContentResponse(noContentResponseSwagger)
