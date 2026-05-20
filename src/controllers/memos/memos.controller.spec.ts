@@ -21,8 +21,10 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -100,6 +102,13 @@ import {
   ContactLegalAuthoritySingleExample,
   ContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesListResponseMemoExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseMemoExample,
+  ActivitiesEntity,
+} from '../../entities/activities.entity';
 
 describe('MemosController', () => {
   let controller: MemosController;
@@ -117,6 +126,7 @@ describe('MemosController', () => {
         AttachmentsService,
         CallInformationService,
         AdditionalInformationService,
+        ActivitiesService,
         VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
@@ -782,6 +792,66 @@ describe('MemosController', () => {
           );
         expect(memosServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
         expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const memoServiceSpy = jest
+          .spyOn(memosService, 'getListMemoActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await controller.getListMemoActivityRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(memoServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseMemoExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const memoServiceSpy = jest
+          .spyOn(memosService, 'getSingleMemoActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await controller.getSingleMemoActivityRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(memoServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new ActivitiesEntity(data));
       },
     );
   });

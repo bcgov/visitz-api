@@ -6,6 +6,7 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -91,6 +92,11 @@ import {
   ContactLegalAuthorityEntity,
   NestedContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesEntity,
+  NestedActivitiesEntity,
+} from '../../entities/activities.entity';
 
 @Injectable()
 export class CasesService {
@@ -100,6 +106,7 @@ export class CasesService {
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
     private readonly caseNotesService: CaseNotesService,
+    private readonly activitiesService: ActivitiesService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -465,6 +472,34 @@ export class CasesService {
     filter?: CheckIdQueryParams,
   ): Promise<NestedContactLegalAuthorityEntity> {
     return await this.contactsService.getListContactLegalAuthorityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleCaseActivityRecord(
+    id: ActivityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    return await this.activitiesService.getSingleActivityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseActivityRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.activitiesService.getListActivityRecord(
       RecordType.Case,
       id,
       res,

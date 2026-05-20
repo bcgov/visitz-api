@@ -52,6 +52,7 @@ const safetyAssessmentIdName = 'safetyAssessmentId';
 const responseNarrativeIdName = 'responseNarrativeId';
 const callInformationIdName = 'callInformationId';
 const additionalInformationIdName = 'additionalInformationId';
+const activityIdName = 'activityId';
 const caseNotesIdName = 'caseNoteId';
 const incidentConcernIdName = 'incidentConcernId';
 
@@ -111,6 +112,7 @@ export {
   responseNarrativeIdName,
   callInformationIdName,
   additionalInformationIdName,
+  activityIdName,
   caseNotesIdName,
   incidentConcernIdName,
   casesAttachmentsFieldName,

@@ -669,3 +669,33 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: CONTACT_LEGAL_AUTHORITY_AFTER_FIELD
+  - name: CASE_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_ACTIVITIES_ENDPOINT
+  - name: INCIDENT_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_ACTIVITIES_ENDPOINT
+  - name: SR_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_ACTIVITIES_ENDPOINT
+  - name: MEMO_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_ACTIVITIES_ENDPOINT
+  - name: ACTIVITIES_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACTIVITIES_AFTER_FIELD
+  - name: ACTIVITIES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACTIVITIES_WORKSPACE

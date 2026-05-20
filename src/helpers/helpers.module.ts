@@ -28,6 +28,8 @@ import { CallInformationModule } from './call-information/call-information.modul
 import { AdditionalInformationService } from './additional-information/additional-information.service';
 import { AdditionalInformationModule } from './additional-information/additional-information.module';
 import { CallInformationService } from './call-information/call-information.service';
+import { ActivitiesModule } from './activities/activities.module';
+import { ActivitiesService } from './activities/activities.service';
 
 @Module({
   imports: [
@@ -47,6 +49,7 @@ import { CallInformationService } from './call-information/call-information.serv
     IncidentConcernModule,
     CallInformationModule,
     AdditionalInformationModule,
+    ActivitiesModule,
   ],
   providers: [
     SupportNetworkService,
@@ -62,6 +65,7 @@ import { CallInformationService } from './call-information/call-information.serv
     IncidentConcernService,
     CallInformationService,
     AdditionalInformationService,
+    ActivitiesService,
   ],
   exports: [
     SupportNetworkService,
@@ -75,6 +79,7 @@ import { CallInformationService } from './call-information/call-information.serv
     IncidentConcernService,
     CallInformationService,
     AdditionalInformationService,
+    ActivitiesService,
   ],
 })
 export class HelpersModule {}

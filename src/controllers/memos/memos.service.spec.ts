@@ -31,8 +31,10 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -100,6 +102,13 @@ import {
   ContactLegalAuthoritySingleExample,
   ContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesListResponseMemoExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseMemoExample,
+  ActivitiesEntity,
+} from '../../entities/activities.entity';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -107,6 +116,7 @@ describe('MemosService', () => {
   let contactsService: ContactsService;
   let callInformationService: CallInformationService;
   let additionalInformationService: AdditionalInformationService;
+  let activitiesService: ActivitiesService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -118,6 +128,7 @@ describe('MemosService', () => {
         AttachmentsService,
         CallInformationService,
         AdditionalInformationService,
+        ActivitiesService,
         VirusScanService,
         UtilitiesService,
         JwtService,
@@ -143,6 +154,7 @@ describe('MemosService', () => {
     additionalInformationService = module.get<AdditionalInformationService>(
       AdditionalInformationService,
     );
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
     mockClear();
   });
 
@@ -813,6 +825,72 @@ describe('MemosService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getListActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await service.getListMemoActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseMemoExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getSingleActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await service.getSingleMemoActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
       },
     );
   });

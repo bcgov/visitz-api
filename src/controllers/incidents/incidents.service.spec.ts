@@ -17,6 +17,7 @@ import {
   FilterQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -54,6 +55,7 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -137,6 +139,13 @@ import {
   ContactLegalAuthoritySingleExample,
   NestedContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesListResponseIncidentExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseIncidentExample,
+  ActivitiesEntity,
+} from '../../entities/activities.entity';
 
 describe('IncidentsService', () => {
   let service: IncidentsService;
@@ -148,6 +157,7 @@ describe('IncidentsService', () => {
   let incidentConcernService: IncidentConcernService;
   let callInformationService: CallInformationService;
   let additionalInformationService: AdditionalInformationService;
+  let activitiesService: ActivitiesService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -164,6 +174,7 @@ describe('IncidentsService', () => {
         CallInformationService,
         AdditionalInformationService,
         IncidentConcernService,
+        ActivitiesService,
         UtilitiesService,
         TokenRefresherService,
         JwtService,
@@ -199,6 +210,7 @@ describe('IncidentsService', () => {
     additionalInformationService = module.get<AdditionalInformationService>(
       AdditionalInformationService,
     );
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
     mockClear();
   });
 
@@ -1192,6 +1204,72 @@ describe('IncidentsService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListIncidentActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseIncidentExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getListActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await service.getListIncidentActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleIncidentActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseIncidentExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getSingleActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await service.getSingleIncidentActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.Incident,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
       },
     );
   });
