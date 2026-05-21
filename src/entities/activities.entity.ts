@@ -7,7 +7,6 @@ import { Exclude, Expose, Type } from 'class-transformer';
 
 export const ActivitiesSingleResponseCaseExample = {
   Id: 'Id Here',
-  'Row Id': 'Id Here',
   'Activity Id': 'Id Here',
   'Activity UID': 'Id Here',
   'Case Id': 'Case Id Here',
@@ -51,11 +50,9 @@ export const ActivitiesSingleResponseCaseExample = {
   Due: '01/01/1970 00:00:00',
   'Duration Minutes': 'Duration Minutes Here',
   'ICM Service Region': 'Service Region Here',
-  'Last Updated By Name': 'Last Updated By Name Here',
   MeetingLocation: '',
   Ministry: 'Ministry Here',
   'Ministry Id': 'Ministry Id Here',
-  'Notification Status Calc': 'Y',
   Overdue: 'Y',
   'Plan Name': '',
   Planned: '01/01/1970 00:00:00',
@@ -65,10 +62,34 @@ export const ActivitiesSingleResponseCaseExample = {
   'Result Code': '',
   Sequence: '',
   'Service Office': 'Service Office Here',
-  'Created By Name': 'Created By Name Here',
   'ICM Created By Office': 'Created By Office Here',
   'Primary Owned By': 'Primary Owner Here',
   'Primary Owner Id': 'Primary Owner Id Here',
+  'Account Location': '',
+  'Account Name': '',
+  'Activity Template Id': '',
+  'Asset Number S_ASSET': '',
+  'Asset Number': '',
+  Brand: '',
+  Class: '',
+  Opportunity: '',
+  'Order Number': '',
+  'Owned By Id': '',
+  'Owned By': '',
+  'Previous Activity Description': '',
+  'Price List': '',
+  Property: '',
+  Quote: '',
+  'Rate List': '',
+  'Repeating Type': 'Repeating Type Here',
+  'Restricted Flag': 'N',
+  'Shared Flag': 'N',
+  Created: '01/01/1970 00:00:00',
+  'Created By': 'Creator Id Here',
+  'Created By Name': 'Created By Name Here',
+  Updated: '01/01/1970 00:00:00',
+  'Updated By': 'Updater Id Here',
+  'Updated By Name': 'Updater Here',
 };
 
 export const ActivitiesSingleResponseIncidentExample = {
@@ -176,12 +197,6 @@ export class ActivitiesEntity {
   })
   @Expose()
   'Id': string;
-
-  @ApiProperty({
-    example: ActivitiesSingleResponseCaseExample['Row Id'],
-  })
-  @Expose()
-  'Row Id': string;
 
   @ApiProperty({
     example: ActivitiesSingleResponseCaseExample['Activity Id'],
@@ -442,12 +457,6 @@ export class ActivitiesEntity {
   'ICM Service Region': string;
 
   @ApiProperty({
-    example: ActivitiesSingleResponseCaseExample['Last Updated By Name'],
-  })
-  @Expose()
-  'Last Updated By Name': string;
-
-  @ApiProperty({
     example: ActivitiesSingleResponseCaseExample['MeetingLocation'],
   })
   @Expose()
@@ -464,12 +473,6 @@ export class ActivitiesEntity {
   })
   @Expose()
   'Ministry Id': string;
-
-  @ApiProperty({
-    example: ActivitiesSingleResponseCaseExample['Notification Status Calc'],
-  })
-  @Expose()
-  'Notification Status Calc': string;
 
   @ApiProperty({
     example: ActivitiesSingleResponseCaseExample['Overdue'],
@@ -526,12 +529,6 @@ export class ActivitiesEntity {
   'Service Office': string;
 
   @ApiProperty({
-    example: ActivitiesSingleResponseCaseExample['Created By Name'],
-  })
-  @Expose()
-  'Created By Name': string;
-
-  @ApiProperty({
     example: ActivitiesSingleResponseCaseExample['ICM Created By Office'],
   })
   @Expose()
@@ -548,6 +545,157 @@ export class ActivitiesEntity {
   })
   @Expose()
   'Primary Owner Id': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Account Location'],
+  })
+  @Expose()
+  'Account Location': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Account Name'],
+  })
+  @Expose()
+  'Account Name': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Activity Template Id'],
+  })
+  @Expose()
+  'Activity Template Id': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Asset Number S_ASSET'],
+  })
+  @Expose()
+  'Asset Number S_ASSET': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Asset Number'],
+  })
+  @Expose()
+  'Asset Number': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Brand'],
+  })
+  @Expose()
+  'Brand': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Class'],
+  })
+  @Expose()
+  'Class': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Opportunity'],
+  })
+  @Expose()
+  'Opportunity': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Order Number'],
+  })
+  @Expose()
+  'Order Number': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Owned By Id'],
+  })
+  @Expose()
+  'Owned By Id': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Owned By'],
+  })
+  @Expose()
+  'Owned By': string;
+
+  @ApiProperty({
+    example:
+      ActivitiesSingleResponseCaseExample['Previous Activity Description'],
+  })
+  @Expose()
+  'Previous Activity Description': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Price List'],
+  })
+  @Expose()
+  'Price List': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Property'],
+  })
+  @Expose()
+  'Property': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Quote'],
+  })
+  @Expose()
+  'Quote': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Rate List'],
+  })
+  @Expose()
+  'Rate List': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Repeating Type'],
+  })
+  @Expose()
+  'Repeating Type': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Restricted Flag'],
+  })
+  @Expose()
+  'Restricted Flag': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Shared Flag'],
+  })
+  @Expose()
+  'Shared Flag': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Created'],
+  })
+  @Expose()
+  'Created': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Created By'],
+  })
+  @Expose()
+  'Created By': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Created By Name'],
+  })
+  @Expose()
+  'Created By Name': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Updated'],
+  })
+  @Expose()
+  'Updated': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Updated By'],
+  })
+  @Expose()
+  'Updated By': string;
+
+  @ApiProperty({
+    example: ActivitiesSingleResponseCaseExample['Updated By Name'],
+  })
+  @Expose()
+  'Updated By Name': string;
 
   constructor(partial: Partial<ActivitiesEntity>) {
     Object.assign(this, partial);
