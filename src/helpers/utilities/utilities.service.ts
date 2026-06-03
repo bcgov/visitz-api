@@ -20,7 +20,7 @@ import {
 import {
   contactMedicalBehavioralConditionEnumError,
   dateFormatError,
-  dateFormatFutureError,
+  dateFormatPastError,
   dateRangeFormatError,
   emojiError,
   endDateFormatError,
@@ -314,7 +314,7 @@ export function isCurrentOrFutureISO8601Date(date: string): string {
       return dateObject.toFormat(upstreamDateFormatNoTime);
     }
   }
-  throw new BadRequestException([dateFormatFutureError]);
+  throw new BadRequestException([dateFormatPastError]);
 }
 
 export function isISO8601DateUpstreamFormatter(date: string): string {
