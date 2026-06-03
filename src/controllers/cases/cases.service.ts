@@ -97,6 +97,10 @@ import {
   ActivitiesEntity,
   NestedActivitiesEntity,
 } from '../../entities/activities.entity';
+import {
+  PostActivityDto,
+  PostActivityDtoUpstream,
+} from '../../dto/post-activity.dto';
 
 @Injectable()
 export class CasesService {
@@ -505,6 +509,27 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleCaseActivityRecord(
+    activityDto: PostActivityDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    const baseObject = {
+      ...activityDto,
+      Id: stringNull,
+      'ICM Type': EntityType.Case,
+      'Case Id': id.rowId,
+      'Primary Owned By': idir,
+    };
+    const body = new PostActivityDtoUpstream(baseObject);
+    return await this.activitiesService.postSingleActivityRecord(
+      RecordType.Case,
+      id,
+      body,
+      idir,
     );
   }
 }

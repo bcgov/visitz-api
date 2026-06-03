@@ -146,6 +146,7 @@ import {
   NestedActivitiesEntity,
   ActivitiesSingleResponseIncidentExample,
   ActivitiesEntity,
+  PostActivitiesResponseIncidentExample,
 } from '../../entities/activities.entity';
 
 describe('IncidentsController', () => {
@@ -1272,6 +1273,46 @@ describe('IncidentsController', () => {
           idPathParams,
           res,
           'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentActivityRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Type: 'type',
+          Description: 'description here',
+          'Action By': 'Staff',
+          Due: '2090-10-05T17:34:57',
+          'Duration Minutes': '60',
+          'Ministry Id': '0-R9NH',
+          Planned: '2090-10-02T17:34:57',
+          Priority: '3-Standard',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostActivitiesResponseIncidentExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'postSingleIncidentActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await controller.postSingleIncidentActivityRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
         );
         expect(result).toEqual(new ActivitiesEntity(data));
       },

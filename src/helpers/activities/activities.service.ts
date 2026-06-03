@@ -13,7 +13,14 @@ import {
 } from '../../entities/activities.entity';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { UtilitiesService } from '../utilities/utilities.service';
-import { activityIdName } from '../../common/constants/parameter-constants';
+import {
+  activityIdName,
+  CONTENT_TYPE,
+  UNIFORM_RESPONSE,
+  uniformResponseParamName,
+} from '../../common/constants/parameter-constants';
+import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
+import { PostActivityDtoUpstream } from '../../dto/post-activity.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -116,5 +123,39 @@ export class ActivitiesService {
       filter,
     );
     return new NestedActivitiesEntity(response.data);
+  }
+
+  async postSingleActivityRecord(
+    type: RecordType,
+    id: IdPathParams,
+    body: PostActivityDtoUpstream,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
+    if (this.workspace !== undefined) {
+      params['workspace'] = this.workspace;
+    }
+
+    const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
+      type,
+      id,
+      this.baseUrl,
+      this.endpointUrls,
+    );
+    const response = await this.requestPreparerService.sendPutRequest(
+      upstreamUrl,
+      body,
+      headers,
+      params,
+    );
+    return new ActivitiesEntity(response.data.items[0].Activities[0]);
   }
 }

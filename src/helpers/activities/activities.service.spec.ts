@@ -10,7 +10,7 @@ import { RequestPreparerService } from '../../external-api/request-preparer/requ
 import { TokenRefresherService } from '../../external-api/token-refresher/token-refresher.service';
 import { UtilitiesService } from '../utilities/utilities.service';
 import { AxiosResponse } from 'axios';
-import { RecordType } from '../../common/constants/enumerations';
+import { EntityType, RecordType } from '../../common/constants/enumerations';
 import {
   idName,
   afterParamName,
@@ -27,6 +27,8 @@ import {
   ActivitiesSingleResponseCaseExample,
   ActivitiesEntity,
 } from '../../entities/activities.entity';
+import { stringNull } from '../../common/constants/upstream-constants';
+import { PostActivityDtoUpstream } from '../../dto/post-activity.dto';
 
 describe('ActivitiesService', () => {
   let service: ActivitiesService;
@@ -132,6 +134,53 @@ describe('ActivitiesService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleActivityRecord tests', () => {
+    it.each([
+      [
+        { items: [{ Activities: [{ Id: 'Id Here' }] }] },
+        RecordType.Case,
+        new PostActivityDtoUpstream({
+          Id: stringNull,
+          'ICM Type': EntityType.Case,
+          'Case Id': 'caseid',
+          'Primary Owned By': 'idir',
+          Status: 'Open',
+          Type: 'type',
+          Description: 'description here',
+          'Action By': 'Staff',
+          Due: '2090-10-05T17:34:57',
+          'Duration Minutes': '60',
+          'Ministry Id': '0-R9NH',
+          Planned: '2090-10-02T17:34:57',
+          Priority: '3-Standard',
+        }),
+        { [idName]: 'test' } as IdPathParams,
+      ],
+    ])(
+      'should return post values given good input',
+      async (data, recordType, body, id) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendPutRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+        const result = await service.postSingleActivityRecord(
+          recordType,
+          id,
+          body,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(
+          new ActivitiesEntity(data.items[0].Activities[0]),
+        );
       },
     );
   });

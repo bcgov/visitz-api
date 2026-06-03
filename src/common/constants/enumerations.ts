@@ -425,6 +425,32 @@ const ContactMedicalBehavioralCategoryConditionMap = {
     ContactMedicalBehavioralSkinAndSubcutaneousCondition,
 } as const;
 
+enum ActivityActionBy {
+  Client = 'Client',
+  External = 'External',
+  Health = 'Health',
+  Staff = 'Staff',
+  Supervisor = 'Supervisor',
+  System = 'System',
+}
+
+enum ActivityPriority {
+  Urgent = '1-Urgent',
+  High = '2-High',
+  Standard = '3-Standard',
+}
+
+enum ActivityStatus {
+  Cancelled = 'Cancelled',
+  Closed = 'Closed',
+  IsError = 'Error',
+  InProgress = 'In Progress',
+  Open = 'Open',
+  Pending = 'Pending',
+  Scheduled = 'Scheduled',
+  SetUp = 'Set Up',
+}
+
 export {
   RecordType,
   EntityType,
@@ -461,4 +487,7 @@ export {
   ContactMedicalBehavioralSkinAndSubcutaneousCondition,
   ContactMedicalBehavioralSkinCondition,
   ContactMedicalBehavioralCategoryConditionMap,
+  ActivityActionBy,
+  ActivityPriority,
+  ActivityStatus,
 };
