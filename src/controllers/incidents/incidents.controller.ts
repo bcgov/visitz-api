@@ -183,7 +183,9 @@ import {
   ActivitiesListResponseIncidentExample,
   ActivitiesEntity,
   ActivitiesSingleResponseIncidentExample,
+  PostActivitiesResponseIncidentExample,
 } from '../../entities/activities.entity';
+import { PostActivityDto } from '../../dto/post-activity.dto';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -1607,6 +1609,48 @@ export class IncidentsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activities`)
+  @ApiOperation({
+    description: 'Create an activity record related to the given incident id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityCreatedResponse: {
+            value: PostActivitiesResponseIncidentExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleIncidentActivityRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    inPersonVisitDto: PostActivityDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    return await this.incidentsService.postSingleIncidentActivityRecord(
+      inPersonVisitDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

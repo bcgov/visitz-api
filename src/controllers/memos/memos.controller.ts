@@ -148,7 +148,9 @@ import {
   ActivitiesListResponseMemoExample,
   ActivitiesEntity,
   ActivitiesSingleResponseMemoExample,
+  PostActivitiesResponseMemoExample,
 } from '../../entities/activities.entity';
+import { PostActivityDto } from '../../dto/post-activity.dto';
 
 @Controller('memo')
 @UseGuards(AuthGuard)
@@ -1148,6 +1150,48 @@ export class MemosController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activities`)
+  @ApiOperation({
+    description: 'Create an activity record related to the given memo id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityCreatedResponse: {
+            value: PostActivitiesResponseMemoExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleMemoActivityRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    inPersonVisitDto: PostActivityDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    return await this.memosService.postSingleMemoActivityRecord(
+      inPersonVisitDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

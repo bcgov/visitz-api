@@ -186,6 +186,22 @@ export const ActivitiesListResponseMemoExample = {
   ],
 };
 
+export const PostActivitiesResponseCaseExample = {
+  ...ActivitiesSingleResponseCaseExample,
+};
+
+export const PostActivitiesResponseIncidentExample = {
+  ...ActivitiesSingleResponseIncidentExample,
+};
+
+export const PostActivitiesResponseSRExample = {
+  ...ActivitiesSingleResponseSRExample,
+};
+
+export const PostActivitiesResponseMemoExample = {
+  ...ActivitiesSingleResponseMemoExample,
+};
+
 /*
  * Model definitions
  */

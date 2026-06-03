@@ -68,6 +68,10 @@ import {
   NestedActivitiesEntity,
 } from '../../entities/activities.entity';
 import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  PostActivityDto,
+  PostActivityDtoUpstream,
+} from '../../dto/post-activity.dto';
 
 @Injectable()
 export class MemosService {
@@ -366,6 +370,27 @@ export class MemosService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleMemoActivityRecord(
+    activityDto: PostActivityDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    const baseObject = {
+      ...activityDto,
+      Id: stringNull,
+      'ICM Type': 'Memo',
+      'ICM Memo Id': id.rowId,
+      'Primary Owned By': idir,
+    };
+    const body = new PostActivityDtoUpstream(baseObject);
+    return await this.activitiesService.postSingleActivityRecord(
+      RecordType.Memo,
+      id,
+      body,
+      idir,
     );
   }
 }
