@@ -10,7 +10,7 @@ export const childServicesMedBehavTypeError =
 export const dateFormatError =
   'Date / time must meet the ISO-8601 standard, and cannot be in the future.';
 
-export const dateFormatFutureError =
+export const dateFormatPastError =
   'Date / time must meet the ISO-8601 standard, and cannot be in the past.';
 
 export const dateFormatErrorAnyTime =
