@@ -171,6 +171,7 @@ import {
   ContactEducationListResponseExample,
   ContactEducationEntity,
   ContactEducationSingleExample,
+  PostContactEducationResponseExample,
 } from '../../entities/contact-education.entity';
 import {
   NestedContactLegalAuthorityEntity,
@@ -186,6 +187,7 @@ import {
   PostActivitiesResponseIncidentExample,
 } from '../../entities/activities.entity';
 import { PostActivityDto } from '../../dto/post-activity.dto';
+import { PostContactEducationDto } from '../../dto/post-contact-education.dto';
 
 @Controller('incident')
 @UseGuards(AuthGuard)
@@ -1413,6 +1415,49 @@ export class IncidentsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/contacts/:${contactIdName}/education`)
+  @ApiOperation({
+    description:
+      'Create a contact education record related to the given incident and contact id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ContactEducationCreatedResponse: {
+            value: PostContactEducationResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleIncidentContactEducationRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    contactEducationDto: PostContactEducationDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    return await this.incidentsService.postSingleIncidentContactEducationRecord(
+      contactEducationDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 

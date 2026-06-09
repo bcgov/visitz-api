@@ -133,6 +133,7 @@ import {
   NestedContactEducationEntity,
   ContactEducationSingleExample,
   ContactEducationEntity,
+  PostContactEducationResponseExample,
 } from '../../entities/contact-education.entity';
 import {
   ContactLegalAuthorityListResponseExample,
@@ -1130,6 +1131,44 @@ describe('IncidentsController', () => {
           idPathParams,
           res,
           'idir',
+        );
+        expect(result).toEqual(new ContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentContactEducationRecord tests', () => {
+    it.each([
+      [
+        {
+          Degree: '12',
+        },
+        {
+          [idName]: 'test',
+          [contactIdName]: 'contactId',
+        } as ContactIdPathParams,
+        'idir',
+        PostContactEducationResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const incidentsServiceSpy = jest
+          .spyOn(incidentsService, 'postSingleIncidentContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactEducationEntity(data)),
+          );
+
+        const result =
+          await controller.postSingleIncidentContactEducationRecord(
+            getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+            body,
+            idPathParams,
+          );
+        expect(incidentsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
         );
         expect(result).toEqual(new ContactEducationEntity(data));
       },

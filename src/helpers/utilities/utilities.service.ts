@@ -355,6 +355,8 @@ export function isValidISO8601StartDateRange(
 export function isValidISO8601EndDate(
   startDate: string | undefined,
   endDate: string | undefined,
+  startDateOptional?: boolean,
+  error?: string,
 ): string {
   if (
     typeof startDate !== 'undefined' &&
@@ -376,8 +378,17 @@ export function isValidISO8601EndDate(
     }
   } else if (typeof startDate == 'undefined' && typeof endDate == 'undefined') {
     return endDate;
+  } else if (startDateOptional) {
+    return DateTime.fromISO(endDate.trim(), {
+      zone: 'UTC',
+    }).toFormat(upstreamDateFormat);
   }
-  throw new BadRequestException([endDateFormatError]);
+
+  if (error) {
+    throw new BadRequestException([error]);
+  } else {
+    throw new BadRequestException([endDateFormatError]);
+  }
 }
 
 export function isValidUpstreamFormatDate(date: string): string {

@@ -699,3 +699,13 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: ACTIVITIES_WORKSPACE
+  - name: POST_CONTACT_EDUCATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_CONTACT_EDUCATION_ENDPOINT
+  - name: POST_CONTACT_EDUCATION_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_CONTACT_EDUCATION_WORKSPACE

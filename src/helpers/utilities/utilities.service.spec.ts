@@ -280,11 +280,15 @@ describe('UtilitiesService', () => {
       [
         DateTime.now().toUTC().minus(60000).toJSDate().toISOString(),
         DateTime.now().toUTC().toJSDate().toISOString(),
+        false,
       ],
+      [undefined, DateTime.now().toUTC().toJSDate().toISOString(), true],
     ])(
       `should return a string upon being given a valid ISO-8601 end date`,
-      (startDate, endDate) => {
-        expect(typeof isValidISO8601EndDate(startDate, endDate)).toBe('string');
+      (startDate, endDate, startDateOptional) => {
+        expect(
+          typeof isValidISO8601EndDate(startDate, endDate, startDateOptional),
+        ).toBe('string');
       },
     );
 
@@ -301,17 +305,26 @@ describe('UtilitiesService', () => {
       [
         DateTime.now().toUTC().toJSDate().toISOString(),
         DateTime.now().toUTC().minus(600000).toJSDate().toISOString(),
+        false,
+        undefined,
       ],
-      [undefined, DateTime.now().toUTC().plus(600000).toJSDate().toISOString()],
+      [
+        undefined,
+        DateTime.now().toUTC().plus(600000).toJSDate().toISOString(),
+        false,
+        'different error',
+      ],
       [
         'abcdefgtlom',
         DateTime.now().toUTC().plus(600000).toJSDate().toISOString(),
+        false,
+        undefined,
       ],
     ])(
       `should throw BadRequestException on invalid end date or unexpected input format`,
-      (startDate, endDate) => {
+      (startDate, endDate, startDateOptional, error) => {
         expect(() => {
-          isValidISO8601StartDateRange(startDate, endDate);
+          isValidISO8601EndDate(startDate, endDate, startDateOptional, error);
         }).toThrow(BadRequestException);
       },
     );

@@ -75,6 +75,7 @@ const activityPlanNameMax = 100;
 const activityResultCodeMax = 50;
 const activitySequenceMax = 255;
 const activityTypeMax = 30;
+const contactEducationCommentsMax = 100;
 
 export {
   baseUrlEnvVarName,
@@ -154,4 +155,5 @@ export {
   activityResultCodeMax,
   activitySequenceMax,
   activityTypeMax,
+  contactEducationCommentsMax,
 };
