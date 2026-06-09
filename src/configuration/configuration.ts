@@ -95,6 +95,8 @@ export default () => ({
     postContactMedicalBehavioral:
       process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
     contactEducation: process.env.CONTACT_EDUCATION_WORKSPACE ?? undefined,
+    postContactEducation:
+      process.env.POST_CONTACT_EDUCATION_WORKSPACE ?? undefined,
     contactLegalAuthority:
       process.env.CONTACT_LEGAL_AUTHORITY_WORKSPACE ?? undefined,
     activities: process.env.ACTIVITIES_WORKSPACE ?? undefined,
@@ -177,6 +179,7 @@ export default () => ({
     postContactMedicalBehavioral:
       process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
     contactEducation: process.env.CONTACT_EDUCATION_ENDPOINT ?? ' ',
+    postContactEducation: process.env.POST_CONTACT_EDUCATION_ENDPOINT ?? ' ',
     contactLegalAuthority: process.env.CONTACT_LEGAL_AUTHORITY_ENDPOINT ?? ' ',
     caseActivities: process.env.CASE_ACTIVITIES_ENDPOINT ?? ' ',
     incidentActivities: process.env.INCIDENT_ACTIVITIES_ENDPOINT ?? ' ',

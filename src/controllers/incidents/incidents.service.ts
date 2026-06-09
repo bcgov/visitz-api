@@ -100,6 +100,10 @@ import {
   PostActivityDto,
   PostActivityDtoUpstream,
 } from '../../dto/post-activity.dto';
+import {
+  PostContactEducationDto,
+  PostContactEducationDtoUpstream,
+} from '../../dto/post-contact-education.dto';
 
 @Injectable()
 export class IncidentsService {
@@ -477,6 +481,24 @@ export class IncidentsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleIncidentContactEducationRecord(
+    contactEducationDto: PostContactEducationDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    const baseObject = {
+      ...contactEducationDto,
+      Id: stringNull,
+    };
+    const body = new PostContactEducationDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactEducationRecord(
+      RecordType.Incident,
+      body,
+      idir,
+      id,
     );
   }
 

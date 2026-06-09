@@ -56,6 +56,7 @@ import {
   ContactLegalAuthorityEntity,
   NestedContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { PostContactEducationDtoUpstream } from '../../dto/post-contact-education.dto';
 
 @Injectable()
 export class ContactsService {
@@ -68,6 +69,7 @@ export class ContactsService {
   contactLegalAuthorityUrl: string;
   postContactLanguagesUrl: string;
   postContactMedicalBehavioralUrl: string;
+  postContactEducationUrl: string;
   workspace: string | undefined;
   caseWorkspace: string | undefined;
   contactLanguagesWorkspace: string | undefined;
@@ -76,6 +78,7 @@ export class ContactsService {
   contactLegalAuthorityWorkspace: string | undefined;
   postContactLanguagesWorkspace: string | undefined;
   postContactMedicalBehavioralWorkspace: string | undefined;
+  postContactEducationWorkspace: string | undefined;
   afterFieldName: string | undefined;
   contactLanguagesAfterFieldName: string | undefined;
   contactMedicalBehavioralAfterFieldName: string | undefined;
@@ -131,6 +134,9 @@ export class ContactsService {
         'endpointUrls.postContactMedicalBehavioral',
       ),
     );
+    this.postContactEducationUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.postContactEducation'),
+    );
     this.workspace = this.configService.get('workspaces.contacts');
     this.caseWorkspace = this.configService.get('upstreamAuth.case.workspace');
 
@@ -151,6 +157,9 @@ export class ContactsService {
     );
     this.postContactMedicalBehavioralWorkspace = this.configService.get(
       'workspaces.postContactMedicalBehavioral',
+    );
+    this.postContactEducationWorkspace = this.configService.get(
+      'workspaces.postContactEducation',
     );
     this.afterFieldName = this.configService.get('afterFieldName.contacts');
     this.contactLanguagesAfterFieldName = this.configService.get(
@@ -586,6 +595,41 @@ export class ContactsService {
       filter,
     );
     return new NestedContactEducationEntity(response.data);
+  }
+
+  async postSingleContactEducationRecord(
+    _type: RecordType,
+    body: PostContactEducationDtoUpstream,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    const upstreamUrl =
+      this.utilitiesService.constructContactSubtypeUpstreamUrl(
+        id,
+        this.baseUrl,
+        this.postContactEducationUrl,
+      );
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
+    if (this.postContactEducationWorkspace !== undefined) {
+      params['workspace'] = this.postContactEducationWorkspace;
+    }
+    const response = await this.requestPreparerService.sendPutRequest(
+      upstreamUrl,
+      body,
+      headers,
+      params,
+    );
+    return new ContactEducationEntity(
+      response.data.items[0].ContactEducation[0],
+    );
   }
 
   async getSingleContactLegalAuthorityRecord(
