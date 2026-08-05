@@ -32,9 +32,11 @@ import {
   contactEducationIdName,
   contactLegalAuthorityIdName,
   activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -104,6 +106,7 @@ import {
   ContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
 import { ActivitiesService } from '../../helpers/activities/activities.service';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
 import {
   ActivitiesListResponseMemoExample,
   NestedActivitiesEntity,
@@ -111,6 +114,12 @@ import {
   ActivitiesEntity,
   PostActivitiesResponseMemoExample,
 } from '../../entities/activities.entity';
+import {
+  ActivityPlanListResponseMemoExample,
+  NestedActivityPlanEntity,
+  ActivityPlanSingleResponseMemoExample,
+  ActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
 
 describe('MemosService', () => {
   let service: MemosService;
@@ -119,6 +128,7 @@ describe('MemosService', () => {
   let callInformationService: CallInformationService;
   let additionalInformationService: AdditionalInformationService;
   let activitiesService: ActivitiesService;
+  let activityPlanService: ActivityPlanService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -131,6 +141,7 @@ describe('MemosService', () => {
         CallInformationService,
         AdditionalInformationService,
         ActivitiesService,
+        ActivityPlanService,
         VirusScanService,
         UtilitiesService,
         JwtService,
@@ -157,6 +168,7 @@ describe('MemosService', () => {
       AdditionalInformationService,
     );
     activitiesService = module.get<ActivitiesService>(ActivitiesService);
+    activityPlanService = module.get<ActivityPlanService>(ActivityPlanService);
     mockClear();
   });
 
@@ -959,6 +971,75 @@ describe('MemosService', () => {
         );
         expect(activitiesSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getListMemoActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanListResponseMemoExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'getListActivityPlanRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivityPlanEntity(data)),
+          );
+
+        const result = await service.getListMemoActivityPlanRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activityPlanSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleMemoActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanSingleResponseMemoExample,
+        {
+          [idName]: 'test',
+          [activityPlanIdName]: 'test2',
+        } as ActivityPlanIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'getSingleActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await service.getSingleMemoActivityPlanRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activityPlanSpy).toHaveBeenCalledWith(
+          RecordType.Memo,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivityPlanEntity(data));
       },
     );
   });

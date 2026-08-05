@@ -3,6 +3,7 @@ import { RecordType } from '../../common/constants/enumerations';
 import { memoAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -76,6 +77,11 @@ import {
   PostContactEducationDto,
   PostContactEducationDtoUpstream,
 } from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
 
 @Injectable()
 export class MemosService {
@@ -85,6 +91,7 @@ export class MemosService {
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
     private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleMemoAttachmentRecord(
@@ -413,6 +420,34 @@ export class MemosService {
       id,
       body,
       idir,
+    );
+  }
+
+  async getSingleMemoActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

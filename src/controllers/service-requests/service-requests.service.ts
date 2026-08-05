@@ -7,6 +7,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -92,6 +93,11 @@ import {
   PostContactEducationDto,
   PostContactEducationDtoUpstream,
 } from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -103,6 +109,7 @@ export class ServiceRequestsService {
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
     private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
@@ -506,6 +513,34 @@ export class ServiceRequestsService {
       id,
       body,
       idir,
+    );
+  }
+
+  async getSingleSRActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

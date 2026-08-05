@@ -30,6 +30,8 @@ import { AdditionalInformationModule } from './additional-information/additional
 import { CallInformationService } from './call-information/call-information.service';
 import { ActivitiesModule } from './activities/activities.module';
 import { ActivitiesService } from './activities/activities.service';
+import { ActivityPlanModule } from './activity-plan/activity-plan.module';
+import { ActivityPlanService } from './activity-plan/activity-plan.service';
 
 @Module({
   imports: [
@@ -50,6 +52,7 @@ import { ActivitiesService } from './activities/activities.service';
     CallInformationModule,
     AdditionalInformationModule,
     ActivitiesModule,
+    ActivityPlanModule,
   ],
   providers: [
     SupportNetworkService,
@@ -66,6 +69,7 @@ import { ActivitiesService } from './activities/activities.service';
     CallInformationService,
     AdditionalInformationService,
     ActivitiesService,
+    ActivityPlanService,
   ],
   exports: [
     SupportNetworkService,
@@ -80,6 +84,7 @@ import { ActivitiesService } from './activities/activities.service';
     CallInformationService,
     AdditionalInformationService,
     ActivitiesService,
+    ActivityPlanService,
   ],
 })
 export class HelpersModule {}

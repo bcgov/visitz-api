@@ -7,6 +7,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -104,6 +105,11 @@ import {
   PostContactEducationDto,
   PostContactEducationDtoUpstream,
 } from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
 
 @Injectable()
 export class IncidentsService {
@@ -117,6 +123,7 @@ export class IncidentsService {
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
     private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleIncidentSupportNetworkInformationRecord(
@@ -576,6 +583,34 @@ export class IncidentsService {
       id,
       body,
       idir,
+    );
+  }
+
+  async getSingleIncidentActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListIncidentActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+      filter,
     );
   }
 }

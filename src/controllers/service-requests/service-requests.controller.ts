@@ -41,6 +41,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -76,6 +77,7 @@ import {
   contactEducationIdName,
   contactLegalAuthorityIdName,
   activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -171,6 +173,12 @@ import {
 } from '../../entities/activities.entity';
 import { PostActivityDto } from '../../dto/post-activity.dto';
 import { PostContactEducationDto } from '../../dto/post-contact-education.dto';
+import {
+  NestedActivityPlanEntity,
+  ActivityPlanListResponseSRExample,
+  ActivityPlanEntity,
+  ActivityPlanSingleResponseSRExample,
+} from '../../entities/activity-plan.entity';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -1487,6 +1495,104 @@ export class ServiceRequestsController {
       inPersonVisitDto,
       req.headers[idirUsernameHeaderField] as string,
       id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description:
+      'Find all Activity Plan entries related to a given SR entity by SR id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanListResponse: {
+            value: ActivityPlanListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.serviceRequestService.getListSRActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans/:${activityPlanIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityPlanIdName} result if it is related to the given SR id.`,
+  })
+  @ApiExtraModels(ActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanSingleResponse: {
+            value: ActivityPlanSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityPlanIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivityPlanEntity> {
+    return await this.serviceRequestService.getSingleSRActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 }
