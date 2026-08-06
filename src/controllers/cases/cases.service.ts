@@ -111,6 +111,10 @@ import {
   ActivityPlanEntity,
   NestedActivityPlanEntity,
 } from '../../entities/activity-plan.entity';
+import {
+  PostActivityPlanDto,
+  PostActivityPlanDtoUpstream,
+} from '../../dto/post-activity-plan.dto';
 
 @Injectable()
 export class CasesService {
@@ -587,6 +591,24 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async postSingleCaseActivityPlanRecord(
+    activityPlanDto: PostActivityPlanDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    const baseObject = {
+      ...activityPlanDto,
+      Id: stringNull,
+    };
+    const body = new PostActivityPlanDtoUpstream(baseObject);
+    return await this.activityPlanService.postSingleActivityPlanRecord(
+      RecordType.Case,
+      id,
+      body,
+      idir,
     );
   }
 }

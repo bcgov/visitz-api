@@ -180,7 +180,9 @@ import {
   ActivityPlanListResponseCaseExample,
   ActivityPlanEntity,
   ActivityPlanSingleResponseCaseExample,
+  PostActivityPlanResponseCaseExample,
 } from '../../entities/activity-plan.entity';
+import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -1643,6 +1645,48 @@ export class CasesController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description: 'Create an activity plan record related to the given case id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityPlanCreatedResponse: {
+            value: PostActivityPlanResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    activityPlanDto: PostActivityPlanDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    return await this.casesService.postSingleCaseActivityPlanRecord(
+      activityPlanDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

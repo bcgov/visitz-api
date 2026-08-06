@@ -156,6 +156,7 @@ import {
   NestedActivityPlanEntity,
   ActivityPlanSingleResponseIncidentExample,
   ActivityPlanEntity,
+  PostActivityPlanResponseIncidentExample,
 } from '../../entities/activity-plan.entity';
 
 describe('IncidentsService', () => {
@@ -1418,6 +1419,35 @@ describe('IncidentsService', () => {
           res,
           'idir',
         );
+        expect(result).toEqual(new ActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleIncidentActivityPlanRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Template: 'Template here',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostActivityPlanResponseIncidentExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'postSingleActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await service.postSingleIncidentActivityPlanRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(activityPlanSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ActivityPlanEntity(data));
       },
     );

@@ -139,6 +139,7 @@ import {
   NestedActivityPlanEntity,
   ActivityPlanSingleResponseSRExample,
   ActivityPlanEntity,
+  PostActivityPlanResponseSRExample,
 } from '../../entities/activity-plan.entity';
 
 describe('ServiceRequestsController', () => {
@@ -1237,6 +1238,39 @@ describe('ServiceRequestsController', () => {
           idPathParams,
           res,
           'idir',
+        );
+        expect(result).toEqual(new ActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRActivityPlanRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Template: 'Template here',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostActivityPlanResponseSRExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await controller.postSingleSRActivityPlanRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
         );
         expect(result).toEqual(new ActivityPlanEntity(data));
       },

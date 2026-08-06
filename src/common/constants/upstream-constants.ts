@@ -75,6 +75,8 @@ const activityPlanNameMax = 100;
 const activityResultCodeMax = 50;
 const activitySequenceMax = 255;
 const activityTypeMax = 30;
+const activityPlanCommentsMax = 1500;
+const activityPlanTemplateMax = 100;
 const contactEducationCommentsMax = 100;
 
 export {
@@ -155,5 +157,7 @@ export {
   activityResultCodeMax,
   activitySequenceMax,
   activityTypeMax,
+  activityPlanCommentsMax,
+  activityPlanTemplateMax,
   contactEducationCommentsMax,
 };

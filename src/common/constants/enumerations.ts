@@ -484,6 +484,14 @@ enum ContactEducationDegree {
   Unspecified = 'Unspecified',
 }
 
+enum ActivityPlanStatus {
+  Open = 'Open',
+  InProgress = 'In Progress',
+  Pending = 'Pending',
+  Cancelled = 'Cancelled',
+  Closed = 'Closed',
+}
+
 export {
   RecordType,
   EntityType,
@@ -524,4 +532,5 @@ export {
   ActivityPriority,
   ActivityStatus,
   ContactEducationDegree,
+  ActivityPlanStatus,
 };

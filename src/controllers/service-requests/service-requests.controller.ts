@@ -178,7 +178,9 @@ import {
   ActivityPlanListResponseSRExample,
   ActivityPlanEntity,
   ActivityPlanSingleResponseSRExample,
+  PostActivityPlanResponseSRExample,
 } from '../../entities/activity-plan.entity';
+import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -1593,6 +1595,48 @@ export class ServiceRequestsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description: 'Create an activity plan record related to the given SR id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityPlanCreatedResponse: {
+            value: PostActivityPlanResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRActivityPlanRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    activityPlanDto: PostActivityPlanDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    return await this.serviceRequestService.postSingleSRActivityPlanRecord(
+      activityPlanDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

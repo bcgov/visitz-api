@@ -13,7 +13,14 @@ import {
 } from '../../entities/activity-plan.entity';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import { UtilitiesService } from '../utilities/utilities.service';
-import { activityPlanIdName } from '../../common/constants/parameter-constants';
+import {
+  activityPlanIdName,
+  CONTENT_TYPE,
+  UNIFORM_RESPONSE,
+  uniformResponseParamName,
+} from '../../common/constants/parameter-constants';
+import { trustedIdirHeaderName } from '../../common/constants/upstream-constants';
+import { PostActivityPlanDtoUpstream } from '../../dto/post-activity-plan.dto';
 
 @Injectable()
 export class ActivityPlanService {
@@ -116,5 +123,39 @@ export class ActivityPlanService {
       filter,
     );
     return new NestedActivityPlanEntity(response.data);
+  }
+
+  async postSingleActivityPlanRecord(
+    type: RecordType,
+    id: IdPathParams,
+    body: PostActivityPlanDtoUpstream,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    const headers = {
+      Accept: CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
+      'Accept-Encoding': '*',
+      [trustedIdirHeaderName]: idir,
+    };
+    const params = {
+      [uniformResponseParamName]: UNIFORM_RESPONSE,
+    };
+    if (this.workspace !== undefined) {
+      params['workspace'] = this.workspace;
+    }
+
+    const upstreamUrl = this.utilitiesService.constructUpstreamUrl(
+      type,
+      id,
+      this.baseUrl,
+      this.endpointUrls,
+    );
+    const response = await this.requestPreparerService.sendPutRequest(
+      upstreamUrl,
+      body,
+      headers,
+      params,
+    );
+    return new ActivityPlanEntity(response.data.items[0].ActivityPlan[0]);
   }
 }

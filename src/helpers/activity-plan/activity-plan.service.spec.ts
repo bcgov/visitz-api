@@ -27,6 +27,7 @@ import {
   ActivityPlanSingleResponseCaseExample,
   ActivityPlanEntity,
 } from '../../entities/activity-plan.entity';
+import { PostActivityPlanDtoUpstream } from '../../dto/post-activity-plan.dto';
 
 describe('ActivityPlanService', () => {
   let service: ActivityPlanService;
@@ -135,6 +136,44 @@ describe('ActivityPlanService', () => {
         );
         expect(spy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleActivityPlanRecord tests', () => {
+    it.each([
+      [
+        { items: [{ ActivityPlan: [{ Id: 'Id Here' }] }] },
+        RecordType.Case,
+        new PostActivityPlanDtoUpstream({
+          Id: 'NULL',
+          'Case Id': 'caseid',
+          Status: 'Open',
+          Template: 'Template here',
+        }),
+        { [idName]: 'test' } as IdPathParams,
+      ],
+    ])(
+      'should return post values given good input',
+      async (data, recordType, body, id) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendPutRequest')
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+        const result = await service.postSingleActivityPlanRecord(
+          recordType,
+          id,
+          body,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(
+          new ActivityPlanEntity(data.items[0].ActivityPlan[0]),
+        );
       },
     );
   });
