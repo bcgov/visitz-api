@@ -714,11 +714,6 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: SR_ACTIVITY_PLAN_ENDPOINT
-  - name: MEMO_ACTIVITY_PLAN_ENDPOINT
-    valueFrom:
-      configMapKeyRef:
-          name: visitz-api-config
-          key: MEMO_ACTIVITY_PLAN_ENDPOINT
   - name: ACTIVITY_PLAN_AFTER_FIELD
     valueFrom:
       configMapKeyRef:
