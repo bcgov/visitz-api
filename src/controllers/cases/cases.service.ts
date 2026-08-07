@@ -7,6 +7,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -105,6 +106,15 @@ import {
   PostContactEducationDto,
   PostContactEducationDtoUpstream,
 } from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
+import {
+  PostActivityPlanDto,
+  PostActivityPlanDtoUpstream,
+} from '../../dto/post-activity-plan.dto';
 
 @Injectable()
 export class CasesService {
@@ -115,6 +125,7 @@ export class CasesService {
     private readonly contactsService: ContactsService,
     private readonly caseNotesService: CaseNotesService,
     private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -548,6 +559,52 @@ export class CasesService {
     };
     const body = new PostActivityDtoUpstream(baseObject);
     return await this.activitiesService.postSingleActivityRecord(
+      RecordType.Case,
+      id,
+      body,
+      idir,
+    );
+  }
+
+  async getSingleCaseActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleCaseActivityPlanRecord(
+    activityPlanDto: PostActivityPlanDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    const baseObject = {
+      ...activityPlanDto,
+      Id: stringNull,
+    };
+    const body = new PostActivityPlanDtoUpstream(baseObject);
+    return await this.activityPlanService.postSingleActivityPlanRecord(
       RecordType.Case,
       id,
       body,

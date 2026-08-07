@@ -53,6 +53,7 @@ const responseNarrativeIdName = 'responseNarrativeId';
 const callInformationIdName = 'callInformationId';
 const additionalInformationIdName = 'additionalInformationId';
 const activityIdName = 'activityId';
+const activityPlanIdName = 'activityPlanId';
 const caseNotesIdName = 'caseNoteId';
 const incidentConcernIdName = 'incidentConcernId';
 
@@ -113,6 +114,7 @@ export {
   callInformationIdName,
   additionalInformationIdName,
   activityIdName,
+  activityPlanIdName,
   caseNotesIdName,
   incidentConcernIdName,
   casesAttachmentsFieldName,

@@ -100,6 +100,7 @@ export default () => ({
     contactLegalAuthority:
       process.env.CONTACT_LEGAL_AUTHORITY_WORKSPACE ?? undefined,
     activities: process.env.ACTIVITIES_WORKSPACE ?? undefined,
+    activityPlan: process.env.ACTIVITY_PLAN_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -133,6 +134,11 @@ export default () => ({
       process.env.ACTIVITIES_AFTER_FIELD == ''
         ? undefined
         : process.env.ACTIVITIES_AFTER_FIELD,
+    activityPlan:
+      typeof process.env.ACTIVITY_PLAN_AFTER_FIELD == 'undefined' ||
+      process.env.ACTIVITY_PLAN_AFTER_FIELD == ''
+        ? undefined
+        : process.env.ACTIVITY_PLAN_AFTER_FIELD,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -185,6 +191,9 @@ export default () => ({
     incidentActivities: process.env.INCIDENT_ACTIVITIES_ENDPOINT ?? ' ',
     srActivities: process.env.SR_ACTIVITIES_ENDPOINT ?? ' ',
     memoActivities: process.env.MEMO_ACTIVITIES_ENDPOINT ?? ' ',
+    caseActivityPlan: process.env.CASE_ACTIVITY_PLAN_ENDPOINT ?? ' ',
+    incidentActivityPlan: process.env.INCIDENT_ACTIVITY_PLAN_ENDPOINT ?? ' ',
+    srActivityPlan: process.env.SR_ACTIVITY_PLAN_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

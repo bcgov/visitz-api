@@ -41,6 +41,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -75,6 +76,7 @@ import {
   contactEducationIdName,
   contactLegalAuthorityIdName,
   activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
@@ -173,6 +175,14 @@ import {
 } from '../../entities/activities.entity';
 import { PostActivityDto } from '../../dto/post-activity.dto';
 import { PostContactEducationDto } from '../../dto/post-contact-education.dto';
+import {
+  NestedActivityPlanEntity,
+  ActivityPlanListResponseCaseExample,
+  ActivityPlanEntity,
+  ActivityPlanSingleResponseCaseExample,
+  PostActivityPlanResponseCaseExample,
+} from '../../entities/activity-plan.entity';
+import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -1535,6 +1545,146 @@ export class CasesController {
   ): Promise<ActivitiesEntity> {
     return await this.casesService.postSingleCaseActivityRecord(
       inPersonVisitDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description:
+      'Find all Activity Plan entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanListResponse: {
+            value: ActivityPlanListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.casesService.getListCaseActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans/:${activityPlanIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityPlanIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(ActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanSingleResponse: {
+            value: ActivityPlanSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityPlanIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivityPlanEntity> {
+    return await this.casesService.getSingleCaseActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description: 'Create an activity plan record related to the given case id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityPlanCreatedResponse: {
+            value: PostActivityPlanResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    activityPlanDto: PostActivityPlanDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    return await this.casesService.postSingleCaseActivityPlanRecord(
+      activityPlanDto,
       req.headers[idirUsernameHeaderField] as string,
       id,
     );

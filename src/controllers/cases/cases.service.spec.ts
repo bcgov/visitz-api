@@ -14,6 +14,7 @@ import {
 } from '../../entities/support-network.entity';
 import {
   ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -60,6 +61,7 @@ import {
   contactEducationIdName,
   contactLegalAuthorityIdName,
   activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -125,6 +127,14 @@ import {
   ActivitiesEntity,
   PostActivitiesResponseCaseExample,
 } from '../../entities/activities.entity';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanListResponseCaseExample,
+  NestedActivityPlanEntity,
+  ActivityPlanSingleResponseCaseExample,
+  ActivityPlanEntity,
+  PostActivityPlanResponseCaseExample,
+} from '../../entities/activity-plan.entity';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -134,6 +144,7 @@ describe('CasesService', () => {
   let contactsService: ContactsService;
   let caseNotesService: CaseNotesService;
   let activitiesService: ActivitiesService;
+  let activityPlanService: ActivityPlanService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -146,6 +157,7 @@ describe('CasesService', () => {
         CaseNotesService,
         AttachmentsService,
         ActivitiesService,
+        ActivityPlanService,
         VirusScanService,
         UtilitiesService,
         JwtService,
@@ -173,6 +185,7 @@ describe('CasesService', () => {
     contactsService = module.get<ContactsService>(ContactsService);
     caseNotesService = module.get<CaseNotesService>(CaseNotesService);
     activitiesService = module.get<ActivitiesService>(ActivitiesService);
+    activityPlanService = module.get<ActivityPlanService>(ActivityPlanService);
     mockClear();
   });
 
@@ -1130,6 +1143,104 @@ describe('CasesService', () => {
         );
         expect(activitiesSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanListResponseCaseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'getListActivityPlanRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivityPlanEntity(data)),
+          );
+
+        const result = await service.getListCaseActivityPlanRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activityPlanSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanSingleResponseCaseExample,
+        {
+          [idName]: 'test',
+          [activityPlanIdName]: 'test2',
+        } as ActivityPlanIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'getSingleActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await service.getSingleCaseActivityPlanRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activityPlanSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseActivityPlanRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Template: 'Template here',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostActivityPlanResponseCaseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'postSingleActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await service.postSingleCaseActivityPlanRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(activityPlanSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new ActivityPlanEntity(data));
       },
     );
   });
