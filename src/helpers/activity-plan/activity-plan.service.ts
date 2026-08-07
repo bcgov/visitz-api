@@ -50,9 +50,6 @@ export class ActivityPlanService {
       [RecordType.SR]: encodeURI(
         this.configService.get<string>('endpointUrls.srActivityPlan'),
       ),
-      [RecordType.Memo]: encodeURI(
-        this.configService.get<string>('endpointUrls.memoActivityPlan'),
-      ),
     };
 
     this.workspace = this.configService.get('workspaces.activityPlan');
