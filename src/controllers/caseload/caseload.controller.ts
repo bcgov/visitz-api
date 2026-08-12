@@ -28,6 +28,7 @@ import {
   CONTENT_TYPE,
   afterParamName,
   caseIncludeParam,
+  checkIdsParamName,
   entityScopeParamName,
   excludeEmptyFieldsParamName,
   idName,
@@ -38,6 +39,7 @@ import {
 import {
   versionInfo,
   noContentResponseSwagger,
+  existingIdsRecordCountHeadersSwagger,
 } from '../../common/constants/swagger-constants';
 import {
   idirUsernameHeaderField,
@@ -207,9 +209,11 @@ export class CaseloadController {
   @ApiQuery({ name: pageSizeParamName, required: false })
   @ApiQuery({ name: startRowNumParamName, required: false })
   @ApiQuery({ name: entityScopeParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
   @ApiExtraModels(NestedSREntity)
   @ApiNoContentResponse(noContentResponseSwagger)
   @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
     content: {
       [CONTENT_TYPE]: {
         schema: {

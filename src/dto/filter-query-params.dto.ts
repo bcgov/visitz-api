@@ -114,21 +114,6 @@ export class FilterQueryParams {
 }
 
 @Exclude()
-export class EntityQueryParams extends FilterQueryParams {
-  @IsEnum(EntityScope)
-  @Expose()
-  @ApiProperty({
-    example: EntityScope.Assigned,
-    default: EntityScope.Assigned,
-    enum: EntityScope,
-    description:
-      `Whether to only show entities directly assigned to the user (default), ` +
-      `or to also show entities in their offices.`,
-  })
-  [entityScopeParamName]: string = EntityScope.Assigned;
-}
-
-@Exclude()
 export class CaseloadQueryParams extends FilterQueryParams {
   @IsOptional()
   @IsEnum(BooleanStringEnum)
@@ -199,6 +184,21 @@ export class CheckIdQueryParams extends FilterQueryParams {
     description: `Ids of child objects to check for existence of. Note that they must be children of the parent entity id provided.`,
   })
   [checkIdsParamName]?: Array<string>;
+}
+
+@Exclude()
+export class EntityQueryParams extends CheckIdQueryParams {
+  @IsEnum(EntityScope)
+  @Expose()
+  @ApiProperty({
+    example: EntityScope.Assigned,
+    default: EntityScope.Assigned,
+    enum: EntityScope,
+    description:
+      `Whether to only show entities directly assigned to the user (default), ` +
+      `or to also show entities in their offices.`,
+  })
+  [entityScopeParamName]: string = EntityScope.Assigned;
 }
 
 @Exclude()

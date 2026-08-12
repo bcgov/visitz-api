@@ -817,8 +817,8 @@ describe('CaseloadService', () => {
         service,
         'caseloadUpstreamRequestPreparer',
       );
-      const sendGetRequestSpy = jest
-        .spyOn(requestPreparerService, 'sendGetRequest')
+      const checkIdsGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'checkIdsGetRequest')
         .mockResolvedValueOnce({
           data: { items: [SRExample] },
         });
@@ -836,7 +836,17 @@ describe('CaseloadService', () => {
         [RecordType.SR],
         configService.get('upstreamAuth.sr.searchspecAfterField'),
       );
-      expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
+      const getRequestSpec = preparerSpy.mock.results[0].value[0];
+      expect(checkIdsGetRequestSpy).toHaveBeenCalledWith(
+        getRequestSpec.url,
+        service.srWorkspace,
+        getRequestSpec.headers,
+        getRequestSpec.params,
+        getRequestSpec.baseSearchSpec,
+        'Id',
+        res,
+        undefined,
+      );
       expect(result).toEqual(
         plainToInstance(
           NestedSREntity,
@@ -854,8 +864,8 @@ describe('CaseloadService', () => {
         service,
         'officeCaseloadUpstreamRequestPreparer',
       );
-      const sendGetRequestSpy = jest
-        .spyOn(requestPreparerService, 'sendGetRequest')
+      const checkIdsGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'checkIdsGetRequest')
         .mockResolvedValueOnce({
           data: { items: [SRExample] },
         });
@@ -876,7 +886,17 @@ describe('CaseloadService', () => {
         [RecordType.SR],
         configService.get('upstreamAuth.sr.searchspecAfterField'),
       );
-      expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
+      const getRequestSpec = preparerSpy.mock.results[0].value[0];
+      expect(checkIdsGetRequestSpy).toHaveBeenCalledWith(
+        getRequestSpec.url,
+        service.srWorkspace,
+        getRequestSpec.headers,
+        getRequestSpec.params,
+        getRequestSpec.baseSearchSpec,
+        'Id',
+        res,
+        filter,
+      );
       expect(result).toEqual(
         plainToInstance(
           NestedSREntity,

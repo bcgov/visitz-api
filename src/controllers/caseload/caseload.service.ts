@@ -213,6 +213,7 @@ export class CaseloadService {
           headers: headers,
           params: params,
           type: type,
+          baseSearchSpec: baseSearchSpec,
         }),
       );
     }
@@ -264,6 +265,7 @@ export class CaseloadService {
           headers: headers,
           params: params,
           type: type,
+          baseSearchSpec: baseSearchSpec,
         }),
       );
     }
@@ -554,11 +556,15 @@ export class CaseloadService {
       )[0];
     }
 
-    const results = await this.requestPreparerService.sendGetRequest(
+    const results = await this.requestPreparerService.checkIdsGetRequest(
       getRequestSpec.url,
+      this[`${type}Workspace`],
       getRequestSpec.headers,
-      res,
       getRequestSpec.params,
+      getRequestSpec.baseSearchSpec,
+      'Id',
+      res,
+      filter,
     );
 
     const unsetResponse = {
