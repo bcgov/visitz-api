@@ -491,6 +491,10 @@ enum ActivityPlanStatus {
   Cancelled = 'Cancelled',
   Closed = 'Closed',
 }
+enum EntityScope {
+  Assigned = 'Assigned',
+  Office = 'Office',
+}
 
 export {
   RecordType,
@@ -533,4 +537,5 @@ export {
   ActivityStatus,
   ContactEducationDegree,
   ActivityPlanStatus,
+  EntityScope,
 };

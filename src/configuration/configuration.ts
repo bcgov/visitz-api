@@ -33,6 +33,7 @@ export default () => ({
       workspace: process.env.SR_WORKSPACE ?? undefined,
       idirField: process.env.SR_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.SR_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField: process.env.SR_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.SR_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.SR_STATUS_FIELD ?? undefined,
       officeField: process.env.SR_OFFICE_FIELD ?? undefined,

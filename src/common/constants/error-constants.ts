@@ -52,3 +52,5 @@ export const contactMedicalBehavioralConditionEnumError =
 
 export const isNotPostiveIntegerStringError =
   'String must be a positive integer or 0';
+
+export const invalidRecordTypeError = 'Given type is not a valid record type.';

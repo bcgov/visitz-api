@@ -32,6 +32,7 @@ import {
 import { Cache } from 'cache-manager';
 import {
   CaseType,
+  EntityScope,
   EntityStatus,
   IncidentType,
   RecordType,
@@ -47,7 +48,10 @@ import {
 import { CaseExample } from '../../entities/case.entity';
 import { IncidentExample } from '../../entities/incident.entity';
 import { MemoExample } from '../../entities/memo.entity';
-import { SRExample } from '../../entities/sr.entity';
+import { NestedSREntity, SRExample } from '../../entities/sr.entity';
+import { EntityQueryParams } from '../../dto/filter-query-params.dto';
+import { invalidRecordTypeError } from '../../common/constants/error-constants';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
@@ -59,10 +63,21 @@ describe('CaseloadService', () => {
   const officeNames = `Office Name 1${officeNamesSeparator}Office Name 2`;
 
   beforeEach(async () => {
+    // set before the module compiles so CaseloadService's constructor picks these up, independent of the local .env file
+    process.env.CASE_AFTER_FIELD = 'Last Updated Date';
+    process.env.INCIDENT_AFTER_FIELD = 'Updated Date';
+    process.env.SR_AFTER_FIELD = 'Updated Date';
+    process.env.MEMO_AFTER_FIELD = 'Updated Date';
+    process.env.CASE_RESTRICTED_FIELD = 'Restricted Flag';
+    process.env.INCIDENT_RESTRICTED_FIELD = 'Restricted Flag';
+    process.env.SR_RESTRICTED_FIELD = 'Restricted Flag';
+    process.env.SR_SEARCHSPEC_AFTER_FIELD = 'Updated';
+    process.env.MEMO_RESTRICTED_FIELD = 'ICMCPU Restricted';
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         HttpModule,
-        ConfigModule.forRoot({ load: [configuration] }),
+        ConfigModule.forRoot({ load: [configuration], ignoreEnvFile: true }),
         CacheModule.register({ isGlobal: true }),
       ],
       providers: [
@@ -82,17 +97,6 @@ describe('CaseloadService', () => {
     );
     jwtService = module.get<JwtService>(JwtService);
 
-    configService.set('afterFieldName.cases', 'Last Updated Date');
-    configService.set('afterFieldName.incidents', 'Updated Date');
-    configService.set('afterFieldName.srs', 'Updated Date');
-    configService.set('afterFieldName.memos', 'Updated Date');
-    configService.set('upstreamAuth.case.restrictedField', 'Restricted Flag');
-    configService.set(
-      'upstreamAuth.incident.restrictedField',
-      'Restricted Flag',
-    );
-    configService.set('upstreamAuth.sr.restrictedField', 'Restricted Flag');
-    configService.set('upstreamAuth.memo.restrictedField', 'ICMCPU Restricted');
     mockClear();
   });
 
@@ -773,5 +777,184 @@ describe('CaseloadService', () => {
         ).rejects.toThrow(error);
       },
     );
+  });
+
+  describe('determineOutputEntity tests', () => {
+    it('returns NestedSREntity for the SR record type', () => {
+      expect(service.determineOutputEntity(RecordType.SR)).toBe(NestedSREntity);
+    });
+
+    it.each([RecordType.Case, RecordType.Incident, RecordType.Memo])(
+      'throws a BadRequestException for the %s record type',
+      (type) => {
+        expect(() => service.determineOutputEntity(type)).toThrow(
+          new BadRequestException([invalidRecordTypeError]),
+        );
+      },
+    );
+  });
+
+  describe('getSingleEntityType tests', () => {
+    const buildReq = (idir: string) => {
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
+      return getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+    };
+
+    it('uses the assigned idir only when no filter is given', async () => {
+      const idir = 'idir';
+      const req = buildReq(idir);
+      const preparerSpy = jest.spyOn(
+        service,
+        'caseloadUpstreamRequestPreparer',
+      );
+      const checkIdsGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'checkIdsGetRequest')
+        .mockResolvedValueOnce({
+          data: { items: [SRExample] },
+        });
+
+      const result = await service.getSingleEntityType(
+        idir,
+        req,
+        res,
+        RecordType.SR,
+      );
+
+      expect(preparerSpy).toHaveBeenCalledWith(
+        idir,
+        undefined,
+        [RecordType.SR],
+        configService.get('upstreamAuth.sr.searchspecAfterField'),
+      );
+      const getRequestSpec = preparerSpy.mock.results[0].value[0];
+      expect(checkIdsGetRequestSpy).toHaveBeenCalledWith(
+        getRequestSpec.url,
+        service.srWorkspace,
+        getRequestSpec.headers,
+        getRequestSpec.params,
+        getRequestSpec.baseSearchSpec,
+        'Id',
+        res,
+        undefined,
+      );
+      expect(result).toEqual(
+        plainToInstance(
+          NestedSREntity,
+          { items: [SRExample] },
+          { enableImplicitConversion: true },
+        ),
+      );
+    });
+
+    it('uses the office when group filter is Office', async () => {
+      const idir = 'idir';
+      const req = buildReq(idir);
+      const filter = { group: EntityScope.Office } as EntityQueryParams;
+      const preparerSpy = jest.spyOn(
+        service,
+        'officeCaseloadUpstreamRequestPreparer',
+      );
+      const checkIdsGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'checkIdsGetRequest')
+        .mockResolvedValueOnce({
+          data: { items: [SRExample] },
+        });
+
+      const result = await service.getSingleEntityType(
+        idir,
+        req,
+        res,
+        RecordType.SR,
+        officeNames,
+        filter,
+      );
+
+      expect(preparerSpy).toHaveBeenCalledWith(
+        idir,
+        filter,
+        officeNames,
+        [RecordType.SR],
+        configService.get('upstreamAuth.sr.searchspecAfterField'),
+      );
+      const getRequestSpec = preparerSpy.mock.results[0].value[0];
+      expect(checkIdsGetRequestSpy).toHaveBeenCalledWith(
+        getRequestSpec.url,
+        service.srWorkspace,
+        getRequestSpec.headers,
+        getRequestSpec.params,
+        getRequestSpec.baseSearchSpec,
+        'Id',
+        res,
+        filter,
+      );
+      expect(result).toEqual(
+        plainToInstance(
+          NestedSREntity,
+          { items: [SRExample] },
+          { enableImplicitConversion: true },
+        ),
+      );
+    });
+  });
+
+  describe('getEntityById tests', () => {
+    it('fetches a single entity by id using the office preparer', async () => {
+      const idir = 'idir';
+      const id = 'entity-id-here';
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+      const preparerSpy = jest.spyOn(
+        service,
+        'officeCaseloadUpstreamRequestPreparer',
+      );
+      const sendGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'sendGetRequest')
+        .mockResolvedValueOnce({
+          data: { items: [SRExample] },
+        });
+
+      const result = await service.getEntityById(
+        idir,
+        id,
+        req,
+        res,
+        RecordType.SR,
+        officeNames,
+      );
+
+      expect(preparerSpy).toHaveBeenCalledWith(idir, undefined, officeNames, [
+        RecordType.SR,
+      ]);
+      expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
+      const calledUrl = sendGetRequestSpy.mock.calls[0][0];
+      expect(calledUrl.endsWith(id)).toBe(true);
+      expect(result).toEqual(
+        plainToInstance(
+          NestedSREntity,
+          { items: [SRExample] },
+          { enableImplicitConversion: true },
+        ),
+      );
+    });
   });
 });

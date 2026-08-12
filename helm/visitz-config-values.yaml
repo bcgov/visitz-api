@@ -734,3 +734,8 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: POST_CONTACT_EDUCATION_WORKSPACE
+  - name: SR_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_SEARCHSPEC_AFTER_FIELD

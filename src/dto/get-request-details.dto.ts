@@ -3,6 +3,7 @@ export class GetRequestDetails {
   headers;
   params?;
   type?;
+  baseSearchSpec?;
 
   constructor(object) {
     Object.assign(this, object);

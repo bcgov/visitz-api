@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   BooleanStringEnum,
+  EntityScope,
   EntityStatus,
   RecordType,
   YNEnum,
@@ -15,6 +16,7 @@ import {
 import {
   FilterQueryParams,
   CaseloadQueryParams,
+  EntityQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { DateTime } from 'luxon';
@@ -34,7 +36,11 @@ import {
   officeNamesSeparator,
   srIncludeParam,
 } from '../../common/constants/parameter-constants';
-import { caseloadIncludeEntityError } from '../../common/constants/error-constants';
+import {
+  caseloadIncludeEntityError,
+  invalidRecordTypeError,
+} from '../../common/constants/error-constants';
+import { NestedSREntity } from '../../entities/sr.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -56,6 +62,7 @@ export class CaseloadService {
   incidentAfterFieldName: string;
   srAfterFieldName: string;
   memoAfterFieldName: string;
+  srSearchSpecAfterFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
   srRestrictedFieldName: string;
@@ -127,6 +134,9 @@ export class CaseloadService {
       this.configService.get<string>(`afterFieldName.srs`);
     this.memoAfterFieldName =
       this.configService.get<string>(`afterFieldName.memos`);
+    this.srSearchSpecAfterFieldName = this.configService.get<string>(
+      `upstreamAuth.sr.searchspecAfterField`,
+    );
     this.caseRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.case.restrictedField`,
     );
@@ -171,6 +181,7 @@ export class CaseloadService {
     idir: string,
     filter: FilterQueryParams,
     entityTypes: RecordType[],
+    afterFieldName?: string,
   ): Array<GetRequestDetails> {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of entityTypes) {
@@ -190,7 +201,7 @@ export class CaseloadService {
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
-          undefined, // we filter for after ourselves
+          afterFieldName ?? undefined, // we filter for after ourselves, unless it's an entity
           true,
           idir,
           filter,
@@ -202,6 +213,7 @@ export class CaseloadService {
           headers: headers,
           params: params,
           type: type,
+          baseSearchSpec: baseSearchSpec,
         }),
       );
     }
@@ -213,6 +225,7 @@ export class CaseloadService {
     filter: FilterQueryParams,
     officeNames: string,
     entityTypes: RecordType[],
+    afterFieldName?: string,
   ): Array<GetRequestDetails> {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of entityTypes) {
@@ -240,7 +253,7 @@ export class CaseloadService {
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
-          undefined, // we filter for after ourselves
+          afterFieldName ?? undefined, // we filter for after ourselves, unless it's an entity
           true,
           idir,
           filter,
@@ -252,6 +265,7 @@ export class CaseloadService {
           headers: headers,
           params: params,
           type: type,
+          baseSearchSpec: baseSearchSpec,
         }),
       );
     }
@@ -445,6 +459,18 @@ export class CaseloadService {
     return response;
   }
 
+  determineOutputEntity(type: RecordType) {
+    switch (type) {
+      case RecordType.SR:
+        return NestedSREntity;
+      case RecordType.Case:
+      case RecordType.Incident:
+      case RecordType.Memo:
+      default:
+        throw new BadRequestException([invalidRecordTypeError]);
+    }
+  }
+
   async getCaseload(
     idir: string,
     req: Request,
@@ -498,6 +524,93 @@ export class CaseloadService {
     );
     response['officeNames'] = officeNames.split(officeNamesSeparator);
     return plainToInstance(OfficeCaseloadEntity, response, {
+      enableImplicitConversion: true,
+    });
+  }
+
+  async getSingleEntityType(
+    idir: string,
+    req: Request,
+    res: Response,
+    type: RecordType,
+    officeNames?: string,
+    filter?: EntityQueryParams,
+  ) {
+    const entityTypes = [type];
+    const typeFieldName = `${type}SearchSpecAfterFieldName`;
+    let getRequestSpec: GetRequestDetails;
+    if (!filter || filter.group === EntityScope.Assigned) {
+      getRequestSpec = this.caseloadUpstreamRequestPreparer(
+        idir,
+        filter,
+        entityTypes,
+        `${this[typeFieldName]}`,
+      )[0];
+    } else {
+      getRequestSpec = this.officeCaseloadUpstreamRequestPreparer(
+        idir,
+        filter,
+        officeNames,
+        entityTypes,
+        `${this[typeFieldName]}`,
+      )[0];
+    }
+
+    const results = await this.requestPreparerService.checkIdsGetRequest(
+      getRequestSpec.url,
+      this[`${type}Workspace`],
+      getRequestSpec.headers,
+      getRequestSpec.params,
+      getRequestSpec.baseSearchSpec,
+      'Id',
+      res,
+      filter,
+    );
+
+    const unsetResponse = {
+      [`${type}s`]: {
+        assignedIds: [results.data.items.map((entry) => entry['Id'])],
+      },
+    };
+    await this.caseloadUnsetCacheItems(unsetResponse, idir, req, entityTypes);
+
+    return plainToInstance(this.determineOutputEntity(type), results.data, {
+      enableImplicitConversion: true,
+    });
+  }
+
+  async getEntityById(
+    idir: string,
+    id: string,
+    req: Request,
+    res: Response,
+    type: RecordType,
+    officeNames: string,
+  ) {
+    const entityTypes = [type];
+
+    const getRequestSpec = this.officeCaseloadUpstreamRequestPreparer(
+      idir,
+      undefined,
+      officeNames,
+      entityTypes,
+    )[0];
+
+    const results = await this.requestPreparerService.sendGetRequest(
+      getRequestSpec.url + id,
+      getRequestSpec.headers,
+      res,
+      getRequestSpec.params,
+    );
+
+    const unsetResponse = {
+      [`${type}s`]: {
+        assignedIds: [results.data.items.map((entry) => entry['Id'])],
+      },
+    };
+    await this.caseloadUnsetCacheItems(unsetResponse, idir, req, entityTypes);
+
+    return plainToInstance(this.determineOutputEntity(type), results.data, {
       enableImplicitConversion: true,
     });
   }
