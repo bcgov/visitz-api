@@ -182,6 +182,14 @@ import {
 } from '../../entities/activity-plan.entity';
 import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
 
+/*
+	Note: The functions for getting multiple srs (/srs) and a single sr by id (/sr/:id)
+	are located in the caseload controller file. This is for 2 reasons:
+	1. The name for the multi get would conflict with the conroller path here (srs vs sr)
+	2. The logic mostly utilizies common functions for fetching entities in caseload, including
+	different authorization to prevent fetching the parent entity twice.
+*/
+
 @Controller('sr')
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)
