@@ -1,5 +1,5 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
   createdByIdFieldName,
@@ -308,6 +308,19 @@ export class SREntity {
   })
   @Expose()
   [updatedDateFieldName]: string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'SRResponse' })
+export class NestedSREntity {
+  @Expose()
+  @ApiProperty({ type: SREntity, isArray: true })
+  @Type(() => SREntity)
+  items: Array<SREntity>;
 
   constructor(object) {
     Object.assign(this, object);

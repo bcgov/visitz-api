@@ -9,6 +9,7 @@ const recordCountHeaderName = 'total-record-count';
 const checkIdsReturnHeaderName = 'existing-ids';
 const inlineAttachmentParamName = 'inlineattachment';
 const excludeEmptyFieldsParamName = 'excludeEmptyFieldsInResponse';
+const entityScopeParamName = 'group';
 const checkIdsParamName = 'checkIds';
 const afterParamName = 'after';
 const caseIncludeParam = 'includeCase';
@@ -75,6 +76,7 @@ export {
   checkIdsReturnHeaderName,
   inlineAttachmentParamName,
   excludeEmptyFieldsParamName,
+  entityScopeParamName,
   checkIdsParamName,
   afterParamName,
   caseIncludeParam,

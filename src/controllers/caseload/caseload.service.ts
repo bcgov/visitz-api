@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
   BooleanStringEnum,
+  EntityScope,
   EntityStatus,
   RecordType,
   YNEnum,
@@ -15,6 +16,7 @@ import {
 import {
   FilterQueryParams,
   CaseloadQueryParams,
+  EntityQueryParams,
 } from '../../dto/filter-query-params.dto';
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { DateTime } from 'luxon';
@@ -34,7 +36,11 @@ import {
   officeNamesSeparator,
   srIncludeParam,
 } from '../../common/constants/parameter-constants';
-import { caseloadIncludeEntityError } from '../../common/constants/error-constants';
+import {
+  caseloadIncludeEntityError,
+  invalidRecordTypeError,
+} from '../../common/constants/error-constants';
+import { NestedSREntity } from '../../entities/sr.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -171,6 +177,7 @@ export class CaseloadService {
     idir: string,
     filter: FilterQueryParams,
     entityTypes: RecordType[],
+    afterFieldName?: string,
   ): Array<GetRequestDetails> {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of entityTypes) {
@@ -190,7 +197,7 @@ export class CaseloadService {
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
-          undefined, // we filter for after ourselves
+          afterFieldName ?? undefined, // we filter for after ourselves, unless it's an entity
           true,
           idir,
           filter,
@@ -213,6 +220,7 @@ export class CaseloadService {
     filter: FilterQueryParams,
     officeNames: string,
     entityTypes: RecordType[],
+    afterFieldName?: string,
   ): Array<GetRequestDetails> {
     const getRequestSpecs: Array<GetRequestDetails> = [];
     for (const type of entityTypes) {
@@ -240,7 +248,7 @@ export class CaseloadService {
         this.requestPreparerService.prepareHeadersAndParams(
           baseSearchSpec,
           this[`${type}Workspace`],
-          undefined, // we filter for after ourselves
+          afterFieldName ?? undefined, // we filter for after ourselves, unless it's an entity
           true,
           idir,
           filter,
@@ -445,6 +453,18 @@ export class CaseloadService {
     return response;
   }
 
+  determineOutputEntity(type: RecordType) {
+    switch (type) {
+      case RecordType.SR:
+        return NestedSREntity;
+      case RecordType.Case:
+      case RecordType.Incident:
+      case RecordType.Memo:
+      default:
+        throw new BadRequestException([invalidRecordTypeError]);
+    }
+  }
+
   async getCaseload(
     idir: string,
     req: Request,
@@ -498,6 +518,50 @@ export class CaseloadService {
     );
     response['officeNames'] = officeNames.split(officeNamesSeparator);
     return plainToInstance(OfficeCaseloadEntity, response, {
+      enableImplicitConversion: true,
+    });
+  }
+
+  async getSingleEntityType(
+    idir: string,
+    req: Request,
+    res: Response,
+    type: RecordType,
+    officeNames?: string,
+    filter?: EntityQueryParams,
+  ) {
+    const entityTypes = [type];
+    let getRequestSpec: GetRequestDetails;
+    if (!filter || filter.group === EntityScope.Assigned) {
+      getRequestSpec = this.caseloadUpstreamRequestPreparer(
+        idir,
+        filter,
+        entityTypes,
+      )[0];
+    } else {
+      getRequestSpec = this.officeCaseloadUpstreamRequestPreparer(
+        idir,
+        filter,
+        officeNames,
+        entityTypes,
+      )[0];
+    }
+
+    const results = await this.requestPreparerService.sendGetRequest(
+      getRequestSpec.url,
+      getRequestSpec.headers,
+      res,
+      getRequestSpec.params,
+    );
+
+    const unsetResponse = {
+      [`${type}s`]: {
+        assignedIds: [results.data.items.map((entry) => entry['Id'])],
+      },
+    };
+    await this.caseloadUnsetCacheItems(unsetResponse, idir, req, entityTypes);
+
+    return plainToInstance(this.determineOutputEntity(type), results.data, {
       enableImplicitConversion: true,
     });
   }

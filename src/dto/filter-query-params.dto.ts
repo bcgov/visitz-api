@@ -10,7 +10,11 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { YNEnum, BooleanStringEnum } from '../common/constants/enumerations';
+import {
+  YNEnum,
+  BooleanStringEnum,
+  EntityScope,
+} from '../common/constants/enumerations';
 import {
   pageSizeDefault,
   pageSizeMax,
@@ -30,6 +34,7 @@ import {
   srIncludeParam,
   memoIncludeParam,
   checkIdsParamName,
+  entityScopeParamName,
 } from '../common/constants/parameter-constants';
 import { isIdArray } from '../helpers/utilities/utilities.service';
 
@@ -106,6 +111,22 @@ export class FilterQueryParams {
       ` ${YNEnum.True} if you want these fields to be removed.`,
   })
   [excludeEmptyFieldsParamName]?: string = YNEnum.False;
+}
+
+@Exclude()
+export class EntityQueryParams extends FilterQueryParams {
+  @IsOptional()
+  @IsEnum(EntityScope)
+  @Expose()
+  @ApiProperty({
+    example: EntityScope.Assigned,
+    default: EntityScope.Assigned,
+    enum: EntityScope,
+    description:
+      `Whether to only show entities directly assigned to the user (default), ` +
+      `or to also show entities in their offices.`,
+  })
+  [entityScopeParamName]?: string = EntityScope.Assigned;
 }
 
 @Exclude()
