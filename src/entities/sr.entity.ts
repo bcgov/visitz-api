@@ -314,6 +314,17 @@ export class SREntity {
   }
 }
 
+export const SRListResponseExample = {
+  items: [
+    {
+      ...SRExample,
+      Id: 'Another Id Here',
+      'Row Id': 'Another Id Here',
+    },
+    SRExample,
+  ],
+};
+
 @Exclude()
 @ApiSchema({ name: 'SRResponse' })
 export class NestedSREntity {

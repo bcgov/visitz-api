@@ -565,4 +565,40 @@ export class CaseloadService {
       enableImplicitConversion: true,
     });
   }
+
+  async getEntityById(
+    idir: string,
+    id: string,
+    req: Request,
+    res: Response,
+    type: RecordType,
+    officeNames: string,
+  ) {
+    const entityTypes = [type];
+
+    const getRequestSpec = this.officeCaseloadUpstreamRequestPreparer(
+      idir,
+      undefined,
+      officeNames,
+      entityTypes,
+    )[0];
+
+    const results = await this.requestPreparerService.sendGetRequest(
+      getRequestSpec.url + id,
+      getRequestSpec.headers,
+      res,
+      getRequestSpec.params,
+    );
+
+    const unsetResponse = {
+      [`${type}s`]: {
+        assignedIds: [results.data.items.map((entry) => entry['Id'])],
+      },
+    };
+    await this.caseloadUnsetCacheItems(unsetResponse, idir, req, entityTypes);
+
+    return plainToInstance(this.determineOutputEntity(type), results.data, {
+      enableImplicitConversion: true,
+    });
+  }
 }

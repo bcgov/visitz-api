@@ -32,6 +32,7 @@ import {
 import { Cache } from 'cache-manager';
 import {
   CaseType,
+  EntityScope,
   EntityStatus,
   IncidentType,
   RecordType,
@@ -47,7 +48,10 @@ import {
 import { CaseExample } from '../../entities/case.entity';
 import { IncidentExample } from '../../entities/incident.entity';
 import { MemoExample } from '../../entities/memo.entity';
-import { SRExample } from '../../entities/sr.entity';
+import { NestedSREntity, SRExample } from '../../entities/sr.entity';
+import { EntityQueryParams } from '../../dto/filter-query-params.dto';
+import { invalidRecordTypeError } from '../../common/constants/error-constants';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CaseloadService', () => {
   let service: CaseloadService;
@@ -773,5 +777,157 @@ describe('CaseloadService', () => {
         ).rejects.toThrow(error);
       },
     );
+  });
+
+  describe('determineOutputEntity tests', () => {
+    it('returns NestedSREntity for the SR record type', () => {
+      expect(service.determineOutputEntity(RecordType.SR)).toBe(NestedSREntity);
+    });
+
+    it.each([RecordType.Case, RecordType.Incident, RecordType.Memo])(
+      'throws a BadRequestException for the %s record type',
+      (type) => {
+        expect(() => service.determineOutputEntity(type)).toThrow(
+          new BadRequestException([invalidRecordTypeError]),
+        );
+      },
+    );
+  });
+
+  describe('getSingleEntityType tests', () => {
+    const buildReq = (idir: string) => {
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
+      return getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+    };
+
+    it('uses the assigned idir only when no filter is given', async () => {
+      const idir = 'idir';
+      const req = buildReq(idir);
+      const preparerSpy = jest.spyOn(
+        service,
+        'caseloadUpstreamRequestPreparer',
+      );
+      const sendGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'sendGetRequest')
+        .mockResolvedValueOnce({
+          data: { items: [SRExample] },
+        });
+
+      const result = await service.getSingleEntityType(
+        idir,
+        req,
+        res,
+        RecordType.SR,
+      );
+
+      expect(preparerSpy).toHaveBeenCalledWith(idir, undefined, [
+        RecordType.SR,
+      ]);
+      expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(
+        plainToInstance(
+          NestedSREntity,
+          { items: [SRExample] },
+          { enableImplicitConversion: true },
+        ),
+      );
+    });
+
+    it('uses the office when group filter is Office', async () => {
+      const idir = 'idir';
+      const req = buildReq(idir);
+      const filter = { group: EntityScope.Office } as EntityQueryParams;
+      const preparerSpy = jest.spyOn(
+        service,
+        'officeCaseloadUpstreamRequestPreparer',
+      );
+      const sendGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'sendGetRequest')
+        .mockResolvedValueOnce({
+          data: { items: [SRExample] },
+        });
+
+      const result = await service.getSingleEntityType(
+        idir,
+        req,
+        res,
+        RecordType.SR,
+        officeNames,
+        filter,
+      );
+
+      expect(preparerSpy).toHaveBeenCalledWith(idir, filter, officeNames, [
+        RecordType.SR,
+      ]);
+      expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(
+        plainToInstance(
+          NestedSREntity,
+          { items: [SRExample] },
+          { enableImplicitConversion: true },
+        ),
+      );
+    });
+  });
+
+  describe('getEntityById tests', () => {
+    it('fetches a single entity by id using the office preparer', async () => {
+      const idir = 'idir';
+      const id = 'entity-id-here';
+      const jwt = jwtService.sign(
+        `{"${idirJWTFieldName}":"${idir}", "jti":"local"}`,
+        {
+          secret: 'aTotalSecret',
+        },
+      );
+      const req = getMockReq({
+        header: jest.fn((headerName) => {
+          const lookup = { authorization: `Bearer ${jwt}` };
+          return lookup[headerName];
+        }),
+      });
+      const preparerSpy = jest.spyOn(
+        service,
+        'officeCaseloadUpstreamRequestPreparer',
+      );
+      const sendGetRequestSpy = jest
+        .spyOn(requestPreparerService, 'sendGetRequest')
+        .mockResolvedValueOnce({
+          data: { items: [SRExample] },
+        });
+
+      const result = await service.getEntityById(
+        idir,
+        id,
+        req,
+        res,
+        RecordType.SR,
+        officeNames,
+      );
+
+      expect(preparerSpy).toHaveBeenCalledWith(idir, undefined, officeNames, [
+        RecordType.SR,
+      ]);
+      expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
+      const calledUrl = sendGetRequestSpy.mock.calls[0][0];
+      expect(calledUrl.endsWith(id)).toBe(true);
+      expect(result).toEqual(
+        plainToInstance(
+          NestedSREntity,
+          { items: [SRExample] },
+          { enableImplicitConversion: true },
+        ),
+      );
+    });
   });
 });
