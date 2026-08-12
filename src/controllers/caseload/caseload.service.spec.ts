@@ -63,10 +63,21 @@ describe('CaseloadService', () => {
   const officeNames = `Office Name 1${officeNamesSeparator}Office Name 2`;
 
   beforeEach(async () => {
+    // set before the module compiles so CaseloadService's constructor picks these up, independent of the local .env file
+    process.env.CASE_AFTER_FIELD = 'Last Updated Date';
+    process.env.INCIDENT_AFTER_FIELD = 'Updated Date';
+    process.env.SR_AFTER_FIELD = 'Updated Date';
+    process.env.MEMO_AFTER_FIELD = 'Updated Date';
+    process.env.CASE_RESTRICTED_FIELD = 'Restricted Flag';
+    process.env.INCIDENT_RESTRICTED_FIELD = 'Restricted Flag';
+    process.env.SR_RESTRICTED_FIELD = 'Restricted Flag';
+    process.env.SR_SEARCHSPEC_AFTER_FIELD = 'Updated';
+    process.env.MEMO_RESTRICTED_FIELD = 'ICMCPU Restricted';
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         HttpModule,
-        ConfigModule.forRoot({ load: [configuration] }),
+        ConfigModule.forRoot({ load: [configuration], ignoreEnvFile: true }),
         CacheModule.register({ isGlobal: true }),
       ],
       providers: [
@@ -86,17 +97,6 @@ describe('CaseloadService', () => {
     );
     jwtService = module.get<JwtService>(JwtService);
 
-    configService.set('afterFieldName.cases', 'Last Updated Date');
-    configService.set('afterFieldName.incidents', 'Updated Date');
-    configService.set('afterFieldName.srs', 'Updated Date');
-    configService.set('afterFieldName.memos', 'Updated Date');
-    configService.set('upstreamAuth.case.restrictedField', 'Restricted Flag');
-    configService.set(
-      'upstreamAuth.incident.restrictedField',
-      'Restricted Flag',
-    );
-    configService.set('upstreamAuth.sr.restrictedField', 'Restricted Flag');
-    configService.set('upstreamAuth.memo.restrictedField', 'ICMCPU Restricted');
     mockClear();
   });
 
@@ -830,9 +830,12 @@ describe('CaseloadService', () => {
         RecordType.SR,
       );
 
-      expect(preparerSpy).toHaveBeenCalledWith(idir, undefined, [
-        RecordType.SR,
-      ]);
+      expect(preparerSpy).toHaveBeenCalledWith(
+        idir,
+        undefined,
+        [RecordType.SR],
+        configService.get('upstreamAuth.sr.searchspecAfterField'),
+      );
       expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(
         plainToInstance(
@@ -866,9 +869,13 @@ describe('CaseloadService', () => {
         filter,
       );
 
-      expect(preparerSpy).toHaveBeenCalledWith(idir, filter, officeNames, [
-        RecordType.SR,
-      ]);
+      expect(preparerSpy).toHaveBeenCalledWith(
+        idir,
+        filter,
+        officeNames,
+        [RecordType.SR],
+        configService.get('upstreamAuth.sr.searchspecAfterField'),
+      );
       expect(sendGetRequestSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual(
         plainToInstance(

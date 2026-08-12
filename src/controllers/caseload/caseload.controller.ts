@@ -229,9 +229,11 @@ export class CaseloadController {
     @Query(
       new ValidationPipe({
         transform: true,
-        transformOptions: { enableImplicitConversion: true },
+        transformOptions: {
+          enableImplicitConversion: true,
+          exposeDefaultValues: true,
+        },
         forbidNonWhitelisted: true,
-        skipMissingProperties: true,
       }),
     )
     filter?: EntityQueryParams,

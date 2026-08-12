@@ -115,7 +115,6 @@ export class FilterQueryParams {
 
 @Exclude()
 export class EntityQueryParams extends FilterQueryParams {
-  @IsOptional()
   @IsEnum(EntityScope)
   @Expose()
   @ApiProperty({
@@ -126,7 +125,7 @@ export class EntityQueryParams extends FilterQueryParams {
       `Whether to only show entities directly assigned to the user (default), ` +
       `or to also show entities in their offices.`,
   })
-  [entityScopeParamName]?: string = EntityScope.Assigned;
+  [entityScopeParamName]: string = EntityScope.Assigned;
 }
 
 @Exclude()

@@ -62,6 +62,7 @@ export class CaseloadService {
   incidentAfterFieldName: string;
   srAfterFieldName: string;
   memoAfterFieldName: string;
+  srSearchSpecAfterFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
   srRestrictedFieldName: string;
@@ -133,6 +134,9 @@ export class CaseloadService {
       this.configService.get<string>(`afterFieldName.srs`);
     this.memoAfterFieldName =
       this.configService.get<string>(`afterFieldName.memos`);
+    this.srSearchSpecAfterFieldName = this.configService.get<string>(
+      `upstreamAuth.sr.searchspecAfterField`,
+    );
     this.caseRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.case.restrictedField`,
     );
@@ -531,12 +535,14 @@ export class CaseloadService {
     filter?: EntityQueryParams,
   ) {
     const entityTypes = [type];
+    const typeFieldName = `${type}SearchSpecAfterFieldName`;
     let getRequestSpec: GetRequestDetails;
     if (!filter || filter.group === EntityScope.Assigned) {
       getRequestSpec = this.caseloadUpstreamRequestPreparer(
         idir,
         filter,
         entityTypes,
+        `${this[typeFieldName]}`,
       )[0];
     } else {
       getRequestSpec = this.officeCaseloadUpstreamRequestPreparer(
@@ -544,6 +550,7 @@ export class CaseloadService {
         filter,
         officeNames,
         entityTypes,
+        `${this[typeFieldName]}`,
       )[0];
     }
 
