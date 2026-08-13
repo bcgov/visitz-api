@@ -32,6 +32,18 @@ import {
   NestedSREntity,
   SRListResponseExample,
 } from '../../entities/sr.entity';
+import {
+  NestedCaseEntity,
+  CaseListResponseExample,
+} from '../../entities/case.entity';
+import {
+  NestedIncidentEntity,
+  IncidentListResponseExample,
+} from '../../entities/incident.entity';
+import {
+  NestedMemoEntity,
+  MemoListResponseExample,
+} from '../../entities/memo.entity';
 import { IdPathParams } from '../../dto/id-path-params.dto';
 
 describe('CaseloadController', () => {
@@ -226,6 +238,211 @@ describe('CaseloadController', () => {
         req,
         res,
         RecordType.SR,
+        officeNames,
+      );
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('getCases tests', () => {
+    it.each([
+      [undefined, undefined],
+      [{ group: EntityScope.Office } as EntityQueryParams, officeNames],
+    ])(
+      'should call getSingleEntityType with correct officeNames',
+      async (filterQueryParams, expectedOfficeNames) => {
+        const externalAuthServiceSpy = jest
+          .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+          .mockImplementationOnce(() => {
+            return Promise.resolve(officeNames);
+          });
+        const expectedResult = plainToInstance(
+          NestedCaseEntity,
+          CaseListResponseExample,
+          { enableImplicitConversion: true },
+        );
+        const caseloadServiceSpy = jest
+          .spyOn(caseloadService, 'getSingleEntityType')
+          .mockReturnValueOnce(Promise.resolve(expectedResult));
+
+        const result = await controller.getCases(req, res, filterQueryParams);
+        expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
+        expect(caseloadServiceSpy).toHaveBeenCalledWith(
+          'idir',
+          req,
+          res,
+          RecordType.Case,
+          expectedOfficeNames,
+          filterQueryParams,
+        );
+        expect(result).toEqual(expectedResult);
+      },
+    );
+  });
+
+  describe('getCaseById tests', () => {
+    it('should call getEntityById with the parsed id and officeNames', async () => {
+      const idParam = { [idName]: 'entity-id-here' } as IdPathParams;
+      const externalAuthServiceSpy = jest
+        .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+        .mockImplementationOnce(() => {
+          return Promise.resolve(officeNames);
+        });
+      const expectedResult = plainToInstance(
+        NestedCaseEntity,
+        CaseListResponseExample,
+        { enableImplicitConversion: true },
+      );
+      const caseloadServiceSpy = jest
+        .spyOn(caseloadService, 'getEntityById')
+        .mockReturnValueOnce(Promise.resolve(expectedResult));
+
+      const result = await controller.getCaseById(req, res, idParam);
+      expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
+      expect(caseloadServiceSpy).toHaveBeenCalledWith(
+        'idir',
+        idParam[idName],
+        req,
+        res,
+        RecordType.Case,
+        officeNames,
+      );
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('getIncidents tests', () => {
+    it.each([
+      [undefined, undefined],
+      [{ group: EntityScope.Office } as EntityQueryParams, officeNames],
+    ])(
+      'should call getSingleEntityType with correct officeNames',
+      async (filterQueryParams, expectedOfficeNames) => {
+        const externalAuthServiceSpy = jest
+          .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+          .mockImplementationOnce(() => {
+            return Promise.resolve(officeNames);
+          });
+        const expectedResult = plainToInstance(
+          NestedIncidentEntity,
+          IncidentListResponseExample,
+          { enableImplicitConversion: true },
+        );
+        const caseloadServiceSpy = jest
+          .spyOn(caseloadService, 'getSingleEntityType')
+          .mockReturnValueOnce(Promise.resolve(expectedResult));
+
+        const result = await controller.getIncidents(
+          req,
+          res,
+          filterQueryParams,
+        );
+        expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
+        expect(caseloadServiceSpy).toHaveBeenCalledWith(
+          'idir',
+          req,
+          res,
+          RecordType.Incident,
+          expectedOfficeNames,
+          filterQueryParams,
+        );
+        expect(result).toEqual(expectedResult);
+      },
+    );
+  });
+
+  describe('getIncidentById tests', () => {
+    it('should call getEntityById with the parsed id and officeNames', async () => {
+      const idParam = { [idName]: 'entity-id-here' } as IdPathParams;
+      const externalAuthServiceSpy = jest
+        .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+        .mockImplementationOnce(() => {
+          return Promise.resolve(officeNames);
+        });
+      const expectedResult = plainToInstance(
+        NestedIncidentEntity,
+        IncidentListResponseExample,
+        { enableImplicitConversion: true },
+      );
+      const caseloadServiceSpy = jest
+        .spyOn(caseloadService, 'getEntityById')
+        .mockReturnValueOnce(Promise.resolve(expectedResult));
+
+      const result = await controller.getIncidentById(req, res, idParam);
+      expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
+      expect(caseloadServiceSpy).toHaveBeenCalledWith(
+        'idir',
+        idParam[idName],
+        req,
+        res,
+        RecordType.Incident,
+        officeNames,
+      );
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('getMemos tests', () => {
+    it.each([
+      [undefined, undefined],
+      [{ group: EntityScope.Office } as EntityQueryParams, officeNames],
+    ])(
+      'should call getSingleEntityType with correct officeNames',
+      async (filterQueryParams, expectedOfficeNames) => {
+        const externalAuthServiceSpy = jest
+          .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+          .mockImplementationOnce(() => {
+            return Promise.resolve(officeNames);
+          });
+        const expectedResult = plainToInstance(
+          NestedMemoEntity,
+          MemoListResponseExample,
+          { enableImplicitConversion: true },
+        );
+        const caseloadServiceSpy = jest
+          .spyOn(caseloadService, 'getSingleEntityType')
+          .mockReturnValueOnce(Promise.resolve(expectedResult));
+
+        const result = await controller.getMemos(req, res, filterQueryParams);
+        expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
+        expect(caseloadServiceSpy).toHaveBeenCalledWith(
+          'idir',
+          req,
+          res,
+          RecordType.Memo,
+          expectedOfficeNames,
+          filterQueryParams,
+        );
+        expect(result).toEqual(expectedResult);
+      },
+    );
+  });
+
+  describe('getMemoById tests', () => {
+    it('should call getEntityById with the parsed id and officeNames', async () => {
+      const idParam = { [idName]: 'entity-id-here' } as IdPathParams;
+      const externalAuthServiceSpy = jest
+        .spyOn(externalAuthService, 'checkEmployeeStatusUpstream')
+        .mockImplementationOnce(() => {
+          return Promise.resolve(officeNames);
+        });
+      const expectedResult = plainToInstance(
+        NestedMemoEntity,
+        MemoListResponseExample,
+        { enableImplicitConversion: true },
+      );
+      const caseloadServiceSpy = jest
+        .spyOn(caseloadService, 'getEntityById')
+        .mockReturnValueOnce(Promise.resolve(expectedResult));
+
+      const result = await controller.getMemoById(req, res, idParam);
+      expect(externalAuthServiceSpy).toHaveBeenCalledTimes(1);
+      expect(caseloadServiceSpy).toHaveBeenCalledWith(
+        'idir',
+        idParam[idName],
+        req,
+        res,
+        RecordType.Memo,
         officeNames,
       );
       expect(result).toEqual(expectedResult);

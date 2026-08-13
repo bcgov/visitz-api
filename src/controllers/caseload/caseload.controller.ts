@@ -69,6 +69,18 @@ import {
   NestedSREntity,
   SRListResponseExample,
 } from '../../entities/sr.entity';
+import {
+  NestedCaseEntity,
+  CaseListResponseExample,
+} from '../../entities/case.entity';
+import {
+  NestedIncidentEntity,
+  IncidentListResponseExample,
+} from '../../entities/incident.entity';
+import {
+  NestedMemoEntity,
+  MemoListResponseExample,
+} from '../../entities/memo.entity';
 import { Request, Response } from 'express';
 import { ExternalAuthService } from '../external-auth/external-auth.service';
 import { EntityScope, RecordType } from '../../common/constants/enumerations';
@@ -244,7 +256,7 @@ export class CaseloadController {
   ): Promise<NestedSREntity> {
     const officeNames =
       await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
-    return await this.caseloadService.getSingleEntityType(
+    return (await this.caseloadService.getSingleEntityType(
       req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
       req,
       res,
@@ -253,7 +265,7 @@ export class CaseloadController {
         ? officeNames
         : undefined,
       filter,
-    );
+    )) as NestedSREntity;
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -291,13 +303,322 @@ export class CaseloadController {
   ): Promise<NestedSREntity> {
     const officeNames =
       await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
-    return await this.caseloadService.getEntityById(
+    return (await this.caseloadService.getEntityById(
       req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
       idParam[idName],
       req,
       res,
       RecordType.SR,
       officeNames,
-    );
+    )) as NestedSREntity;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('cases')
+  @ApiOperation({
+    description: `Displays the case details related to the user's IDIR, or their assigned office(s)`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: entityScopeParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedCaseEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedCaseEntity),
+        },
+        examples: {
+          CaseListResponse: {
+            value: CaseListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getCases(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+          exposeDefaultValues: true,
+        },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    filter?: EntityQueryParams,
+  ): Promise<NestedCaseEntity> {
+    const officeNames =
+      await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
+    return (await this.caseloadService.getSingleEntityType(
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
+      req,
+      res,
+      RecordType.Case,
+      filter?.[entityScopeParamName] === EntityScope.Office
+        ? officeNames
+        : undefined,
+      filter,
+    )) as NestedCaseEntity;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`case/:${idName}`)
+  @ApiOperation({
+    description: `Displays the case details for the given case id.`,
+  })
+  @ApiExtraModels(NestedCaseEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedCaseEntity),
+        },
+        examples: {
+          CaseListResponse: {
+            value: CaseListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getCaseById(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    idParam: IdPathParams,
+  ): Promise<NestedCaseEntity> {
+    const officeNames =
+      await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
+    return (await this.caseloadService.getEntityById(
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
+      idParam[idName],
+      req,
+      res,
+      RecordType.Case,
+      officeNames,
+    )) as NestedCaseEntity;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('incidents')
+  @ApiOperation({
+    description: `Displays the incident details related to the user's IDIR, or their assigned office(s)`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: entityScopeParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedIncidentEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedIncidentEntity),
+        },
+        examples: {
+          IncidentListResponse: {
+            value: IncidentListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getIncidents(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+          exposeDefaultValues: true,
+        },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    filter?: EntityQueryParams,
+  ): Promise<NestedIncidentEntity> {
+    const officeNames =
+      await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
+    return (await this.caseloadService.getSingleEntityType(
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
+      req,
+      res,
+      RecordType.Incident,
+      filter?.[entityScopeParamName] === EntityScope.Office
+        ? officeNames
+        : undefined,
+      filter,
+    )) as NestedIncidentEntity;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`incident/:${idName}`)
+  @ApiOperation({
+    description: `Displays the incident details for the given incident id.`,
+  })
+  @ApiExtraModels(NestedIncidentEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedIncidentEntity),
+        },
+        examples: {
+          IncidentListResponse: {
+            value: IncidentListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getIncidentById(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    idParam: IdPathParams,
+  ): Promise<NestedIncidentEntity> {
+    const officeNames =
+      await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
+    return (await this.caseloadService.getEntityById(
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
+      idParam[idName],
+      req,
+      res,
+      RecordType.Incident,
+      officeNames,
+    )) as NestedIncidentEntity;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('memos')
+  @ApiOperation({
+    description: `Displays the memo details related to the user's IDIR, or their assigned office(s)`,
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: entityScopeParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedMemoEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedMemoEntity),
+        },
+        examples: {
+          MemoListResponse: {
+            value: MemoListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getMemos(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+          exposeDefaultValues: true,
+        },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    filter?: EntityQueryParams,
+  ): Promise<NestedMemoEntity> {
+    const officeNames =
+      await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
+    return (await this.caseloadService.getSingleEntityType(
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
+      req,
+      res,
+      RecordType.Memo,
+      filter?.[entityScopeParamName] === EntityScope.Office
+        ? officeNames
+        : undefined,
+      filter,
+    )) as NestedMemoEntity;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`memo/:${idName}`)
+  @ApiOperation({
+    description: `Displays the memo details for the given memo id.`,
+  })
+  @ApiExtraModels(NestedMemoEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedMemoEntity),
+        },
+        examples: {
+          MemoListResponse: {
+            value: MemoListResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async getMemoById(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    idParam: IdPathParams,
+  ): Promise<NestedMemoEntity> {
+    const officeNames =
+      await this.externalAuthService.checkEmployeeStatusUpstream(req); // auth check
+    return (await this.caseloadService.getEntityById(
+      req.headers[idirUsernameHeaderField] as string, // this will be set by the jwt in the previous auth check
+      idParam[idName],
+      req,
+      res,
+      RecordType.Memo,
+      officeNames,
+    )) as NestedMemoEntity;
   }
 }

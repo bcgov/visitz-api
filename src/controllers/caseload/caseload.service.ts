@@ -21,7 +21,7 @@ import {
 import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { DateTime } from 'luxon';
 import { ParallelResponse } from '../../dto/parallel-response.dto';
-import { plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 import {
   pageSizeMax,
   pageSizeParamName,
@@ -41,6 +41,9 @@ import {
   invalidRecordTypeError,
 } from '../../common/constants/error-constants';
 import { NestedSREntity } from '../../entities/sr.entity';
+import { NestedCaseEntity } from '../../entities/case.entity';
+import { NestedIncidentEntity } from '../../entities/incident.entity';
+import { NestedMemoEntity } from '../../entities/memo.entity';
 
 @Injectable()
 export class CaseloadService {
@@ -62,7 +65,10 @@ export class CaseloadService {
   incidentAfterFieldName: string;
   srAfterFieldName: string;
   memoAfterFieldName: string;
+  caseSearchSpecAfterFieldName: string;
+  incidentSearchSpecAfterFieldName: string;
   srSearchSpecAfterFieldName: string;
+  memoSearchSpecAfterFieldName: string;
   caseRestrictedFieldName: string;
   incidentRestrictedFieldName: string;
   srRestrictedFieldName: string;
@@ -134,8 +140,17 @@ export class CaseloadService {
       this.configService.get<string>(`afterFieldName.srs`);
     this.memoAfterFieldName =
       this.configService.get<string>(`afterFieldName.memos`);
+    this.caseSearchSpecAfterFieldName = this.configService.get<string>(
+      `upstreamAuth.case.searchspecAfterField`,
+    );
+    this.incidentSearchSpecAfterFieldName = this.configService.get<string>(
+      `upstreamAuth.incident.searchspecAfterField`,
+    );
     this.srSearchSpecAfterFieldName = this.configService.get<string>(
       `upstreamAuth.sr.searchspecAfterField`,
+    );
+    this.memoSearchSpecAfterFieldName = this.configService.get<string>(
+      `upstreamAuth.memo.searchspecAfterField`,
     );
     this.caseRestrictedFieldName = this.configService.get<string>(
       `upstreamAuth.case.restrictedField`,
@@ -459,13 +474,20 @@ export class CaseloadService {
     return response;
   }
 
-  determineOutputEntity(type: RecordType) {
+  determineOutputEntity(
+    type: RecordType,
+  ): ClassConstructor<
+    NestedSREntity | NestedCaseEntity | NestedIncidentEntity | NestedMemoEntity
+  > {
     switch (type) {
       case RecordType.SR:
         return NestedSREntity;
       case RecordType.Case:
+        return NestedCaseEntity;
       case RecordType.Incident:
+        return NestedIncidentEntity;
       case RecordType.Memo:
+        return NestedMemoEntity;
       default:
         throw new BadRequestException([invalidRecordTypeError]);
     }

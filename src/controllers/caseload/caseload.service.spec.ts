@@ -45,9 +45,12 @@ import {
   trustedIdirHeaderName,
   idirJWTFieldName,
 } from '../../common/constants/upstream-constants';
-import { CaseExample } from '../../entities/case.entity';
-import { IncidentExample } from '../../entities/incident.entity';
-import { MemoExample } from '../../entities/memo.entity';
+import { CaseExample, NestedCaseEntity } from '../../entities/case.entity';
+import {
+  IncidentExample,
+  NestedIncidentEntity,
+} from '../../entities/incident.entity';
+import { MemoExample, NestedMemoEntity } from '../../entities/memo.entity';
 import { NestedSREntity, SRExample } from '../../entities/sr.entity';
 import { EntityQueryParams } from '../../dto/filter-query-params.dto';
 import { invalidRecordTypeError } from '../../common/constants/error-constants';
@@ -780,18 +783,23 @@ describe('CaseloadService', () => {
   });
 
   describe('determineOutputEntity tests', () => {
-    it('returns NestedSREntity for the SR record type', () => {
-      expect(service.determineOutputEntity(RecordType.SR)).toBe(NestedSREntity);
-    });
-
-    it.each([RecordType.Case, RecordType.Incident, RecordType.Memo])(
-      'throws a BadRequestException for the %s record type',
-      (type) => {
-        expect(() => service.determineOutputEntity(type)).toThrow(
-          new BadRequestException([invalidRecordTypeError]),
-        );
+    it.each([
+      [RecordType.SR, NestedSREntity],
+      [RecordType.Case, NestedCaseEntity],
+      [RecordType.Incident, NestedIncidentEntity],
+      [RecordType.Memo, NestedMemoEntity],
+    ])(
+      'returns the correct nested entity for the %s record type',
+      (type, expected) => {
+        expect(service.determineOutputEntity(type)).toBe(expected);
       },
     );
+
+    it('throws a BadRequestException for an unrecognized record type', () => {
+      expect(() =>
+        service.determineOutputEntity('invalid' as RecordType),
+      ).toThrow(new BadRequestException([invalidRecordTypeError]));
+    });
   });
 
   describe('getSingleEntityType tests', () => {

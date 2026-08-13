@@ -154,6 +154,16 @@ import {
 import { PostActivityDto } from '../../dto/post-activity.dto';
 import { PostContactEducationDto } from '../../dto/post-contact-education.dto';
 
+/*
+	Note: The functions for getting multiple memos (/memos) and 
+	a single memo by id (/memo/:id)
+	are located in the caseload controller file. This is for 2 reasons:
+	1. The name for the multi get would conflict with the controller path here 
+	(memos vs memo)
+	2. The logic mostly utilizies common functions for fetching entities in caseload, including
+	different authorization to prevent fetching the parent entity twice.
+*/
+
 @Controller('memo')
 @UseGuards(AuthGuard)
 @ApiNoContentResponse(noContentResponseSwagger)

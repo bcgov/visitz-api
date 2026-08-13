@@ -734,8 +734,23 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: POST_CONTACT_EDUCATION_WORKSPACE
+  - name: CASE_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_SEARCHSPEC_AFTER_FIELD
+  - name: INCIDENT_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_SEARCHSPEC_AFTER_FIELD
   - name: SR_SEARCHSPEC_AFTER_FIELD
     valueFrom:
       configMapKeyRef:
           name: visitz-api-config
           key: SR_SEARCHSPEC_AFTER_FIELD
+  - name: MEMO_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_SEARCHSPEC_AFTER_FIELD

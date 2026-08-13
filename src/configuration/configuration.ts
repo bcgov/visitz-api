@@ -10,6 +10,8 @@ export default () => ({
       workspace: process.env.CASE_WORKSPACE ?? undefined,
       idirField: process.env.CASE_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.CASE_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField:
+        process.env.CASE_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.CASE_RESTRICTED_FIELD ?? undefined,
       typeField: process.env.CASE_TYPE_FIELD ?? undefined,
       statusField: process.env.CASE_STATUS_FIELD ?? undefined,
@@ -22,6 +24,8 @@ export default () => ({
       idirField: process.env.INCIDENT_IDIR_FIELD ?? undefined,
       searchspecIdirField:
         process.env.INCIDENT_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField:
+        process.env.INCIDENT_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.INCIDENT_RESTRICTED_FIELD ?? undefined,
       typeField: process.env.INCIDENT_TYPE_FIELD ?? undefined,
       statusField: process.env.INCIDENT_STATUS_FIELD ?? undefined,
@@ -44,6 +48,8 @@ export default () => ({
       workspace: process.env.MEMO_WORKSPACE ?? undefined,
       idirField: process.env.MEMO_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.MEMO_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField:
+        process.env.MEMO_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.MEMO_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.MEMO_STATUS_FIELD ?? undefined,
       officeField: process.env.MEMO_OFFICE_FIELD ?? undefined,
