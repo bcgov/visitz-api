@@ -292,3 +292,27 @@ export class CaseEntity {
     Object.assign(this, object);
   }
 }
+
+export const CaseListResponseExample = {
+  items: [
+    {
+      ...CaseExample,
+      Id: 'Another Id Here',
+      'Row Id': 'Another Id Here',
+    },
+    CaseExample,
+  ],
+};
+
+@Exclude()
+@ApiSchema({ name: 'CaseResponse' })
+export class NestedCaseEntity {
+  @Expose()
+  @ApiProperty({ type: CaseEntity, isArray: true })
+  @Type(() => CaseEntity)
+  items: Array<CaseEntity>;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}

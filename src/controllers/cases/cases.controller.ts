@@ -184,6 +184,16 @@ import {
 } from '../../entities/activity-plan.entity';
 import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
 
+/*
+	Note: The functions for getting multiple cases (/cases) and a single 
+	case by id (/case/:id)
+	are located in the caseload controller file. This is for 2 reasons:
+	1. The name for the multi get would conflict with the controller path here 
+	(cases vs case)
+	2. The logic mostly utilizies common functions for fetching entities in caseload, including
+	different authorization to prevent fetching the parent entity twice.
+*/
+
 @Controller('case')
 @UseGuards(AuthGuard)
 @ApiBadRequestResponse({ type: ApiBadRequestErrorEntity })
