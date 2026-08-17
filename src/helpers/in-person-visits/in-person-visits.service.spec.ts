@@ -7,32 +7,42 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
-import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
+import {
+  IdPathParams,
+  VisitDetailIdPathParams,
+  VisitIdPathParams,
+} from '../../dto/id-path-params.dto';
 import { RecordType, VisitDetails } from '../../common/constants/enumerations';
 import {
   FilterQueryParams,
   VisitDetailsQueryParams,
 } from '../../dto/filter-query-params.dto';
 import {
+  InPersonVisitDetailsListResponseCaseExample,
+  InPersonVisitDetailsSingleResponseCaseExample,
   InPersonVisitsEntityMultiValue,
   InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsSingleResponseCaseExample,
   InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import {
   idName,
   afterParamName,
   visitIdName,
+  visitDetailIdName,
 } from '../../common/constants/parameter-constants';
 import { PostInPersonVisitDtoUpstream } from '../../dto/post-in-person-visit.dto';
 import { getMockRes } from '@jest-mock/express';
 import configuration from '../../configuration/configuration';
 import { JwtService } from '@nestjs/jwt';
 import { caseChildServices } from '../../common/constants/upstream-constants';
+import { visitNotRelatedError } from '../../common/constants/error-constants';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 
 describe('InPersonVisitsService', () => {
@@ -311,6 +321,176 @@ describe('InPersonVisitsService', () => {
         expect(caseTypeSpy).toHaveBeenCalledTimes(1);
       },
     );
+  });
+
+  describe('getListVisitDetailValues tests', () => {
+    it.each([
+      [
+        InPersonVisitDetailsListResponseCaseExample,
+        RecordType.Case,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, recordType, idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: { items: [] },
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>)
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getListVisitDetailValues(
+          recordType,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(result).toEqual(new NestedInPersonVisitDetailsEntity(data));
+      },
+    );
+
+    it.each([
+      [
+        RecordType.Case,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+      ],
+    ])(
+      'should throw bad request exception when visit is not related to the case',
+      async (recordType, idPathParams) => {
+        const visitOfCaseSpy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockRejectedValueOnce(new HttpException({}, HttpStatus.NO_CONTENT));
+
+        await expect(
+          service.getListVisitDetailValues(
+            recordType,
+            idPathParams,
+            res,
+            'idir',
+          ),
+        ).rejects.toThrow(new BadRequestException([visitNotRelatedError]));
+        expect(visitOfCaseSpy).toHaveBeenCalledTimes(1);
+      },
+    );
+  });
+
+  describe('getSingleVisitDetailValues tests', () => {
+    it.each([
+      [
+        InPersonVisitDetailsSingleResponseCaseExample,
+        RecordType.Case,
+        {
+          [idName]: 'test',
+          [visitIdName]: 'test2',
+          [visitDetailIdName]: 'test3',
+        } as VisitDetailIdPathParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, recordType, idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: { items: [] },
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>)
+          .mockResolvedValueOnce({
+            data: data,
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const result = await service.getSingleVisitDetailValues(
+          recordType,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(result).toEqual(new VisitDetailValue(data));
+      },
+    );
+
+    it.each([
+      [
+        RecordType.Case,
+        {
+          [idName]: 'test',
+          [visitIdName]: 'test2',
+          [visitDetailIdName]: 'test3',
+        } as VisitDetailIdPathParams,
+      ],
+    ])(
+      'should throw bad request exception when visit is not related to the case',
+      async (recordType, idPathParams) => {
+        const visitOfCaseSpy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockRejectedValueOnce(new HttpException({}, HttpStatus.NO_CONTENT));
+
+        await expect(
+          service.getSingleVisitDetailValues(
+            recordType,
+            idPathParams,
+            res,
+            'idir',
+          ),
+        ).rejects.toThrow(new BadRequestException([visitNotRelatedError]));
+        expect(visitOfCaseSpy).toHaveBeenCalledTimes(1);
+      },
+    );
+  });
+
+  describe('isChildVisitOfCase tests', () => {
+    it.each([
+      [{ [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams],
+    ])(
+      'should return true when the visit is related to the case',
+      async (idPathParams) => {
+        const spy = jest
+          .spyOn(requestPreparerService, 'sendGetRequest')
+          .mockResolvedValueOnce({
+            data: { items: [] },
+            headers: {},
+            status: 200,
+            statusText: 'OK',
+          } as AxiosResponse<any, any>);
+
+        const isVisitOfCase = await service.isChildVisitOfCase(
+          idPathParams,
+          'idir',
+        );
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(isVisitOfCase).toBe(true);
+      },
+    );
+
+    it.each([
+      [{ [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams],
+    ])('should return false on upstream error', async (idPathParams) => {
+      const spy = jest
+        .spyOn(requestPreparerService, 'sendGetRequest')
+        .mockRejectedValueOnce(new HttpException({}, HttpStatus.NO_CONTENT));
+
+      const isVisitOfCase = await service.isChildVisitOfCase(
+        idPathParams,
+        'idir',
+      );
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(isVisitOfCase).toBe(false);
+    });
   });
 
   describe('isChildCaseType tests', () => {

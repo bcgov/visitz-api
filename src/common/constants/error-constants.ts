@@ -4,6 +4,9 @@ import { upstreamDateFormatNoTime } from './upstream-constants';
 export const childServicesTypeError =
   'Given case is not a Child Services case and cannot have Child/Youth visits.';
 
+export const visitNotRelatedError =
+  'Given visit is not related to the given case.';
+
 export const childServicesMedBehavTypeError =
   'Given contact cannot have Medical/Behvioral information.';
 

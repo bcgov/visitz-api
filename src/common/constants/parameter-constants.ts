@@ -49,6 +49,7 @@ const contactEducationIdName = 'contactEducationId';
 const contactLegalAuthorityIdName = 'contactLegalAuthorityId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
+const visitDetailIdName = 'visitDetailId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
 const responseNarrativeIdName = 'responseNarrativeId';
 const callInformationIdName = 'callInformationId';
@@ -111,6 +112,7 @@ export {
   contactLegalAuthorityIdName,
   supportNetworkIdName,
   visitIdName,
+  visitDetailIdName,
   safetyAssessmentIdName,
   responseNarrativeIdName,
   callInformationIdName,

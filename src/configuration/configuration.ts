@@ -201,6 +201,7 @@ export default () => ({
     caseActivityPlan: process.env.CASE_ACTIVITY_PLAN_ENDPOINT ?? ' ',
     incidentActivityPlan: process.env.INCIDENT_ACTIVITY_PLAN_ENDPOINT ?? ' ',
     srActivityPlan: process.env.SR_ACTIVITY_PLAN_ENDPOINT ?? ' ',
+    inPersonVisitDetails: process.env.IN_PERSON_VISIT_DETAILS_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

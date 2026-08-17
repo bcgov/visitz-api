@@ -51,6 +51,7 @@ import {
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitDetailIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -77,19 +78,24 @@ import {
   contactLegalAuthorityIdName,
   activityIdName,
   activityPlanIdName,
+  visitDetailIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import {
+  InPersonVisitDetailsListResponseCaseExample,
+  InPersonVisitDetailsSingleResponseCaseExample,
   InPersonVisitsEntityMultiValue,
   InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsListResponseCaseExampleNoMultiValue,
   InPersonVisitsSingleResponseCaseExample,
   InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import {
   AttachmentDetailsCaseExample,
@@ -442,6 +448,86 @@ export class CasesController {
       res,
       req.headers[idirUsernameHeaderField] as string,
       filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/visits/:${visitIdName}/detail-values`)
+  @ApiOperation({
+    description: `Find all Visit Detail Values related to a given Visit entity by Case id and ${visitIdName}.`,
+  })
+  @ApiExtraModels(VisitDetailValue)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedInPersonVisitDetailsEntity),
+        },
+        examples: {
+          InPersonVisitDetailsListResponse: {
+            value: InPersonVisitDetailsListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseVisitDetailValues(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: VisitIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<NestedInPersonVisitDetailsEntity> {
+    return await this.casesService.getListCaseVisitDetailValues(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/visits/:${visitIdName}/detail-values/:${visitDetailIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${visitDetailIdName} result if it is related to the given Case id and ${visitIdName}.`,
+  })
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiExtraModels(VisitDetailValue)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(VisitDetailValue),
+        },
+        examples: {
+          InPersonVisitDetailsSingleResponse: {
+            value: InPersonVisitDetailsSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseVisitDetailValues(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: VisitDetailIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<VisitDetailValue> {
+    return await this.casesService.getSingleCaseVisitDetailValues(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 

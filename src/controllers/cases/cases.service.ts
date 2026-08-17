@@ -17,6 +17,7 @@ import {
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitDetailIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -29,8 +30,10 @@ import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-
 import {
   InPersonVisitsEntityMultiValue,
   InPersonVisitsEntityNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -188,6 +191,32 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async getListCaseVisitDetailValues(
+    id: VisitIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<NestedInPersonVisitDetailsEntity> {
+    return await this.inPersonVisitsService.getListVisitDetailValues(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getSingleCaseVisitDetailValues(
+    id: VisitDetailIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<VisitDetailValue> {
+    return await this.inPersonVisitsService.getSingleVisitDetailValues(
+      RecordType.Case,
+      id,
+      res,
+      idir,
     );
   }
 
