@@ -37,6 +37,7 @@ import {
 import {
   ContactIdPathParams,
   IdPathParams,
+  VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
@@ -171,6 +172,13 @@ export class UtilitiesService {
     endpointUrl: string,
   ): string {
     return baseUrl + endpointUrl.replace('rowId', id.contactId);
+  }
+
+  constructChildVisitDetailUrl(
+    id: VisitIdPathParams,
+    endpointUrl: string,
+  ): string {
+    return endpointUrl.replace('rowId', id.visitId);
   }
 
   constructQueryHierarchy(parentComponent: QueryHierarchyComponent): string {

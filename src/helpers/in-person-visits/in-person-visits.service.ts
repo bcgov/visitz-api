@@ -4,7 +4,11 @@ import {
   RecordType,
   YNEnum,
 } from '../../common/constants/enumerations';
-import { IdPathParams, VisitIdPathParams } from '../../dto/id-path-params.dto';
+import {
+  IdPathParams,
+  VisitDetailIdPathParams,
+  VisitIdPathParams,
+} from '../../dto/id-path-params.dto';
 import { VisitDetailsQueryParams } from '../../dto/filter-query-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
@@ -12,8 +16,10 @@ import {
   InPersonVisitsEntityMultiValue,
   InPersonVisitsEntityNoMultiValue,
   InPersonVisitsSingleResponseCaseExample,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import {
   CONTENT_TYPE,
@@ -41,6 +47,7 @@ import {
 import {
   childServicesTypeError,
   restrictedNotOpenPostError,
+  visitNotRelatedError,
 } from '../../common/constants/error-constants';
 import { UtilitiesService } from '../utilities/utilities.service';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
@@ -50,6 +57,7 @@ export class InPersonVisitsService {
   url: string;
   postUrl: string;
   caseUrl: string;
+  detailsUrl: string;
   workspace: string | undefined;
   postWorkspace: string | undefined;
   caseWorkspace: string | undefined;
@@ -76,6 +84,10 @@ export class InPersonVisitsService {
     this.caseUrl = encodeURI(
       this.configService.get<string>('endpointUrls.baseUrl') +
         this.configService.get<string>('upstreamAuth.case.endpoint'),
+    );
+    this.detailsUrl = encodeURI(
+      this.configService.get<string>('endpointUrls.baseUrl') +
+        this.configService.get<string>('endpointUrls.inPersonVisitDetails'),
     );
     this.workspace = this.configService.get('workspaces.inPersonVisits');
     this.postWorkspace = this.configService.get(
@@ -158,6 +170,64 @@ export class InPersonVisitsService {
       return new InPersonVisitsEntityMultiValue(returnItems);
     }
     return new InPersonVisitsEntityNoMultiValue(returnItems);
+  }
+
+  async getListVisitDetailValues(
+    _type: RecordType,
+    id: VisitIdPathParams,
+    res: Response,
+    idir: string,
+  ) {
+    const isVisitOfCase = await this.isChildVisitOfCase(id, idir);
+    if (!isVisitOfCase) {
+      throw new BadRequestException([visitNotRelatedError]);
+    }
+    const baseSearchSpec = ``;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.workspace,
+        undefined,
+        true,
+        idir,
+      );
+    const response = await this.requestPreparerService.sendGetRequest(
+      this.utilitiesService.constructChildVisitDetailUrl(id, this.detailsUrl),
+      headers,
+      res,
+      params,
+    );
+    return new NestedInPersonVisitDetailsEntity(response.data);
+  }
+
+  async getSingleVisitDetailValues(
+    _type: RecordType,
+    id: VisitDetailIdPathParams,
+    res: Response,
+    idir: string,
+  ) {
+    const isVisitOfCase = await this.isChildVisitOfCase(id, idir);
+    if (!isVisitOfCase) {
+      throw new BadRequestException([visitNotRelatedError]);
+    }
+    const baseSearchSpec = ``;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.workspace,
+        undefined,
+        false,
+        idir,
+      );
+    const response = await this.requestPreparerService.sendGetRequest(
+      this.utilitiesService.constructChildVisitDetailUrl(id, this.detailsUrl) +
+        '/' +
+        id.visitDetailId,
+      headers,
+      res,
+      params,
+    );
+    return new VisitDetailValue(response.data);
   }
 
   async getListInPersonVisitRecord(
@@ -293,6 +363,29 @@ export class InPersonVisitsService {
       throw new BadRequestException([restrictedNotOpenPostError]);
     }
     return this.childCaseTypeCheck(response);
+  }
+
+  async isChildVisitOfCase(id: VisitIdPathParams, idir: string) {
+    const baseSearchSpec = `([Parent Id]="${id[idName]}" AND [Id]="${id[visitIdName]}"`;
+    const [headers, params] =
+      this.requestPreparerService.prepareHeadersAndParams(
+        baseSearchSpec,
+        this.workspace,
+        undefined,
+        true,
+        idir,
+      );
+    try {
+      await this.requestPreparerService.sendGetRequest(
+        this.url,
+        headers,
+        undefined,
+        params,
+      );
+    } catch {
+      return false;
+    }
+    return true;
   }
 
   async isChildCaseType(parentId: string, idir: string): Promise<boolean> {

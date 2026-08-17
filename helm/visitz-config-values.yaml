@@ -754,3 +754,8 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: MEMO_SEARCHSPEC_AFTER_FIELD
+  - name: IN_PERSON_VISIT_DETAILS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: IN_PERSON_VISIT_DETAILS_ENDPOINT        

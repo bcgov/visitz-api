@@ -27,6 +27,7 @@ import {
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitDetailIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { AuthService } from '../../common/guards/auth/auth.service';
@@ -36,12 +37,16 @@ import { UtilitiesService } from '../../helpers/utilities/utilities.service';
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  InPersonVisitDetailsListResponseCaseExample,
+  InPersonVisitDetailsSingleResponseCaseExample,
   InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExampleNoMultiValue,
   InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import {
   attachmentIdName,
@@ -51,6 +56,7 @@ import {
   afterParamName,
   supportNetworkIdName,
   visitIdName,
+  visitDetailIdName,
   caseNotesIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
@@ -311,6 +317,60 @@ describe('CasesController', () => {
           undefined,
         );
         expect(result).toEqual(new InPersonVisitsEntityNoMultiValue(data));
+      },
+    );
+  });
+
+  describe('getListCaseVisitDetailValues tests', () => {
+    it.each([
+      [
+        InPersonVisitDetailsListResponseCaseExample,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getListCaseVisitDetailValues')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedInPersonVisitDetailsEntity(data)),
+          );
+
+        const result = await controller.getListCaseVisitDetailValues(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new NestedInPersonVisitDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseVisitDetailValues tests', () => {
+    it.each([
+      [
+        InPersonVisitDetailsSingleResponseCaseExample,
+        {
+          [idName]: 'test',
+          [visitIdName]: 'test2',
+          [visitDetailIdName]: 'test3',
+        } as VisitDetailIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const casesServiceSpy = jest
+          .spyOn(casesService, 'getSingleCaseVisitDetailValues')
+          .mockReturnValueOnce(Promise.resolve(new VisitDetailValue(data)));
+
+        const result = await controller.getSingleCaseVisitDetailValues(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(casesServiceSpy).toHaveBeenCalledWith(idPathParams, res, 'idir');
+        expect(result).toEqual(new NestedInPersonVisitDetailsEntity(data));
       },
     );
   });

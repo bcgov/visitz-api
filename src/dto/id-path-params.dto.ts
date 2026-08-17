@@ -20,6 +20,7 @@ import {
   contactLegalAuthorityIdName,
   activityIdName,
   activityPlanIdName,
+  visitDetailIdName,
 } from '../common/constants/parameter-constants';
 
 export class IdPathParams {
@@ -121,6 +122,17 @@ export class VisitIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [visitIdName]: string;
+}
+
+export class VisitDetailIdPathParams extends VisitIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Visit-Detail-Id-Here',
+    description: 'The Id of the visit detail you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [visitDetailIdName]: string;
 }
 
 export class SafetyAssessmentIdPathParams extends IdPathParams {

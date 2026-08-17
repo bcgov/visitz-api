@@ -43,6 +43,21 @@ export const InPersonVisitsSingleResponseCaseExample = {
   Updated: '01/01/1970 00:00:00',
 };
 
+export const InPersonVisitDetailsSingleResponseCaseExample = {
+  Id: 'Id-1-here',
+  'Visit Detail Value': VisitDetailsEnum.PrivateVisitInHome,
+};
+
+export const InPersonVisitDetailsListResponseCaseExample = {
+  items: [
+    InPersonVisitDetailsSingleResponseCaseExample,
+    {
+      Id: 'Id-2-here',
+      'Visit Detail Value': VisitDetailsEnum.PrivateVisitZeroToFive,
+    },
+  ],
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { VisitDetails, ...baseCaseBody } =
   InPersonVisitsSingleResponseCaseExample;
@@ -86,19 +101,30 @@ export const PostInPersonVisitResponseExample = {
 @ApiSchema({ name: 'InPersonVisitDetailValue' })
 export class VisitDetailValue {
   @ApiProperty({
-    example: InPersonVisitsSingleResponseCaseExample['VisitDetails'][0]['Id'],
+    example: InPersonVisitDetailsSingleResponseCaseExample['Id'],
   })
   @Expose()
   Id: string;
 
   @ApiProperty({
     example:
-      InPersonVisitsSingleResponseCaseExample['VisitDetails'][0][
-        'Visit Detail Value'
-      ],
+      InPersonVisitDetailsSingleResponseCaseExample['Visit Detail Value'],
   })
   @Expose()
   'Visit Detail Value': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+@Exclude()
+@ApiSchema({ name: 'InPersonVisitDetailsListResponse' })
+export class NestedInPersonVisitDetailsEntity {
+  @Expose()
+  @ApiProperty({ type: VisitDetailValue, isArray: true })
+  @Type(() => VisitDetailValue)
+  items: Array<VisitDetailValue>;
 
   constructor(object) {
     Object.assign(this, object);
