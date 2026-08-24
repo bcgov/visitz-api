@@ -66,7 +66,8 @@ export class PostAppLogEntry {
   @Expose()
   @ApiProperty({
     example: 1970000000,
-    description: 'The unix timestamp of when the log entry was created.',
+    description:
+      'The unix timestamp of when the log entry was created, in milliseconds format.',
     format: 'int64',
   })
   'app-timestamp': number;

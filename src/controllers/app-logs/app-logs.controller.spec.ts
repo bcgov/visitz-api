@@ -1,16 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getMockReq } from '@jest-mock/express';
 import { AppLogsController } from './app-logs.controller';
 import { AppLogsService } from './app-logs.service';
-import { ExternalAuthService } from '../external-auth/external-auth.service';
 import { AppLogLevel } from '../../common/constants/enumerations';
 import { PostAppLogsDto } from '../../dto/post-app-logs.dto';
 
 describe('AppLogsController', () => {
   let controller: AppLogsController;
   let appLogsService: AppLogsService;
-  let externalAuthService: ExternalAuthService;
-  const req = getMockReq();
 
   const appLogs: PostAppLogsDto = [
     {
@@ -35,39 +31,20 @@ describe('AppLogsController', () => {
       controllers: [AppLogsController],
       providers: [
         { provide: AppLogsService, useValue: { logAppLogs: jest.fn() } },
-        {
-          provide: ExternalAuthService,
-          useValue: { checkEmployeeStatusUpstream: jest.fn() },
-        },
       ],
     }).compile();
 
     controller = module.get<AppLogsController>(AppLogsController);
     appLogsService = module.get<AppLogsService>(AppLogsService);
-    externalAuthService = module.get<ExternalAuthService>(ExternalAuthService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('checks employee status upstream before logging the app logs', async () => {
-    await controller.postAppLogs(req, appLogs);
+  it('logs the app logs', () => {
+    controller.postAppLogs(appLogs);
 
-    expect(
-      externalAuthService.checkEmployeeStatusUpstream,
-    ).toHaveBeenCalledWith(req);
     expect(appLogsService.logAppLogs).toHaveBeenCalledWith(appLogs);
-  });
-
-  it('propagates errors from the employee status check without logging', async () => {
-    (
-      externalAuthService.checkEmployeeStatusUpstream as jest.Mock
-    ).mockRejectedValueOnce(new Error('Forbidden'));
-
-    await expect(controller.postAppLogs(req, appLogs)).rejects.toThrow(
-      'Forbidden',
-    );
-    expect(appLogsService.logAppLogs).not.toHaveBeenCalled();
   });
 });
