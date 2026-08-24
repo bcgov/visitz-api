@@ -496,6 +496,15 @@ enum EntityScope {
   Office = 'Office',
 }
 
+enum AppLogLevel {
+  Fatal = 60,
+  Error = 50,
+  Warn = 40,
+  Log = 30,
+  Debug = 20,
+  Verbose = 10,
+}
+
 export {
   RecordType,
   EntityType,
@@ -538,4 +547,5 @@ export {
   ContactEducationDegree,
   ActivityPlanStatus,
   EntityScope,
+  AppLogLevel,
 };
