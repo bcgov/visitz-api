@@ -6,6 +6,8 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -90,6 +92,28 @@ import {
   ContactLegalAuthorityEntity,
   NestedContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesEntity,
+  NestedActivitiesEntity,
+} from '../../entities/activities.entity';
+import {
+  PostActivityDto,
+  PostActivityDtoUpstream,
+} from '../../dto/post-activity.dto';
+import {
+  PostContactEducationDto,
+  PostContactEducationDtoUpstream,
+} from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
+import {
+  PostActivityPlanDto,
+  PostActivityPlanDtoUpstream,
+} from '../../dto/post-activity-plan.dto';
 
 @Injectable()
 export class IncidentsService {
@@ -102,6 +126,8 @@ export class IncidentsService {
     private readonly incidentConcernService: IncidentConcernService,
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
+    private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleIncidentSupportNetworkInformationRecord(
@@ -469,6 +495,24 @@ export class IncidentsService {
     );
   }
 
+  async postSingleIncidentContactEducationRecord(
+    contactEducationDto: PostContactEducationDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    const baseObject = {
+      ...contactEducationDto,
+      Id: stringNull,
+    };
+    const body = new PostContactEducationDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactEducationRecord(
+      RecordType.Incident,
+      body,
+      idir,
+      id,
+    );
+  }
+
   async getSingleIncidentContactLegalAuthorityRecord(
     id: ContactLegalAuthorityIdPathParams,
     res: Response,
@@ -494,6 +538,101 @@ export class IncidentsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async getSingleIncidentActivityRecord(
+    id: ActivityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    return await this.activitiesService.getSingleActivityRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListIncidentActivityRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.activitiesService.getListActivityRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleIncidentActivityRecord(
+    activityDto: PostActivityDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    const baseObject = {
+      ...activityDto,
+      Id: stringNull,
+      'ICM Type': EntityType.Incident,
+      'Incident Id': id.rowId,
+      'Primary Owned By': idir,
+    };
+    const body = new PostActivityDtoUpstream(baseObject);
+    return await this.activitiesService.postSingleActivityRecord(
+      RecordType.Incident,
+      id,
+      body,
+      idir,
+    );
+  }
+
+  async getSingleIncidentActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListIncidentActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.Incident,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleIncidentActivityPlanRecord(
+    activityPlanDto: PostActivityPlanDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    const baseObject = {
+      ...activityPlanDto,
+      Id: stringNull,
+    };
+    const body = new PostActivityPlanDtoUpstream(baseObject);
+    return await this.activityPlanService.postSingleActivityPlanRecord(
+      RecordType.Incident,
+      id,
+      body,
+      idir,
     );
   }
 }

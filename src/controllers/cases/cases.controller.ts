@@ -40,6 +40,8 @@ import {
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -49,6 +51,7 @@ import {
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitDetailIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -73,19 +76,26 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
+  activityPlanIdName,
+  visitDetailIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import { AuthGuard } from '../../common/guards/auth/auth.guard';
 import {
+  InPersonVisitDetailsListResponseCaseExample,
+  InPersonVisitDetailsSingleResponseCaseExample,
   InPersonVisitsEntityMultiValue,
   InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsListResponseCaseExampleNoMultiValue,
   InPersonVisitsSingleResponseCaseExample,
   InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import {
   AttachmentDetailsCaseExample,
@@ -154,6 +164,7 @@ import {
   ContactEducationListResponseExample,
   ContactEducationEntity,
   ContactEducationSingleExample,
+  PostContactEducationResponseExample,
 } from '../../entities/contact-education.entity';
 import {
   NestedContactLegalAuthorityEntity,
@@ -161,6 +172,33 @@ import {
   ContactLegalAuthorityEntity,
   ContactLegalAuthoritySingleExample,
 } from '../../entities/contact-legals.entity';
+import {
+  NestedActivitiesEntity,
+  ActivitiesListResponseCaseExample,
+  ActivitiesEntity,
+  ActivitiesSingleResponseCaseExample,
+  PostActivitiesResponseCaseExample,
+} from '../../entities/activities.entity';
+import { PostActivityDto } from '../../dto/post-activity.dto';
+import { PostContactEducationDto } from '../../dto/post-contact-education.dto';
+import {
+  NestedActivityPlanEntity,
+  ActivityPlanListResponseCaseExample,
+  ActivityPlanEntity,
+  ActivityPlanSingleResponseCaseExample,
+  PostActivityPlanResponseCaseExample,
+} from '../../entities/activity-plan.entity';
+import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
+
+/*
+	Note: The functions for getting multiple cases (/cases) and a single 
+	case by id (/case/:id)
+	are located in the caseload controller file. This is for 2 reasons:
+	1. The name for the multi get would conflict with the controller path here 
+	(cases vs case)
+	2. The logic mostly utilizies common functions for fetching entities in caseload, including
+	different authorization to prevent fetching the parent entity twice.
+*/
 
 @Controller('case')
 @UseGuards(AuthGuard)
@@ -410,6 +448,86 @@ export class CasesController {
       res,
       req.headers[idirUsernameHeaderField] as string,
       filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/visits/:${visitIdName}/detail-values`)
+  @ApiOperation({
+    description: `Find all Visit Detail Values related to a given Visit entity by Case id and ${visitIdName}.`,
+  })
+  @ApiExtraModels(VisitDetailValue)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedInPersonVisitDetailsEntity),
+        },
+        examples: {
+          InPersonVisitDetailsListResponse: {
+            value: InPersonVisitDetailsListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseVisitDetailValues(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: VisitIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<NestedInPersonVisitDetailsEntity> {
+    return await this.casesService.getListCaseVisitDetailValues(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/visits/:${visitIdName}/detail-values/:${visitDetailIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${visitDetailIdName} result if it is related to the given Case id and ${visitIdName}.`,
+  })
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiExtraModels(VisitDetailValue)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(VisitDetailValue),
+        },
+        examples: {
+          InPersonVisitDetailsSingleResponse: {
+            value: InPersonVisitDetailsSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseVisitDetailValues(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: VisitDetailIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<VisitDetailValue> {
+    return await this.casesService.getSingleCaseVisitDetailValues(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
     );
   }
 
@@ -1248,6 +1366,49 @@ export class CasesController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/contacts/:${contactIdName}/education`)
+  @ApiOperation({
+    description:
+      'Create a contact education record related to the given case and contact id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ContactEducationCreatedResponse: {
+            value: PostContactEducationResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseContactEducationRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    contactEducationDto: PostContactEducationDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    return await this.casesService.postSingleCaseContactEducationRecord(
+      contactEducationDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(`:${idName}/contacts/:${contactIdName}/legal-authorities`)
   @ApiOperation({
     description:
@@ -1342,6 +1503,286 @@ export class CasesController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities`)
+  @ApiOperation({
+    description:
+      'Find all Activity entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivitiesEntity),
+        },
+        examples: {
+          ActivitiesListResponse: {
+            value: ActivitiesListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.casesService.getListCaseActivityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities/:${activityIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(ActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivitiesEntity),
+        },
+        examples: {
+          ActivitiesSingleResponse: {
+            value: ActivitiesSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivitiesEntity> {
+    return await this.casesService.getSingleCaseActivityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activities`)
+  @ApiOperation({
+    description: 'Create an activity record related to the given case id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityCreatedResponse: {
+            value: PostActivitiesResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseActivityRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    inPersonVisitDto: PostActivityDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    return await this.casesService.postSingleCaseActivityRecord(
+      inPersonVisitDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description:
+      'Find all Activity Plan entries related to a given Case entity by Case id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanListResponse: {
+            value: ActivityPlanListResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getListCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.casesService.getListCaseActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans/:${activityPlanIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityPlanIdName} result if it is related to the given Case id.`,
+  })
+  @ApiExtraModels(ActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanSingleResponse: {
+            value: ActivityPlanSingleResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityPlanIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivityPlanEntity> {
+    return await this.casesService.getSingleCaseActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description: 'Create an activity plan record related to the given case id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityPlanCreatedResponse: {
+            value: PostActivityPlanResponseCaseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleCaseActivityPlanRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    activityPlanDto: PostActivityPlanDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    return await this.casesService.postSingleCaseActivityPlanRecord(
+      activityPlanDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

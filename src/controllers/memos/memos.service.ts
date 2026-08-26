@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RecordType } from '../../common/constants/enumerations';
 import { memoAttachmentsFieldName } from '../../common/constants/parameter-constants';
 import {
+  ActivityIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -62,6 +63,19 @@ import {
   ContactLegalAuthorityEntity,
   NestedContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import {
+  ActivitiesEntity,
+  NestedActivitiesEntity,
+} from '../../entities/activities.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  PostActivityDto,
+  PostActivityDtoUpstream,
+} from '../../dto/post-activity.dto';
+import {
+  PostContactEducationDto,
+  PostContactEducationDtoUpstream,
+} from '../../dto/post-contact-education.dto';
 
 @Injectable()
 export class MemosService {
@@ -70,6 +84,7 @@ export class MemosService {
     private readonly contactsService: ContactsService,
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
+    private readonly activitiesService: ActivitiesService,
   ) {}
 
   async getSingleMemoAttachmentRecord(
@@ -306,6 +321,24 @@ export class MemosService {
     );
   }
 
+  async postSingleMemoContactEducationRecord(
+    contactEducationDto: PostContactEducationDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    const baseObject = {
+      ...contactEducationDto,
+      Id: stringNull,
+    };
+    const body = new PostContactEducationDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactEducationRecord(
+      RecordType.Memo,
+      body,
+      idir,
+      id,
+    );
+  }
+
   async getSingleMemoContactLegalAuthorityRecord(
     id: ContactLegalAuthorityIdPathParams,
     res: Response,
@@ -331,6 +364,55 @@ export class MemosService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async getSingleMemoActivityRecord(
+    id: ActivityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    return await this.activitiesService.getSingleActivityRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListMemoActivityRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.activitiesService.getListActivityRecord(
+      RecordType.Memo,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleMemoActivityRecord(
+    activityDto: PostActivityDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    const baseObject = {
+      ...activityDto,
+      Id: stringNull,
+      'ICM Type': 'Memo',
+      'ICM Memo Id': id.rowId,
+      'Primary Owned By': idir,
+    };
+    const body = new PostActivityDtoUpstream(baseObject);
+    return await this.activitiesService.postSingleActivityRecord(
+      RecordType.Memo,
+      id,
+      body,
+      idir,
     );
   }
 }

@@ -43,7 +43,7 @@ export const ContactEducationListResponseExample = {
 };
 
 export const PostContactEducationResponseExample = {
-  items: [ContactEducationSingleExample],
+  ...ContactEducationSingleExample,
 };
 
 /*

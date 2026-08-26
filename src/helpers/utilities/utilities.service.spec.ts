@@ -7,6 +7,9 @@ import {
   isISO8601DateUpstreamFormatter,
   isValidISO8601StartDateRange,
   isMedicalConditionValidForCategory,
+  isCurrentOrFutureISO8601Date,
+  isValidISO8601EndDate,
+  isPositiveIntegerString,
 } from './utilities.service';
 import { DateTime } from 'luxon';
 import { BadRequestException } from '@nestjs/common';
@@ -188,6 +191,27 @@ describe('UtilitiesService', () => {
     );
   });
 
+  describe('isCurrentOrFutureISO8601Date tests', () => {
+    it.each([[DateTime.now().toUTC().plus(60000).toJSDate().toISOString()]])(
+      `should return a string upon being given a future ISO-8601 date`,
+      (input) => {
+        expect(typeof isCurrentOrFutureISO8601Date(input)).toBe('string');
+      },
+    );
+
+    it.each([
+      [DateTime.now().toUTC().minus(600000).toJSDate().toISOString()],
+      ['abcdefgtlom'],
+    ])(
+      `should throw BadRequestException on past date or unexpected input format`,
+      (input) => {
+        expect(() => {
+          isCurrentOrFutureISO8601Date(input);
+        }).toThrow(BadRequestException);
+      },
+    );
+  });
+
   describe('isISO8601DateUpstreamFormatter tests', () => {
     it.each([[DateTime.now().toUTC().minus(60000).toJSDate().toISOString()]])(
       `should return a string upon being given a ISO-8601 date`,
@@ -246,6 +270,61 @@ describe('UtilitiesService', () => {
       (startDate, endDate) => {
         expect(() => {
           isValidISO8601StartDateRange(startDate, endDate);
+        }).toThrow(BadRequestException);
+      },
+    );
+  });
+
+  describe('isValidISO8601EndDate tests', () => {
+    it.each([
+      [
+        DateTime.now().toUTC().minus(60000).toJSDate().toISOString(),
+        DateTime.now().toUTC().toJSDate().toISOString(),
+        false,
+      ],
+      [undefined, DateTime.now().toUTC().toJSDate().toISOString(), true],
+    ])(
+      `should return a string upon being given a valid ISO-8601 end date`,
+      (startDate, endDate, startDateOptional) => {
+        expect(
+          typeof isValidISO8601EndDate(startDate, endDate, startDateOptional),
+        ).toBe('string');
+      },
+    );
+
+    it.each([[undefined, undefined]])(
+      `should return undefined upon being given two undefined values`,
+      (startDate, endDate) => {
+        expect(typeof isValidISO8601EndDate(startDate, endDate)).toBe(
+          'undefined',
+        );
+      },
+    );
+
+    it.each([
+      [
+        DateTime.now().toUTC().toJSDate().toISOString(),
+        DateTime.now().toUTC().minus(600000).toJSDate().toISOString(),
+        false,
+        undefined,
+      ],
+      [
+        undefined,
+        DateTime.now().toUTC().plus(600000).toJSDate().toISOString(),
+        false,
+        'different error',
+      ],
+      [
+        'abcdefgtlom',
+        DateTime.now().toUTC().plus(600000).toJSDate().toISOString(),
+        false,
+        undefined,
+      ],
+    ])(
+      `should throw BadRequestException on invalid end date or unexpected input format`,
+      (startDate, endDate, startDateOptional, error) => {
+        expect(() => {
+          isValidISO8601EndDate(startDate, endDate, startDateOptional, error);
         }).toThrow(BadRequestException);
       },
     );
@@ -400,6 +479,24 @@ describe('UtilitiesService', () => {
         const output = service.constructQueryHierarchy(input);
         const outputObject = JSON.parse(output);
         expect(outputObject).toEqual(expected);
+      },
+    );
+  });
+
+  describe('isPositiveIntegerString tests', () => {
+    it.each([['0'], ['20']])(
+      'returns input if string is a postive or zero integer',
+      (input) => {
+        expect(isPositiveIntegerString(input)).toBe(input);
+      },
+    );
+
+    it.each([['-20'], ['20.555'], ['not a number']])(
+      'throws error on non integer or negative number',
+      (input) => {
+        expect(() => {
+          isPositiveIntegerString(input);
+        }).toThrow(BadRequestException);
       },
     );
   });

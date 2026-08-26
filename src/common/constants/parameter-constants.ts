@@ -9,6 +9,7 @@ const recordCountHeaderName = 'total-record-count';
 const checkIdsReturnHeaderName = 'existing-ids';
 const inlineAttachmentParamName = 'inlineattachment';
 const excludeEmptyFieldsParamName = 'excludeEmptyFieldsInResponse';
+const entityScopeParamName = 'group';
 const checkIdsParamName = 'checkIds';
 const afterParamName = 'after';
 const caseIncludeParam = 'includeCase';
@@ -48,10 +49,13 @@ const contactEducationIdName = 'contactEducationId';
 const contactLegalAuthorityIdName = 'contactLegalAuthorityId';
 const supportNetworkIdName = 'supportNetworkId';
 const visitIdName = 'visitId';
+const visitDetailIdName = 'visitDetailId';
 const safetyAssessmentIdName = 'safetyAssessmentId';
 const responseNarrativeIdName = 'responseNarrativeId';
 const callInformationIdName = 'callInformationId';
 const additionalInformationIdName = 'additionalInformationId';
+const activityIdName = 'activityId';
+const activityPlanIdName = 'activityPlanId';
 const caseNotesIdName = 'caseNoteId';
 const incidentConcernIdName = 'incidentConcernId';
 
@@ -73,6 +77,7 @@ export {
   checkIdsReturnHeaderName,
   inlineAttachmentParamName,
   excludeEmptyFieldsParamName,
+  entityScopeParamName,
   checkIdsParamName,
   afterParamName,
   caseIncludeParam,
@@ -107,10 +112,13 @@ export {
   contactLegalAuthorityIdName,
   supportNetworkIdName,
   visitIdName,
+  visitDetailIdName,
   safetyAssessmentIdName,
   responseNarrativeIdName,
   callInformationIdName,
   additionalInformationIdName,
+  activityIdName,
+  activityPlanIdName,
   caseNotesIdName,
   incidentConcernIdName,
   casesAttachmentsFieldName,

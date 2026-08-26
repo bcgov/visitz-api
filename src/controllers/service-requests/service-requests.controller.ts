@@ -40,6 +40,8 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
@@ -74,6 +76,8 @@ import {
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import { ApiInternalServerErrorEntity } from '../../entities/api-internal-server-error.entity';
 import {
@@ -152,6 +156,7 @@ import {
   ContactEducationListResponseExample,
   ContactEducationEntity,
   ContactEducationSingleExample,
+  PostContactEducationResponseExample,
 } from '../../entities/contact-education.entity';
 import {
   NestedContactLegalAuthorityEntity,
@@ -159,6 +164,32 @@ import {
   ContactLegalAuthorityEntity,
   ContactLegalAuthoritySingleExample,
 } from '../../entities/contact-legals.entity';
+import {
+  NestedActivitiesEntity,
+  ActivitiesListResponseSRExample,
+  ActivitiesEntity,
+  ActivitiesSingleResponseSRExample,
+  PostActivitiesResponseSRExample,
+} from '../../entities/activities.entity';
+import { PostActivityDto } from '../../dto/post-activity.dto';
+import { PostContactEducationDto } from '../../dto/post-contact-education.dto';
+import {
+  NestedActivityPlanEntity,
+  ActivityPlanListResponseSRExample,
+  ActivityPlanEntity,
+  ActivityPlanSingleResponseSRExample,
+  PostActivityPlanResponseSRExample,
+} from '../../entities/activity-plan.entity';
+import { PostActivityPlanDto } from '../../dto/post-activity-plan.dto';
+
+/*
+	Note: The functions for getting multiple srs (/srs) and a single sr by id (/sr/:id)
+	are located in the caseload controller file. This is for 2 reasons:
+	1. The name for the multi get would conflict with the controller path here 
+	(srs vs sr)
+	2. The logic mostly utilizies common functions for fetching entities in caseload, including
+	different authorization to prevent fetching the parent entity twice.
+*/
 
 @Controller('sr')
 @UseGuards(AuthGuard)
@@ -1198,6 +1229,49 @@ export class ServiceRequestsController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/contacts/:${contactIdName}/education`)
+  @ApiOperation({
+    description:
+      'Create a contact education record related to the given SR and contact id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ContactEducationCreatedResponse: {
+            value: PostContactEducationResponseExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRContactEducationRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    contactEducationDto: PostContactEducationDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    return await this.serviceRequestService.postSingleSRContactEducationRecord(
+      contactEducationDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(`:${idName}/contacts/:${contactIdName}/legal-authorities`)
   @ApiOperation({
     description:
@@ -1292,6 +1366,286 @@ export class ServiceRequestsController {
       id,
       res,
       req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities`)
+  @ApiOperation({
+    description:
+      'Find all Activity entries related to a given SR entity by SR id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivitiesEntity),
+        },
+        examples: {
+          ActivitiesListResponse: {
+            value: ActivitiesListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.serviceRequestService.getListSRActivityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activities/:${activityIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityIdName} result if it is related to the given SR id.`,
+  })
+  @ApiExtraModels(ActivitiesEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivitiesEntity),
+        },
+        examples: {
+          ActivitiesSingleResponse: {
+            value: ActivitiesSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRActivityRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivitiesEntity> {
+    return await this.serviceRequestService.getSingleSRActivityRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activities`)
+  @ApiOperation({
+    description: 'Create an activity record related to the given SR id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityCreatedResponse: {
+            value: PostActivitiesResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRActivityRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    inPersonVisitDto: PostActivityDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    return await this.serviceRequestService.postSingleSRActivityRecord(
+      inPersonVisitDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description:
+      'Find all Activity Plan entries related to a given SR entity by SR id.',
+  })
+  @ApiQuery({ name: afterParamName, required: false })
+  @ApiQuery({ name: recordCountNeededParamName, required: false })
+  @ApiQuery({ name: pageSizeParamName, required: false })
+  @ApiQuery({ name: startRowNumParamName, required: false })
+  @ApiQuery({ name: excludeEmptyFieldsParamName, required: false })
+  @ApiQuery({ name: checkIdsParamName, required: false, type: 'string' })
+  @ApiExtraModels(NestedActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    headers: existingIdsRecordCountHeadersSwagger,
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(NestedActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanListResponse: {
+            value: ActivityPlanListResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getListSRActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+    @Res({ passthrough: true }) res: Response,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+        skipMissingProperties: true,
+      }),
+    )
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.serviceRequestService.getListSRActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+      filter,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(`:${idName}/activity-plans/:${activityPlanIdName}`)
+  @ApiOperation({
+    description: `Displays the single ${activityPlanIdName} result if it is related to the given SR id.`,
+  })
+  @ApiExtraModels(ActivityPlanEntity)
+  @ApiNoContentResponse(noContentResponseSwagger)
+  @ApiOkResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        schema: {
+          $ref: getSchemaPath(ActivityPlanEntity),
+        },
+        examples: {
+          ActivityPlanSingleResponse: {
+            value: ActivityPlanSingleResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async getSingleSRActivityPlanRecord(
+    @Req() req: Request,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: ActivityPlanIdPathParams,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ActivityPlanEntity> {
+    return await this.serviceRequestService.getSingleSRActivityPlanRecord(
+      id,
+      res,
+      req.headers[idirUsernameHeaderField] as string,
+    );
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(`:${idName}/activity-plans`)
+  @ApiOperation({
+    description: 'Create an activity plan record related to the given SR id.',
+  })
+  @ApiCreatedResponse({
+    content: {
+      [CONTENT_TYPE]: {
+        examples: {
+          ActivityPlanCreatedResponse: {
+            value: PostActivityPlanResponseSRExample,
+          },
+        },
+      },
+    },
+  })
+  async postSingleSRActivityPlanRecord(
+    @Req() req: Request,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        whitelist: true,
+      }),
+    )
+    activityPlanDto: PostActivityPlanDto,
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    return await this.serviceRequestService.postSingleSRActivityPlanRecord(
+      activityPlanDto,
+      req.headers[idirUsernameHeaderField] as string,
+      id,
     );
   }
 }

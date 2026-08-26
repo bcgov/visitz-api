@@ -13,6 +13,8 @@ import {
   SupportNetworkSingleResponseCaseExample,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
   ContactEducationIdPathParams,
@@ -22,6 +24,7 @@ import {
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitDetailIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -37,12 +40,16 @@ import { TokenRefresherService } from '../../external-api/token-refresher/token-
 import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-visits.service';
 import { RequestPreparerService } from '../../external-api/request-preparer/request-preparer.service';
 import {
+  InPersonVisitDetailsListResponseCaseExample,
+  InPersonVisitDetailsSingleResponseCaseExample,
   InPersonVisitsEntityNoMultiValue,
   InPersonVisitsListResponseCaseExample,
   InPersonVisitsSingleResponseCaseExampleNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
   PostInPersonVisitResponseExample,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import {
   attachmentIdName,
@@ -53,11 +60,14 @@ import {
   afterParamName,
   supportNetworkIdName,
   visitIdName,
+  visitDetailIdName,
   caseNotesIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
   contactEducationIdName,
   contactLegalAuthorityIdName,
+  activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -107,6 +117,7 @@ import {
   NestedContactEducationEntity,
   ContactEducationSingleExample,
   ContactEducationEntity,
+  PostContactEducationResponseExample,
 } from '../../entities/contact-education.entity';
 import {
   ContactLegalAuthorityListResponseExample,
@@ -114,6 +125,22 @@ import {
   ContactLegalAuthoritySingleExample,
   ContactLegalAuthorityEntity,
 } from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesListResponseCaseExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseCaseExample,
+  ActivitiesEntity,
+  PostActivitiesResponseCaseExample,
+} from '../../entities/activities.entity';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanListResponseCaseExample,
+  NestedActivityPlanEntity,
+  ActivityPlanSingleResponseCaseExample,
+  ActivityPlanEntity,
+  PostActivityPlanResponseCaseExample,
+} from '../../entities/activity-plan.entity';
 
 describe('CasesService', () => {
   let service: CasesService;
@@ -122,6 +149,8 @@ describe('CasesService', () => {
   let attachmentsService: AttachmentsService;
   let contactsService: ContactsService;
   let caseNotesService: CaseNotesService;
+  let activitiesService: ActivitiesService;
+  let activityPlanService: ActivityPlanService;
   const { res, mockClear } = getMockRes();
 
   beforeEach(async () => {
@@ -133,6 +162,8 @@ describe('CasesService', () => {
         SupportNetworkService,
         CaseNotesService,
         AttachmentsService,
+        ActivitiesService,
+        ActivityPlanService,
         VirusScanService,
         UtilitiesService,
         JwtService,
@@ -159,6 +190,8 @@ describe('CasesService', () => {
     attachmentsService = module.get<AttachmentsService>(AttachmentsService);
     contactsService = module.get<ContactsService>(ContactsService);
     caseNotesService = module.get<CaseNotesService>(CaseNotesService);
+    activitiesService = module.get<ActivitiesService>(ActivitiesService);
+    activityPlanService = module.get<ActivityPlanService>(ActivityPlanService);
     mockClear();
   });
 
@@ -306,6 +339,70 @@ describe('CasesService', () => {
           undefined,
         );
         expect(result).toEqual(new InPersonVisitsEntityNoMultiValue(data));
+      },
+    );
+  });
+
+  describe('getListCaseVisitDetailValues tests', () => {
+    it.each([
+      [
+        InPersonVisitDetailsListResponseCaseExample,
+        { [idName]: 'test', [visitIdName]: 'test2' } as VisitIdPathParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams) => {
+        const InPersonVisitsSpy = jest
+          .spyOn(inPersonVisitsService, 'getListVisitDetailValues')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedInPersonVisitDetailsEntity(data)),
+          );
+
+        const result = await service.getListCaseVisitDetailValues(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(InPersonVisitsSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new NestedInPersonVisitDetailsEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseVisitDetailValues tests', () => {
+    it.each([
+      [
+        InPersonVisitDetailsSingleResponseCaseExample,
+        {
+          [idName]: 'test',
+          [visitIdName]: 'test2',
+          [visitDetailIdName]: 'test3',
+        } as VisitDetailIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const InPersonVisitsSpy = jest
+          .spyOn(inPersonVisitsService, 'getSingleVisitDetailValues')
+          .mockReturnValueOnce(Promise.resolve(new VisitDetailValue(data)));
+
+        const result = await service.getSingleCaseVisitDetailValues(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(InPersonVisitsSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new NestedInPersonVisitDetailsEntity(data));
       },
     );
   });
@@ -916,6 +1013,36 @@ describe('CasesService', () => {
     );
   });
 
+  describe('postSingleCaseContactEducationRecord tests', () => {
+    it.each([
+      [
+        {
+          Degree: '12',
+        },
+        'idir',
+        { [idName]: 'test', [contactIdName]: 'Id Here' } as ContactIdPathParams,
+        PostContactEducationResponseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const contactEducationSpy = jest
+          .spyOn(contactsService, 'postSingleContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactEducationEntity(data)),
+          );
+
+        const result = await service.postSingleCaseContactEducationRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(contactEducationSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new ContactEducationEntity(data));
+      },
+    );
+  });
+
   describe('getListCaseContactLegalAuthorityRecord tests', () => {
     it.each([
       [
@@ -984,6 +1111,206 @@ describe('CasesService', () => {
           'idir',
         );
         expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseCaseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getListActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await service.getListCaseActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseCaseExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'getSingleActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await service.getSingleCaseActivityRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activitiesSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseActivityRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Type: 'type',
+          Description: 'description here',
+          'Action By': 'Staff',
+          Due: '2090-10-05T17:34:57',
+          'Duration Minutes': '60',
+          'Ministry Id': '0-R9NH',
+          Planned: '2090-10-02T17:34:57',
+          Priority: '3-Standard',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostActivitiesResponseCaseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const activitiesSpy = jest
+          .spyOn(activitiesService, 'postSingleActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await service.postSingleCaseActivityRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(activitiesSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getListCaseActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanListResponseCaseExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2024-12-01',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'getListActivityPlanRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivityPlanEntity(data)),
+          );
+
+        const result = await service.getListCaseActivityPlanRecord(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(activityPlanSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleCaseActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanSingleResponseCaseExample,
+        {
+          [idName]: 'test',
+          [activityPlanIdName]: 'test2',
+        } as ActivityPlanIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'getSingleActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await service.getSingleCaseActivityPlanRecord(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(activityPlanSpy).toHaveBeenCalledWith(
+          RecordType.Case,
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleCaseActivityPlanRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Template: 'Template here',
+        },
+        'idir',
+        { [idName]: 'test' } as IdPathParams,
+        PostActivityPlanResponseCaseExample,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (body, idir, idPathParams, data) => {
+        const activityPlanSpy = jest
+          .spyOn(activityPlanService, 'postSingleActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await service.postSingleCaseActivityPlanRecord(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(activityPlanSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(new ActivityPlanEntity(data));
       },
     );
   });

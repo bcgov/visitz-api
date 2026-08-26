@@ -274,6 +274,11 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: MAX_FILE_SIZE_BYTES
+  - name: BODY_SIZE_LIMIT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: BODY_SIZE_LIMIT
   - name: CLAM_DEBUG_MODE
     valueFrom:
       configMapKeyRef:
@@ -669,3 +674,93 @@ env:
       configMapKeyRef:
           name: visitz-api-config
           key: CONTACT_LEGAL_AUTHORITY_AFTER_FIELD
+  - name: CASE_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_ACTIVITIES_ENDPOINT
+  - name: INCIDENT_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_ACTIVITIES_ENDPOINT
+  - name: SR_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_ACTIVITIES_ENDPOINT
+  - name: MEMO_ACTIVITIES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_ACTIVITIES_ENDPOINT
+  - name: ACTIVITIES_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACTIVITIES_AFTER_FIELD
+  - name: ACTIVITIES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACTIVITIES_WORKSPACE
+  - name: CASE_ACTIVITY_PLAN_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_ACTIVITY_PLAN_ENDPOINT
+  - name: INCIDENT_ACTIVITY_PLAN_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_ACTIVITY_PLAN_ENDPOINT
+  - name: SR_ACTIVITY_PLAN_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_ACTIVITY_PLAN_ENDPOINT
+  - name: ACTIVITY_PLAN_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACTIVITY_PLAN_AFTER_FIELD
+  - name: ACTIVITY_PLAN_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: ACTIVITY_PLAN_WORKSPACE
+  - name: POST_CONTACT_EDUCATION_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_CONTACT_EDUCATION_ENDPOINT
+  - name: POST_CONTACT_EDUCATION_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: POST_CONTACT_EDUCATION_WORKSPACE
+  - name: CASE_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: CASE_SEARCHSPEC_AFTER_FIELD
+  - name: INCIDENT_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: INCIDENT_SEARCHSPEC_AFTER_FIELD
+  - name: SR_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: SR_SEARCHSPEC_AFTER_FIELD
+  - name: MEMO_SEARCHSPEC_AFTER_FIELD
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: MEMO_SEARCHSPEC_AFTER_FIELD
+  - name: IN_PERSON_VISIT_DETAILS_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: IN_PERSON_VISIT_DETAILS_ENDPOINT        

@@ -63,6 +63,21 @@ const contactLanguagesCommentsMax = 255;
 const contactMedicalBehavioralCommentsMax = 200;
 const contactMedicalBehavioralDiagnosedByMax = 100;
 const contactMedicalBehavioralTreatmentPlanMax = 100;
+const activityActionCodeMax = 50;
+const activityApptAlarmTimeMax = 16;
+const activityCategoryMax = 30;
+const activityDelayMax = 30;
+const activityDescriptionMax = 250;
+const activityDurationMinutesMax = 16;
+const activityICMSubTypeMax = 30;
+const activityMeetingLocationMax = 1500;
+const activityPlanNameMax = 100;
+const activityResultCodeMax = 50;
+const activitySequenceMax = 255;
+const activityTypeMax = 30;
+const activityPlanCommentsMax = 1500;
+const activityPlanTemplateMax = 100;
+const contactEducationCommentsMax = 100;
 
 export {
   baseUrlEnvVarName,
@@ -130,4 +145,19 @@ export {
   contactMedicalBehavioralCommentsMax,
   contactMedicalBehavioralDiagnosedByMax,
   contactMedicalBehavioralTreatmentPlanMax,
+  activityActionCodeMax,
+  activityApptAlarmTimeMax,
+  activityCategoryMax,
+  activityDelayMax,
+  activityDescriptionMax,
+  activityDurationMinutesMax,
+  activityICMSubTypeMax,
+  activityMeetingLocationMax,
+  activityPlanNameMax,
+  activityResultCodeMax,
+  activitySequenceMax,
+  activityTypeMax,
+  activityPlanCommentsMax,
+  activityPlanTemplateMax,
+  contactEducationCommentsMax,
 };

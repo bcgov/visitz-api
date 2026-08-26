@@ -4,17 +4,26 @@ import { upstreamDateFormatNoTime } from './upstream-constants';
 export const childServicesTypeError =
   'Given case is not a Child Services case and cannot have Child/Youth visits.';
 
+export const visitNotRelatedError =
+  'Given visit is not related to the given case.';
+
 export const childServicesMedBehavTypeError =
   'Given contact cannot have Medical/Behvioral information.';
 
 export const dateFormatError =
   'Date / time must meet the ISO-8601 standard, and cannot be in the future.';
 
+export const dateFormatPastError =
+  'Date / time must meet the ISO-8601 standard, and cannot be in the past.';
+
 export const dateFormatErrorAnyTime =
   'Date / time must meet the ISO-8601 standard.';
 
 export const dateRangeFormatError =
   'Dates / times must meet the ISO-8601 standard, and end date must be greater than or equal to start date.';
+
+export const endDateFormatError =
+  'Dates / times must meet the ISO-8601 standard, and done date must be greater than or equal to planned date.';
 
 export const upstreamDateFormatError =
   'Date must be valid, not in the future and in the ' +
@@ -43,3 +52,8 @@ export const multiIdError =
 
 export const contactMedicalBehavioralConditionEnumError =
   'Condition must be one of the following values when Category is ${category}: ${enum}';
+
+export const isNotPostiveIntegerStringError =
+  'String must be a positive integer or 0';
+
+export const invalidRecordTypeError = 'Given type is not a valid record type.';
