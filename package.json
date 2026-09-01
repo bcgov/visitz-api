@@ -1,6 +1,6 @@
 {
   "name": "visitz-api",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "Middleware API for the MCFD Mobility app.",
   "scripts": {
     "build": "nest build",
@@ -19,7 +19,7 @@
     "test:debug": "NODE_OPTIONS=--experimental-vm-modules node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky || true",
-	"update": "npm update --allow-git=none"
+    "update": "npm update --allow-git=none"
   },
   "author": "MCFD Mobility",
   "license": "MIT License",
@@ -73,7 +73,8 @@
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^9.1.6",
     "jest": "^30.0.0",
-    "jest-junit": "^16.0.0",
+    "jest-junit": "^17.0.0",
+    "pino": "^10.3.1",
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",

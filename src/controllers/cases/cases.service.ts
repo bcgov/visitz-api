@@ -6,13 +6,18 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AttachmentIdPathParams,
   CaseNotesIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   SupportNetworkIdPathParams,
+  VisitDetailIdPathParams,
   VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import {
@@ -25,8 +30,10 @@ import { InPersonVisitsService } from '../../helpers/in-person-visits/in-person-
 import {
   InPersonVisitsEntityMultiValue,
   InPersonVisitsEntityNoMultiValue,
+  NestedInPersonVisitDetailsEntity,
   NestedInPersonVisitsMultiValueEntity,
   NestedInPersonVisitsNoMultiValueEntity,
+  VisitDetailValue,
 } from '../../entities/in-person-visits.entity';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -81,6 +88,36 @@ import {
   PostContactMedicalBehavioralDto,
   PostContactMedicalBehavioralDtoUpstream,
 } from '../../dto/post-contact-medical-behavioral.dto';
+import {
+  ContactEducationEntity,
+  NestedContactEducationEntity,
+} from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  ActivitiesEntity,
+  NestedActivitiesEntity,
+} from '../../entities/activities.entity';
+import {
+  PostActivityDto,
+  PostActivityDtoUpstream,
+} from '../../dto/post-activity.dto';
+import {
+  PostContactEducationDto,
+  PostContactEducationDtoUpstream,
+} from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
+import {
+  PostActivityPlanDto,
+  PostActivityPlanDtoUpstream,
+} from '../../dto/post-activity-plan.dto';
 
 @Injectable()
 export class CasesService {
@@ -90,6 +127,8 @@ export class CasesService {
     private readonly attachmentsService: AttachmentsService,
     private readonly contactsService: ContactsService,
     private readonly caseNotesService: CaseNotesService,
+    private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleCaseSupportNetworkInformationRecord(
@@ -152,6 +191,32 @@ export class CasesService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async getListCaseVisitDetailValues(
+    id: VisitIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<NestedInPersonVisitDetailsEntity> {
+    return await this.inPersonVisitsService.getListVisitDetailValues(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getSingleCaseVisitDetailValues(
+    id: VisitDetailIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<VisitDetailValue> {
+    return await this.inPersonVisitsService.getSingleVisitDetailValues(
+      RecordType.Case,
+      id,
+      res,
+      idir,
     );
   }
 
@@ -404,6 +469,175 @@ export class CasesService {
       body,
       idir,
       id,
+    );
+  }
+
+  async getSingleCaseContactEducationRecord(
+    id: ContactEducationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactEducationEntity> {
+    return await this.contactsService.getSingleContactEducationRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactEducationRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactEducationEntity> {
+    return await this.contactsService.getListContactEducationRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleCaseContactEducationRecord(
+    contactEducationDto: PostContactEducationDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    const baseObject = {
+      ...contactEducationDto,
+      Id: stringNull,
+    };
+    const body = new PostContactEducationDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactEducationRecord(
+      RecordType.Case,
+      body,
+      idir,
+      id,
+    );
+  }
+
+  async getSingleCaseContactLegalAuthorityRecord(
+    id: ContactLegalAuthorityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.contactsService.getSingleContactLegalAuthorityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseContactLegalAuthorityRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.contactsService.getListContactLegalAuthorityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleCaseActivityRecord(
+    id: ActivityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    return await this.activitiesService.getSingleActivityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseActivityRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.activitiesService.getListActivityRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleCaseActivityRecord(
+    activityDto: PostActivityDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    const baseObject = {
+      ...activityDto,
+      Id: stringNull,
+      'ICM Type': EntityType.Case,
+      'Case Id': id.rowId,
+      'Primary Owned By': idir,
+    };
+    const body = new PostActivityDtoUpstream(baseObject);
+    return await this.activitiesService.postSingleActivityRecord(
+      RecordType.Case,
+      id,
+      body,
+      idir,
+    );
+  }
+
+  async getSingleCaseActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListCaseActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.Case,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleCaseActivityPlanRecord(
+    activityPlanDto: PostActivityPlanDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    const baseObject = {
+      ...activityPlanDto,
+      Id: stringNull,
+    };
+    const body = new PostActivityPlanDtoUpstream(baseObject);
+    return await this.activityPlanService.postSingleActivityPlanRecord(
+      RecordType.Case,
+      id,
+      body,
+      idir,
     );
   }
 }

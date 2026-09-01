@@ -168,7 +168,9 @@ export class AttachmentsService {
       `[${this.fileExtensionFieldName}] IS NOT NULL AND ` +
       `([${this.formDescriptionFieldName}] IS NULL OR ` +
       `NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
-      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}"))`;
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}" AND ` +
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Recycled}" AND ` +
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.UnProfiled}"))`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,
@@ -203,7 +205,9 @@ export class AttachmentsService {
       `([${typeFieldName}]="${id[idName]}" AND ` +
       `([${this.formDescriptionFieldName}] IS NULL OR ` +
       `NOT ([${this.formDescriptionFieldName}]="${attachmentTypeSafetyAssessment}" AND ` +
-      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}"))`;
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Complete}" AND ` +
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.Recycled}" AND ` +
+      `[${this.attachmentStatusFieldName}]<>"${AttachmentStatusEnum.UnProfiled}"))`;
     const [headers, params] =
       this.requestPreparerService.prepareHeadersAndParams(
         baseSearchSpec,

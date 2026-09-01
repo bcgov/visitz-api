@@ -12,11 +12,15 @@ import {
   SupportNetworkSingleResponseSRExample,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
@@ -42,6 +46,10 @@ import {
   callInformationIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
+  contactLegalAuthorityIdName,
+  activityIdName,
+  activityPlanIdName,
 } from '../../common/constants/parameter-constants';
 import { AttachmentsService } from '../../helpers/attachments/attachments.service';
 import {
@@ -104,6 +112,35 @@ import {
   ContactMedicalBehavioralSingleExample,
   ContactMedicalBehavioralEntity,
 } from '../../entities/contact-medical-behavioral.entity';
+import {
+  ContactEducationListResponseExample,
+  NestedContactEducationEntity,
+  ContactEducationSingleExample,
+  ContactEducationEntity,
+  PostContactEducationResponseExample,
+} from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityListResponseExample,
+  NestedContactLegalAuthorityEntity,
+  ContactLegalAuthoritySingleExample,
+  ContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivitiesListResponseSRExample,
+  NestedActivitiesEntity,
+  ActivitiesSingleResponseSRExample,
+  ActivitiesEntity,
+  PostActivitiesResponseSRExample,
+} from '../../entities/activities.entity';
+import {
+  ActivityPlanListResponseSRExample,
+  NestedActivityPlanEntity,
+  ActivityPlanSingleResponseSRExample,
+  ActivityPlanEntity,
+  PostActivityPlanResponseSRExample,
+} from '../../entities/activity-plan.entity';
 
 describe('ServiceRequestsController', () => {
   let controller: ServiceRequestsController;
@@ -126,6 +163,8 @@ describe('ServiceRequestsController', () => {
         ResponseNarrativeService,
         CallInformationService,
         AdditionalInformationService,
+        ActivitiesService,
+        ActivityPlanService,
         VirusScanService,
         TokenRefresherService,
         RequestPreparerService,
@@ -842,6 +881,398 @@ describe('ServiceRequestsController', () => {
           'idir',
         );
         expect(result).toEqual(new ContactMedicalBehavioralEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRContactEducationRecord tests', () => {
+    it.each([
+      [
+        ContactEducationListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactEducationEntity(data)),
+          );
+
+        const result = await controller.getListSRContactEducationRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRContactEducationRecord tests', () => {
+    it.each([
+      [
+        ContactEducationSingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactEducationIdName]: 'test3',
+        } as ContactEducationIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactEducationEntity(data)),
+          );
+
+        const result = await controller.getSingleSRContactEducationRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRContactEducationRecord tests', () => {
+    it.each([
+      [
+        {
+          Degree: '12',
+        },
+        {
+          [idName]: 'test',
+          [contactIdName]: 'contactId',
+        } as ContactIdPathParams,
+        'idir',
+        PostContactEducationResponseExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRContactEducationRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactEducationEntity(data)),
+          );
+
+        const result = await controller.postSingleSRContactEducationRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(result).toEqual(new ContactEducationEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRContactLegalAuthorityRecord tests', () => {
+    it.each([
+      [
+        ContactLegalAuthorityListResponseExample,
+        { [idName]: 'test', [contactIdName]: 'test2' } as ContactIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRContactLegalAuthorityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedContactLegalAuthorityEntity(data)),
+          );
+
+        const result = await controller.getListSRContactLegalAuthorityRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRContactLegalAuthorityRecord tests', () => {
+    it.each([
+      [
+        ContactLegalAuthoritySingleExample,
+        {
+          [idName]: 'test',
+          [contactIdName]: 'test2',
+          [contactLegalAuthorityIdName]: 'test3',
+        } as ContactLegalAuthorityIdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(
+            serviceRequestsService,
+            'getSingleSRContactLegalAuthorityRecord',
+          )
+          .mockReturnValueOnce(
+            Promise.resolve(new ContactLegalAuthorityEntity(data)),
+          );
+
+        const result = await controller.getSingleSRContactLegalAuthorityRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ContactLegalAuthorityEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const serviceRequestServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRActivityRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivitiesEntity(data)),
+          );
+
+        const result = await controller.getListSRActivityRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(serviceRequestServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRActivityRecord tests', () => {
+    it.each([
+      [
+        ActivitiesSingleResponseSRExample,
+        { [idName]: 'test', [activityIdName]: 'test2' } as ActivityIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const serviceRequestServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await controller.getSingleSRActivityRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(serviceRequestServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRActivityRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Type: 'type',
+          Description: 'description here',
+          'Action By': 'Staff',
+          Due: '2090-10-05T17:34:57',
+          'Duration Minutes': '60',
+          'Ministry Id': '0-R9NH',
+          Planned: '2090-10-02T17:34:57',
+          Priority: '3-Standard',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostActivitiesResponseSRExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRActivityRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivitiesEntity(data)));
+
+        const result = await controller.postSingleSRActivityRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(result).toEqual(new ActivitiesEntity(data));
+      },
+    );
+  });
+
+  describe('getListSRActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanListResponseSRExample,
+        { [idName]: 'test' } as IdPathParams,
+        {
+          [afterParamName]: '2020-02-02',
+          [startRowNumParamName]: 0,
+        } as FilterQueryParams,
+      ],
+    ])(
+      'should return nested values given good input',
+      async (data, idPathParams, filterQueryParams) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getListSRActivityPlanRecord')
+          .mockReturnValueOnce(
+            Promise.resolve(new NestedActivityPlanEntity(data)),
+          );
+
+        const result = await controller.getListSRActivityPlanRecord(
+          req,
+          idPathParams,
+          res,
+          filterQueryParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+          filterQueryParams,
+        );
+        expect(result).toEqual(new NestedActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('getSingleSRActivityPlanRecord tests', () => {
+    it.each([
+      [
+        ActivityPlanSingleResponseSRExample,
+        {
+          [idName]: 'test',
+          [activityPlanIdName]: 'test2',
+        } as ActivityPlanIdPathParams,
+      ],
+    ])(
+      'should return single values given good input',
+      async (data, idPathParams) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'getSingleSRActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await controller.getSingleSRActivityPlanRecord(
+          req,
+          idPathParams,
+          res,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          idPathParams,
+          res,
+          'idir',
+        );
+        expect(result).toEqual(new ActivityPlanEntity(data));
+      },
+    );
+  });
+
+  describe('postSingleSRActivityPlanRecord tests', () => {
+    it.each([
+      [
+        {
+          Status: 'Open',
+          Template: 'Template here',
+        },
+        { [idName]: 'test' } as IdPathParams,
+        'idir',
+        PostActivityPlanResponseSRExample,
+      ],
+    ])(
+      'should return a single nested given good input',
+      async (body, idPathParams, idir, data) => {
+        const serviceRequestsServiceSpy = jest
+          .spyOn(serviceRequestsService, 'postSingleSRActivityPlanRecord')
+          .mockReturnValueOnce(Promise.resolve(new ActivityPlanEntity(data)));
+
+        const result = await controller.postSingleSRActivityPlanRecord(
+          getMockReq({ headers: { [idirUsernameHeaderField]: idir } }),
+          body,
+          idPathParams,
+        );
+        expect(serviceRequestsServiceSpy).toHaveBeenCalledWith(
+          body,
+          idir,
+          idPathParams,
+        );
+        expect(result).toEqual(new ActivityPlanEntity(data));
       },
     );
   });

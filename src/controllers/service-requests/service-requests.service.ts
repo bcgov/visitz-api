@@ -6,11 +6,15 @@ import {
   SupportNetworkEntity,
 } from '../../entities/support-network.entity';
 import {
+  ActivityIdPathParams,
+  ActivityPlanIdPathParams,
   AdditionalInformationIdPathParams,
   AttachmentIdPathParams,
   CallInformationIdPathParams,
+  ContactEducationIdPathParams,
   ContactIdPathParams,
   ContactLanguagesIdPathParams,
+  ContactLegalAuthorityIdPathParams,
   ContactMedicalBehavioralIdPathParams,
   IdPathParams,
   ResponseNarrativeIdPathParams,
@@ -68,6 +72,36 @@ import {
   ContactMedicalBehavioralEntity,
   NestedContactMedicalBehavioralEntity,
 } from '../../entities/contact-medical-behavioral.entity';
+import {
+  ContactEducationEntity,
+  NestedContactEducationEntity,
+} from '../../entities/contact-education.entity';
+import {
+  ContactLegalAuthorityEntity,
+  NestedContactLegalAuthorityEntity,
+} from '../../entities/contact-legals.entity';
+import {
+  ActivitiesEntity,
+  NestedActivitiesEntity,
+} from '../../entities/activities.entity';
+import { ActivitiesService } from '../../helpers/activities/activities.service';
+import {
+  PostActivityDto,
+  PostActivityDtoUpstream,
+} from '../../dto/post-activity.dto';
+import {
+  PostContactEducationDto,
+  PostContactEducationDtoUpstream,
+} from '../../dto/post-contact-education.dto';
+import { ActivityPlanService } from '../../helpers/activity-plan/activity-plan.service';
+import {
+  ActivityPlanEntity,
+  NestedActivityPlanEntity,
+} from '../../entities/activity-plan.entity';
+import {
+  PostActivityPlanDto,
+  PostActivityPlanDtoUpstream,
+} from '../../dto/post-activity-plan.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -78,6 +112,8 @@ export class ServiceRequestsService {
     private readonly responseNarrativesService: ResponseNarrativeService,
     private readonly callInformationService: CallInformationService,
     private readonly additionalInformationService: AdditionalInformationService,
+    private readonly activitiesService: ActivitiesService,
+    private readonly activityPlanService: ActivityPlanService,
   ) {}
 
   async getSingleSRSupportNetworkInformationRecord(
@@ -358,6 +394,175 @@ export class ServiceRequestsService {
       res,
       idir,
       filter,
+    );
+  }
+
+  async getSingleSRContactEducationRecord(
+    id: ContactEducationIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactEducationEntity> {
+    return await this.contactsService.getSingleContactEducationRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRContactEducationRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactEducationEntity> {
+    return await this.contactsService.getListContactEducationRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleSRContactEducationRecord(
+    contactEducationDto: PostContactEducationDto,
+    idir: string,
+    id: ContactIdPathParams,
+  ): Promise<ContactEducationEntity> {
+    const baseObject = {
+      ...contactEducationDto,
+      Id: stringNull,
+    };
+    const body = new PostContactEducationDtoUpstream(baseObject);
+    return await this.contactsService.postSingleContactEducationRecord(
+      RecordType.SR,
+      body,
+      idir,
+      id,
+    );
+  }
+
+  async getSingleSRContactLegalAuthorityRecord(
+    id: ContactLegalAuthorityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ContactLegalAuthorityEntity> {
+    return await this.contactsService.getSingleContactLegalAuthorityRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRContactLegalAuthorityRecord(
+    id: ContactIdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedContactLegalAuthorityEntity> {
+    return await this.contactsService.getListContactLegalAuthorityRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async getSingleSRActivityRecord(
+    id: ActivityIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivitiesEntity> {
+    return await this.activitiesService.getSingleActivityRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRActivityRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivitiesEntity> {
+    return await this.activitiesService.getListActivityRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleSRActivityRecord(
+    activityDto: PostActivityDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivitiesEntity> {
+    const baseObject = {
+      ...activityDto,
+      Id: stringNull,
+      'ICM Type': EntityType.SR,
+      'Activity SR Id': id.rowId,
+      'Primary Owned By': idir,
+    };
+    const body = new PostActivityDtoUpstream(baseObject);
+    return await this.activitiesService.postSingleActivityRecord(
+      RecordType.SR,
+      id,
+      body,
+      idir,
+    );
+  }
+
+  async getSingleSRActivityPlanRecord(
+    id: ActivityPlanIdPathParams,
+    res: Response,
+    idir: string,
+  ): Promise<ActivityPlanEntity> {
+    return await this.activityPlanService.getSingleActivityPlanRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+    );
+  }
+
+  async getListSRActivityPlanRecord(
+    id: IdPathParams,
+    res: Response,
+    idir: string,
+    filter?: CheckIdQueryParams,
+  ): Promise<NestedActivityPlanEntity> {
+    return await this.activityPlanService.getListActivityPlanRecord(
+      RecordType.SR,
+      id,
+      res,
+      idir,
+      filter,
+    );
+  }
+
+  async postSingleSRActivityPlanRecord(
+    activityPlanDto: PostActivityPlanDto,
+    idir: string,
+    id: IdPathParams,
+  ): Promise<ActivityPlanEntity> {
+    const baseObject = {
+      ...activityPlanDto,
+      Id: stringNull,
+    };
+    const body = new PostActivityPlanDtoUpstream(baseObject);
+    return await this.activityPlanService.postSingleActivityPlanRecord(
+      RecordType.SR,
+      id,
+      body,
+      idir,
     );
   }
 }

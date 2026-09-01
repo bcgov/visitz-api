@@ -16,6 +16,11 @@ import {
   additionalInformationIdName,
   contactLanguageIdName,
   contactMedicalBehavioralIdName,
+  contactEducationIdName,
+  contactLegalAuthorityIdName,
+  activityIdName,
+  activityPlanIdName,
+  visitDetailIdName,
 } from '../common/constants/parameter-constants';
 
 export class IdPathParams {
@@ -74,6 +79,29 @@ export class ContactMedicalBehavioralIdPathParams extends ContactIdPathParams {
   [contactMedicalBehavioralIdName]: string;
 }
 
+export class ContactEducationIdPathParams extends ContactIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Contact-Education-Id-Here',
+    description: 'The Id of the contact education entry you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [contactEducationIdName]: string;
+}
+
+export class ContactLegalAuthorityIdPathParams extends ContactIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Contact-Legal-Authority-Id-Here',
+    description:
+      'The Id of the contact legal authority entry you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [contactLegalAuthorityIdName]: string;
+}
+
 export class SupportNetworkIdPathParams extends IdPathParams {
   @Matches(idRegex)
   @ApiProperty({
@@ -94,6 +122,17 @@ export class VisitIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [visitIdName]: string;
+}
+
+export class VisitDetailIdPathParams extends VisitIdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Visit-Detail-Id-Here',
+    description: 'The Id of the visit detail you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [visitDetailIdName]: string;
 }
 
 export class SafetyAssessmentIdPathParams extends IdPathParams {
@@ -160,4 +199,26 @@ export class AdditionalInformationIdPathParams extends IdPathParams {
     pattern: idRegex.toString().replaceAll('/', ''),
   })
   [additionalInformationIdName]: string;
+}
+
+export class ActivityIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Activity-Id-Here',
+    description: 'The Id of the activity you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [activityIdName]: string;
+}
+
+export class ActivityPlanIdPathParams extends IdPathParams {
+  @Matches(idRegex)
+  @ApiProperty({
+    example: 'Activity-Plan-Id-Here',
+    description: 'The Id of the activity plan you wish to find.',
+    maxLength: idMaxLength,
+    pattern: idRegex.toString().replaceAll('/', ''),
+  })
+  [activityPlanIdName]: string;
 }

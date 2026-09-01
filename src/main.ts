@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
 import { Logger as NestJSLogger, VersioningType } from '@nestjs/common';
 import { versionNumber } from './common/constants/parameter-constants';
+import { json, urlencoded } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -18,6 +19,10 @@ async function bootstrap() {
     },
   });
   app.useLogger(app.get(Logger));
+
+  const bodyLimit = process.env.BODY_SIZE_LIMIT ?? '7mb';
+  app.use(json({ limit: bodyLimit }));
+  app.use(urlencoded({ extended: true, limit: bodyLimit }));
 
   app.enableVersioning({
     type: VersioningType.URI,

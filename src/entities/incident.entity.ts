@@ -484,3 +484,27 @@ export class IncidentEntity {
     Object.assign(this, object);
   }
 }
+
+export const IncidentListResponseExample = {
+  items: [
+    {
+      ...IncidentExample,
+      Id: 'Another Id Here',
+      'Row Id': 'Another Id Here',
+    },
+    IncidentExample,
+  ],
+};
+
+@Exclude()
+@ApiSchema({ name: 'IncidentResponse' })
+export class NestedIncidentEntity {
+  @Expose()
+  @ApiProperty({ type: IncidentEntity, isArray: true })
+  @Type(() => IncidentEntity)
+  items: Array<IncidentEntity>;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}

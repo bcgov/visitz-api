@@ -20,8 +20,11 @@ import {
 import {
   contactMedicalBehavioralConditionEnumError,
   dateFormatError,
+  dateFormatPastError,
   dateRangeFormatError,
   emojiError,
+  endDateFormatError,
+  isNotPostiveIntegerStringError,
   multiIdError,
   upstreamDateFormatError,
 } from '../../common/constants/error-constants';
@@ -34,6 +37,7 @@ import {
 import {
   ContactIdPathParams,
   IdPathParams,
+  VisitIdPathParams,
 } from '../../dto/id-path-params.dto';
 import { QueryHierarchyComponent } from '../../dto/query-hierarchy-component.dto';
 
@@ -170,6 +174,13 @@ export class UtilitiesService {
     return baseUrl + endpointUrl.replace('rowId', id.contactId);
   }
 
+  constructChildVisitDetailUrl(
+    id: VisitIdPathParams,
+    endpointUrl: string,
+  ): string {
+    return endpointUrl.replace('rowId', id.visitId);
+  }
+
   constructQueryHierarchy(parentComponent: QueryHierarchyComponent): string {
     const queryHierarchy = {};
     const innerObject = this.constructFieldAndSearchSpec(parentComponent);
@@ -301,6 +312,19 @@ export function isPastISO8601Date(date: string): string {
   throw new BadRequestException([dateFormatError]);
 }
 
+export function isCurrentOrFutureISO8601Date(date: string): string {
+  if (isISO8601(date, { strict: true })) {
+    const dateObject = DateTime.fromISO(date.trim(), {
+      zone: 'UTC',
+    });
+    const currentTimeUTC = DateTime.now().toUTC();
+    if (dateObject >= currentTimeUTC) {
+      return dateObject.toFormat(upstreamDateFormatNoTime);
+    }
+  }
+  throw new BadRequestException([dateFormatPastError]);
+}
+
 export function isISO8601DateUpstreamFormatter(date: string): string {
   if (isISO8601(date, { strict: true })) {
     const dateObject = DateTime.fromISO(date.trim(), {
@@ -334,6 +358,45 @@ export function isValidISO8601StartDateRange(
     return startDate;
   }
   throw new BadRequestException([dateRangeFormatError]);
+}
+
+export function isValidISO8601EndDate(
+  startDate: string | undefined,
+  endDate: string | undefined,
+  startDateOptional?: boolean,
+  error?: string,
+): string {
+  if (
+    typeof startDate !== 'undefined' &&
+    isISO8601(startDate, { strict: true })
+  ) {
+    const startDateObject = DateTime.fromISO(startDate.trim(), {
+      zone: 'UTC',
+    });
+    if (typeof endDate == 'undefined') {
+      return endDate;
+    }
+    if (isISO8601(endDate, { strict: true })) {
+      const endDateObject = DateTime.fromISO(endDate.trim(), {
+        zone: 'UTC',
+      });
+      if (endDateObject >= startDateObject) {
+        return endDateObject.toFormat(upstreamDateFormat);
+      }
+    }
+  } else if (typeof startDate == 'undefined' && typeof endDate == 'undefined') {
+    return endDate;
+  } else if (startDateOptional) {
+    return DateTime.fromISO(endDate.trim(), {
+      zone: 'UTC',
+    }).toFormat(upstreamDateFormat);
+  }
+
+  if (error) {
+    throw new BadRequestException([error]);
+  } else {
+    throw new BadRequestException([endDateFormatError]);
+  }
 }
 
 export function isValidUpstreamFormatDate(date: string): string {
@@ -390,4 +453,12 @@ export function isIdArray(input): Array<string> {
     }
   }
   throw new BadRequestException([multiIdError]);
+}
+
+export function isPositiveIntegerString(input: string) {
+  const integer = Number.parseFloat(input);
+  if (Number.isNaN(integer) || !Number.isInteger(integer) || integer < 0) {
+    throw new BadRequestException([isNotPostiveIntegerStringError]);
+  }
+  return input;
 }

@@ -10,6 +10,8 @@ export default () => ({
       workspace: process.env.CASE_WORKSPACE ?? undefined,
       idirField: process.env.CASE_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.CASE_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField:
+        process.env.CASE_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.CASE_RESTRICTED_FIELD ?? undefined,
       typeField: process.env.CASE_TYPE_FIELD ?? undefined,
       statusField: process.env.CASE_STATUS_FIELD ?? undefined,
@@ -22,6 +24,8 @@ export default () => ({
       idirField: process.env.INCIDENT_IDIR_FIELD ?? undefined,
       searchspecIdirField:
         process.env.INCIDENT_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField:
+        process.env.INCIDENT_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.INCIDENT_RESTRICTED_FIELD ?? undefined,
       typeField: process.env.INCIDENT_TYPE_FIELD ?? undefined,
       statusField: process.env.INCIDENT_STATUS_FIELD ?? undefined,
@@ -33,6 +37,7 @@ export default () => ({
       workspace: process.env.SR_WORKSPACE ?? undefined,
       idirField: process.env.SR_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.SR_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField: process.env.SR_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.SR_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.SR_STATUS_FIELD ?? undefined,
       officeField: process.env.SR_OFFICE_FIELD ?? undefined,
@@ -43,6 +48,8 @@ export default () => ({
       workspace: process.env.MEMO_WORKSPACE ?? undefined,
       idirField: process.env.MEMO_IDIR_FIELD ?? undefined,
       searchspecIdirField: process.env.MEMO_SEARCHSPEC_IDIR_FIELD ?? undefined,
+      searchspecAfterField:
+        process.env.MEMO_SEARCHSPEC_AFTER_FIELD ?? undefined,
       restrictedField: process.env.MEMO_RESTRICTED_FIELD ?? undefined,
       statusField: process.env.MEMO_STATUS_FIELD ?? undefined,
       officeField: process.env.MEMO_OFFICE_FIELD ?? undefined,
@@ -94,6 +101,13 @@ export default () => ({
       process.env.CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
     postContactMedicalBehavioral:
       process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_WORKSPACE ?? undefined,
+    contactEducation: process.env.CONTACT_EDUCATION_WORKSPACE ?? undefined,
+    postContactEducation:
+      process.env.POST_CONTACT_EDUCATION_WORKSPACE ?? undefined,
+    contactLegalAuthority:
+      process.env.CONTACT_LEGAL_AUTHORITY_WORKSPACE ?? undefined,
+    activities: process.env.ACTIVITIES_WORKSPACE ?? undefined,
+    activityPlan: process.env.ACTIVITY_PLAN_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -115,6 +129,23 @@ export default () => ({
     contactLanguages: process.env.CONTACT_LANGUAGES_AFTER_FIELD ?? undefined,
     contactMedicalBehavioral:
       process.env.CONTACT_MEDICAL_BEHAVIORAL_AFTER_FIELD ?? undefined,
+    contactEducation:
+      typeof process.env.CONTACT_EDUCATION_AFTER_FIELD == 'undefined' ||
+      process.env.CONTACT_EDUCATION_AFTER_FIELD == ''
+        ? undefined
+        : process.env.CONTACT_EDUCATION_AFTER_FIELD,
+    contactLegalAuthority:
+      process.env.CONTACT_LEGAL_AUTHORITY_AFTER_FIELD ?? undefined,
+    activities:
+      typeof process.env.ACTIVITIES_AFTER_FIELD == 'undefined' ||
+      process.env.ACTIVITIES_AFTER_FIELD == ''
+        ? undefined
+        : process.env.ACTIVITIES_AFTER_FIELD,
+    activityPlan:
+      typeof process.env.ACTIVITY_PLAN_AFTER_FIELD == 'undefined' ||
+      process.env.ACTIVITY_PLAN_AFTER_FIELD == ''
+        ? undefined
+        : process.env.ACTIVITY_PLAN_AFTER_FIELD,
   },
   skipAuthGuard:
     process.env.VPI_APP_ENV === 'prod'
@@ -160,6 +191,17 @@ export default () => ({
       process.env.CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
     postContactMedicalBehavioral:
       process.env.POST_CONTACT_MEDICAL_BEHAVIORAL_ENDPOINT ?? ' ',
+    contactEducation: process.env.CONTACT_EDUCATION_ENDPOINT ?? ' ',
+    postContactEducation: process.env.POST_CONTACT_EDUCATION_ENDPOINT ?? ' ',
+    contactLegalAuthority: process.env.CONTACT_LEGAL_AUTHORITY_ENDPOINT ?? ' ',
+    caseActivities: process.env.CASE_ACTIVITIES_ENDPOINT ?? ' ',
+    incidentActivities: process.env.INCIDENT_ACTIVITIES_ENDPOINT ?? ' ',
+    srActivities: process.env.SR_ACTIVITIES_ENDPOINT ?? ' ',
+    memoActivities: process.env.MEMO_ACTIVITIES_ENDPOINT ?? ' ',
+    caseActivityPlan: process.env.CASE_ACTIVITY_PLAN_ENDPOINT ?? ' ',
+    incidentActivityPlan: process.env.INCIDENT_ACTIVITY_PLAN_ENDPOINT ?? ' ',
+    srActivityPlan: process.env.SR_ACTIVITY_PLAN_ENDPOINT ?? ' ',
+    inPersonVisitDetails: process.env.IN_PERSON_VISIT_DETAILS_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

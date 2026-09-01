@@ -1,5 +1,5 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import {
   createdByFieldName,
   createdByIdFieldName,
@@ -343,6 +343,30 @@ export class MemoEntity {
   })
   @Expose()
   'Urgent': string;
+
+  constructor(object) {
+    Object.assign(this, object);
+  }
+}
+
+export const MemoListResponseExample = {
+  items: [
+    {
+      ...MemoExample,
+      Id: 'Another Id Here',
+      'Row Id': 'Another Id Here',
+    },
+    MemoExample,
+  ],
+};
+
+@Exclude()
+@ApiSchema({ name: 'MemoResponse' })
+export class NestedMemoEntity {
+  @Expose()
+  @ApiProperty({ type: MemoEntity, isArray: true })
+  @Type(() => MemoEntity)
+  items: Array<MemoEntity>;
 
   constructor(object) {
     Object.assign(this, object);

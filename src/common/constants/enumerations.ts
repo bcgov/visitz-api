@@ -425,6 +425,86 @@ const ContactMedicalBehavioralCategoryConditionMap = {
     ContactMedicalBehavioralSkinAndSubcutaneousCondition,
 } as const;
 
+enum ActivityActionBy {
+  Client = 'Client',
+  External = 'External',
+  Health = 'Health',
+  Staff = 'Staff',
+  Supervisor = 'Supervisor',
+  System = 'System',
+}
+
+enum ActivityPriority {
+  Urgent = '1-Urgent',
+  High = '2-High',
+  Standard = '3-Standard',
+}
+
+enum ActivityStatus {
+  Cancelled = 'Cancelled',
+  Closed = 'Closed',
+  IsError = 'Error',
+  InProgress = 'In Progress',
+  Open = 'Open',
+  Pending = 'Pending',
+  Scheduled = 'Scheduled',
+  SetUp = 'Set Up',
+}
+
+enum ContactEducationDegree {
+  One = '1',
+  Two = '2',
+  Three = '3',
+  Four = '4',
+  Five = '5',
+  Six = '6',
+  Seven = '7',
+  Eight = '8',
+  Nine = '9',
+  Ten = '10',
+  Eleven = '11',
+  Twelve = '12',
+  Daycare = 'Daycare',
+  ElementarySchool = 'Elementary school',
+  Grade12GEDEquiv = 'Grade 12 grad/GED/equivalent',
+  GraduatedAdult = 'Graduated Adult',
+  HomeSchooledStudent = 'Home Schooled Student',
+  FullDayKindergarten = 'KF - full day kindergarten',
+  HalfDayKindergarten = 'KH - half day kindergarten',
+  LessThanGrade10 = 'Less than grade 10',
+  PostSecondaryCertFirstYearAppren = 'Post-sec certif/1st yr appren',
+  PostSecondaryDiplomaSecondYearAppren = 'Post-sec diploma/2st yr appren',
+  PostSecondaryDegree = 'Post-secondary degree',
+  PreKindergarten = 'Pre-Kindergarten',
+  SecondarySchool = 'Secondary school',
+  SomeHighSchool = 'Some high school(grades 10-12)',
+  SomePostSecondaryTrades = 'Some post-sec/entry trds train',
+  TradesThirdFourthYear = 'Trades (3rd/4th yr appren)',
+  TradesCert = 'Trades cert (Journey Person)',
+  Unspecified = 'Unspecified',
+}
+
+enum ActivityPlanStatus {
+  Open = 'Open',
+  InProgress = 'In Progress',
+  Pending = 'Pending',
+  Cancelled = 'Cancelled',
+  Closed = 'Closed',
+}
+enum EntityScope {
+  Assigned = 'Assigned',
+  Office = 'Office',
+}
+
+enum AppLogLevel {
+  Fatal = 60,
+  Error = 50,
+  Warn = 40,
+  Log = 30,
+  Debug = 20,
+  Verbose = 10,
+}
+
 export {
   RecordType,
   EntityType,
@@ -461,4 +541,11 @@ export {
   ContactMedicalBehavioralSkinAndSubcutaneousCondition,
   ContactMedicalBehavioralSkinCondition,
   ContactMedicalBehavioralCategoryConditionMap,
+  ActivityActionBy,
+  ActivityPriority,
+  ActivityStatus,
+  ContactEducationDegree,
+  ActivityPlanStatus,
+  EntityScope,
+  AppLogLevel,
 };
