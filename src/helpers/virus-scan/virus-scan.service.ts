@@ -5,7 +5,11 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as NodeClam from 'clamscan';
+// TS `export =` interop: this import is required (rather than a namespace
+// import) so `NodeClam` remains usable as a constructable value under TS 6's
+// stricter namespace-import typing.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import NodeClam = require('clamscan');
 import {
   virusInfectedError,
   virusScanFailedError,
