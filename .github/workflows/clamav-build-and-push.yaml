@@ -83,6 +83,12 @@ jobs:
               "clamav.tag": "${{ github.event.inputs.environment }}",
             }
           commitChange: false
+      
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@37eb3cfb20ac2df6f0511ffa71cd917e4d49cabf #v3.1.0
+        with:
+          oc: "latest"
+          helm: "latest"
 
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@2a1614bc977c054c8786c8e35fc9534bd0ddc156 #v2.0.1
