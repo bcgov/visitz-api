@@ -2,11 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VirusScanService } from './virus-scan.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../../configuration/configuration';
-// TS `export =` interop: import directly (rather than a namespace import) so
-// `NodeClam` remains usable as a constructable value under TS 6's stricter
-// namespace-import typing.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import NodeClam = require('clamscan');
+import NodeClam from 'clamscan';
 import { Readable } from 'stream';
 import {
   BadRequestException,

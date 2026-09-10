@@ -1,9 +1,8 @@
-// TS 6's `__importStar` helper wraps namespace imports in a synthetic object
-// with non-configurable getters, which breaks `jest.spyOn`. Import the raw
-// CommonJS module directly so the spy binds to the same object referenced by
-// file-validators.ts's `loadEsm` import.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import loadEsm = require('load-esm');
+jest.mock('load-esm', () => ({
+  __esModule: true,
+  loadEsm: jest.fn(jest.requireActual('load-esm').loadEsm),
+}));
+import { loadEsm } from 'load-esm';
 import { FileTypeMagicNumberValidatorPipe } from './file-validators';
 import { Readable } from 'stream';
 import { BadRequestException } from '@nestjs/common';
@@ -20,7 +19,8 @@ describe('FileValidators', () => {
 
   describe('loadFileTypeModule tests', () => {
     it('should only load the module once', async () => {
-      const loadSpy = jest.spyOn(loadEsm, 'loadEsm');
+      const loadSpy = loadEsm as jest.Mock;
+      loadSpy.mockClear();
       const fileTypeSpy = jest.spyOn(fileTypeValidator, 'loadFileTypeModule');
       await fileTypeValidator.loadFileTypeModule();
       await fileTypeValidator.loadFileTypeModule();
