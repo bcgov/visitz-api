@@ -5,7 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as NodeClam from 'clamscan';
+import NodeClam from 'clamscan';
 import {
   virusInfectedError,
   virusScanFailedError,
