@@ -108,6 +108,7 @@ export default () => ({
       process.env.CONTACT_LEGAL_AUTHORITY_WORKSPACE ?? undefined,
     activities: process.env.ACTIVITIES_WORKSPACE ?? undefined,
     activityPlan: process.env.ACTIVITY_PLAN_WORKSPACE ?? undefined,
+    listOfValues: process.env.LIST_OF_VALUES_WORKSPACE ?? undefined,
   },
   afterFieldName: {
     supportNetwork: updatedDateFieldName,
@@ -202,6 +203,7 @@ export default () => ({
     incidentActivityPlan: process.env.INCIDENT_ACTIVITY_PLAN_ENDPOINT ?? ' ',
     srActivityPlan: process.env.SR_ACTIVITY_PLAN_ENDPOINT ?? ' ',
     inPersonVisitDetails: process.env.IN_PERSON_VISIT_DETAILS_ENDPOINT ?? ' ',
+    listOfValues: process.env.LIST_OF_VALUES_ENDPOINT ?? ' ',
   },
   fileUpload: {
     maxFileSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES) ?? 5242880,

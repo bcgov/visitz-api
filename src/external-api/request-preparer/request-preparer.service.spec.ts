@@ -246,6 +246,34 @@ describe('RequestPreparerService', () => {
       },
     );
 
+    it('Should still be treated as an axios error when it is not an instanceof AxiosError (e.g. a cross-bundle CJS/ESM error)', async () => {
+      // @nestjs/axios loads axios via a real ESM import while our code
+      // imports it via CommonJS require(), so an error thrown upstream can
+      // be a structurally-identical object that is NOT `instanceof` our
+      // imported AxiosError class. Simulate that here with a plain object
+      // that only duck-types as an axios error (isAxiosError: true).
+      const crossBundleError = {
+        isAxiosError: true,
+        message: 'Axios Error',
+        status: 500,
+        response: {
+          data: {},
+          status: 500,
+          statusText: '',
+          headers: {},
+          config: {},
+        },
+      };
+      const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+        throw crossBundleError;
+      });
+
+      await expect(
+        service.sendGetRequest('url', {}, res, {}),
+      ).rejects.toHaveProperty('status', 500);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
     it('Should return HttpException with status 204 on 404 from upstream', async () => {
       const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
         throw new AxiosError(
@@ -261,6 +289,33 @@ describe('RequestPreparerService', () => {
             config: {} as InternalAxiosRequestConfig,
           },
         );
+      });
+      await expect(
+        service.sendGetRequest('url', {}, res, {}),
+      ).rejects.toHaveProperty('status', 204);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('Should return HttpException with status 204 when only the nested response status is 404', async () => {
+      const spy = jest.spyOn(httpService, 'get').mockImplementation(() => {
+        const error = new AxiosError(
+          'Axios Error',
+          '404',
+          {} as InternalAxiosRequestConfig,
+          {},
+          {
+            data: {},
+            status: 404,
+            statusText: '',
+            headers: {} as RawAxiosRequestHeaders,
+            config: {} as InternalAxiosRequestConfig,
+          },
+        );
+        // Simulate an Axios error instance where the top-level `status`
+        // convenience property was not populated, leaving the nested
+        // `response.status` as the only reliable source of truth.
+        delete error.status;
+        throw error;
       });
       await expect(
         service.sendGetRequest('url', {}, res, {}),

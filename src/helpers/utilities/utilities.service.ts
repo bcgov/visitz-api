@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { isEnum, isISO8601 } from 'class-validator';
 import { DateTime } from 'luxon';
 import {
@@ -151,6 +156,18 @@ export class UtilitiesService {
 
   convertFileBufferToBase64(buffer: Buffer): string {
     return buffer.toString('base64');
+  }
+
+  /**
+   * Upstream error status codes can be surfaced in different places
+   * depending on how the Axios error was constructed. Check both
+   * locations so a 404 from upstream is reliably detected.
+   */
+  isUpstreamNotFoundError(error: any): boolean {
+    return (
+      error?.response?.status === HttpStatus.NOT_FOUND ||
+      error?.status === HttpStatus.NOT_FOUND
+    );
   }
 
   enumTypeGuard<T>(object: T, possibleValue: any): possibleValue is T[keyof T] {

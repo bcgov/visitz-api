@@ -25,7 +25,7 @@ import {
   Observable,
   of,
 } from 'rxjs';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import {
@@ -128,7 +128,7 @@ export class RequestPreparerService {
         this.httpService.get(url, { params, headers }),
       );
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (isAxiosError(error)) {
         this.logger.error({
           msg: error.message,
           errorDetails: error.response?.data,
@@ -136,7 +136,7 @@ export class RequestPreparerService {
           cause: error.cause,
           buildNumber: this.buildNumber,
         });
-        if (error.status === 404) {
+        if (this.utilitiesService.isUpstreamNotFoundError(error)) {
           throw new HttpException({}, HttpStatus.NO_CONTENT, { cause: error });
         }
         throw new HttpException(
@@ -190,7 +190,7 @@ export class RequestPreparerService {
         this.httpService.post(url, body, { params, headers }),
       );
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (isAxiosError(error)) {
         this.logger.error({
           msg: error.message,
           errorDetails: error.response?.data,
@@ -240,7 +240,7 @@ export class RequestPreparerService {
         this.httpService.put(url, body, { params, headers }),
       );
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (isAxiosError(error)) {
         this.logger.error({
           msg: error.message,
           errorDetails: error.response?.data,
@@ -407,7 +407,7 @@ export class RequestPreparerService {
           buildNumber: this.buildNumber,
           status: response.status,
         });
-        if (response.status === 404) {
+        if (this.utilitiesService.isUpstreamNotFoundError(response)) {
           throw new HttpException({}, HttpStatus.NO_CONTENT);
         }
         throw new HttpException(
