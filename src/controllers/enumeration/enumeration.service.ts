@@ -44,6 +44,10 @@ export class EnumerationService {
     filter: ListOfValuesQueryParams,
   ): Promise<NestedListOfValuesEntity> {
     const searchspec = `([Active]="${YNEnum.True}" AND [Type]="${filter[typeParamName]}")`;
+    /* 
+		Setting up the headers and params here because using Catalog mode would require a 
+		method signature change, which I didn't feel was worth the refactor.
+	*/
     const headers = {
       Accept: CONTENT_TYPE,
       'Accept-Encoding': '*',
