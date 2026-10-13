@@ -7,6 +7,7 @@ import { CaseloadModule } from './caseload/caseload.module';
 import { ExternalAuthModule } from './external-auth/external-auth.module';
 import { WorkflowsModule } from './workflows/workflows.module';
 import { AppLogsModule } from './app-logs/app-logs.module';
+import { EnumerationModule } from './enumeration/enumeration.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AppLogsModule } from './app-logs/app-logs.module';
     ExternalAuthModule,
     WorkflowsModule,
     AppLogsModule,
+    EnumerationModule,
   ],
 })
 export class ControllersModule {}

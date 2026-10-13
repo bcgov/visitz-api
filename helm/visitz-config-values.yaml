@@ -763,4 +763,14 @@ env:
     valueFrom:
       configMapKeyRef:
           name: visitz-api-config
-          key: IN_PERSON_VISIT_DETAILS_ENDPOINT        
+          key: IN_PERSON_VISIT_DETAILS_ENDPOINT
+  - name: LIST_OF_VALUES_ENDPOINT
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: LIST_OF_VALUES_ENDPOINT
+  - name: LIST_OF_VALUES_WORKSPACE
+    valueFrom:
+      configMapKeyRef:
+          name: visitz-api-config
+          key: LIST_OF_VALUES_WORKSPACE
