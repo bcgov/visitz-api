@@ -1,3 +1,12 @@
+# Use nvm pinned node version (Nest now requires Node 24.9 or greater)
+if [ -z "$NVM_DIR" ]; then
+  NVM_DIR="$HOME/.nvm"
+fi
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  \. "$NVM_DIR/nvm.sh"
+  nvm use --silent > /dev/null 2>&1 || true
+fi
+
 npm run lint
 npm run format
 npm run test:cov
