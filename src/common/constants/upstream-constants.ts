@@ -78,6 +78,7 @@ const activityTypeMax = 30;
 const activityPlanCommentsMax = 1500;
 const activityPlanTemplateMax = 100;
 const contactEducationCommentsMax = 100;
+const listOfValuesTypeMax = 30;
 
 export {
   baseUrlEnvVarName,
@@ -160,4 +161,5 @@ export {
   activityPlanCommentsMax,
   activityPlanTemplateMax,
   contactEducationCommentsMax,
+  listOfValuesTypeMax,
 };

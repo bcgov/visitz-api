@@ -6,8 +6,11 @@ import {
   IsEnum,
   IsInt,
   IsISO8601,
+  IsNotEmpty,
   IsOptional,
+  IsString,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 import {
@@ -16,6 +19,7 @@ import {
   EntityScope,
 } from '../common/constants/enumerations';
 import {
+  listOfValuesTypeMax,
   pageSizeDefault,
   pageSizeMax,
   pageSizeMin,
@@ -35,23 +39,12 @@ import {
   memoIncludeParam,
   checkIdsParamName,
   entityScopeParamName,
+  typeParamName,
 } from '../common/constants/parameter-constants';
 import { isIdArray } from '../helpers/utilities/utilities.service';
 
 @Exclude()
-export class FilterQueryParams {
-  @IsOptional()
-  @IsISO8601({ strict: true })
-  @Expose()
-  @ApiProperty({
-    example: '1970-01-01T00:00:00',
-    format: 'date-time',
-    description:
-      'The ISO8601 formatted date to narrow down searches with, expected to be provided in UTC.' +
-      ' Only results after the selected datetime will appear.',
-  })
-  [afterParamName]?: string;
-
+export class PaginationQueryParams {
   @IsOptional()
   @IsEnum(BooleanStringEnum)
   @Expose()
@@ -111,6 +104,21 @@ export class FilterQueryParams {
       ` ${YNEnum.True} if you want these fields to be removed.`,
   })
   [excludeEmptyFieldsParamName]?: string = YNEnum.False;
+}
+
+@Exclude()
+export class FilterQueryParams extends PaginationQueryParams {
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  @Expose()
+  @ApiProperty({
+    example: '1970-01-01T00:00:00',
+    format: 'date-time',
+    description:
+      'The ISO8601 formatted date to narrow down searches with, expected to be provided in UTC.' +
+      ' Only results after the selected datetime will appear.',
+  })
+  [afterParamName]?: string;
 }
 
 @Exclude()
@@ -229,4 +237,34 @@ export class VisitDetailsQueryParams extends CheckIdQueryParams {
       'Whether or not you want the visit details to be displayed as multiple values.',
   })
   multivalue?: string = 'false';
+}
+
+@Exclude()
+export class ListOfValuesQueryParams extends PaginationQueryParams {
+  @Expose()
+  @ApiProperty({
+    example: pageSizeMax,
+    default: pageSizeMax,
+    maximum: pageSizeMax,
+    minimum: pageSizeMin,
+    format: 'integer',
+    description:
+      `The maximum number of records to return. This parameter has a maximum of` +
+      ` ${pageSizeMax}. Used to enable pagination. Defaults to the maximum page` +
+      ` size for this endpoint if not provided.`,
+  })
+  [pageSizeParamName]?: number = pageSizeMax;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(listOfValuesTypeMax)
+  @Expose()
+  @ApiProperty({
+    example: 'Type Here',
+    required: true,
+    maxLength: listOfValuesTypeMax,
+    description:
+      'Filters the results to only include list of values entries whose Type matches this value.',
+  })
+  [typeParamName]: string;
 }

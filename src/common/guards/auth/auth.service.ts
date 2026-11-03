@@ -28,7 +28,7 @@ import {
   uniformResponseParamName,
   VIEW_MODE,
 } from '../../../common/constants/parameter-constants';
-import { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { TokenRefresherService } from '../../../external-api/token-refresher/token-refresher.service';
 import {
   idirUsernameHeaderField,
@@ -344,7 +344,7 @@ export class AuthService {
       );
       return [true, searchspec];
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (isAxiosError(error)) {
         this.logger.error({
           msg: error.message,
           errorDetails: error.response?.data,
@@ -353,7 +353,7 @@ export class AuthService {
           buildNumber: this.buildNumber,
           function: this.getIsAssignedToOfficeUpstream.name,
         });
-        if (error.status === 404) {
+        if (this.utilitiesService.isUpstreamNotFoundError(error)) {
           return [false, searchspec];
         }
         throw new HttpException(
@@ -432,7 +432,7 @@ export class AuthService {
       );
       return await this.positionCheck(idir, response);
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (isAxiosError(error)) {
         this.logger.error({
           msg: error.message,
           errorDetails: error.response?.data,
@@ -443,7 +443,7 @@ export class AuthService {
         });
         await this.cacheManager.set(officeNamesKey, null, this.cacheTime);
         await this.cacheManager.set(idir, false, this.cacheTime);
-        if (error.status === 404) {
+        if (this.utilitiesService.isUpstreamNotFoundError(error)) {
           return [false, null];
         }
         throw new HttpException(

@@ -170,6 +170,26 @@ describe('UtilitiesService', () => {
     );
   });
 
+  describe('isUpstreamNotFoundError tests', () => {
+    it.each([
+      [{ response: { status: 404 } }, true],
+      [{ status: 404 }, true],
+      [{ response: { status: 404 }, status: 500 }, true],
+      [{ response: { status: 500 }, status: 404 }, true],
+      [{ response: { status: 500 }, status: 500 }, false],
+      [{ response: { status: 500 } }, false],
+      [{ status: 500 }, false],
+      [{}, false],
+      [undefined, false],
+      [null, false],
+    ])(
+      'should check both the response and top-level status for a 404',
+      (error, expected) => {
+        expect(service.isUpstreamNotFoundError(error)).toBe(expected);
+      },
+    );
+  });
+
   describe('isPastISO8601Date tests', () => {
     it.each([[DateTime.now().toUTC().minus(60000).toJSDate().toISOString()]])(
       `should return a string upon being given a past ISO-8601 date`,

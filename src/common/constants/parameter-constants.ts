@@ -1,4 +1,5 @@
 const VIEW_MODE = 'Organization';
+const CATALOG_VIEW_MODE = 'Catalog';
 const CHILD_LINKS = 'None';
 const CONTENT_TYPE = 'application/json';
 const UNIFORM_RESPONSE = 'y';
@@ -12,6 +13,7 @@ const excludeEmptyFieldsParamName = 'excludeEmptyFieldsInResponse';
 const entityScopeParamName = 'group';
 const checkIdsParamName = 'checkIds';
 const afterParamName = 'after';
+const typeParamName = 'type';
 const caseIncludeParam = 'includeCase';
 const incidentIncludeParam = 'includeIncident';
 const srIncludeParam = 'includeSR';
@@ -67,6 +69,7 @@ const attachmentIdFieldName = 'Attachment Id';
 
 export {
   VIEW_MODE,
+  CATALOG_VIEW_MODE,
   CHILD_LINKS,
   CONTENT_TYPE,
   UNIFORM_RESPONSE,
@@ -80,6 +83,7 @@ export {
   entityScopeParamName,
   checkIdsParamName,
   afterParamName,
+  typeParamName,
   caseIncludeParam,
   incidentIncludeParam,
   srIncludeParam,
