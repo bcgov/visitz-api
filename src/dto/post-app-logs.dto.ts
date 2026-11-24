@@ -17,19 +17,28 @@ export class PostAppLogDevice {
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiProperty({ example: 'iPhone 15', description: 'The device model.' })
+  @ApiProperty({
+    required: false,
+    example: 'iPhone 15',
+    description: 'The device model.',
+  })
   'model'?: string;
 
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiProperty({ example: 'Apple', description: 'The device manufacturer.' })
+  @ApiProperty({
+    required: false,
+    example: 'Apple',
+    description: 'The device manufacturer.',
+  })
   'manufacturer'?: string;
 
   @IsString()
   @IsOptional()
   @Expose()
   @ApiProperty({
+    required: false,
     example: '17.4.1',
     description: 'The device operating system version.',
   })
@@ -38,13 +47,21 @@ export class PostAppLogDevice {
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiProperty({ example: 'phone', description: 'The device idiom.' })
+  @ApiProperty({
+    required: false,
+    example: 'phone',
+    description: 'The device idiom.',
+  })
   'idiom'?: string;
 
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiProperty({ example: 'ios', description: 'The device platform.' })
+  @ApiProperty({
+    required: false,
+    example: 'ios',
+    description: 'The device platform.',
+  })
   'platform'?: string;
 }
 
@@ -54,6 +71,7 @@ export class PostAppLogEntry {
   @IsEnum(AppLogLevel)
   @Expose()
   @ApiProperty({
+    required: false,
     example: AppLogLevel.Log,
     description: 'The severity level of the log entry.',
     enum: AppLogLevel,
@@ -76,6 +94,7 @@ export class PostAppLogEntry {
   @IsOptional()
   @Expose()
   @ApiProperty({
+    required: false,
     example: '8.0.1',
     description: 'The .NET runtime version used by the app.',
   })
@@ -84,13 +103,18 @@ export class PostAppLogEntry {
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiProperty({ example: '1.0.0', description: 'The version of the app.' })
+  @ApiProperty({
+    required: false,
+    example: '1.0.0',
+    description: 'The version of the app.',
+  })
   'app-version'?: string;
 
   @IsString()
   @IsOptional()
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'ClassNameHere',
     description: 'The name of the source that generated the log entry.',
   })

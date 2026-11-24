@@ -68,6 +68,7 @@ export class PostActivityDto {
   @IsEnum(YesNoEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YesNoEnum.True,
     default: YesNoEnum.True,
     description: 'If the activity has an alarm.',
@@ -270,6 +271,7 @@ export class PostActivityDto {
   @IsEnum(YesNoEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YesNoEnum.False,
     default: YesNoEnum.False,
     description: 'If the activity should repeat.',
@@ -285,6 +287,7 @@ export class PostActivityDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: '1970-01-01T00:00:00',
     format: 'date-time',
     description:

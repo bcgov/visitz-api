@@ -74,6 +74,7 @@ export class PostInPersonVisitDto {
   @MaxLength(visitDetailsMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: VisitDetails.PrivateVisitInHome,
     description:
       'The visit type. Either this field or the VisitDetails array is required. The array takes precedence if both are present.',
@@ -92,6 +93,7 @@ export class PostInPersonVisitDto {
   @ArrayNotEmpty()
   @Expose()
   @ApiProperty({
+    required: false,
     type: PostInPersonVisitDetail,
     isArray: true,
     description:

@@ -183,6 +183,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -201,6 +202,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -219,6 +221,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -237,6 +240,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -255,6 +259,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -273,6 +278,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -291,6 +297,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -309,6 +316,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -327,6 +335,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -345,6 +354,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -363,6 +373,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -381,6 +392,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -399,6 +411,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -417,6 +430,7 @@ export class SafetyAssessmentSafetyFactorsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -531,20 +545,22 @@ export class SafetyAssessmentProtectiveCapacityItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
-  cmtProtectiveCapacity01: string;
+  cmtProtectiveCapacity01?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
-  cmtProtectiveCapacity02: string;
+  cmtProtectiveCapacity02?: string;
 
   constructor(object) {
     Object.assign(this, object);
@@ -623,6 +639,7 @@ export class SafetyAssessmentSafetyInterventionsItem {
   @MaxLength(safetyAssessmentStandardCommentMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyAssessmentStandardCommentMax,
   })
@@ -681,6 +698,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @MaxLength(safetyDecisionsDecisionUnsafeMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: SafetyAssessmentDecisionUnsafe.All,
     enum: SafetyAssessmentDecisionUnsafe,
     maxLength: safetyDecisionsDecisionUnsafeMax,
@@ -692,6 +710,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @MaxLength(safetyDecisionsCommentsMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyDecisionsCommentsMax,
   })
@@ -702,6 +721,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @MaxLength(safetyDecisionsNarrativeMax)
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comment here',
     maxLength: safetyDecisionsNarrativeMax,
   })
@@ -711,6 +731,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @IsEnum(YNEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YNEnum.True,
     enum: YNEnum,
   })
@@ -726,6 +747,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @IsNotEmpty()
   @MaxLength(upstreamDateFormatNoTime.length)
   @ApiProperty({
+    required: false,
     example: '02/28/2025',
     description:
       'Expected to be provided in ' +
@@ -739,6 +761,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @IsEnum(YNEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YNEnum.True,
     enum: YNEnum,
   })
@@ -754,6 +777,7 @@ export class SafetyAssessmentSafetyDecisionsItem {
   @IsNotEmpty()
   @MaxLength(upstreamDateFormatNoTime.length)
   @ApiProperty({
+    required: false,
     example: '02/28/2025',
     description:
       'Expected to be provided in ' +
@@ -867,6 +891,7 @@ export class SafetyAssessmentWorkflowDto {
   @ArrayNotEmpty()
   @Expose()
   @ApiProperty({
+    required: false,
     type: SafetyAssessmentChildsInOutCareItem,
     isArray: true,
   })
