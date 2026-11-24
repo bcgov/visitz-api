@@ -43,6 +43,29 @@ describe('PostContactLanguagesDto Language Name tests', () => {
   );
 });
 
+describe('PostContactLanguagesDto required field tests', () => {
+  it(`should have no validation errors when only Language Name is provided`, async () => {
+    const postContactLanguages = {
+      'Language Name': 'English',
+    };
+    const postContactLanguagesDto = plainToInstance(
+      PostContactLanguagesDto,
+      postContactLanguages,
+    );
+    const errors = await validate(postContactLanguagesDto);
+    expect(errors).toHaveLength(0);
+  });
+
+  it(`should only report Language Name as a validation error when the entire body is empty`, async () => {
+    const postContactLanguagesDto = plainToInstance(
+      PostContactLanguagesDto,
+      {},
+    );
+    const errors = await validate(postContactLanguagesDto);
+    expect(errors.map((error) => error.property)).toEqual(['Language Name']);
+  });
+});
+
 describe('PostContactLanguagesDto ICM Type tests', () => {
   it(`should not have validation errors when ICM Type is omitted`, async () => {
     const postContactLanguages = {

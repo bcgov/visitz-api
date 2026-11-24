@@ -88,6 +88,7 @@ export class PostContactEducationDto {
   @IsEnum(YNEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YNEnum.False,
     default: YNEnum.False,
     enum: YNEnum,
@@ -100,6 +101,7 @@ export class PostContactEducationDto {
   @IsEnum(YNEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YNEnum.False,
     default: YNEnum.False,
     enum: YNEnum,
