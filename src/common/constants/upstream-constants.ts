@@ -60,6 +60,8 @@ const supportNetworkAgencyMax = 100;
 const supportNetworkAddressMax = 250;
 const contactLanguagesOtherLanguageMax = 30;
 const contactLanguagesCommentsMax = 255;
+const contactLanguagesLanguageNameMax = 100;
+const contactLanguagesIcmTypeMax = 30;
 const contactMedicalBehavioralCommentsMax = 200;
 const contactMedicalBehavioralDiagnosedByMax = 100;
 const contactMedicalBehavioralTreatmentPlanMax = 100;
@@ -145,6 +147,8 @@ export {
   supportNetworkAddressMax,
   contactLanguagesOtherLanguageMax,
   contactLanguagesCommentsMax,
+  contactLanguagesLanguageNameMax,
+  contactLanguagesIcmTypeMax,
   contactMedicalBehavioralCommentsMax,
   contactMedicalBehavioralDiagnosedByMax,
   contactMedicalBehavioralTreatmentPlanMax,
