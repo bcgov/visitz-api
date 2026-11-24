@@ -82,6 +82,7 @@ const activityTypeMax = 30;
 const activityPlanCommentsMax = 1500;
 const activityPlanTemplateMax = 100;
 const contactEducationCommentsMax = 100;
+const contactEducationDegreeMax = 30;
 const listOfValuesTypeMax = 30;
 
 export {
@@ -169,5 +170,6 @@ export {
   activityPlanCommentsMax,
   activityPlanTemplateMax,
   contactEducationCommentsMax,
+  contactEducationDegreeMax,
   listOfValuesTypeMax,
 };

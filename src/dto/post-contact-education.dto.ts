@@ -1,19 +1,21 @@
 import { ApiSchema, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Transform } from 'class-transformer';
-import {
-  ContactEducationDegree,
-  YNEnum,
-} from '../common/constants/enumerations';
+import { YNEnum } from '../common/constants/enumerations';
 import {
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
   ValidateIf,
 } from 'class-validator';
-import { contactEducationCommentsMax } from '../common/constants/upstream-constants';
+import {
+  contactEducationCommentsMax,
+  contactEducationDegreeMax,
+} from '../common/constants/upstream-constants';
 import {
   isISO8601DateUpstreamFormatter,
+  isNotEmoji,
   isValidISO8601EndDate,
 } from '../helpers/utilities/utilities.service';
 import { dateRangeFormatError } from '../common/constants/error-constants';
@@ -21,11 +23,15 @@ import { dateRangeFormatError } from '../common/constants/error-constants';
 @Exclude()
 @ApiSchema({ name: 'PostContactEducationRequest' })
 export class PostContactEducationDto {
-  @IsEnum(ContactEducationDegree)
+  @IsNotEmpty()
+  @MaxLength(contactEducationDegreeMax)
+  @Transform(({ value }) => {
+    return isNotEmoji(value);
+  })
   @ApiProperty({
-    example: ContactEducationDegree.SomeHighSchool,
+    example: 'Some High School',
     description: 'The level of education reached for the contact.',
-    enum: ContactEducationDegree,
+    maxLength: contactEducationDegreeMax,
   })
   @Expose()
   'Degree': string;
