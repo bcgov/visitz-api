@@ -6,7 +6,6 @@ import {
   isValidUpstreamFormatDate,
   isISO8601DateUpstreamFormatter,
   isValidISO8601StartDateRange,
-  isMedicalConditionValidForCategory,
   isCurrentOrFutureISO8601Date,
   isValidISO8601EndDate,
   isPositiveIntegerString,
@@ -28,10 +27,6 @@ import {
   updatedByFieldName,
 } from '../../common/constants/upstream-constants';
 import configuration from '../../configuration/configuration';
-import {
-  ContactMedicalBehavioralAllergyCondition,
-  ContactMedicalBehavioralOtherCondition,
-} from '../../common/constants/enumerations';
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -415,46 +410,6 @@ describe('UtilitiesService', () => {
       (input) => {
         expect(() => {
           isNotEmoji(input);
-        }).toThrow(BadRequestException);
-      },
-    );
-  });
-
-  describe('isMedicalConditionValidForCategory tests', () => {
-    it.each([
-      [
-        ContactMedicalBehavioralAllergyCondition.SpecialDiet,
-        { Category: 'Allergy' },
-      ],
-    ])(
-      `should return input if value is part of the correct condition enum`,
-      (input, baseObject) => {
-        expect(isMedicalConditionValidForCategory(input, baseObject)).toBe(
-          input,
-        );
-      },
-    );
-
-    it.each([
-      [
-        ContactMedicalBehavioralAllergyCondition.SpecialDiet,
-        { Category: 'blahblahblah' },
-      ],
-    ])(`should return input if category is invalid`, (input, baseObject) => {
-      expect(isMedicalConditionValidForCategory(input, baseObject)).toBe(input);
-    });
-
-    it.each([
-      [
-        ContactMedicalBehavioralOtherCondition.Insomnia,
-        { Category: 'Allergy' },
-      ],
-      ['blahblahblah', { Category: 'Allergy' }],
-    ])(
-      `should throw BadRequestException on enum for wrong category or non enum values`,
-      (input, baseObject) => {
-        expect(() => {
-          isMedicalConditionValidForCategory(input, baseObject);
         }).toThrow(BadRequestException);
       },
     );

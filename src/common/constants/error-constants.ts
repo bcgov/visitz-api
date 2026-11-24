@@ -50,9 +50,6 @@ export const multiIdError =
   checkIdsParamName +
   ` parameter must contain a comma-seperated list of ids.`;
 
-export const contactMedicalBehavioralConditionEnumError =
-  'Condition must be one of the following values when Category is ${category}: ${enum}';
-
 export const isNotPostiveIntegerStringError =
   'String must be a positive integer or 0';
 

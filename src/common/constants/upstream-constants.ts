@@ -60,9 +60,13 @@ const supportNetworkAgencyMax = 100;
 const supportNetworkAddressMax = 250;
 const contactLanguagesOtherLanguageMax = 30;
 const contactLanguagesCommentsMax = 255;
+const contactLanguagesLanguageNameMax = 100;
+const contactLanguagesIcmTypeMax = 30;
 const contactMedicalBehavioralCommentsMax = 200;
 const contactMedicalBehavioralDiagnosedByMax = 100;
 const contactMedicalBehavioralTreatmentPlanMax = 100;
+const contactMedicalBehavioralCategoryMax = 30;
+const contactMedicalBehavioralConditionMax = 30;
 const activityActionCodeMax = 50;
 const activityApptAlarmTimeMax = 16;
 const activityCategoryMax = 30;
@@ -78,6 +82,7 @@ const activityTypeMax = 30;
 const activityPlanCommentsMax = 1500;
 const activityPlanTemplateMax = 100;
 const contactEducationCommentsMax = 100;
+const contactEducationDegreeMax = 30;
 const listOfValuesTypeMax = 30;
 
 export {
@@ -143,9 +148,13 @@ export {
   supportNetworkAddressMax,
   contactLanguagesOtherLanguageMax,
   contactLanguagesCommentsMax,
+  contactLanguagesLanguageNameMax,
+  contactLanguagesIcmTypeMax,
   contactMedicalBehavioralCommentsMax,
   contactMedicalBehavioralDiagnosedByMax,
   contactMedicalBehavioralTreatmentPlanMax,
+  contactMedicalBehavioralCategoryMax,
+  contactMedicalBehavioralConditionMax,
   activityActionCodeMax,
   activityApptAlarmTimeMax,
   activityCategoryMax,
@@ -161,5 +170,6 @@ export {
   activityPlanCommentsMax,
   activityPlanTemplateMax,
   contactEducationCommentsMax,
+  contactEducationDegreeMax,
   listOfValuesTypeMax,
 };

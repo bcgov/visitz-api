@@ -1,26 +1,29 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
-import {
-  ContactLanguage,
-  ContactLanguageType,
-  YNEnum,
-} from '../common/constants/enumerations';
+import { YNEnum } from '../common/constants/enumerations';
 import { isNotEmoji } from '../helpers/utilities/utilities.service';
 import {
   contactLanguagesCommentsMax,
+  contactLanguagesIcmTypeMax,
+  contactLanguagesLanguageNameMax,
   contactLanguagesOtherLanguageMax,
 } from '../common/constants/upstream-constants';
 
 @Exclude()
 @ApiSchema({ name: 'PostContactLanguagesRequest' })
 export class PostContactLanguagesDto {
-  @IsEnum(ContactLanguage)
+  @IsNotEmpty()
+  @MaxLength(contactLanguagesLanguageNameMax)
+  @Transform(({ value }) => {
+    if (value != undefined) return isNotEmoji(value);
+    else return value;
+  })
   @Expose()
   @ApiProperty({
-    example: ContactLanguage.AmericanSignLanguage,
+    example: 'American Sign Language',
     description: 'The Language the contact uses.',
-    enum: ContactLanguage,
+    maxLength: contactLanguagesLanguageNameMax,
   })
   'Language Name': string;
 
@@ -36,6 +39,7 @@ export class PostContactLanguagesDto {
     example: 'Other Language Here',
     description: 'Other Language for the contact.',
     maxLength: contactLanguagesOtherLanguageMax,
+    required: false,
   })
   'Other Language'?: string;
 
@@ -46,16 +50,23 @@ export class PostContactLanguagesDto {
     example: YNEnum.True,
     description: 'Whether or not the contact requires a translator.',
     enum: YNEnum,
+    required: false,
   })
   'Translator Req'?: string;
 
   @IsOptional()
-  @IsEnum(ContactLanguageType)
+  @IsNotEmpty()
+  @MaxLength(contactLanguagesIcmTypeMax)
+  @Transform(({ value }) => {
+    if (value != undefined) return isNotEmoji(value);
+    else return value;
+  })
   @Expose()
   @ApiProperty({
-    example: ContactLanguageType.SignLanguage,
+    example: 'Sign Language',
     description: 'The type of language.',
-    enum: ContactLanguageType,
+    maxLength: contactLanguagesIcmTypeMax,
+    required: false,
   })
   'ICM Type'?: string;
 
@@ -71,6 +82,7 @@ export class PostContactLanguagesDto {
     example: 'Comments here',
     description: 'Comments for contact language.',
     maxLength: contactLanguagesCommentsMax,
+    required: false,
   })
   'Comments'?: string;
 }
@@ -79,10 +91,10 @@ export class PostContactLanguagesDto {
 // as it should have already been done previously
 export class PostContactLanguagesDtoUpstream {
   Id: string;
-  'Language Name': ContactLanguage;
+  'Language Name': string;
   'Other Language'?: string;
   'Translator Req'?: YNEnum;
-  'ICM Type'?: ContactLanguageType;
+  'ICM Type'?: string;
   'Type': string;
   Comments?: string;
   'SSA Primary Field'?: YNEnum;
