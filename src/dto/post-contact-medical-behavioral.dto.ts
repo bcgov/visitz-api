@@ -1,41 +1,16 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Expose, Transform } from 'class-transformer';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-  ValidateIf,
-} from 'class-validator';
-import {
-  ContactMedicalBehavioralAllergyCondition,
-  ContactMedicalBehavioralBehaviouralCondition,
-  ContactMedicalBehavioralCategory,
-  ContactMedicalBehavioralCirculatoryCondition,
-  ContactMedicalBehavioralCognitiveLearningCondition,
-  ContactMedicalBehavioralCommunicableCondition,
-  ContactMedicalBehavioralCongenitalAnomaliesCondition,
-  ContactMedicalBehavioralDevelopmentalCondition,
-  ContactMedicalBehavioralDigestiveEndocrineDisordersCondition,
-  ContactMedicalBehavioralMentalHealthCondition,
-  ContactMedicalBehavioralMusculoskeletalCondition,
-  ContactMedicalBehavioralNeoplasmsCondition,
-  ContactMedicalBehavioralNeurologicalCondition,
-  ContactMedicalBehavioralOtherCondition,
-  ContactMedicalBehavioralRespiratoryCondition,
-  ContactMedicalBehavioralSensoryCondition,
-  ContactMedicalBehavioralSkinAndSubcutaneousCondition,
-  ContactMedicalBehavioralSkinCondition,
-} from '../common/constants/enumerations';
+import { IsNotEmpty, IsOptional, MaxLength, ValidateIf } from 'class-validator';
 import {
   isISO8601DateUpstreamFormatter,
-  isMedicalConditionValidForCategory,
   isNotEmoji,
   isPastISO8601Date,
   isValidISO8601StartDateRange,
 } from '../helpers/utilities/utilities.service';
 import {
+  contactMedicalBehavioralCategoryMax,
   contactMedicalBehavioralCommentsMax,
+  contactMedicalBehavioralConditionMax,
   contactMedicalBehavioralDiagnosedByMax,
   contactMedicalBehavioralTreatmentPlanMax,
 } from '../common/constants/upstream-constants';
@@ -43,66 +18,32 @@ import {
 @Exclude()
 @ApiSchema({ name: 'PostContactMedicalBehavioralRequest' })
 export class PostContactMedicalBehavioralDto {
-  @IsEnum(ContactMedicalBehavioralCategory)
+  @IsNotEmpty()
+  @MaxLength(contactMedicalBehavioralCategoryMax)
+  @Transform(({ value }) => {
+    if (value != undefined) return isNotEmoji(value);
+    else return value;
+  })
   @Expose()
   @ApiProperty({
-    example: ContactMedicalBehavioralCategory.Allergy,
+    example: 'Allergy',
     description: 'The category of the medical or behavioral condition.',
-    enum: ContactMedicalBehavioralCategory,
+    maxLength: contactMedicalBehavioralCategoryMax,
   })
   'Category': string;
 
   @IsOptional()
   @IsNotEmpty()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @Transform(({ value, key, obj }) => {
-    if (value != undefined)
-      return isMedicalConditionValidForCategory(value, obj);
+  @MaxLength(contactMedicalBehavioralConditionMax)
+  @Transform(({ value }) => {
+    if (value != undefined) return isNotEmoji(value);
     else return value;
   })
   @Expose()
   @ApiProperty({
-    example:
-      ContactMedicalBehavioralAllergyCondition.EnvironmentalSensitivities,
-    description:
-      'The condition name. Options vary based on the chosen Category, in order.',
-    enum: {
-      Allergy: Object.values(ContactMedicalBehavioralAllergyCondition),
-      Behavioral: Object.values(ContactMedicalBehavioralBehaviouralCondition),
-      Circulatory: Object.values(ContactMedicalBehavioralCirculatoryCondition),
-      CognitiveLearning: Object.values(
-        ContactMedicalBehavioralCognitiveLearningCondition,
-      ),
-      Communicable: Object.values(
-        ContactMedicalBehavioralCommunicableCondition,
-      ),
-      CongenitalAnomalies: Object.values(
-        ContactMedicalBehavioralCongenitalAnomaliesCondition,
-      ),
-      Developmental: Object.values(
-        ContactMedicalBehavioralDevelopmentalCondition,
-      ),
-      DigestiveEndocrineDisorders: Object.values(
-        ContactMedicalBehavioralDigestiveEndocrineDisordersCondition,
-      ),
-      MentalHealth: Object.values(
-        ContactMedicalBehavioralMentalHealthCondition,
-      ),
-      Musculoskeletal: Object.values(
-        ContactMedicalBehavioralMusculoskeletalCondition,
-      ),
-      Neoplasms: Object.values(ContactMedicalBehavioralNeoplasmsCondition),
-      Neurological: Object.values(
-        ContactMedicalBehavioralNeurologicalCondition,
-      ),
-      Other: Object.values(ContactMedicalBehavioralOtherCondition),
-      Respiratory: Object.values(ContactMedicalBehavioralRespiratoryCondition),
-      Sensory: Object.values(ContactMedicalBehavioralSensoryCondition),
-      Skin: Object.values(ContactMedicalBehavioralSkinCondition),
-      SkinAndSubcutaneous: Object.values(
-        ContactMedicalBehavioralSkinAndSubcutaneousCondition,
-      ),
-    },
+    example: 'Environmental sensitivities',
+    description: 'The condition name.',
+    maxLength: contactMedicalBehavioralConditionMax,
   })
   'Condition'?: string;
 
@@ -206,25 +147,8 @@ export class PostContactMedicalBehavioralDto {
 export class PostContactMedicalBehavioralDtoUpstream {
   Id: string;
   'Case Id': string;
-  'Category': ContactMedicalBehavioralCategory;
-  'Condition'?:
-    | ContactMedicalBehavioralAllergyCondition
-    | ContactMedicalBehavioralBehaviouralCondition
-    | ContactMedicalBehavioralCirculatoryCondition
-    | ContactMedicalBehavioralCognitiveLearningCondition
-    | ContactMedicalBehavioralCommunicableCondition
-    | ContactMedicalBehavioralCongenitalAnomaliesCondition
-    | ContactMedicalBehavioralDevelopmentalCondition
-    | ContactMedicalBehavioralDigestiveEndocrineDisordersCondition
-    | ContactMedicalBehavioralMentalHealthCondition
-    | ContactMedicalBehavioralMusculoskeletalCondition
-    | ContactMedicalBehavioralNeoplasmsCondition
-    | ContactMedicalBehavioralNeurologicalCondition
-    | ContactMedicalBehavioralOtherCondition
-    | ContactMedicalBehavioralRespiratoryCondition
-    | ContactMedicalBehavioralSensoryCondition
-    | ContactMedicalBehavioralSkinCondition
-    | ContactMedicalBehavioralSkinAndSubcutaneousCondition;
+  'Category': string;
+  'Condition'?: string;
   'Diagnosis Date'?: string;
   'Diagnosed By'?: string;
   'Start Date'?: string;

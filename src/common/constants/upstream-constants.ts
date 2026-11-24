@@ -63,6 +63,8 @@ const contactLanguagesCommentsMax = 255;
 const contactMedicalBehavioralCommentsMax = 200;
 const contactMedicalBehavioralDiagnosedByMax = 100;
 const contactMedicalBehavioralTreatmentPlanMax = 100;
+const contactMedicalBehavioralCategoryMax = 30;
+const contactMedicalBehavioralConditionMax = 30;
 const activityActionCodeMax = 50;
 const activityApptAlarmTimeMax = 16;
 const activityCategoryMax = 30;
@@ -146,6 +148,8 @@ export {
   contactMedicalBehavioralCommentsMax,
   contactMedicalBehavioralDiagnosedByMax,
   contactMedicalBehavioralTreatmentPlanMax,
+  contactMedicalBehavioralCategoryMax,
+  contactMedicalBehavioralConditionMax,
   activityActionCodeMax,
   activityApptAlarmTimeMax,
   activityCategoryMax,
