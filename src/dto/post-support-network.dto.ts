@@ -39,6 +39,7 @@ export class PostSupportNetworkDto {
   @Matches(phoneNumberRegex)
   @Expose()
   @ApiProperty({
+    required: false,
     example: '12345678901',
     description: 'Cell phone number of support network person.',
     maxLength: supportNetworkCellMax,
@@ -50,6 +51,7 @@ export class PostSupportNetworkDto {
   @Matches(phoneNumberRegex)
   @Expose()
   @ApiProperty({
+    required: false,
     example: '12345678901',
     description: 'Phone number of support network person.',
     maxLength: supportNetworkCellMax,
@@ -66,6 +68,7 @@ export class PostSupportNetworkDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Address Here',
     description: 'Address for support network person.',
     maxLength: supportNetworkAddressMax,
@@ -81,6 +84,7 @@ export class PostSupportNetworkDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Parent',
     description: 'Relationship for support network person.',
     maxLength: supportNetworkRelationshipMax,
@@ -96,6 +100,7 @@ export class PostSupportNetworkDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Agency Name',
     description: 'Agency name for support network person.',
     maxLength: supportNetworkAgencyMax,
@@ -111,6 +116,7 @@ export class PostSupportNetworkDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comments here',
     description: 'Comments for support network person.',
     maxLength: supportNetworkCommentsMax,
@@ -121,6 +127,7 @@ export class PostSupportNetworkDto {
   @IsEnum(YesNoEnum)
   @Expose()
   @ApiProperty({
+    required: false,
     example: YesNoEnum.True,
     default: YesNoEnum.True,
     description: 'Whether the support network person is active.',

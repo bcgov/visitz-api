@@ -41,6 +41,7 @@ export class PostContactMedicalBehavioralDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Environmental sensitivities',
     description: 'The condition name.',
     maxLength: contactMedicalBehavioralConditionMax,
@@ -55,6 +56,7 @@ export class PostContactMedicalBehavioralDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: '1970-01-01T00:00:00',
     format: 'date-time',
     description:
@@ -71,6 +73,7 @@ export class PostContactMedicalBehavioralDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Diagnoser here',
     description: 'The diagnoser for contact medical behavioral.',
     maxLength: contactMedicalBehavioralDiagnosedByMax,
@@ -120,6 +123,7 @@ export class PostContactMedicalBehavioralDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Treatment Plan here',
     description: 'Treatment Plan for contact medical behavioral.',
     maxLength: contactMedicalBehavioralTreatmentPlanMax,
@@ -135,6 +139,7 @@ export class PostContactMedicalBehavioralDto {
   })
   @Expose()
   @ApiProperty({
+    required: false,
     example: 'Comments here',
     description: 'Comments for contact medical behavioral.',
     maxLength: contactMedicalBehavioralCommentsMax,

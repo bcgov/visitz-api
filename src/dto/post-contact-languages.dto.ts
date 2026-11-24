@@ -39,6 +39,7 @@ export class PostContactLanguagesDto {
     example: 'Other Language Here',
     description: 'Other Language for the contact.',
     maxLength: contactLanguagesOtherLanguageMax,
+    required: false,
   })
   'Other Language'?: string;
 
@@ -49,6 +50,7 @@ export class PostContactLanguagesDto {
     example: YNEnum.True,
     description: 'Whether or not the contact requires a translator.',
     enum: YNEnum,
+    required: false,
   })
   'Translator Req'?: string;
 
@@ -64,6 +66,7 @@ export class PostContactLanguagesDto {
     example: 'Sign Language',
     description: 'The type of language.',
     maxLength: contactLanguagesIcmTypeMax,
+    required: false,
   })
   'ICM Type'?: string;
 
@@ -79,6 +82,7 @@ export class PostContactLanguagesDto {
     example: 'Comments here',
     description: 'Comments for contact language.',
     maxLength: contactLanguagesCommentsMax,
+    required: false,
   })
   'Comments'?: string;
 }
